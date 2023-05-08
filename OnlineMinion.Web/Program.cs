@@ -13,6 +13,10 @@ builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<Api>();
 
+builder.Services.AddMediatR(
+    opts => opts.RegisterServicesFromAssemblyContaining<Program>()
+);
+
 //--
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

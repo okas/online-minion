@@ -1,10 +1,10 @@
 ﻿@page "/account-specs"
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.Contracts
-@using OnlineMinion.Contracts.Commands
-@using OnlineMinion.Contracts.HttpHeaders
+@using OnlineMinion.Contracts.Queries
+@using MediatR
 @inject NavigationManager Navigation
-@inject Api Api
+@inject IMediator Mediator
 @inject ILogger<AccountSpecResp> Logger
 
 <AppPageTitle>Account Specs</AppPageTitle>
@@ -91,8 +91,6 @@ else
 
 @code {
 
-  private static readonly Uri UriApiV1AccountSpecs = new("api/v1/AccountSpecs", UriKind.Relative);
-
   private BasePagedResult<AccountSpecResp>? _vm;
 
   private bool _isSubmitting;
@@ -115,9 +113,7 @@ else
 
   protected override async Task OnParametersSetAsync()
   {
-    _vm = await Api.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(
-      UriApiV1AccountSpecs + $"?{nameof(Page)}={Page}&{nameof(PageSize)}={PageSize}"
-      );
+    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize));
 
     await base.OnParametersSetAsync();
   }
@@ -126,38 +122,29 @@ else
   {
     _isSubmitting = true;
 
-    await Api.Client.PostAsJsonAsync(
-      UriApiV1AccountSpecs,
-      new CreateAccountSpecCmd(_newName, _newGroup, _newDescription)
-      );
+    if (await Mediator.Send(new CreateAccountSpecCmd(_newName, _newGroup, _newDescription)))
+    {
+      _newName = string.Empty;
+      _newGroup = string.Empty;
+      _newDescription = string.Empty;
+      ModalDialog.Close();
 
-    _newName = string.Empty;
-    _newGroup = string.Empty;
-    _newDescription = string.Empty;
-    ModalDialog.Close();
-
-    await NavigateToNewItemPage();
+      await NavigateToNewItemPage();
+    }
 
     _isSubmitting = false;
   }
 
   private async Task NavigateToNewItemPage()
   {
-    var result = await Api.Client.SendAsync(
-      new(HttpMethod.Head, UriApiV1AccountSpecs + $"?{nameof(PageSize)}={PageSize}"),
-      HttpCompletionOption.ResponseHeadersRead
-      );
-
-    if (result.Headers.TryGetValues(CustomHeaderNames.PagingPages, out var values) && values.First() is {} value)
+    if (await Mediator.Send(new GetAccountSpecsPagesCountBySizeQry(PageSize)) is { } pages)
     {
-      if (!string.IsNullOrWhiteSpace(value))
-      {
-        NavigateByPager(int.Parse(value));
-        return;
-      }
+      NavigateByPager(pages);
     }
-
-    Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+    else
+    {
+      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+    }
   }
 
   private void PageChanged(int page)
