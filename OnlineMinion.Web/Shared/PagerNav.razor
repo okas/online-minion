@@ -1,0 +1,70 @@
+@using OnlineMinion.Contracts
+<ul class="justify-content-end mb-0 pagination">
+
+  @for (var i = StartIndex; i <= FinishIndex; i++)
+  {
+    var idx = i;
+    @if (idx == PagingMetaInfo.Current)
+    {
+      <li>
+        <span class="btn btn-primary">@idx</span>
+      </li>
+    }
+    else
+    {
+      <li>
+        <div class="btn btn-outline-info" onclick="@(() => JumpTo(idx))">@idx</div>
+      </li>
+    }
+  }
+
+  <li>
+    <div class="btn btn-outline-secondary" onclick="@JumToStart">⟪</div>
+  </li>
+
+  <li>
+    <div class="btn btn-outline-secondary" onclick="@JumToPrev">〈</div>
+  </li>
+
+  <li>
+    <div class="btn btn-outline-secondary" onclick="@JumToNext">〉</div>
+  </li>
+
+  <li>
+    <div class="btn btn-outline-secondary" onclick="@JumToEnd">⟫</div>
+  </li>
+
+</ul>
+
+@code {
+
+  [Parameter]
+  [EditorRequired]
+  public PagingMetaInfo PagingMetaInfo { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<int> OnPageChanged { get; set; }
+
+  protected override void OnParametersSet()
+  {
+    StartIndex = Math.Max(PagingMetaInfo.Current - 5, 1);
+    FinishIndex = Math.Min(PagingMetaInfo.Current + 5, PagingMetaInfo.Pages);
+
+    base.OnParametersSet();
+  }
+
+  private int StartIndex { get; set; }
+
+  private int FinishIndex { get; set; }
+
+  private void JumpTo(int page) => OnPageChanged.InvokeAsync(PagingMetaInfo.SanitizePage(page));
+
+  private void JumToStart() => OnPageChanged.InvokeAsync(PagingMetaInfo.First);
+
+  private void JumToPrev() => OnPageChanged.InvokeAsync(PagingMetaInfo.Previous);
+
+  private void JumToNext() => OnPageChanged.InvokeAsync(PagingMetaInfo.Next);
+
+  private void JumToEnd() => OnPageChanged.InvokeAsync(PagingMetaInfo.Pages);
+}

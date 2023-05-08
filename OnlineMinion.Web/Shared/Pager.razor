@@ -1,0 +1,32 @@
+@using OnlineMinion.Contracts
+<div class="col-md-8 col-sm-8">
+  <PagerNav OnPageChanged="@OnPageChanged" PagingMetaInfo="PagingMetaInfo" />
+</div>
+
+<select @bind:get="@PagingMetaInfo.Size" @bind:set="@UpdatePageSize">
+  @for (var i = 1; i <= 10; i++)
+  {
+    <option value="@i">@i</option>
+  }
+</select>
+
+<div>
+  <span>Total:</span>&nbsp;<em >@PagingMetaInfo.TotalItems</em>
+</div>
+
+@code
+{
+  [Parameter]
+  [EditorRequired]
+  public PagingMetaInfo PagingMetaInfo { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<int> OnPageSizeChanged { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<int> OnPageChanged { get; set; }
+
+  private async Task UpdatePageSize(int size) => await OnPageSizeChanged.InvokeAsync(size);
+}

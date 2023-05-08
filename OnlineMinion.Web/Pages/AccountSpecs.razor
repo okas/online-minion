@@ -1,0 +1,189 @@
+﻿@page "/account-specs"
+@using OnlineMinion.Contracts.Responses
+@using OnlineMinion.Contracts
+@using OnlineMinion.Contracts.Commands
+@using OnlineMinion.Contracts.HttpHeaders
+@inject NavigationManager Navigation
+@inject Api Api
+@inject ILogger<AccountSpecResp> Logger
+
+<AppPageTitle>Account Specs</AppPageTitle>
+
+<h1>Account Specifications</h1>
+
+<p>Manage Account Specifications</p>
+
+@if (_vm is not null)
+{
+  <ToolbarForTabular OnAdd="ModalDialog.Open">
+    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="_vm.Value.Paging" />
+  </ToolbarForTabular>
+}
+
+@if (_vm is null)
+{
+  <p>
+    <em>Loading...</em>
+  </p>
+}
+else if (!_vm.Value.Result.Any())
+{
+  <p>
+    <em>No items.</em>
+  </p>
+}
+else
+{
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Group</th>
+    </tr>
+    </thead>
+    <tbody style="overflow-y:scroll" tabindex="-1">
+    <Virtualize Context="m" Items="_vm.Value.Result">
+      <tr>
+        <td>@m.Id</td>
+        <td>@m.Name</td>
+        <td>@m.Description</td>
+        <td>@m.Group</td>
+      </tr>
+    </Virtualize>
+    </tbody>
+  </table>
+}
+
+<ModalDialog @ref="@ModalDialog" Title="Add new Account Specification">
+  <div class="row">
+
+    <form @onsubmit:preventDefault @onsubmit="@SubmitHandler">
+      <fieldset disabled="@_isSubmitting">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input @bind="_newName" class="form-control" id="name" placeholder="Enter name" type="text">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input @bind="_newDescription" class="form-control" id="description" placeholder="Enter description" type="text">
+        </div>
+
+        <div class="form-group">
+          <label for="group">Group</label>
+          <input @bind="_newGroup" class="form-control" id="group" placeholder="Enter group" type="text">
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2">
+            <button class="btn btn-primary form-control" type="submit">
+              Add
+            </button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+  </div>
+</ModalDialog>
+
+@code {
+
+  private static readonly Uri UriApiV1AccountSpecs = new("api/v1/AccountSpecs", UriKind.Relative);
+
+  private BasePagedResult<AccountSpecResp>? _vm;
+
+  private bool _isSubmitting;
+  private string _newName = string.Empty;
+  private string _newGroup = string.Empty;
+  private string _newDescription = string.Empty;
+
+  private ModalDialog ModalDialog { get; set; } = new();
+
+  private int? _page;
+  private int? _size;
+
+  [Parameter]
+  [SupplyParameterFromQuery]
+  public int Page { get => _page ?? PagingMetaInfo.DefaultCurrent; set => _page = value == default ? PagingMetaInfo.DefaultCurrent : value; }
+
+  [Parameter]
+  [SupplyParameterFromQuery]
+  public int PageSize { get => _size ?? PagingMetaInfo.DefaultSize; set => _size = value == default ? PagingMetaInfo.DefaultSize : value; }
+
+  protected override async Task OnParametersSetAsync()
+  {
+    _vm = await Api.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(
+      UriApiV1AccountSpecs + $"?{nameof(Page)}={Page}&{nameof(PageSize)}={PageSize}"
+      );
+
+    await base.OnParametersSetAsync();
+  }
+
+  private async Task SubmitHandler()
+  {
+    _isSubmitting = true;
+
+    await Api.Client.PostAsJsonAsync(
+      UriApiV1AccountSpecs,
+      new CreateAccountSpecCmd(_newName, _newGroup, _newDescription)
+      );
+
+    _newName = string.Empty;
+    _newGroup = string.Empty;
+    _newDescription = string.Empty;
+    ModalDialog.Close();
+
+    await NavigateToNewItemPage();
+
+    _isSubmitting = false;
+  }
+
+  private async Task NavigateToNewItemPage()
+  {
+    var result = await Api.Client.SendAsync(
+      new(HttpMethod.Head, UriApiV1AccountSpecs + $"?{nameof(PageSize)}={PageSize}"),
+      HttpCompletionOption.ResponseHeadersRead
+      );
+
+    if (result.Headers.TryGetValues(CustomHeaderNames.PagingPages, out var values) && values.First() is {} value)
+    {
+      if (!string.IsNullOrWhiteSpace(value))
+      {
+        NavigateByPager(int.Parse(value));
+        return;
+      }
+    }
+
+    Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+  }
+
+  private void PageChanged(int page)
+  {
+    var old = Page;
+
+    Page = _vm!.Value.Paging.SanitizePage(page);
+    if (Page == old)
+    {
+      return;
+    }
+
+    NavigateByPager();
+  }
+
+  private void PageSizeChanged(int size)
+  {
+    PageSize = size;
+    Page = _vm!.Value.Paging.GetNewCurrentBySize(PageSize);
+
+    NavigateByPager();
+  }
+
+  private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
+    Navigation.GetUriWithQueryParameters(
+      new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize }
+      ));
+
+}

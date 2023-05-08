@@ -1,0 +1,25 @@
+<section class="pager row">
+  <div aria-label="Toolbar with buttons" class="btn-toolbar col-sm d-sm-flex" role="toolbar">
+    <div aria-label="Add new" class="btn-group" role="group">
+      <button aria-label="Close" class="btn btn-primary" data-dismiss="modal" @onclick="@OnAdd" type="button">
+        <span aria-hidden="true" class="oi oi-plus"></span>
+        <span>Add</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="col-sm d-sm-flex just">
+    @ChildContent
+  </div>
+</section>
+
+@code {
+
+  [Parameter]
+  public RenderFragment? ChildContent { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback OnAdd { get; set; }
+
+}
