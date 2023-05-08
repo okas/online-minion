@@ -19,19 +19,6 @@
       </NavLink>
     </div>
     <div class="nav-item px-3">
-      <NavLink class="nav-link" href="counter">
-        <span aria-hidden="true" class="oi oi-plus">
-        </span>
-        <span>Counter</span>
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="fetchdata">
-        <span aria-hidden="true" class="oi oi-list-rich">
-        </span><span>Fetch data</span>
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
       <NavLink class="nav-link" href="account-specs">
         <span aria-hidden="true" class="oi oi-list-rich">
         </span>
@@ -42,13 +29,9 @@
 </div>
 
 @code {
-  private bool collapseNavMenu = true;
+  private bool _collapseNavMenu = true;
 
-  private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+  private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
 
-  private void ToggleNavMenu()
-  {
-    collapseNavMenu = !collapseNavMenu;
-  }
-
+  private void ToggleNavMenu() => _collapseNavMenu = !_collapseNavMenu;
 }
