@@ -12,7 +12,14 @@
 <h1>Account Specifications</h1>
 
 <p>Manage Account Specifications</p>
-
+@{
+  var name = nameof(_formModel.Name);
+  var nameLower = name.ToLowerInvariant();
+  var group = nameof(_formModel.Group);
+  var groupLower = group.ToLowerInvariant();
+  var description = nameof(_formModel.Description);
+  var descriptionLower = description.ToLowerInvariant();
+}
 @if (_vm is not null)
 {
   <ToolbarForTabular OnAdd="OnAddHandler">
@@ -37,16 +44,14 @@ else
   <table class="table">
     <thead>
     <tr>
-      <th>Id</th>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Group</th>
+      <th>@name</th>
+      <th>@description</th>
+      <th>@group</th>
     </tr>
     </thead>
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm.Value.Result">
-      <tr>
-        <td>@m.Id</td>
+      <tr @onclick="@(() => Console.WriteLine($"Id: {m.Id}"))">
         <td>@m.Name</td>
         <td>@m.Description</td>
         <td>@m.Group</td>
@@ -56,19 +61,12 @@ else
   </table>
 }
 
-<ModalDialog @ref="@ModalDialog" Title="Add new Account Specification">
+<ModalDialog @ref="@_modalDialog" Title="Add new Account Specification">
   <div class="row">
     <EditForm Model="@_formModel" OnValidSubmit="@ValidSubmitHandler">
-      @{
-        var name = context.Field(nameof(_formModel.Name)).FieldName;
-        var nameLower = name.ToLowerInvariant();
-        var group = context.Field(nameof(_formModel.Group)).FieldName;
-        var groupLower = group.ToLowerInvariant();
-        var description = context.Field(nameof(_formModel.Description)).FieldName;
-        var descriptionLower = description.ToLowerInvariant();
-      }
       <DataAnnotationsValidator />
       <ValidationSummary />
+
       <fieldset disabled="@_isSubmitting">
         <div class="form-group">
           <label for="@nameLower">@name</label>
@@ -106,8 +104,7 @@ else
 
   private bool _isSubmitting;
   private CreateAccountSpecCmd? _formModel;
-
-  private ModalDialog ModalDialog { get; set; } = new();
+  private ModalDialog _modalDialog = null!;
 
   private int? _page;
   private int? _size;
@@ -133,7 +130,7 @@ else
 
     if (_formModel is not null && await Mediator.Send(_formModel))
     {
-      ModalDialog.Close();
+      _modalDialog.Close();
       _formModel = null;
       await NavigateToNewItemPage();
     }
@@ -181,8 +178,8 @@ else
 
   private void OnAddHandler()
   {
-    ModalDialog.Open();
     _formModel = new();
+    _modalDialog.Open();
   }
 
 }
