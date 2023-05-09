@@ -16,7 +16,7 @@ internal sealed class GetPagedAccountSpecsQryHlr : BaseAccountSpecsRequestHandle
         GetAccountSpecsQry request,
         CancellationToken  cancellationToken
     ) => await _api.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(
-        UriApiV1AccountSpecs + $"?page={request.Page}&page-size={request.PageSize}",
+        UriApiV1AccountSpecs + $"?{nameof(request.Page)}={request.Page}&{nameof(request.PageSize)}={request.PageSize}",
         cancellationToken
     );
 }
