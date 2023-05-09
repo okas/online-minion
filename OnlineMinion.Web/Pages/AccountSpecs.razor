@@ -15,7 +15,7 @@
 
 @if (_vm is not null)
 {
-  <ToolbarForTabular OnAdd="ModalDialog.Open">
+  <ToolbarForTabular OnAdd="OnAddHandler">
     <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="_vm.Value.Paging" />
   </ToolbarForTabular>
 }
@@ -58,23 +58,34 @@ else
 
 <ModalDialog @ref="@ModalDialog" Title="Add new Account Specification">
   <div class="row">
-
-    <form @onsubmit:preventDefault @onsubmit="@SubmitHandler">
+    <EditForm Model="@_formModel" OnValidSubmit="@ValidSubmitHandler">
+      @{
+        var name = context.Field(nameof(_formModel.Name)).FieldName;
+        var nameLower = name.ToLowerInvariant();
+        var group = context.Field(nameof(_formModel.Group)).FieldName;
+        var groupLower = group.ToLowerInvariant();
+        var description = context.Field(nameof(_formModel.Description)).FieldName;
+        var descriptionLower = description.ToLowerInvariant();
+      }
+      <DataAnnotationsValidator />
+      <ValidationSummary />
       <fieldset disabled="@_isSubmitting">
         <div class="form-group">
-          <label for="name">Name</label>
-          <input @bind="_newName" class="form-control" id="name" placeholder="Enter name" type="text">
+          <label for="@nameLower">@name</label>
+          <InputText @bind-Value="@_formModel.Name" class="form-control" id="@nameLower" placeholder="@($"Enter {nameLower}")" />
         </div>
 
         <div class="form-group">
-          <label for="description">Description</label>
-          <input @bind="_newDescription" class="form-control" id="description" placeholder="Enter description" type="text">
+          <label for="@groupLower">@group</label>
+          <InputText @bind-Value="@_formModel.Group" class="form-control" id="@groupLower" placeholder="@($"Enter {groupLower}")" />
         </div>
 
         <div class="form-group">
-          <label for="group">Group</label>
-          <input @bind="_newGroup" class="form-control" id="group" placeholder="Enter group" type="text">
+          <label for="@descriptionLower">@description</label>
+          <InputText @bind-Value="@_formModel.Description" class="form-control" id="@descriptionLower" placeholder="@($"Enter {descriptionLower}")" />
         </div>
+
+        <hr />
 
         <div class="form-group row">
           <div class="col-sm-2">
@@ -84,7 +95,7 @@ else
           </div>
         </div>
       </fieldset>
-    </form>
+    </EditForm>
 
   </div>
 </ModalDialog>
@@ -94,9 +105,7 @@ else
   private BasePagedResult<AccountSpecResp>? _vm;
 
   private bool _isSubmitting;
-  private string _newName = string.Empty;
-  private string _newGroup = string.Empty;
-  private string _newDescription = string.Empty;
+  private CreateAccountSpecCmd? _formModel;
 
   private ModalDialog ModalDialog { get; set; } = new();
 
@@ -118,17 +127,14 @@ else
     await base.OnParametersSetAsync();
   }
 
-  private async Task SubmitHandler()
+  private async Task ValidSubmitHandler()
   {
     _isSubmitting = true;
 
-    if (await Mediator.Send(new CreateAccountSpecCmd(_newName, _newGroup, _newDescription)))
+    if (_formModel is not null && await Mediator.Send(_formModel))
     {
-      _newName = string.Empty;
-      _newGroup = string.Empty;
-      _newDescription = string.Empty;
       ModalDialog.Close();
-
+      _formModel = null;
       await NavigateToNewItemPage();
     }
 
@@ -172,5 +178,11 @@ else
     Navigation.GetUriWithQueryParameters(
       new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize }
       ));
+
+  private void OnAddHandler()
+  {
+    ModalDialog.Open();
+    _formModel = new();
+  }
 
 }
