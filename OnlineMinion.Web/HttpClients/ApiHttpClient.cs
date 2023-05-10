@@ -3,13 +3,11 @@ using OnlineMinion.Web.Settings;
 
 namespace OnlineMinion.Web.HttpClients;
 
-public class Api
+public class ApiHttpClient : BaseHttpClient
 {
-    public Api(HttpClient httpClient, IOptions<ApiSettings> options)
+    public ApiHttpClient(HttpClient httpClient, IOptions<ApiClientSettings> options)
     {
         Client = httpClient;
         Client.BaseAddress = new(options.Value.Url);
     }
-
-    public HttpClient Client { get; }
 }

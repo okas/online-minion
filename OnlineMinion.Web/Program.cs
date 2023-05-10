@@ -7,11 +7,11 @@ using OnlineMinion.Web.Settings;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 //-- Configurations setup
-builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(ApiSettings)));
+builder.Services.Configure<ApiClientSettings>(builder.Configuration.GetSection(nameof(ApiClientSettings)));
 
 // Services setup
-builder.Services.AddHttpClient();
-builder.Services.AddHttpClient<Api>();
+builder.Services.AddHttpClient<HostHttpClient>();
+builder.Services.AddHttpClient<ApiHttpClient>();
 
 builder.Services.AddMediatR(
     opts => opts.RegisterServicesFromAssemblyContaining<Program>()
@@ -22,4 +22,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //--
-await builder.Build().RunAsync();
+var webAssemblyHost = builder.Build();
+
+await webAssemblyHost.RunAsync();

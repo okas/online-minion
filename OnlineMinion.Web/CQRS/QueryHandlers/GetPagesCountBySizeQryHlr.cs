@@ -8,12 +8,12 @@ namespace OnlineMinion.Web.CQRS.QueryHandlers;
 internal sealed class GetPagesCountBySizeQryHlr : BaseAccountSpecsRequestHandler,
     IRequestHandler<GetAccountSpecsPagesCountBySizeQry, int?>
 {
-    private readonly Api _api;
-    public GetPagesCountBySizeQryHlr(Api api) => _api = api;
+    private readonly ApiHttpClient _apiHttpClient;
+    public GetPagesCountBySizeQryHlr(ApiHttpClient apiHttpClient) => _apiHttpClient = apiHttpClient;
 
     public async Task<int?> Handle(GetAccountSpecsPagesCountBySizeQry request, CancellationToken cancellationToken)
     {
-        using var result = await _api.Client.SendAsync(
+        using var result = await _apiHttpClient.Client.SendAsync(
             new(HttpMethod.Head, UriApiV1AccountSpecs + $"?page-size={request.Size}"),
             HttpCompletionOption.ResponseHeadersRead,
             cancellationToken
