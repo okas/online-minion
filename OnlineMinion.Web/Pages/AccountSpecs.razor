@@ -7,6 +7,92 @@
 @inject IMediator Mediator
 @inject ILogger<AccountSpecResp> Logger
 
+@code {
+
+  private BasePagedResult<AccountSpecResp>? _vm;
+
+  private bool _isSubmitting;
+  private CreateAccountSpecCmd? _formModel;
+  private ModalDialog _modalDialog = null!;
+
+  private int? _page;
+  private int? _size;
+
+  [Parameter]
+  [SupplyParameterFromQuery]
+  public int Page { get => _page ?? PagingMetaInfo.DefaultCurrent; set => _page = value == default ? PagingMetaInfo.DefaultCurrent : value; }
+
+  [Parameter]
+  [SupplyParameterFromQuery]
+  public int PageSize { get => _size ?? PagingMetaInfo.DefaultSize; set => _size = value == default ? PagingMetaInfo.DefaultSize : value; }
+
+  protected override async Task OnParametersSetAsync()
+  {
+    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize));
+
+    await base.OnParametersSetAsync();
+  }
+
+  private async Task ValidSubmitHandler()
+  {
+    _isSubmitting = true;
+
+    if (_formModel is not null && await Mediator.Send(_formModel))
+    {
+      _modalDialog.Close();
+      _formModel = null;
+      await NavigateToNewItemPage();
+    }
+
+    _isSubmitting = false;
+  }
+
+  private async Task NavigateToNewItemPage()
+  {
+    if (await Mediator.Send(new GetAccountSpecsPagesCountBySizeQry(PageSize)) is { } pages)
+    {
+      NavigateByPager(pages);
+    }
+    else
+    {
+      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+    }
+  }
+
+  private void PageChanged(int page)
+  {
+    var old = Page;
+
+    Page = _vm!.Value.Paging.SanitizePage(page);
+    if (Page == old)
+    {
+      return;
+    }
+
+    NavigateByPager();
+  }
+
+  private void PageSizeChanged(int size)
+  {
+    PageSize = size;
+    Page = _vm!.Value.Paging.GetNewCurrentBySize(PageSize);
+
+    NavigateByPager();
+  }
+
+  private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
+    Navigation.GetUriWithQueryParameters(
+      new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize }
+      ));
+
+  private void OnAddHandler()
+  {
+    _formModel = new();
+    _modalDialog.Open();
+  }
+
+}
+
 <AppPageTitle>Account Specs</AppPageTitle>
 
 <h1>Account Specifications</h1>
@@ -97,89 +183,3 @@ else
 
   </div>
 </ModalDialog>
-
-@code {
-
-  private BasePagedResult<AccountSpecResp>? _vm;
-
-  private bool _isSubmitting;
-  private CreateAccountSpecCmd? _formModel;
-  private ModalDialog _modalDialog = null!;
-
-  private int? _page;
-  private int? _size;
-
-  [Parameter]
-  [SupplyParameterFromQuery]
-  public int Page { get => _page ?? PagingMetaInfo.DefaultCurrent; set => _page = value == default ? PagingMetaInfo.DefaultCurrent : value; }
-
-  [Parameter]
-  [SupplyParameterFromQuery]
-  public int PageSize { get => _size ?? PagingMetaInfo.DefaultSize; set => _size = value == default ? PagingMetaInfo.DefaultSize : value; }
-
-  protected override async Task OnParametersSetAsync()
-  {
-    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize));
-
-    await base.OnParametersSetAsync();
-  }
-
-  private async Task ValidSubmitHandler()
-  {
-    _isSubmitting = true;
-
-    if (_formModel is not null && await Mediator.Send(_formModel))
-    {
-      _modalDialog.Close();
-      _formModel = null;
-      await NavigateToNewItemPage();
-    }
-
-    _isSubmitting = false;
-  }
-
-  private async Task NavigateToNewItemPage()
-  {
-    if (await Mediator.Send(new GetAccountSpecsPagesCountBySizeQry(PageSize)) is { } pages)
-    {
-      NavigateByPager(pages);
-    }
-    else
-    {
-      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
-    }
-  }
-
-  private void PageChanged(int page)
-  {
-    var old = Page;
-
-    Page = _vm!.Value.Paging.SanitizePage(page);
-    if (Page == old)
-    {
-      return;
-    }
-
-    NavigateByPager();
-  }
-
-  private void PageSizeChanged(int size)
-  {
-    PageSize = size;
-    Page = _vm!.Value.Paging.GetNewCurrentBySize(PageSize);
-
-    NavigateByPager();
-  }
-
-  private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
-    Navigation.GetUriWithQueryParameters(
-      new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize }
-      ));
-
-  private void OnAddHandler()
-  {
-    _formModel = new();
-    _modalDialog.Open();
-  }
-
-}
