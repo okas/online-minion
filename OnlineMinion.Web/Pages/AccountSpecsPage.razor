@@ -99,15 +99,6 @@
 
 }
 
-@{
-  var name = nameof(_formModel.Name);
-  var nameLower = name.ToLowerInvariant();
-  var group = nameof(_formModel.Group);
-  var groupLower = group.ToLowerInvariant();
-  var description = nameof(_formModel.Description);
-  var descriptionLower = description.ToLowerInvariant();
-}
-
 <AppPageTitle>Account Specs</AppPageTitle>
 
 <h1>Account Specifications</h1>
@@ -157,5 +148,5 @@ else
 }
 
 <ModalDialog @ref="@_modalDialog" Title="@_modalTitle">
-  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@ValidSubmitHandler"  />
+  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@ValidSubmitHandler"/>
 </ModalDialog>
