@@ -7,13 +7,12 @@
 @using OnlineMinion.Contracts
 @using OnlineMinion.Contracts.Queries
 @using MediatR
-@implements IAsyncDisposable
+@inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
 
 @code {
-  private readonly CancellationTokenSource _cts;
-  private readonly CancellationToken _ct;
-  private bool _disposed;
+  public AccountSpecsPage() => _ct = CancellationTokenSource.Token;
 
+  private readonly CancellationToken _ct;
   private BasePagedResult<AccountSpecResp>? _vm;
 
   private bool _isSubmitting;
@@ -30,12 +29,6 @@
   [Parameter]
   [SupplyParameterFromQuery]
   public int PageSize { get => _size ?? PagingMetaInfo.DefaultSize; set => _size = value == default ? PagingMetaInfo.DefaultSize : value; }
-
-  public AccountSpecs()
-  {
-    _cts = new();
-    _ct = _cts.Token;
-  }
 
   protected override async Task OnParametersSetAsync()
   {
@@ -100,17 +93,6 @@
   {
     _formModel = new();
     _modalDialog.Open();
-  }
-
-  async ValueTask IAsyncDisposable.DisposeAsync()
-  {
-    if (!_disposed)
-    {
-      _disposed = true;
-      await _cts.CancelAsync();
-      _cts.Dispose();
-    }
-    GC.SuppressFinalize(this);
   }
 
 }
