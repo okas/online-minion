@@ -18,6 +18,7 @@
   private bool _isSubmitting;
   private CreateAccountSpecCmd? _formModel;
   private ModalDialog _modalDialog = null!;
+  private string _modalTitle;
 
   private int? _page;
   private int? _size;
@@ -92,16 +93,12 @@
   private void OnAddHandler()
   {
     _formModel = new();
+    _modalTitle = "Add new Account Specification";
     _modalDialog.Open();
   }
 
 }
 
-<AppPageTitle>Account Specs</AppPageTitle>
-
-<h1>Account Specifications</h1>
-
-<p>Manage Account Specifications</p>
 @{
   var name = nameof(_formModel.Name);
   var nameLower = name.ToLowerInvariant();
@@ -110,10 +107,17 @@
   var description = nameof(_formModel.Description);
   var descriptionLower = description.ToLowerInvariant();
 }
+
+<AppPageTitle>Account Specs</AppPageTitle>
+
+<h1>Account Specifications</h1>
+
+<p>Manage Account Specifications</p>
+
 @if (_vm is not null)
 {
   <ToolbarForTabular OnAdd="OnAddHandler">
-    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="_vm.Value.Paging" />
+    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="_vm.Value.Paging"/>
   </ToolbarForTabular>
 }
 
@@ -134,13 +138,14 @@ else
   <table class="table">
     <thead>
     <tr>
-      <th>@name</th>
-      <th>@description</th>
-      <th>@group</th>
+      <th>@nameof(_formModel.Name)</th>
+      <th>@nameof(_formModel.Group)</th>
+      <th>@nameof(_formModel.Description)</th>
     </tr>
     </thead>
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm.Value.Result">
+      @* TODO: implement link/action to single entity view *@
       <tr @onclick="@(() => Console.WriteLine($"Id: {m.Id}"))">
         <td>@m.Name</td>
         <td>@m.Description</td>
@@ -151,39 +156,6 @@ else
   </table>
 }
 
-<ModalDialog @ref="@_modalDialog" Title="Add new Account Specification">
-  <div class="row">
-    <EditForm Model="@_formModel" OnValidSubmit="@ValidSubmitHandler">
-      <DataAnnotationsValidator />
-      <ValidationSummary />
-
-      <fieldset disabled="@_isSubmitting">
-        <div class="form-group">
-          <label for="@nameLower">@name</label>
-          <InputText @bind-Value="@_formModel!.Name" class="form-control" id="@nameLower" placeholder="@($"Enter {nameLower}")" />
-        </div>
-
-        <div class="form-group">
-          <label for="@groupLower">@group</label>
-          <InputText @bind-Value="@_formModel.Group" class="form-control" id="@groupLower" placeholder="@($"Enter {groupLower}")" />
-        </div>
-
-        <div class="form-group">
-          <label for="@descriptionLower">@description</label>
-          <InputText @bind-Value="@_formModel.Description" class="form-control" id="@descriptionLower" placeholder="@($"Enter {descriptionLower}")" />
-        </div>
-
-        <hr />
-
-        <div class="form-group row">
-          <div class="col-sm-2">
-            <button class="btn btn-primary form-control" type="submit">
-              Add
-            </button>
-          </div>
-        </div>
-      </fieldset>
-    </EditForm>
-
-  </div>
+<ModalDialog @ref="@_modalDialog" Title="@_modalTitle">
+  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@ValidSubmitHandler"  />
 </ModalDialog>

@@ -3,7 +3,7 @@ using OnlineMinion.Contracts.Commands;
 
 namespace OnlineMinion.Web.CQRS.Commands;
 
-internal sealed class CreateAccountSpecCmd : BaseCreateAccountSpecCmd, IRequest<bool>
+public sealed class CreateAccountSpecCmd : BaseCreateAccountSpecCmd, IRequest<bool>
 {
     public CreateAccountSpecCmd() : base(string.Empty, string.Empty, null) { }
 

@@ -1,0 +1,58 @@
+@code {
+
+  [Parameter]
+  [EditorRequired]
+  public CreateAccountSpecCmd Model { get; set; } = null!;
+
+  [Parameter]
+  [EditorRequired]
+  public bool IsSubmitting { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<EditContext> OnValidSubmit { get; set; }
+
+}
+
+@{
+  var name = nameof(Model.Name);
+  var nameLower = name.ToLowerInvariant();
+  var group = nameof(Model.Group);
+  var groupLower = group.ToLowerInvariant();
+  var description = nameof(Model.Description);
+  var descriptionLower = description.ToLowerInvariant();
+}
+
+<div class="row">
+
+  <EditForm Model="Model" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <fieldset disabled="@IsSubmitting">
+      <div class="form-group">
+        <label for="@nameLower">@name</label>
+        <InputText @bind-Value="@Model!.Name" class="form-control" id="@nameLower" placeholder="@($"Enter {nameLower}")"/>
+      </div>
+
+      <div class="form-group">
+        <label for="@groupLower">@group</label>
+        <InputText @bind-Value="@Model.Group" class="form-control" id="@groupLower" placeholder="@($"Enter {groupLower}")"/>
+      </div>
+
+      <div class="form-group">
+        <label for="@descriptionLower">@description</label>
+        <InputText @bind-Value="@Model.Description" class="form-control" id="@descriptionLower" placeholder="@($"Enter {descriptionLower}")"/>
+      </div>
+
+      <hr/>
+
+      <div class="form-group row">
+        <div class="col-sm-2">
+          <button class="btn btn-primary form-control" type="submit">Add</button>
+        </div>
+      </div>
+    </fieldset>
+  </EditForm>
+
+</div>
