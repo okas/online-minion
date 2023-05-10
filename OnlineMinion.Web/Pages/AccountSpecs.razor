@@ -1,13 +1,18 @@
 ﻿@page "/account-specs"
+
+@inject NavigationManager Navigation
+@inject IMediator Mediator
+@inject ILogger<AccountSpecResp> Logger
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.Contracts
 @using OnlineMinion.Contracts.Queries
 @using MediatR
-@inject NavigationManager Navigation
-@inject IMediator Mediator
-@inject ILogger<AccountSpecResp> Logger
+@implements IAsyncDisposable
 
 @code {
+  private readonly CancellationTokenSource _cts;
+  private readonly CancellationToken _ct;
+  private bool _disposed;
 
   private BasePagedResult<AccountSpecResp>? _vm;
 
@@ -26,9 +31,15 @@
   [SupplyParameterFromQuery]
   public int PageSize { get => _size ?? PagingMetaInfo.DefaultSize; set => _size = value == default ? PagingMetaInfo.DefaultSize : value; }
 
+  public AccountSpecs()
+  {
+    _cts = new();
+    _ct = _cts.Token;
+  }
+
   protected override async Task OnParametersSetAsync()
   {
-    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize));
+    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct);
 
     await base.OnParametersSetAsync();
   }
@@ -37,7 +48,7 @@
   {
     _isSubmitting = true;
 
-    if (_formModel is not null && await Mediator.Send(_formModel))
+    if (_formModel is not null && await Mediator.Send(_formModel, _ct))
     {
       _modalDialog.Close();
       _formModel = null;
@@ -49,7 +60,7 @@
 
   private async Task NavigateToNewItemPage()
   {
-    if (await Mediator.Send(new GetAccountSpecsPagesCountBySizeQry(PageSize)) is { } pages)
+    if (await Mediator.Send(new GetAccountSpecsPagesCountBySizeQry(PageSize), _ct) is { } pages)
     {
       NavigateByPager(pages);
     }
@@ -89,6 +100,17 @@
   {
     _formModel = new();
     _modalDialog.Open();
+  }
+
+  async ValueTask IAsyncDisposable.DisposeAsync()
+  {
+    if (!_disposed)
+    {
+      _disposed = true;
+      await _cts.CancelAsync();
+      _cts.Dispose();
+    }
+    GC.SuppressFinalize(this);
   }
 
 }
