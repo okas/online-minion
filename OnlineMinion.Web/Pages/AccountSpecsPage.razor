@@ -160,7 +160,7 @@ else
       <fieldset disabled="@_isSubmitting">
         <div class="form-group">
           <label for="@nameLower">@name</label>
-          <InputText @bind-Value="@_formModel.Name" class="form-control" id="@nameLower" placeholder="@($"Enter {nameLower}")" />
+          <InputText @bind-Value="@_formModel!.Name" class="form-control" id="@nameLower" placeholder="@($"Enter {nameLower}")" />
         </div>
 
         <div class="form-group">

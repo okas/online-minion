@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using MediatR;
+using OnlineMinion.Common.Infrastructure.Extensions;
 using OnlineMinion.Contracts.Queries;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Web.HttpClients;
@@ -15,8 +16,17 @@ internal sealed class GetPagedAccountSpecsQryHlr : BaseAccountSpecsRequestHandle
     public async Task<BasePagedResult<AccountSpecResp>> Handle(
         GetAccountSpecsQry request,
         CancellationToken  cancellationToken
-    ) => await _apiHttpClient.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(
-        UriApiV1AccountSpecs + $"?{nameof(request.Page)}={request.Page}&{nameof(request.PageSize)}={request.PageSize}",
-        cancellationToken
-    );
+    )
+    {
+        var parameters = new Dictionary<string, object?>
+        {
+            [nameof(request.Page)] = request.Page,
+            [nameof(request.PageSize)] = request.PageSize
+        };
+
+        return await _apiHttpClient.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(
+            UriApiV1AccountSpecs.AddQueryString(parameters),
+            cancellationToken
+        );
+    }
 }

@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Contracts", "O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Web", "OnlineMinion.Web\OnlineMinion.Web.csproj", "{156691A3-8993-47C8-BFB0-ECC03ABECAC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Common.Infrastructure", "OnlineMinion.Common.Infrastructure\OnlineMinion.Common.Infrastructure.csproj", "{8546968C-16DB-4A0B-AC23-45A347D53EAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{156691A3-8993-47C8-BFB0-ECC03ABECAC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{156691A3-8993-47C8-BFB0-ECC03ABECAC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{156691A3-8993-47C8-BFB0-ECC03ABECAC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8546968C-16DB-4A0B-AC23-45A347D53EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8546968C-16DB-4A0B-AC23-45A347D53EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8546968C-16DB-4A0B-AC23-45A347D53EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8546968C-16DB-4A0B-AC23-45A347D53EAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
