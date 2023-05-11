@@ -1,8 +1,6 @@
-using MediatR;
+namespace OnlineMinion.Web.CQRS.Commands;
 
-namespace OnlineMinion.Contracts.Commands;
-
-public sealed class UpdateAccountSpecCmd : BaseUpsertAccountSpecCmdData, IRequest<int>
+public sealed class UpdateAccountSpecCmd : BaseUpsertAccountSpecCmd
 {
     public UpdateAccountSpecCmd() : base(string.Empty, string.Empty, null) { }
 

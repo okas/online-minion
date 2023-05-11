@@ -4,4 +4,4 @@ using OnlineMinion.Contracts.Responses;
 
 namespace OnlineMinion.Contracts.Queries;
 
-public record struct GetAccountSpecByIdQry([property: Required] int Id) : IRequest<AccountSpecResp?>;
+public record GetAccountSpecByIdQry([Required] int Id) : IRequest<AccountSpecResp?>;

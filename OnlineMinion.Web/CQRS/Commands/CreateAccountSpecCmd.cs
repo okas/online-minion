@@ -1,9 +1,6 @@
-using MediatR;
-using OnlineMinion.Contracts.Commands;
-
 namespace OnlineMinion.Web.CQRS.Commands;
 
-public sealed class CreateAccountSpecCmd : BaseCreateAccountSpecCmd, IRequest<bool>
+public sealed class CreateAccountSpecCmd : BaseUpsertAccountSpecCmd
 {
     public CreateAccountSpecCmd() : base(string.Empty, string.Empty, null) { }
 

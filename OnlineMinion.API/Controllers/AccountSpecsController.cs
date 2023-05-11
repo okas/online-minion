@@ -79,7 +79,7 @@ public class AccountSpecsController : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromRoute] UpdateAccountSpecCmd cmd, CancellationToken ct) =>
+    public async Task<IActionResult> Update(UpdateAccountSpecCmd cmd, CancellationToken ct) =>
         await RunIdempotentAction(cmd, ct);
 
     [HttpDelete("{id}")]

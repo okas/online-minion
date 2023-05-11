@@ -1,8 +1,9 @@
+@using OnlineMinion.Contracts.Commands
 @code {
 
   [Parameter]
   [EditorRequired]
-  public CreateAccountSpecCmd Model { get; set; } = null!;
+  public BaseUpsertAccountSpecCmdData Model { get; set; } = null!;
 
   [Parameter]
   [EditorRequired]

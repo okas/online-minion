@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using MediatR;
 using OnlineMinion.Web.CQRS.Commands;
-using OnlineMinion.Web.CQRS.QueryHandlers;
 using OnlineMinion.Web.HttpClients;
 
 namespace OnlineMinion.Web.CQRS.CommandHandlers;

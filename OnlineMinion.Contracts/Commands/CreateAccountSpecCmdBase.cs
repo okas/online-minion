@@ -2,12 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineMinion.Contracts.Commands;
 
+// TODO: to ref record?
 /// <summary>
 ///     Base class, that provides some model metadata.
 /// </summary>
-public abstract class BaseCreateAccountSpecCmd
+public abstract class BaseUpsertAccountSpecCmdData
 {
-    protected BaseCreateAccountSpecCmd(string name, string group, string? description)
+    protected BaseUpsertAccountSpecCmdData(string name, string group, string? description)
     {
         Name = name;
         Group = group;

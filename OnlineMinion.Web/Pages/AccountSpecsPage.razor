@@ -16,7 +16,7 @@
   private BasePagedResult<AccountSpecResp>? _vm;
 
   private bool _isSubmitting;
-  private CreateAccountSpecCmd? _formModel;
+  private BaseUpsertAccountSpecCmd? _formModel;
   private ModalDialog _modalDialog = null!;
   private string? _modalTitle;
 
@@ -38,23 +38,62 @@
     await base.OnParametersSetAsync();
   }
 
-  private async Task ValidSubmitHandler()
+  private async Task OnValidSubmitHandler()
   {
-    _isSubmitting = true;
-
-    if (_formModel is not null && await Mediator.Send(_formModel, _ct))
+    if (_formModel is null)
     {
-      _modalDialog.Close();
-      _formModel = null;
+      return;
+    }
+
+    if (!await SendUpsertCommand())
+    {
+      return;
+    }
+
+    _modalDialog.Close();
+
+    if (_formModel is UpdateAccountSpecCmd cmd)
+    {
+      UpdateViewModelItem(cmd);
+    }
+    else
+    {
       await NavigateToNewItemPage();
     }
 
+    _formModel = null;
+  }
+
+  private async Task<bool> SendUpsertCommand()
+  {
+    _isSubmitting = true;
+    var isSuccess = await Mediator.Send(_formModel!, _ct);
     _isSubmitting = false;
+
+    if (isSuccess)
+    {
+      return true;
+    }
+
+    var action = _formModel is UpdateAccountSpecCmd ? "update" : "creation";
+    Logger.LogWarning("Account Specification {Action} failed", action);
+
+    return false;
+  }
+
+  private void UpdateViewModelItem(UpdateAccountSpecCmd cmd)
+  {
+    var list = _vm!.Value.Result;
+
+    var model = list.Single(m => m.Id == cmd.Id)!;
+    var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description };
+
+    list[list.IndexOf(model)] = clone;
   }
 
   private async Task NavigateToNewItemPage()
   {
-    if (await Mediator.Send(new GetAccountSpecsPagesCountBySizeQry(PageSize), _ct) is { } pages)
+    if (await Mediator.Send(new GetAccountSpecPageCountBySizeQry(PageSize), _ct) is { } pages)
     {
       NavigateByPager(pages);
     }
@@ -92,9 +131,37 @@
 
   private void OnAddHandler()
   {
-    _formModel = new();
+    if (_formModel is not CreateAccountSpecCmd)
+    {
+      _formModel = new CreateAccountSpecCmd();
+    }
+
     _modalTitle = "Add new Account Specification";
     _modalDialog.Open();
+  }
+
+  private async Task OnEditHandler(int id)
+  {
+    if (_formModel is UpdateAccountSpecCmd cmd && cmd.Id == id)
+    {
+      _modalTitle = GetTitle();
+      _modalDialog.Open();
+
+      return;
+    }
+
+    if (await Mediator.Send(new GetAccountSpecByIdQry(id), _ct) is { } model)
+    {
+      _formModel = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
+      _modalTitle = GetTitle();
+      _modalDialog.Open();
+    }
+    else
+    {
+      Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
+    }
+
+    string GetTitle() => $"Edit Account Specification: id#{id}";
   }
 
 }
@@ -137,7 +204,7 @@ else
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm.Value.Result">
       @* TODO: implement link/action to single entity view *@
-      <tr @onclick="@(() => Console.WriteLine($"Id: {m.Id}"))">
+      <tr @onclick="@(() => OnEditHandler(m.Id))">
         <td>@m.Name</td>
         <td>@m.Description</td>
         <td>@m.Group</td>
@@ -147,6 +214,7 @@ else
   </table>
 }
 
+@*TODO: Set focus to modal, if it is opened.*@
 <ModalDialog @ref="@_modalDialog" Title="@_modalTitle">
-  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@ValidSubmitHandler"/>
+  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@OnValidSubmitHandler"/>
 </ModalDialog>
