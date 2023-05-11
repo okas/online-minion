@@ -1,4 +1,4 @@
-namespace OnlineMinion.Web.CQRS.QueryHandlers;
+namespace OnlineMinion.Web.CQRS;
 
 internal class BaseAccountSpecsRequestHandler
 {

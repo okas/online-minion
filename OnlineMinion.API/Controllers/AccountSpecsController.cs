@@ -57,9 +57,11 @@ public class AccountSpecsController : Controller
         return NoContent();
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<AccountSpecResp?>> GetById(int id, CancellationToken ct) =>
-        await _mediator.Send(new GetAccountSpecByIdQry(id), ct);
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AccountSpecResp?>> GetById(
+        [FromRoute] GetAccountSpecByIdQry cmd,
+        CancellationToken                 ct
+    ) => await _mediator.Send(cmd, ct);
 
     [HttpGet]
     public async Task<ActionResult<BasePagedResult<AccountSpecResp>>> Get(
@@ -71,6 +73,7 @@ public class AccountSpecsController : Controller
     public async Task<IActionResult> Create(CreateAccountSpecCmd cmd, CancellationToken ct)
     {
         var resp = await _mediator.Send(cmd, ct);
+        // TODO: Add check, if result is unfavorable.
 
         return CreatedAtAction(nameof(GetById), new { resp.Id }, null);
     }

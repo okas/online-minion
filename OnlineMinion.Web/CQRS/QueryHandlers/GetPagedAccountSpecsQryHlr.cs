@@ -18,15 +18,14 @@ internal sealed class GetPagedAccountSpecsQryHlr : BaseAccountSpecsRequestHandle
         CancellationToken  cancellationToken
     )
     {
-        var parameters = new Dictionary<string, object?>
-        {
-            [nameof(request.Page)] = request.Page,
-            [nameof(request.PageSize)] = request.PageSize
-        };
-
-        return await _apiHttpClient.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(
-            UriApiV1AccountSpecs.AddQueryString(parameters),
-            cancellationToken
+        var uri = UriApiV1AccountSpecs.AddQueryString(
+            new Dictionary<string, object?>
+            {
+                [nameof(request.Page)] = request.Page,
+                [nameof(request.PageSize)] = request.PageSize
+            }
         );
+
+        return await _apiHttpClient.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(uri, cancellationToken);
     }
 }
