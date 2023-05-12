@@ -203,7 +203,9 @@
 
   private void HandlePageStateAfterDelete()
   {
-    if (_vm?.Result.Count == 1)
+  // Detect it was last item on page, or very last item of the whole resource.
+  // Navigate only, when page has to be changed, get current page's items otherwise.
+    if (_vm?.Paging.TotalItems > 1 && _vm?.Result.Count == 1)
     {
       Page = _vm.Value.Paging.Previous;
       NavigateByPager();
