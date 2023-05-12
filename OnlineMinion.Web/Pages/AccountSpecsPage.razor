@@ -4,10 +4,10 @@
 @inject IMediator Mediator
 @inject ILogger<AccountSpecsPage> Logger
 @using OnlineMinion.Contracts.Responses
+@using MediatR
 @using OnlineMinion.Contracts
 @using OnlineMinion.Contracts.Commands
 @using OnlineMinion.Contracts.Queries
-@using MediatR
 @using UpdateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.UpdateAccountSpecCmd
 @using CreateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.CreateAccountSpecCmd
 @inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
@@ -26,25 +26,30 @@
   private ModalDialog _modalDelete = null!;
   private string? _modalDeleteTitle;
 
-  private int? _page;
-  private int? _size;
+  [Parameter]
+  [SupplyParameterFromQuery]
+  public int Page { get; set; }
 
   [Parameter]
   [SupplyParameterFromQuery]
-  public int Page { get => _page ?? PagingMetaInfo.DefaultCurrent; set => _page = value == default ? PagingMetaInfo.DefaultCurrent : value; }
+  public int PageSize { get; set; }
 
-  [Parameter]
-  [SupplyParameterFromQuery]
-  public int PageSize { get => _size ?? PagingMetaInfo.DefaultSize; set => _size = value == default ? PagingMetaInfo.DefaultSize : value; }
-
-  protected override async Task OnParametersSetAsync()
+  public override async Task SetParametersAsync(ParameterView parameters)
   {
-    await LoadPagedModels();
-
-    await base.OnParametersSetAsync();
+  // This order ensures that incoming params are sett before they ar needed by data loading.
+    await base.SetParametersAsync(parameters);
+    await GetPageViewModel();
+    StateHasChanged();
   }
 
-  private async Task LoadPagedModels()
+  protected override async Task OnInitializedAsync()
+  {
+    Page = Page == default ? PagingMetaInfo.DefaultCurrent : Page;
+    PageSize = PageSize == default ? PagingMetaInfo.DefaultSize : PageSize;
+    await base.OnInitializedAsync();
+  }
+
+  private async Task GetPageViewModel()
   {
     _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct);
   }
@@ -97,7 +102,7 @@
     var list = _vm!.Value.Result;
 
     var model = list.Single(m => m.Id == cmd.Id)!;
-    var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description };
+    var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description, };
 
     list[list.IndexOf(model)] = clone;
   }
@@ -137,7 +142,7 @@
 
   private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
     Navigation.GetUriWithQueryParameters(
-      new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize }
+      new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize, }
       ));
 
   private void OnAddHandler()
@@ -198,7 +203,7 @@
     if (await Mediator.Send(new DeleteAccountSpecCmd(id), _ct) == 1)
     {
       _modalDelete.Close();
-      await LoadPagedModels();
+      await GetPageViewModel();
     }
     else
     {
