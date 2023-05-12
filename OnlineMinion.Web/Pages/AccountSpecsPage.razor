@@ -5,8 +5,11 @@
 @inject ILogger<AccountSpecsPage> Logger
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.Contracts
+@using OnlineMinion.Contracts.Commands
 @using OnlineMinion.Contracts.Queries
 @using MediatR
+@using UpdateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.UpdateAccountSpecCmd
+@using CreateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.CreateAccountSpecCmd
 @inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
 
 @code {
@@ -15,10 +18,13 @@
   private readonly CancellationToken _ct;
   private BasePagedResult<AccountSpecResp>? _vm;
 
-  private bool _isSubmitting;
   private BaseUpsertAccountSpecCmd? _formModel;
-  private ModalDialog _modalDialog = null!;
-  private string? _modalTitle;
+  private AccountSpecResp? _deleteModel;
+  private bool _isSubmitting;
+  private ModalDialog _modalUpsert = null!;
+  private string? _modalUpsertTitle;
+  private ModalDialog _modalDelete = null!;
+  private string? _modalDeleteTitle;
 
   private int? _page;
   private int? _size;
@@ -33,9 +39,14 @@
 
   protected override async Task OnParametersSetAsync()
   {
-    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct);
+    await LoadPagedModels();
 
     await base.OnParametersSetAsync();
+  }
+
+  private async Task LoadPagedModels()
+  {
+    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct);
   }
 
   private async Task OnValidSubmitHandler()
@@ -50,7 +61,7 @@
       return;
     }
 
-    _modalDialog.Close();
+    _modalUpsert.Close();
 
     if (_formModel is UpdateAccountSpecCmd cmd)
     {
@@ -136,16 +147,16 @@
       _formModel = new CreateAccountSpecCmd();
     }
 
-    _modalTitle = "Add new Account Specification";
-    _modalDialog.Open();
+    _modalUpsertTitle = "Add new Account Specification";
+    _modalUpsert.Open();
   }
 
   private async Task OnEditHandler(int id)
   {
     if (_formModel is UpdateAccountSpecCmd cmd && cmd.Id == id)
     {
-      _modalTitle = GetTitle();
-      _modalDialog.Open();
+      _modalUpsertTitle = GetTitle();
+      _modalUpsert.Open();
 
       return;
     }
@@ -153,8 +164,8 @@
     if (await Mediator.Send(new GetAccountSpecByIdQry(id), _ct) is { } model)
     {
       _formModel = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
-      _modalTitle = GetTitle();
-      _modalDialog.Open();
+      _modalUpsertTitle = GetTitle();
+      _modalUpsert.Open();
     }
     else
     {
@@ -162,6 +173,39 @@
     }
 
     string GetTitle() => $"Edit Account Specification: id#{id}";
+  }
+
+  private void OnDeleteHandler(int id)
+  {
+    _deleteModel = _vm?.Result.Single(m => m.Id == id);
+    _modalDeleteTitle = GetTitle();
+    _modalDelete.Open();
+
+    string GetTitle() => $"Delete Account Specification: id#{id}";
+  }
+
+  private async Task OnDeleteSubmitHandler()
+  {
+    if (_deleteModel is null)
+    {
+      return;
+    }
+
+    var id = _deleteModel.Value.Id;
+
+    _isSubmitting = true;
+
+    if (await Mediator.Send(new DeleteAccountSpecCmd(id), _ct) == 1)
+    {
+      _modalDelete.Close();
+      await LoadPagedModels();
+    }
+    else
+    {
+      Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
+    }
+
+    _isSubmitting = false;
   }
 
 }
@@ -199,15 +243,19 @@ else
       <th>@nameof(_formModel.Name)</th>
       <th>@nameof(_formModel.Group)</th>
       <th>@nameof(_formModel.Description)</th>
+      <th></th>
     </tr>
     </thead>
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm.Value.Result">
-      @* TODO: implement link/action to single entity view *@
-      <tr @onclick="@(() => OnEditHandler(m.Id))">
+      <tr>
         <td>@m.Name</td>
         <td>@m.Description</td>
         <td>@m.Group</td>
+        <td>
+          <button class="btn btn-outline-danger" @onclick="@(() => OnDeleteHandler(m.Id))">❌</button>
+          <button class="btn btn-outline-warning" @onclick="@(() => OnEditHandler(m.Id))">🛠️</button>
+        </td>
       </tr>
     </Virtualize>
     </tbody>
@@ -215,6 +263,25 @@ else
 }
 
 @*TODO: Set focus to modal, if it is opened.*@
-<ModalDialog @ref="@_modalDialog" Title="@_modalTitle">
+<ModalDialog @ref="@_modalUpsert" Title="@_modalUpsertTitle">
   <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@OnValidSubmitHandler"/>
+</ModalDialog>
+
+<ModalDialog @ref="@_modalDelete" Title="@_modalDeleteTitle">
+  <div class="row">
+    <h3>
+      Confirm deletion
+    </h3>
+
+    <h6>@nameof(AccountSpecResp.Name)</h6>
+    <h5>@_deleteModel?.Name</h5>
+
+    <h6>@nameof(AccountSpecResp.Group)</h6>
+    <h5>@_deleteModel?.Group</h5>
+
+    <h6>@nameof(AccountSpecResp.Description)</h6>
+    <h5>@_deleteModel?.Description</h5>
+
+    <button class="btn btn-outline-danger" @onclick="@OnDeleteSubmitHandler">❌</button>
+  </div>
 </ModalDialog>
