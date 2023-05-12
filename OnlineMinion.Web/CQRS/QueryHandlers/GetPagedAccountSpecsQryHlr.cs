@@ -3,15 +3,17 @@ using MediatR;
 using OnlineMinion.Common.Infrastructure.Extensions;
 using OnlineMinion.Contracts.Queries;
 using OnlineMinion.Contracts.Responses;
-using OnlineMinion.Web.HttpClients;
+using OnlineMinion.Web.Settings;
 
 namespace OnlineMinion.Web.CQRS.QueryHandlers;
 
 internal sealed class GetPagedAccountSpecsQryHlr : BaseAccountSpecsRequestHandler,
     IRequestHandler<GetAccountSpecsQry, BasePagedResult<AccountSpecResp>>
 {
-    private readonly ApiHttpClient _apiHttpClient;
-    public GetPagedAccountSpecsQryHlr(ApiHttpClient apiHttpClient) => _apiHttpClient = apiHttpClient;
+    private readonly HttpClient _httpClient;
+
+    public GetPagedAccountSpecsQryHlr(IHttpClientFactory factory) =>
+        _httpClient = factory.CreateClient(Constants.ApiClient);
 
     public async Task<BasePagedResult<AccountSpecResp>> Handle(
         GetAccountSpecsQry request,
@@ -26,6 +28,6 @@ internal sealed class GetPagedAccountSpecsQryHlr : BaseAccountSpecsRequestHandle
             }
         );
 
-        return await _apiHttpClient.Client.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(uri, cancellationToken);
+        return await _httpClient.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(uri, cancellationToken);
     }
 }

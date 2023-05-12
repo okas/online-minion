@@ -2,15 +2,17 @@ using MediatR;
 using OnlineMinion.Common.Infrastructure.Extensions;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Web.CQRS.Queries;
-using OnlineMinion.Web.HttpClients;
+using OnlineMinion.Web.Settings;
 
 namespace OnlineMinion.Web.CQRS.QueryHandlers;
 
 internal sealed class GetAccountSpecPageCountBySizeQryHlr : BaseAccountSpecsRequestHandler,
     IRequestHandler<GetAccountSpecPageCountBySizeQry, int?>
 {
-    private readonly ApiHttpClient _apiHttpClient;
-    public GetAccountSpecPageCountBySizeQryHlr(ApiHttpClient apiHttpClient) => _apiHttpClient = apiHttpClient;
+    private readonly HttpClient _httpClient;
+
+    public GetAccountSpecPageCountBySizeQryHlr(IHttpClientFactory factory) =>
+        _httpClient = factory.CreateClient(Constants.ApiClient);
 
     public async Task<int?> Handle(GetAccountSpecPageCountBySizeQry request, CancellationToken cancellationToken)
     {
@@ -21,11 +23,8 @@ internal sealed class GetAccountSpecPageCountBySizeQryHlr : BaseAccountSpecsRequ
             )
         );
 
-        using var result = await _apiHttpClient.Client.SendAsync(
-            httpRequestMessage,
-            HttpCompletionOption.ResponseHeadersRead,
-            cancellationToken
-        );
+        using var result = await _httpClient
+            .SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
         return result.Headers.TryGetValues(CustomHeaderNames.PagingPages, out var values) &&
                int.TryParse(values.First(), out var pages)
