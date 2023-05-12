@@ -8,8 +8,8 @@
 @using OnlineMinion.Contracts
 @using OnlineMinion.Contracts.Commands
 @using OnlineMinion.Contracts.Queries
-@using UpdateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.UpdateAccountSpecCmd
 @using CreateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.CreateAccountSpecCmd
+@using UpdateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.UpdateAccountSpecCmd
 @inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
 
 @code {
@@ -18,8 +18,8 @@
   private readonly CancellationToken _ct;
   private BasePagedResult<AccountSpecResp>? _vm;
 
-  private BaseUpsertAccountSpecCmd? _formModel;
-  private AccountSpecResp? _deleteModel;
+  private BaseUpsertAccountSpecCmd? _modelUpsert;
+  private AccountSpecResp? _modelDelete;
   private bool _isSubmitting;
   private ModalDialog _modalUpsert = null!;
   private string? _modalUpsertTitle;
@@ -54,71 +54,6 @@
     StateHasChanged();
   }
 
-  private async Task OnValidSubmitHandler()
-  {
-    if (_formModel is null)
-    {
-      return;
-    }
-
-    if (!await SendUpsertCommand())
-    {
-      return;
-    }
-
-    _modalUpsert.Close();
-
-    if (_formModel is UpdateAccountSpecCmd cmd)
-    {
-      UpdateViewModelItem(cmd);
-    }
-    else
-    {
-      await NavigateToNewItemPage();
-    }
-
-    _formModel = null;
-  }
-
-  private async Task<bool> SendUpsertCommand()
-  {
-    _isSubmitting = true;
-    var isSuccess = await Mediator.Send(_formModel!, _ct);
-    _isSubmitting = false;
-
-    if (isSuccess)
-    {
-      return true;
-    }
-
-    var action = _formModel is UpdateAccountSpecCmd ? "update" : "creation";
-    Logger.LogWarning("Account Specification {Action} failed", action);
-
-    return false;
-  }
-
-  private void UpdateViewModelItem(UpdateAccountSpecCmd cmd)
-  {
-    var list = _vm!.Value.Result;
-
-    var model = list.Single(m => m.Id == cmd.Id)!;
-    var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description, };
-
-    list[list.IndexOf(model)] = clone;
-  }
-
-  private async Task NavigateToNewItemPage()
-  {
-    if (await Mediator.Send(new GetAccountSpecPageCountBySizeQry(PageSize), _ct) is { } pages)
-    {
-      NavigateByPager(pages);
-    }
-    else
-    {
-      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
-    }
-  }
-
   private void PageChanged(int page)
   {
     var old = Page;
@@ -147,9 +82,9 @@
 
   private void OnAddHandler()
   {
-    if (_formModel is not CreateAccountSpecCmd)
+    if (_modelUpsert is not CreateAccountSpecCmd)
     {
-      _formModel = new CreateAccountSpecCmd();
+      _modelUpsert = new CreateAccountSpecCmd();
     }
 
     _modalUpsertTitle = "Add new Account Specification";
@@ -158,7 +93,7 @@
 
   private async Task OnEditHandler(int id)
   {
-    if (_formModel is UpdateAccountSpecCmd cmd && cmd.Id == id)
+    if (_modelUpsert is UpdateAccountSpecCmd cmd && cmd.Id == id)
     {
       _modalUpsertTitle = GetTitle();
       _modalUpsert.Open();
@@ -168,7 +103,7 @@
 
     if (await Mediator.Send(new GetAccountSpecByIdQry(id), _ct) is { } model)
     {
-      _formModel = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
+      _modelUpsert = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
       _modalUpsertTitle = GetTitle();
       _modalUpsert.Open();
     }
@@ -180,9 +115,63 @@
     string GetTitle() => $"Edit Account Specification: id#{id}";
   }
 
+  private async Task OnValidSubmitHandler()
+  {
+    if (_modelUpsert is null)
+    {
+      return;
+    }
+
+    _isSubmitting = true;
+    var isSuccess = await Mediator.Send(_modelUpsert!, _ct);
+    _isSubmitting = false;
+
+    if (isSuccess)
+    {
+      _modalUpsert.Close();
+      HandlePageStateAfterUpsert();
+    }
+    else
+    {
+      var action = _modelUpsert is UpdateAccountSpecCmd ? "update" : "creation";
+      Logger.LogWarning("Account Specification {Action} failed", action);
+    }
+  }
+
+  private void HandlePageStateAfterUpsert()
+  {
+    if (_modelUpsert is UpdateAccountSpecCmd cmd)
+    {
+      var list = _vm!.Value.Result;
+
+      var model = list.Single(m => m.Id == cmd.Id)!;
+      var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description, };
+
+      list[list.IndexOf(model)] = clone;
+    }
+    else
+    {
+      Task.Run(NavigateToNewItemPage, _ct);
+    }
+
+    _modelUpsert = null;
+  }
+
+  private async Task NavigateToNewItemPage()
+  {
+    if (await Mediator.Send(new GetAccountSpecPageCountBySizeQry(PageSize), _ct) is { } pages)
+    {
+      NavigateByPager(pages);
+    }
+    else
+    {
+      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+    }
+  }
+
   private void OnDeleteHandler(int id)
   {
-    _deleteModel = _vm?.Result.Single(m => m.Id == id);
+    _modelDelete = _vm?.Result.Single(m => m.Id == id);
     _modalDeleteTitle = GetTitle();
     _modalDelete.Open();
 
@@ -191,12 +180,12 @@
 
   private async Task OnDeleteSubmitHandler()
   {
-    if (_deleteModel is null)
+    if (_modelDelete is null)
     {
       return;
     }
 
-    var id = _deleteModel.Value.Id;
+    var id = _modelDelete.Value.Id;
 
     _isSubmitting = true;
     var result = await Mediator.Send(new DeleteAccountSpecCmd(id), _ct) == 1;
@@ -224,6 +213,8 @@
     {
       Task.Run(GetPageViewModel, _ct);
     }
+
+    _modelDelete = null;
   }
 
 }
@@ -258,9 +249,9 @@ else
   <table class="table">
     <thead>
     <tr>
-      <th>@nameof(_formModel.Name)</th>
-      <th>@nameof(_formModel.Group)</th>
-      <th>@nameof(_formModel.Description)</th>
+      <th>@nameof(_modelUpsert.Name)</th>
+      <th>@nameof(_modelUpsert.Group)</th>
+      <th>@nameof(_modelUpsert.Description)</th>
       <th></th>
     </tr>
     </thead>
@@ -282,7 +273,7 @@ else
 
 @*TODO: Set focus to modal, if it is opened.*@
 <ModalDialog @ref="@_modalUpsert" Title="@_modalUpsertTitle">
-  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_formModel" OnValidSubmit="@OnValidSubmitHandler"/>
+  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnValidSubmit="@OnValidSubmitHandler"/>
 </ModalDialog>
 
 <ModalDialog @ref="@_modalDelete" Title="@_modalDeleteTitle">
@@ -292,13 +283,13 @@ else
     </h3>
 
     <h6>@nameof(AccountSpecResp.Name)</h6>
-    <h5>@_deleteModel?.Name</h5>
+    <h5>@_modelDelete?.Name</h5>
 
     <h6>@nameof(AccountSpecResp.Group)</h6>
-    <h5>@_deleteModel?.Group</h5>
+    <h5>@_modelDelete?.Group</h5>
 
     <h6>@nameof(AccountSpecResp.Description)</h6>
-    <h5>@_deleteModel?.Description</h5>
+    <h5>@_modelDelete?.Description</h5>
 
     <button class="btn btn-outline-danger" @onclick="@OnDeleteSubmitHandler">Submit</button>
   </div>
