@@ -39,19 +39,19 @@
   // This order ensures that incoming params are sett before they ar needed by data loading.
     await base.SetParametersAsync(parameters);
     await GetPageViewModel();
-    StateHasChanged();
   }
 
-  protected override async Task OnInitializedAsync()
+  protected override void OnInitialized()
   {
     Page = Page == default ? PagingMetaInfo.DefaultCurrent : Page;
     PageSize = PageSize == default ? PagingMetaInfo.DefaultSize : PageSize;
-    await base.OnInitializedAsync();
+    base.OnInitialized();
   }
 
   private async Task GetPageViewModel()
   {
     _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct);
+    StateHasChanged();
   }
 
   private async Task OnValidSubmitHandler()
@@ -199,18 +199,31 @@
     var id = _deleteModel.Value.Id;
 
     _isSubmitting = true;
+    var result = await Mediator.Send(new DeleteAccountSpecCmd(id), _ct) == 1;
+    _isSubmitting = false;
 
-    if (await Mediator.Send(new DeleteAccountSpecCmd(id), _ct) == 1)
+    if (result)
     {
       _modalDelete.Close();
-      await GetPageViewModel();
+      HandlePageStateAfterDelete();
     }
     else
     {
       Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
     }
+  }
 
-    _isSubmitting = false;
+  private void HandlePageStateAfterDelete()
+  {
+    if (_vm?.Result.Count == 1)
+    {
+      Page = _vm.Value.Paging.Previous;
+      NavigateByPager();
+    }
+    else
+    {
+      Task.Run(GetPageViewModel, _ct);
+    }
   }
 
 }
@@ -287,6 +300,6 @@ else
     <h6>@nameof(AccountSpecResp.Description)</h6>
     <h5>@_deleteModel?.Description</h5>
 
-    <button class="btn btn-outline-danger" @onclick="@OnDeleteSubmitHandler">❌</button>
+    <button class="btn btn-outline-danger" @onclick="@OnDeleteSubmitHandler">Submit</button>
   </div>
 </ModalDialog>
