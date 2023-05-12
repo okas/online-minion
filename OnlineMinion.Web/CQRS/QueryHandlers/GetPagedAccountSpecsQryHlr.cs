@@ -15,19 +15,16 @@ internal sealed class GetPagedAccountSpecsQryHlr : BaseAccountSpecsRequestHandle
     public GetPagedAccountSpecsQryHlr(IHttpClientFactory factory) =>
         _httpClient = factory.CreateClient(Constants.ApiClient);
 
-    public async Task<BasePagedResult<AccountSpecResp>> Handle(
-        GetAccountSpecsQry request,
-        CancellationToken  cancellationToken
-    )
+    public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsQry request, CancellationToken ct)
     {
         var uri = UriApiV1AccountSpecs.AddQueryString(
-            new Dictionary<string, object?>
+            new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
             {
                 [nameof(request.Page)] = request.Page,
-                [nameof(request.PageSize)] = request.PageSize
+                [nameof(request.PageSize)] = request.PageSize,
             }
         );
 
-        return await _httpClient.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(uri, cancellationToken);
+        return await _httpClient.GetFromJsonAsync<BasePagedResult<AccountSpecResp>>(uri, ct).ConfigureAwait(false);
     }
 }
