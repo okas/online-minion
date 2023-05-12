@@ -4,10 +4,10 @@
 @inject IMediator Mediator
 @inject ILogger<AccountSpecsPage> Logger
 @using OnlineMinion.Contracts.Responses
+@using OnlineMinion.Contracts.Queries
 @using MediatR
 @using OnlineMinion.Contracts
 @using OnlineMinion.Contracts.Commands
-@using OnlineMinion.Contracts.Queries
 @using CreateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.CreateAccountSpecCmd
 @using UpdateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.UpdateAccountSpecCmd
 @inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
@@ -38,7 +38,7 @@
   {
   // This order ensures that incoming params are sett before they ar needed by data loading.
     await base.SetParametersAsync(parameters);
-    await GetPageViewModel();
+    GetPageViewModel();
   }
 
   protected override void OnInitialized()
@@ -48,11 +48,9 @@
     base.OnInitialized();
   }
 
-  private async Task GetPageViewModel()
-  {
-    _vm = await Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct);
-    StateHasChanged();
-  }
+  private void GetPageViewModel() => Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct)
+    .ContinueWith(task => _vm = task.Result, _ct)
+    .ContinueWith(_ => StateHasChanged(), _ct);
 
   private void PageChanged(int page)
   {
@@ -162,6 +160,7 @@
     if (await Mediator.Send(new GetAccountSpecPageCountBySizeQry(PageSize), _ct) is { } pages)
     {
       NavigateByPager(pages);
+      GetPageViewModel();
     }
     else
     {
@@ -211,7 +210,7 @@
     }
     else
     {
-      Task.Run(GetPageViewModel, _ct);
+      GetPageViewModel();
     }
 
     _modelDelete = null;
