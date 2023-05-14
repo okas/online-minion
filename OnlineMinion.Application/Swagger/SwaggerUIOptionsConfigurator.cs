@@ -1,33 +1,29 @@
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
+using OnlineMinion.RestApi;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace OnlineMinion.API.Swagger;
+namespace OnlineMinion.Application.Swagger;
 
 public class SwaggerUIOptionsConfigurator : IConfigureOptions<SwaggerUIOptions>
 {
+    private readonly string _apiAssemblyName;
     private readonly IApiVersionDescriptionProvider _apiVersionDescriptionProvider;
-    private readonly IWebHostEnvironment _webHostEnv;
 
-    public SwaggerUIOptionsConfigurator(
-        IWebHostEnvironment            webHostEnv,
-        IApiVersionDescriptionProvider apiVersionDescriptionProvider
-    )
+    public SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
     {
-        _webHostEnv = webHostEnv;
+        _apiAssemblyName = typeof(AccountSpecsController).Assembly.GetName().Name ??
+                           throw new InvalidOperationException();
+
         _apiVersionDescriptionProvider = apiVersionDescriptionProvider;
     }
 
     public void Configure(SwaggerUIOptions options)
     {
-        var applicationName = _webHostEnv.ApplicationName;
-
-        options.DocumentTitle = $"{applicationName} | {options.DocumentTitle}";
-
-        options.EnableFilter();
-        options.ShowExtensions();
-        options.DisplayRequestDuration();
-        options.ShowCommonExtensions();
+        if (string.IsNullOrWhiteSpace(options.DocumentTitle))
+        {
+            options.DocumentTitle = _apiAssemblyName;
+        }
 
         // Allows multiple versions of our routes.
         // .Reverse(), first shown most recent version.
@@ -35,7 +31,7 @@ public class SwaggerUIOptionsConfigurator : IConfigureOptions<SwaggerUIOptions>
         {
             options.SwaggerEndpoint(
                 $"/swagger/{versionDescription.GroupName}/swagger.json",
-                $"{applicationName} - {versionDescription.GroupName.ToUpper()}"
+                $"{_apiAssemblyName} - {versionDescription.GroupName.ToUpper()}"
             );
         }
     }

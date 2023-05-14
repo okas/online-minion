@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using MediatR;
-using OnlineMinion.Common.Infrastructure.Extensions;
+using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Web.CQRS.Queries;
 using OnlineMinion.Web.Settings;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 
-namespace OnlineMinion.Common.Infrastructure.Extensions;
+namespace OnlineMinion.Common.Utilities.Extensions;
 
 public static class UriHelpers
 {

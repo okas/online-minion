@@ -5,7 +5,7 @@ using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.Entities;
 
-namespace OnlineMinion.Common.CQRS.QueryHandlers;
+namespace OnlineMinion.RestApi.CQRS.QueryHandlers;
 
 public sealed class GetAccountSpecByIdQryHlr : IRequestHandler<GetAccountSpecByIdQry, AccountSpecResp?>
 {
@@ -26,7 +26,7 @@ public sealed class GetAccountSpecByIdQryHlr : IRequestHandler<GetAccountSpecByI
             Id = entity.Id,
             Group = entity.Group,
             Name = entity.Name,
-            Description = entity.Description
+            Description = entity.Description,
         };
     }
 }

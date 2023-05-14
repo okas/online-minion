@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
 using MediatR;
-using OnlineMinion.Common.Infrastructure.Extensions;
+using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts.Queries;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Web.Settings;

@@ -6,7 +6,7 @@ using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.Entities;
 
-namespace OnlineMinion.Common.CQRS.QueryHandlers;
+namespace OnlineMinion.RestApi.CQRS.QueryHandlers;
 
 public sealed class GetAccountSpecsQryHlr : IRequestHandler<GetAccountSpecsQry, BasePagedResult<AccountSpecResp>>
 {

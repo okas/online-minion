@@ -4,16 +4,17 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Title>OnlineMinion.API</Title>
+        <Title>OnlineMinion.Application</Title>
         <Authors>Lauri Saar</Authors>
         <Company>LS Pro</Company>
         <PublicSign>false</PublicSign>
-        <PackageId>OnlineMinion.API</PackageId>
-        <Product>OnlineMinion.API</Product>
+        <PackageId>OnlineMinion.Application</PackageId>
+        <Product>OnlineMinion.Application</Product>
+        <RootNamespace>OnlineMinion.Application</RootNamespace>
+        <Copyright>Lauri Saar</Copyright>
     </PropertyGroup>
 
     <PropertyGroup>
-        <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
@@ -27,9 +28,7 @@
 
     <ItemGroup>
         <PackageReference Include="CorsPolicySettings" Version="2.0.0" />
-        <PackageReference Include="MediatR" Version="12.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0-preview.3.23177.8" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0-preview1.23109.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-preview.3.23174.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0-preview.3.23174.2">
@@ -38,14 +37,13 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-preview.3.23174.2" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-preview.3.23174.8" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Filters.Abstractions" Version="7.0.6" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj" />
+        <ProjectReference Include="..\OnlineMinion.RestApi\OnlineMinion.RestApi.csproj" />
         <ProjectReference Include="..\OnlineMinion.Data\OnlineMinion.Data.csproj" />
     </ItemGroup>
 

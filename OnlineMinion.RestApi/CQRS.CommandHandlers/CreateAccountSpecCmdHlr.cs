@@ -3,7 +3,7 @@ using OnlineMinion.Contracts.Commands;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.Common.CQRS.CommandHandlers;
+namespace OnlineMinion.RestApi.CQRS.CommandHandlers;
 
 public sealed class CreateAccountSpecCmdHlr : IRequestHandler<CreateAccountSpecCmd, AccountSpecResp>
 {

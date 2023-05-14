@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.Commands;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.Common.CQRS.CommandHandlers;
+namespace OnlineMinion.RestApi.CQRS.CommandHandlers;
 
 public sealed class DeleteAccountSpecCmdHlr : IRequestHandler<DeleteAccountSpecCmd, bool>
 {

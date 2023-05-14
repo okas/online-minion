@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Common.Infrastructure\OnlineMinion.Common.Infrastructure.csproj" />
+        <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj" />
         <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj" />
     </ItemGroup>
 

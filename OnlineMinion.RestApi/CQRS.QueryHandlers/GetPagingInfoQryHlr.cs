@@ -4,7 +4,7 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Queries;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.Common.CQRS.QueryHandlers;
+namespace OnlineMinion.RestApi.CQRS.QueryHandlers;
 
 public sealed class GetPagingInfoQryHlr<TEntity> : IRequestHandler<GetPagingMetaInfoQry<TEntity>, PagingMetaInfo>
     where TEntity : BaseEntity

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts.HttpHeaders;
 
-namespace OnlineMinion.API.Configurators;
+namespace OnlineMinion.RestApi.Configurators;
 
 public class ApiCorsOptionsConfigurator : IConfigureOptions<CorsOptions>
 {
