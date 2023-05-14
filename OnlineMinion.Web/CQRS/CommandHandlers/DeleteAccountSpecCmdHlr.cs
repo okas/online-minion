@@ -5,16 +5,18 @@ using OnlineMinion.Web.Settings;
 namespace OnlineMinion.Web.CQRS.CommandHandlers;
 
 internal sealed class DeleteAccountSpecCmdHlr : BaseAccountSpecsRequestHandler,
-    IRequestHandler<DeleteAccountSpecCmd, int>
+    IRequestHandler<DeleteAccountSpecCmd, bool>
 {
     private readonly HttpClient _httpClient;
 
     public DeleteAccountSpecCmdHlr(IHttpClientFactory factory) =>
         _httpClient = factory.CreateClient(Constants.ApiClient);
 
+    public async Task<bool> Handle(DeleteAccountSpecCmd request, CancellationToken cancellationToken)
+    {
+        var uri = $"{UriApiV1AccountSpecs}/{request.Id}";
+        var responseMessage = await _httpClient.DeleteAsync(uri, cancellationToken).ConfigureAwait(false);
 
-    public async Task<int> Handle(DeleteAccountSpecCmd request, CancellationToken cancellationToken) =>
-        (await _httpClient.DeleteAsync($"{UriApiV1AccountSpecs}/{request.Id}", cancellationToken)).IsSuccessStatusCode
-            ? 1
-            : 0;
+        return responseMessage.IsSuccessStatusCode;
+    }
 }

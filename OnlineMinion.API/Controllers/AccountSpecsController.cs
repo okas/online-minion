@@ -75,7 +75,7 @@ public class AccountSpecsController : Controller
         var resp = await _mediator.Send(cmd, ct);
         // TODO: Add check, if result is unfavorable.
 
-        return CreatedAtAction(nameof(GetById), new { resp.Id }, null);
+        return CreatedAtAction(nameof(GetById), new { resp.Id, }, null);
     }
 
     [HttpPut("{id}")]
@@ -86,10 +86,6 @@ public class AccountSpecsController : Controller
     public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecCmd cmd, CancellationToken ct) =>
         await RunIdempotentAction(cmd, ct);
 
-    private async Task<IActionResult> RunIdempotentAction(IRequest<int> cmd, CancellationToken ct)
-    {
-        var count = await _mediator.Send(cmd, ct);
-
-        return count == 0 ? NotFound() : NoContent();
-    }
+    private async Task<IActionResult> RunIdempotentAction(IRequest<bool> cmd, CancellationToken ct) =>
+        await _mediator.Send(cmd, ct) ? NoContent() : NotFound();
 }

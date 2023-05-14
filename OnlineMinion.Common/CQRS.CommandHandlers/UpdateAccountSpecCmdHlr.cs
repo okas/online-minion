@@ -5,14 +5,15 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.Common.CQRS.CommandHandlers;
 
-public sealed class UpdateAccountSpecCmdHlr : IRequestHandler<UpdateAccountSpecCmd, int>
+public sealed class UpdateAccountSpecCmdHlr : IRequestHandler<UpdateAccountSpecCmd, bool>
 {
     private readonly OnlineMinionDbContext _dbContext;
 
     public UpdateAccountSpecCmdHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public Task<int> Handle(UpdateAccountSpecCmd rq, CancellationToken ct) =>
-        _dbContext.AccountSpecs
+    public Task<bool> Handle(UpdateAccountSpecCmd rq, CancellationToken ct)
+    {
+        var task = _dbContext.AccountSpecs
             .Where(a => a.Id == rq.Id)
             .ExecuteUpdateAsync(
                 s => s
@@ -21,4 +22,7 @@ public sealed class UpdateAccountSpecCmdHlr : IRequestHandler<UpdateAccountSpecC
                     .SetProperty(a => a.Description, rq.Description),
                 ct
             );
+
+        return Task.FromResult(task.Result > 0);
+    }
 }

@@ -2,7 +2,7 @@ using MediatR;
 
 namespace OnlineMinion.Contracts.Commands;
 
-public sealed class UpdateAccountSpecCmd : BaseUpsertAccountSpecCmdData, IRequest<int>
+public sealed class UpdateAccountSpecCmd : BaseUpsertAccountSpecCmdData, IRequest<bool>
 {
     public UpdateAccountSpecCmd() : base(string.Empty, string.Empty, null) { }
 

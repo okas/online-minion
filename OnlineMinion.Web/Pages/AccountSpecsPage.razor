@@ -187,7 +187,7 @@
     var id = _modelDelete.Value.Id;
 
     _isSubmitting = true;
-    var result = await Mediator.Send(new DeleteAccountSpecCmd(id), _ct) == 1;
+    var result = await Mediator.Send(new DeleteAccountSpecCmd(id), _ct);
     _isSubmitting = false;
 
     if (result)

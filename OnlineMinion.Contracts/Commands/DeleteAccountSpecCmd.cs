@@ -3,4 +3,4 @@ using MediatR;
 
 namespace OnlineMinion.Contracts.Commands;
 
-public record DeleteAccountSpecCmd([Required] int Id) : IRequest<int>;
+public record DeleteAccountSpecCmd([Required] int Id) : IRequest<bool>;

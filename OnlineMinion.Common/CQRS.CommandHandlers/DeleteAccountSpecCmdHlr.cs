@@ -5,14 +5,18 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.Common.CQRS.CommandHandlers;
 
-public sealed class DeleteAccountSpecCmdHlr : IRequestHandler<DeleteAccountSpecCmd, int>
+public sealed class DeleteAccountSpecCmdHlr : IRequestHandler<DeleteAccountSpecCmd, bool>
 {
     private readonly OnlineMinionDbContext _dbContext;
 
     public DeleteAccountSpecCmdHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public Task<int> Handle(DeleteAccountSpecCmd rq, CancellationToken ct) =>
-        _dbContext.AccountSpecs
+    public Task<bool> Handle(DeleteAccountSpecCmd rq, CancellationToken ct)
+    {
+        var task = _dbContext.AccountSpecs
             .Where(a => a.Id == rq.Id)
             .ExecuteDeleteAsync(ct);
+
+        return Task.FromResult(task.Result > 0);
+    }
 }
