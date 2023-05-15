@@ -3,7 +3,6 @@ using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.Data.Entities;
-using OnlineMinion.Data.EntityConfiguration;
 using OnlineMinion.Data.Exceptions;
 
 namespace OnlineMinion.Data;
@@ -61,11 +60,6 @@ public class OnlineMinionDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // TODO: refactor to detection based registration. To consider.
-        new AccountSpecEntityConfig().Configure(modelBuilder.Entity<AccountSpec>());
-        new TransactionDebitEntityConfig().Configure(modelBuilder.Entity<TransactionDebit>());
-        new BasePaymentSpecEntityConfig().Configure(modelBuilder.Entity<BasePaymentSpec>());
-        new BankAccountEntityConfig().Configure(modelBuilder.Entity<BankAccountSpec>());
-        new BaseTransactionEntityConfig().Configure(modelBuilder.Entity<BaseTransaction>());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineMinionDbContext).Assembly);
     }
 }
