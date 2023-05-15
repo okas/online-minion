@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Application.Swagger;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Queries;
+using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Data;
 using OnlineMinion.Data.Entities;
+using OnlineMinion.RestApi.AppMessaging.Handlers;
 using OnlineMinion.RestApi.Configurators;
-using OnlineMinion.RestApi.CQRS.QueryHandlers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -47,10 +47,10 @@ webAppBuilder.Services
 webAppBuilder.Services.AddEndpointsApiExplorer();
 
 webAppBuilder.Services
-    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetPagingInfoQryHlr<>)))
+    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetPagingInfoReqHlr<>)))
     .AddTransient<
-        IRequestHandler<GetPagingMetaInfoQry<AccountSpec>, PagingMetaInfo>,
-        GetPagingInfoQryHlr<AccountSpec>
+        IRequestHandler<GetPagingMetaInfoReq<AccountSpec>, PagingMetaInfo>,
+        GetPagingInfoReqHlr<AccountSpec>
     >();
 
 if (webAppBuilder.Environment.IsDevelopment())

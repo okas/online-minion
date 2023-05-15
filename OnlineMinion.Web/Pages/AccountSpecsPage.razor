@@ -3,13 +3,14 @@
 @inject NavigationManager Navigation
 @inject IMediator Mediator
 @inject ILogger<AccountSpecsPage> Logger
+@using CreateAccountSpecCmd = OnlineMinion.Web.AppMessaging.Requests.CreateAccountSpecReq
+@using UpdateAccountSpecCmd = OnlineMinion.Web.AppMessaging.Requests.UpdateAccountSpecReq
 @using OnlineMinion.Contracts.Responses
-@using OnlineMinion.Contracts.Queries
+@using OnlineMinion.Web.AppMessaging.Requests
+@using OnlineMinion.Contracts.AppMessaging.Requests
 @using MediatR
 @using OnlineMinion.Contracts
-@using OnlineMinion.Contracts.Commands
-@using CreateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.CreateAccountSpecCmd
-@using UpdateAccountSpecCmd = OnlineMinion.Web.CQRS.Commands.UpdateAccountSpecCmd
+@using OnlineMinion.Web.AppMessaging.Handlers
 @inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
 
 @code {
@@ -18,7 +19,7 @@
   private readonly CancellationToken _ct;
   private BasePagedResult<AccountSpecResp>? _vm;
 
-  private BaseUpsertAccountSpecCmd? _modelUpsert;
+  private BaseUpsertAccountSpecReq? _modelUpsert;
   private AccountSpecResp? _modelDelete;
   private bool _isSubmitting;
   private ModalDialog _modalUpsert = null!;
@@ -48,7 +49,7 @@
     base.OnInitialized();
   }
 
-  private void GetPageViewModel() => Mediator.Send(new GetAccountSpecsQry(Page, PageSize), _ct)
+  private void GetPageViewModel() => Mediator.Send(new GetAccountSpecsReq(Page, PageSize), _ct)
     .ContinueWith(task => _vm = task.Result, _ct)
     .ContinueWith(_ => StateHasChanged(), _ct);
 
@@ -99,7 +100,7 @@
       return;
     }
 
-    if (await Mediator.Send(new GetAccountSpecByIdQry(id), _ct) is { } model)
+    if (await Mediator.Send(new GetAccountSpecByIdReq(id), _ct) is { } model)
     {
       _modelUpsert = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
       _modalUpsertTitle = GetTitle();
@@ -157,7 +158,7 @@
 
   private async Task NavigateToNewItemPage()
   {
-    if (await Mediator.Send(new GetAccountSpecPageCountBySizeQry(PageSize), _ct) is { } pages)
+    if (await Mediator.Send(new GetAccountSpecPageCountBySizeReq(PageSize), _ct) is { } pages)
     {
       NavigateByPager(pages);
       GetPageViewModel();
@@ -187,7 +188,7 @@
     var id = _modelDelete.Value.Id;
 
     _isSubmitting = true;
-    var result = await Mediator.Send(new DeleteAccountSpecCmd(id), _ct);
+    var result = await Mediator.Send(new DeleteAccountSpecReq(id), _ct);
     _isSubmitting = false;
 
     if (result)

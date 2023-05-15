@@ -2,9 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts.Commands;
+using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
-using OnlineMinion.Contracts.Queries;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.Configurators;
@@ -49,7 +48,7 @@ public class AccountSpecsController : Controller
     )]
     public async Task<IActionResult> PagingMetaInfo(int pageSize, CancellationToken ct)
     {
-        var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoQry<AccountSpec>(pageSize), ct);
+        var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
         Response.Headers[CustomHeaderNames.PagingTotalItems] = pagingMetaInfo.TotalItems.ToString();
         Response.Headers[CustomHeaderNames.PagingSize] = pagingMetaInfo.Size.ToString();
@@ -60,32 +59,32 @@ public class AccountSpecsController : Controller
 
     [HttpGet("{id}")]
     public async Task<ActionResult<AccountSpecResp?>> GetById(
-        [FromRoute] GetAccountSpecByIdQry cmd,
+        [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
     ) => await _mediator.Send(cmd, ct);
 
     [HttpGet]
     public async Task<ActionResult<BasePagedResult<AccountSpecResp>>> Get(
-        [FromQuery] GetAccountSpecsQry qry,
+        [FromQuery] GetAccountSpecsReq req,
         CancellationToken              ct
-    ) => await _mediator.Send(qry, ct);
+    ) => await _mediator.Send(req, ct);
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateAccountSpecCmd cmd, CancellationToken ct)
+    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
-        var resp = await _mediator.Send(cmd, ct);
+        var resp = await _mediator.Send(req, ct);
         // TODO: Add check, if result is unfavorable.
 
         return CreatedAtAction(nameof(GetById), new { resp.Id, }, null);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(UpdateAccountSpecCmd cmd, CancellationToken ct) =>
-        await RunIdempotentAction(cmd, ct);
+    public async Task<IActionResult> Update(UpdateAccountSpecReq req, CancellationToken ct) =>
+        await RunIdempotentAction(req, ct);
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecCmd cmd, CancellationToken ct) =>
-        await RunIdempotentAction(cmd, ct);
+    public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecReq req, CancellationToken ct) =>
+        await RunIdempotentAction(req, ct);
 
     private async Task<IActionResult> RunIdempotentAction(IRequest<bool> cmd, CancellationToken ct) =>
         await _mediator.Send(cmd, ct) ? NoContent() : NotFound();
