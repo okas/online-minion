@@ -1,7 +1,10 @@
+using EntityFramework.Exceptions.Common;
+using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.Data.EntityConfiguration;
+using OnlineMinion.Data.Exceptions;
 
 namespace OnlineMinion.Data;
 
@@ -21,10 +24,44 @@ public class OnlineMinionDbContext : DbContext
 
     public DbSet<CashAccountSpec> CashAccountsSpecs { get; set; } = null!;
 
+    public new int SaveChanges() => SaveChanges(true);
+
+    public new int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        try
+        {
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+        catch (UniqueConstraintException ex)
+        {
+            throw new ConflictException("Field(s) must have unique values", ex);
+        }
+    }
+
+    public new Task<int> SaveChangesAsync(CancellationToken ct = default) => SaveChangesAsync(true, ct);
+
+    public new async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
+    {
+        try
+        {
+            return await base.SaveChangesAsync(ct);
+        }
+        catch (UniqueConstraintException ex)
+        {
+            throw new ConflictException("Field(s) must have unique values", ex);
+        }
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseExceptionProcessor();
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // TODO: refactor to detection based registration. To consider.
         new AccountSpecEntityConfig().Configure(modelBuilder.Entity<AccountSpec>());
         new TransactionDebitEntityConfig().Configure(modelBuilder.Entity<TransactionDebit>());
         new BasePaymentSpecEntityConfig().Configure(modelBuilder.Entity<BasePaymentSpec>());
