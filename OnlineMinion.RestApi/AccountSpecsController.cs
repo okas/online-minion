@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +27,7 @@ public class AccountSpecsController : Controller
     ///     To probe some paging related data about this resource.
     /// </summary>
     /// <param name="pageSize"></param>
+    /// <param name="ct"></param>
     [HttpHead]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Using page size, get count of total items and count of pages.")]
@@ -46,7 +49,10 @@ public class AccountSpecsController : Controller
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IActionResult> PagingMetaInfo(int pageSize, CancellationToken ct)
+    public async Task<IActionResult> PagingMetaInfo(
+        [FromQuery][Range(1, 50)][DefaultValue(10)] int pageSize,
+        CancellationToken                               ct
+    )
     {
         var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
