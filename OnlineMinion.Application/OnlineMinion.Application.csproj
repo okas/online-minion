@@ -27,7 +27,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CorsPolicySettings" Version="2.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0-preview1.23109.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-preview.3.23174.2" />
@@ -37,7 +36,6 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-preview.3.23174.2" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-preview.3.23174.8" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     </ItemGroup>

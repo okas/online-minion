@@ -6,7 +6,7 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
-using OnlineMinion.RestApi.Configurators;
+using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 

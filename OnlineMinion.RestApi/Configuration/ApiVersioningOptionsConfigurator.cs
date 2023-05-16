@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Options;
 
-namespace OnlineMinion.RestApi.Configurators;
+namespace OnlineMinion.RestApi.Configuration;
 
 public class ApiVersioningOptionsConfigurator : IConfigureOptions<ApiVersioningOptions>
 {
