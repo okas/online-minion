@@ -23,10 +23,10 @@ webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
     )
 );
 
-webAppBuilder.AddRestApiServices();
-
 if (webAppBuilder.Environment.IsDevelopment())
 {
+    webAppBuilder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     webAppBuilder.Services.Configure<SwaggerOptions>(confManager.GetSection(nameof(SwaggerOptions)));
 
@@ -42,6 +42,8 @@ if (webAppBuilder.Environment.IsDevelopment())
 
     webAppBuilder.Services.AddSwaggerGen();
 }
+
+webAppBuilder.AddRestApiServices();
 
 #endregion
 
