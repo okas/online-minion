@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using OnlineMinion.Application.Swagger;
 using OnlineMinion.Data;
 using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.HttpRequestPipeline;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -22,7 +23,7 @@ webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
     )
 );
 
-webAppBuilder.ConfigureRestApi();
+webAppBuilder.AddRestApiServices();
 
 if (webAppBuilder.Environment.IsDevelopment())
 {
@@ -55,13 +56,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors();
-
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseRestApi();
 
 #endregion
 

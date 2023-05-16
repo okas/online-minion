@@ -15,7 +15,7 @@ namespace OnlineMinion.RestApi.Configuration;
 
 public static class WebApplicationBuilderExtensions
 {
-    public static WebApplicationBuilder ConfigureRestApi(this WebApplicationBuilder webAppBuilder)
+    public static WebApplicationBuilder AddRestApiServices(this WebApplicationBuilder webAppBuilder)
     {
         // Order is important (CORS): first read base policies, then produce CORS configuration.
         webAppBuilder.Services.AddCorsPolicies(webAppBuilder.Configuration);
@@ -38,7 +38,9 @@ public static class WebApplicationBuilderExtensions
         webAppBuilder.Services.AddEndpointsApiExplorer();
 
         webAppBuilder.Services
-            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetPagingInfoReqHlr<>)))
+            .AddMediatR(
+                cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetPagingInfoReqHlr<>))
+            )
             .AddTransient<
                 IRequestHandler<GetPagingMetaInfoReq<AccountSpec>, PagingMetaInfo>,
                 GetPagingInfoReqHlr<AccountSpec>
