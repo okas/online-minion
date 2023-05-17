@@ -13,7 +13,7 @@ builder.Logging.AddConfiguration(
 );
 
 builder.Services.AddHttpClient(
-    Constants.ApiClient,
+    Constants.HostClient,
     client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
 );
 
