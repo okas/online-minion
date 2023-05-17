@@ -23,6 +23,10 @@
         <NoWarn>1701;1702;1591</NoWarn>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>true</EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>
+    </PropertyGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
