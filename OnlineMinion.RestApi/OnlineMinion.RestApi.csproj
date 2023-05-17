@@ -10,13 +10,17 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\OnlineMinion.RestApi.xml</DocumentationFile>
-      <NoWarn>1701;1702;1591</NoWarn>
+        <DocumentationFile>bin\Debug\OnlineMinion.RestApi.xml</DocumentationFile>
+        <NoWarn>1701;1702;1591</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\OnlineMinion.RestApi.xml</DocumentationFile>
-      <NoWarn>1701;1702;1591</NoWarn>
+        <DocumentationFile>bin\Release\OnlineMinion.RestApi.xml</DocumentationFile>
+        <NoWarn>1701;1702;1591</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>true</EnableMicrosoftExtensionsConfigurationBinderSourceGenerator>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,11 +31,25 @@
     <ItemGroup>
         <PackageReference Include="CorsPolicySettings" Version="2.0.0" />
         <PackageReference Include="MediatR" Version="12.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0-preview.3.23177.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0-preview.4.23260.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-preview.3.23174.8" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0-preview.3.23174.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.0-preview.4.23260.4" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
+        <PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.4.23259.5" />
+        <PackageReference Include="Microsoft.OpenApi" Version="1.6.4" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Filters.Abstractions" Version="7.0.6" />
     </ItemGroup>
