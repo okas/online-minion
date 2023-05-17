@@ -6,27 +6,23 @@ using OnlineMinion.Web.Settings;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-#region Container setup
+//-- Configurations setup
+builder.Services.Configure<ApiClientSettings>(builder.Configuration.GetSection(nameof(ApiClientSettings)));
 
-builder.Logging.AddConfiguration(
-    builder.Configuration.GetSection("Logging")
-);
-
+// Services setup
 builder.Services.AddHttpClient(
     Constants.HostClient,
     client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
 );
 
-builder.Services
-    .Configure<ApiClientSettings>(builder.Configuration.GetSection(nameof(ApiClientSettings)))
-    .AddHttpClient(
-        Constants.ApiClient,
-        (provider, client) =>
-            client.BaseAddress = new(
-                provider.GetService<IOptions<ApiClientSettings>>()?.Value.Url ??
-                throw new InvalidOperationException($"Missing {nameof(ApiClientSettings)} from configuration.")
-            )
-    );
+builder.Services.AddHttpClient(
+    Constants.ApiClient,
+    (provider, client) =>
+        client.BaseAddress = new(
+            provider.GetService<IOptions<ApiClientSettings>>()?.Value.Url ??
+            throw new InvalidOperationException($"Missing {nameof(ApiClientSettings)} from configuration.")
+        )
+);
 
 builder.Services.AddMediatR(
     opts => opts.RegisterServicesFromAssemblyContaining<Program>()
@@ -36,8 +32,7 @@ builder.Services.AddMediatR(
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-#endregion
-
+//--
 var webAssemblyHost = builder.Build();
 
-await webAssemblyHost.RunAsync().ConfigureAwait(false);
+await webAssemblyHost.RunAsync();
