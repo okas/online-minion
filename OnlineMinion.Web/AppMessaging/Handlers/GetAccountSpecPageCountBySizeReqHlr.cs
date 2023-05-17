@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts.HttpHeaders;
+using OnlineMinion.Web.AppMessaging.Requests;
 using OnlineMinion.Web.Settings;
 
 namespace OnlineMinion.Web.AppMessaging.Handlers;
