@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts.HttpHeaders;
@@ -7,7 +6,6 @@ using OnlineMinion.Web.Settings;
 
 namespace OnlineMinion.Web.AppMessaging.Handlers;
 
-[SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
 internal sealed class GetAccountSpecPageCountBySizeReqHlr : BaseAccountSpecsRequestHandler,
     IRequestHandler<GetAccountSpecPageCountBySizeReq, int?>
 {
@@ -18,21 +16,17 @@ internal sealed class GetAccountSpecPageCountBySizeReqHlr : BaseAccountSpecsRequ
 
     public async Task<int?> Handle(GetAccountSpecPageCountBySizeReq request, CancellationToken ct)
     {
-        var httpRequestMessage = new HttpRequestMessage(
-            HttpMethod.Head,
-            UriApiV1AccountSpecs.AddQueryString(
-                new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
-                    { [nameof(request.PageSize)] = request.PageSize, }
-            )
+        var uri = UriApiV1AccountSpecs.AddQueryString(
+            new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
+                { [nameof(request.PageSize)] = request.PageSize, }
         );
 
+        var message = new HttpRequestMessage(HttpMethod.Head, uri);
+
         using var result = await _httpClient
-            .SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, ct)
+            .SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
             .ConfigureAwait(false);
 
-        return result.Headers.TryGetValues(CustomHeaderNames.PagingPages, out var values) &&
-               int.TryParse(values.First(), out var pages)
-            ? pages
-            : null;
+        return result.Headers.GetHeaderFirstValue<int?>(CustomHeaderNames.PagingPages);
     }
 }
