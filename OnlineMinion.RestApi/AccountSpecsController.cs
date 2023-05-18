@@ -63,6 +63,9 @@ public class AccountSpecsController : Controller
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AccountSpecResp?>> GetById(
         [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
@@ -104,21 +107,29 @@ public class AccountSpecsController : Controller
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
         var resp = await _mediator.Send(req, ct);
         // TODO: Add check, if result is unfavorable.
-
         return CreatedAtAction(nameof(GetById), new { resp.Id, }, null);
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateAccountSpecReq req, CancellationToken ct) =>
-        await RunIdempotentAction(req, ct);
+        await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecReq req, CancellationToken ct) =>
-        await RunIdempotentAction(req, ct);
+        await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
     private void SetPagingHeaders(PagingMetaInfo pagingMetaInfo)
     {

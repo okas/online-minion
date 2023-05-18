@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 
 namespace OnlineMinion.Contracts.AppMessaging.Requests;
@@ -10,5 +11,6 @@ public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IReques
         base(name, group, description) =>
         Id = id;
 
+    [Required]
     public int Id { get; set; }
 }
