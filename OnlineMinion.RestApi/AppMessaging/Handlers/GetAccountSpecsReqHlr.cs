@@ -22,13 +22,13 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
             rq.Page
         );
 
-        var entities = await _queryable
+        var entities =  _queryable
             .OrderBy(e => e.Id)
             .Skip(pagingMeta.ItemsOffset)
             .Take(pagingMeta.Size)
             .Select(e => new AccountSpecResp(e.Id, e.Name, e.Group, e.Description))
-            .ToListAsync(ct);
+            .AsAsyncEnumerable();
 
-        return new(Paging: pagingMeta, Result: entities.ToAsyncEnumerable());
+        return new(Paging: pagingMeta, Result: entities);
     }
 }
