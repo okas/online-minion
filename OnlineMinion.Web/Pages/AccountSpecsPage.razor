@@ -5,19 +5,20 @@
 @inject ILogger<AccountSpecsPage> Logger
 @using CreateAccountSpecCmd = OnlineMinion.Web.AppMessaging.Requests.CreateAccountSpecReq
 @using UpdateAccountSpecCmd = OnlineMinion.Web.AppMessaging.Requests.UpdateAccountSpecReq
+@using OnlineMinion.Contracts
+@using OnlineMinion.Contracts.AppMessaging.Requests
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.Web.AppMessaging.Requests
-@using OnlineMinion.Contracts.AppMessaging.Requests
 @using MediatR
-@using OnlineMinion.Contracts
-@using OnlineMinion.Web.AppMessaging.Handlers
 @inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
 
 @code {
   public AccountSpecsPage() => _ct = CancellationTokenSource.Token;
 
   private readonly CancellationToken _ct;
-  private BasePagedResult<AccountSpecResp>? _vm;
+
+  private PagingMetaInfo? _paging;
+  private List<AccountSpecResp>? _vm;
 
   private BaseUpsertAccountSpecReq? _modelUpsert;
   private AccountSpecResp? _modelDelete;
@@ -49,15 +50,32 @@
     base.OnInitialized();
   }
 
-  private void GetPageViewModel() => Mediator.Send(new GetAccountSpecsReq(Page, PageSize), _ct)
-    .ContinueWith(task => _vm = task.Result, _ct)
-    .ContinueWith(_ => StateHasChanged(), _ct);
+  private void GetPageViewModel()
+  {
+    InvokeAsync(async () =>
+    {
+      _vm = null;
+
+      var result = await Mediator.Send(new GetAccountSpecsReq(Page, PageSize), _ct);
+
+      _paging = result.Paging;
+      StateHasChanged();
+
+      _vm = new();
+
+      await foreach (var model in result.Result.WithCancellation(_ct))
+      {
+        _vm.Add(model);
+        StateHasChanged();
+      }
+    });
+  }
 
   private void PageChanged(int page)
   {
     var old = Page;
 
-    Page = _vm!.Value.Paging.SanitizePage(page);
+    Page = _paging?.SanitizePage(page) ?? PagingMetaInfo.First;
     if (Page == old)
     {
       return;
@@ -69,7 +87,7 @@
   private void PageSizeChanged(int size)
   {
     PageSize = size;
-    Page = _vm!.Value.Paging.GetNewCurrentBySize(PageSize);
+    Page = _paging?.GetNewCurrentBySize(PageSize) ?? PagingMetaInfo.First;
 
     NavigateByPager();
   }
@@ -141,12 +159,10 @@
   {
     if (_modelUpsert is UpdateAccountSpecCmd cmd)
     {
-      var list = _vm!.Value.Result;
-
-      var model = list.Single(m => m.Id == cmd.Id)!;
+      var model = _vm!.Single(m => m.Id == cmd.Id);
       var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description, };
 
-      list[list.IndexOf(model)] = clone;
+      _vm![_vm.IndexOf(model)] = clone;
     }
     else
     {
@@ -177,7 +193,7 @@
 
   private void OnDeleteHandler(int id)
   {
-    _modelDelete = _vm?.Result.Single(m => m.Id == id);
+    _modelDelete = _vm!.Single(m => m.Id == id);
     _modalDeleteTitle = GetTitle();
     _modalDelete.Open();
 
@@ -212,9 +228,9 @@
   {
   // Detect it was last item on page, or very last item of the whole resource.
   // Navigate only, when page has to be changed, get current page's items otherwise.
-    if (_vm?.Paging.TotalItems > 1 && _vm?.Result.Count == 1)
+    if (_paging?.TotalItems > 1 && _vm?.Count == 1)
     {
-      Page = _vm.Value.Paging.Previous;
+      Page = _paging!.Value.Previous;
       NavigateByPager();
     }
     else
@@ -233,10 +249,14 @@
 
 <p>Manage Account Specifications</p>
 
-@if (_vm is not null)
+@if (_paging is null)
 {
-  <ToolbarForTabular OnAdd="OnAddHandler">
-    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="_vm.Value.Paging"/>
+  <p>No content to page | loading ...</p>
+}
+else
+{
+  <ToolbarForTabular OnAdd="@OnAddHandler">
+    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="@_paging.Value"/>
   </ToolbarForTabular>
 }
 
@@ -246,7 +266,7 @@
     <em>Loading...</em>
   </p>
 }
-else if (!_vm.Value.Result.Any())
+else if (!_vm.Any())
 {
   <p>
     <em>No items.</em>
@@ -264,7 +284,7 @@ else
     </tr>
     </thead>
     <tbody style="overflow-y:scroll" tabindex="-1">
-    <Virtualize Context="m" Items="_vm.Value.Result">
+    <Virtualize Context="m" Items="_vm">
       <tr>
         <td>@m.Name</td>
         <td>@m.Description</td>

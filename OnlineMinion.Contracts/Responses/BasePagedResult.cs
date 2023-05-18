@@ -1,3 +1,3 @@
 namespace OnlineMinion.Contracts.Responses;
 
-public record struct BasePagedResult<TResult>(IList<TResult> Result, PagingMetaInfo Paging);
+public record struct BasePagedResult<TResult>(IAsyncEnumerable<TResult> Result, PagingMetaInfo Paging);

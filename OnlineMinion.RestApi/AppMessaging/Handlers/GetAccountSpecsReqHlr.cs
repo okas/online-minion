@@ -29,6 +29,6 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
             .Select(e => new AccountSpecResp(e.Id, e.Name, e.Group, e.Description))
             .ToListAsync(ct);
 
-        return new(Paging: pagingMeta, Result: entities);
+        return new(Paging: pagingMeta, Result: entities.ToAsyncEnumerable());
     }
 }
