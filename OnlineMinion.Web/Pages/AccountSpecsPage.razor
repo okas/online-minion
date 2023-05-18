@@ -158,14 +158,20 @@
 
   private async Task NavigateToNewItemPage()
   {
-    if (await Mediator.Send(new GetAccountSpecPageCountBySizeReq(PageSize), _ct) is { } pages)
+    if (await Mediator.Send(new GetAccountSpecPageCountBySizeReq(PageSize), _ct) is not { } pages)
     {
-      NavigateByPager(pages);
+      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+
+      return;
+    }
+
+    if (pages == Page)
+    {
       GetPageViewModel();
     }
     else
     {
-      Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+      NavigateByPager(pages);
     }
   }
 
