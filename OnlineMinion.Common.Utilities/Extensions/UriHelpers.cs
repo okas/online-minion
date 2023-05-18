@@ -1,10 +1,17 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
+﻿using JetBrains.Annotations;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace OnlineMinion.Common.Utilities.Extensions;
 
 public static class UriHelpers
 {
-    public static string AddQueryString(this Uri uri, IReadOnlyDictionary<string, IEnumerable<object?>> parameters)
+    public static string AddQueryString(this Uri uri, IReadOnlyDictionary<string, IEnumerable<object?>> parameters) =>
+        uri.ToString().AddQueryString(parameters);
+
+    public static string AddQueryString(
+        [UriString] this string                           uri,
+        IReadOnlyDictionary<string, IEnumerable<object?>> parameters
+    )
     {
         var queryStringParameters = new Dictionary<string, string>(
             parameters.Select(
@@ -15,10 +22,13 @@ public static class UriHelpers
             )
         );
 
-        return QueryHelpers.AddQueryString(uri.ToString(), queryStringParameters);
+        return QueryHelpers.AddQueryString(uri, queryStringParameters);
     }
 
-    public static string AddQueryString(this Uri uri, IReadOnlyDictionary<string, object?> parameters)
+    public static string AddQueryString(this Uri uri, IReadOnlyDictionary<string, object?> parameters) =>
+        uri.ToString().AddQueryString(parameters);
+
+    public static string AddQueryString([UriString] this string uri, IReadOnlyDictionary<string, object?> parameters)
     {
         var queryStringParameters = new Dictionary<string, string>(
             parameters.Select(
@@ -33,6 +43,6 @@ public static class UriHelpers
             )
         );
 
-        return QueryHelpers.AddQueryString(uri.ToString(), queryStringParameters);
+        return QueryHelpers.AddQueryString(uri, queryStringParameters);
     }
 }
