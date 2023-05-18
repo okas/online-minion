@@ -1,21 +1,18 @@
 using MediatR;
 using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Web.Settings;
+using OnlineMinion.Web.Infrastructure;
 
 namespace OnlineMinion.Web.AppMessaging.Handlers;
 
-internal sealed class DeleteAccountSpecReqHlr : BaseAccountSpecsRequestHandler,
-    IRequestHandler<DeleteAccountSpecReq, bool>
+internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, bool>
 {
-    private readonly HttpClient _httpClient;
-
-    public DeleteAccountSpecReqHlr(IHttpClientFactory factory) =>
-        _httpClient = factory.CreateClient(Constants.ApiClient);
+    private readonly ApiService _api;
+    public DeleteAccountSpecReqHlr(ApiService api) => _api = api;
 
     public async Task<bool> Handle(DeleteAccountSpecReq request, CancellationToken cancellationToken)
     {
-        var uri = $"{UriApiV1AccountSpecs}/{request.Id}";
-        var responseMessage = await _httpClient.DeleteAsync(uri, cancellationToken).ConfigureAwait(false);
+        var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
+        var responseMessage = await _api.Client.DeleteAsync(uri, cancellationToken).ConfigureAwait(false);
 
         return responseMessage.IsSuccessStatusCode;
     }

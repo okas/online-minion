@@ -2,18 +2,19 @@ using System.Net.Http.Json;
 using MediatR;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
-using OnlineMinion.Web.Settings;
+using OnlineMinion.Web.Infrastructure;
 
 namespace OnlineMinion.Web.AppMessaging.Handlers;
 
-internal sealed class GetAccountSpecByIdReqHlr : BaseAccountSpecsRequestHandler,
-    IRequestHandler<GetAccountSpecByIdReq, AccountSpecResp?>
+internal sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecByIdReq, AccountSpecResp?>
 {
-    private readonly HttpClient _httpClient;
+    private readonly ApiService _api;
+    public GetAccountSpecByIdReqHlr(ApiService api) => _api = api;
 
-    public GetAccountSpecByIdReqHlr(IHttpClientFactory factory) =>
-        _httpClient = factory.CreateClient(Constants.ApiClient);
+    public async Task<AccountSpecResp?> Handle(GetAccountSpecByIdReq request, CancellationToken cancellationToken)
+    {
+        var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
 
-    public async Task<AccountSpecResp?> Handle(GetAccountSpecByIdReq request, CancellationToken cancellationToken) =>
-        await _httpClient.GetFromJsonAsync<AccountSpecResp?>($"{UriApiV1AccountSpecs}/{request.Id}", cancellationToken);
+        return await _api.Client.GetFromJsonAsync<AccountSpecResp?>(uri, cancellationToken).ConfigureAwait(false);
+    }
 }

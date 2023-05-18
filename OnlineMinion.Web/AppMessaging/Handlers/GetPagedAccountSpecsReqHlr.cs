@@ -7,17 +7,14 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
-using OnlineMinion.Web.Settings;
+using OnlineMinion.Web.Infrastructure;
 
 namespace OnlineMinion.Web.AppMessaging.Handlers;
 
-internal sealed class GetPagedAccountSpecsReqHlr : BaseAccountSpecsRequestHandler,
-    IRequestHandler<GetAccountSpecsReq, BasePagedResult<AccountSpecResp>>
+internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, BasePagedResult<AccountSpecResp>>
 {
-    private readonly HttpClient _httpClient;
-
-    public GetPagedAccountSpecsReqHlr(IHttpClientFactory factory) =>
-        _httpClient = factory.CreateClient(Constants.ApiClient);
+    private readonly ApiService _api;
+    public GetPagedAccountSpecsReqHlr(ApiService api) => _api = api;
 
     public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq request, CancellationToken ct)
     {
@@ -40,9 +37,9 @@ internal sealed class GetPagedAccountSpecsReqHlr : BaseAccountSpecsRequestHandle
         return new(modelsAsyncStream, pagingMetaInfo);
     }
 
-    private static HttpRequestMessage CreateGetMessage(GetAccountSpecsReq request)
+    private HttpRequestMessage CreateGetMessage(GetAccountSpecsReq request)
     {
-        var uri = UriApiV1AccountSpecs.AddQueryString(
+        var uri = _api.ApiV1AccountSpecsUri.AddQueryString(
             new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
             {
                 [nameof(request.Page)] = request.Page,
@@ -54,7 +51,7 @@ internal sealed class GetPagedAccountSpecsReqHlr : BaseAccountSpecsRequestHandle
     }
 
     private Task<HttpResponseMessage> GetRequestResponse(HttpRequestMessage message, CancellationToken ct) =>
-        _httpClient.SendAsync(
+        _api.Client.SendAsync(
             // Important: browser streaming and http completion are requirements to get streaming behavior working.
             message.SetBrowserResponseStreamingEnabled(true),
             HttpCompletionOption.ResponseHeadersRead,

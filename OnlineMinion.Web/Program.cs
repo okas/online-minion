@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Options;
 using OnlineMinion.Web;
+using OnlineMinion.Web.Infrastructure;
 using OnlineMinion.Web.Settings;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -18,15 +18,8 @@ builder.Services.AddHttpClient(
 );
 
 builder.Services
-    .Configure<ApiClientSettings>(builder.Configuration.GetSection(nameof(ApiClientSettings)))
-    .AddHttpClient(
-        Constants.ApiClient,
-        (provider, client) =>
-            client.BaseAddress = new(
-                provider.GetService<IOptions<ApiClientSettings>>()?.Value.Url ??
-                throw new InvalidOperationException($"Missing {nameof(ApiClientSettings)} from configuration.")
-            )
-    );
+    .Configure<ApiServiceSettings>(builder.Configuration.GetSection(nameof(ApiServiceSettings)))
+    .AddHttpClient<ApiService>();
 
 builder.Services.AddMediatR(
     opts => opts.RegisterServicesFromAssemblyContaining<Program>()
