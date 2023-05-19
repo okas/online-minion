@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace OnlineMinion.Web.Infrastructure;
+namespace OnlineMinion.Web.Pages.Base;
 
 public abstract class BaseCancellationTokenPage : ComponentBase, IAsyncDisposable
 {

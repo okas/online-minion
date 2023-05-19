@@ -1,4 +1,4 @@
-namespace OnlineMinion.Web.AppMessaging.Requests;
+namespace OnlineMinion.RestApi.Client.Requests;
 
 public sealed class CreateAccountSpecReq : BaseUpsertAccountSpecReq
 {

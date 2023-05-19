@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Infrastructure;
 using OnlineMinion.Web.Settings;
@@ -17,12 +18,9 @@ builder.Services.AddHttpClient(
     client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
 );
 
-builder.Services
-    .Configure<ApiServiceSettings>(builder.Configuration.GetSection(nameof(ApiServiceSettings)))
-    .AddHttpClient<ApiService>();
-
-builder.Services.AddMediatR(
-    opts => opts.RegisterServicesFromAssemblyContaining<Program>()
+builder.Services.AddRestApiClient(
+    builder.Configuration,
+    new[] { new SetWebAssemblyStreamingOptionsHandler(), }
 );
 
 #endregion

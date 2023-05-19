@@ -1,13 +1,13 @@
 using MediatR;
 using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Web.Infrastructure;
+using OnlineMinion.RestApi.Client.Infrastructure;
 
-namespace OnlineMinion.Web.AppMessaging.Handlers;
+namespace OnlineMinion.RestApi.Client.Handlers;
 
 internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, bool>
 {
-    private readonly ApiService _api;
-    public DeleteAccountSpecReqHlr(ApiService api) => _api = api;
+    private readonly ApiClientProvider _api;
+    public DeleteAccountSpecReqHlr(ApiClientProvider api) => _api = api;
 
     public async Task<bool> Handle(DeleteAccountSpecReq request, CancellationToken cancellationToken)
     {

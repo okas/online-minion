@@ -1,15 +1,15 @@
 using System.Net.Http.Json;
 using MediatR;
-using OnlineMinion.Web.AppMessaging.Requests;
-using OnlineMinion.Web.Infrastructure;
+using OnlineMinion.RestApi.Client.Infrastructure;
+using OnlineMinion.RestApi.Client.Requests;
 
-namespace OnlineMinion.Web.AppMessaging.Handlers;
+namespace OnlineMinion.RestApi.Client.Handlers;
 
 internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, bool>
 {
-    private readonly ApiService _api;
+    private readonly ApiClientProvider _api;
 
-    public CreateAccountSpecReqHlr(ApiService api) => _api = api;
+    public CreateAccountSpecReqHlr(ApiClientProvider api) => _api = api;
 
     public async Task<bool> Handle(CreateAccountSpecReq request, CancellationToken cancellationToken)
     {

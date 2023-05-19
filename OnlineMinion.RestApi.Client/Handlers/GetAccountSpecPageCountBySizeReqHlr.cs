@@ -1,16 +1,16 @@
 using MediatR;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts.HttpHeaders;
-using OnlineMinion.Web.AppMessaging.Requests;
-using OnlineMinion.Web.Infrastructure;
+using OnlineMinion.RestApi.Client.Infrastructure;
+using OnlineMinion.RestApi.Client.Requests;
 
-namespace OnlineMinion.Web.AppMessaging.Handlers;
+namespace OnlineMinion.RestApi.Client.Handlers;
 
 internal sealed class GetAccountSpecPageCountBySizeReqHlr :
     IRequestHandler<GetAccountSpecPageCountBySizeReq, int?>
 {
-    private readonly ApiService _api;
-    public GetAccountSpecPageCountBySizeReqHlr(ApiService api) => _api = api;
+    private readonly ApiClientProvider _api;
+    public GetAccountSpecPageCountBySizeReqHlr(ApiClientProvider api) => _api = api;
 
     public async Task<int?> Handle(GetAccountSpecPageCountBySizeReq request, CancellationToken ct)
     {

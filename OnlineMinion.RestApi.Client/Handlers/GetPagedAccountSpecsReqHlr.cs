@@ -1,20 +1,19 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using MediatR;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
-using OnlineMinion.Web.Infrastructure;
+using OnlineMinion.RestApi.Client.Infrastructure;
 
-namespace OnlineMinion.Web.AppMessaging.Handlers;
+namespace OnlineMinion.RestApi.Client.Handlers;
 
 internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, BasePagedResult<AccountSpecResp>>
 {
-    private readonly ApiService _api;
-    public GetPagedAccountSpecsReqHlr(ApiService api) => _api = api;
+    private readonly ApiClientProvider _api;
+    public GetPagedAccountSpecsReqHlr(ApiClientProvider api) => _api = api;
 
     public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq request, CancellationToken ct)
     {
@@ -52,8 +51,11 @@ internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpe
 
     private Task<HttpResponseMessage> GetRequestResponse(HttpRequestMessage message, CancellationToken ct) =>
         _api.Client.SendAsync(
-            // Important: browser streaming and http completion are requirements to get streaming behavior working.
-            message.SetBrowserResponseStreamingEnabled(true),
+            /* Important: *browser streaming* and *http completion* are requirements to get streaming behavior working.
+             * NB! It is expected to be configured as DelegatingHandler for HttpClientFactory!
+             * This way current assembly do not hold references to WebAssembly specific dependencies. */
+            // message.SetBrowserResponseStreamingEnabled(true),
+            message,
             HttpCompletionOption.ResponseHeadersRead,
             ct
         );

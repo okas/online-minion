@@ -3,14 +3,14 @@
 @inject NavigationManager Navigation
 @inject IMediator Mediator
 @inject ILogger<AccountSpecsPage> Logger
-@using CreateAccountSpecCmd = OnlineMinion.Web.AppMessaging.Requests.CreateAccountSpecReq
-@using UpdateAccountSpecCmd = OnlineMinion.Web.AppMessaging.Requests.UpdateAccountSpecReq
+@using CreateAccountSpecCmd = OnlineMinion.RestApi.Client.Requests.CreateAccountSpecReq
+@using UpdateAccountSpecCmd = OnlineMinion.RestApi.Client.Requests.UpdateAccountSpecReq
 @using OnlineMinion.Contracts
 @using OnlineMinion.Contracts.AppMessaging.Requests
 @using OnlineMinion.Contracts.Responses
-@using OnlineMinion.Web.AppMessaging.Requests
+@using OnlineMinion.RestApi.Client.Requests
 @using MediatR
-@inherits OnlineMinion.Web.Infrastructure.BaseCancellationTokenPage
+@inherits OnlineMinion.Web.Pages.Base.BaseCancellationTokenPage
 
 @code {
   public AccountSpecsPage() => _ct = CancellationTokenSource.Token;

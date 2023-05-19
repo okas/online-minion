@@ -1,6 +1,6 @@
 using OnlineMinion.Contracts.AppMessaging;
 
-namespace OnlineMinion.Web.AppMessaging.Requests;
+namespace OnlineMinion.RestApi.Client.Requests;
 
 public abstract class BaseUpsertAccountSpecReq : BaseUpsertAccountSpecReqData, IsSuccessResultRequest
 {
