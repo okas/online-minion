@@ -43,7 +43,7 @@ if (webAppBuilder.Environment.IsDevelopment())
     webAppBuilder.Services.AddSwaggerGen();
 }
 
-webAppBuilder.AddRestApiServices();
+webAppBuilder.Services.AddRestApi(webAppBuilder.Configuration);
 
 #endregion
 

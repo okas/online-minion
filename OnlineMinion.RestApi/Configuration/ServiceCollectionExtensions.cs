@@ -1,9 +1,9 @@
 using CorsPolicySettings;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts;
@@ -13,31 +13,31 @@ using OnlineMinion.RestApi.AppMessaging.Handlers;
 
 namespace OnlineMinion.RestApi.Configuration;
 
-public static class WebApplicationBuilderExtensions
+public static class ServiceCollectionExtensions
 {
-    public static WebApplicationBuilder AddRestApiServices(this WebApplicationBuilder webAppBuilder)
+    public static IServiceCollection AddRestApi(this IServiceCollection services, IConfigurationRoot config)
     {
         // Order is important (CORS): first read base policies, then produce CORS configuration.
-        webAppBuilder.Services.AddCorsPolicies(webAppBuilder.Configuration);
-        webAppBuilder.Services
+        services.AddCorsPolicies(config);
+        services
             .AddSingleton<IConfigureOptions<CorsOptions>, ApiCorsOptionsConfigurator>()
             .AddCors();
 
-        webAppBuilder.Services
+        services
             // .AddSingleton<IConfigureOptions<MvcOptions>, MvcOptionsConfigurator>()
             .AddControllers();
 
-        webAppBuilder.Services
+        services
             .AddSingleton<IConfigureOptions<ApiVersioningOptions>, ApiVersioningOptionsConfigurator>()
             .AddApiVersioning();
 
-        webAppBuilder.Services
+        services
             .AddSingleton<IConfigureOptions<ApiExplorerOptions>, ApiExplorerOptionsConfigurator>()
             .AddVersionedApiExplorer();
 
-        webAppBuilder.Services.AddEndpointsApiExplorer();
+        services.AddEndpointsApiExplorer();
 
-        webAppBuilder.Services
+        services
             .AddMediatR(
                 cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetPagingInfoReqHlr<>))
             )
@@ -46,6 +46,6 @@ public static class WebApplicationBuilderExtensions
                 GetPagingInfoReqHlr<AccountSpec>
             >();
 
-        return webAppBuilder;
+        return services;
     }
 }
