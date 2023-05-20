@@ -64,17 +64,17 @@ public class AccountSpecsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AccountSpecResp), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AccountSpecResp?>> GetById(
+    public async Task<IActionResult> GetById(
         [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
-    ) => await _mediator.Send(cmd, ct);
+    ) => await _mediator.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IAsyncEnumerable<AccountSpecResp>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponseHeader(
@@ -95,7 +95,7 @@ public class AccountSpecsController : ControllerBase
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IAsyncEnumerable<AccountSpecResp>> Get(
+    public async Task<IActionResult> Get(
         [FromQuery] GetAccountSpecsReq req,
         CancellationToken              ct
     )
@@ -104,7 +104,7 @@ public class AccountSpecsController : ControllerBase
 
         SetPagingHeaders(result.Paging);
 
-        return result.Result;
+        return Ok(result.Result);
     }
 
     [HttpPost]
@@ -129,8 +129,10 @@ public class AccountSpecsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecReq req, CancellationToken ct) =>
-        await _mediator.Send(req, ct) ? NoContent() : NotFound();
+    public async Task<IActionResult> Delete(
+        [FromRoute] DeleteAccountSpecReq req,
+        CancellationToken                ct
+    ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
     private void SetPagingHeaders(PagingMetaInfo values)
     {
