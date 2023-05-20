@@ -1,21 +1,22 @@
 using System.Net.Http.Json;
 using MediatR;
+using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
-using OnlineMinion.RestApi.Client.Requests;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, bool>
+internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ModelIdResp?>
 {
     private readonly ApiClientProvider _api;
 
     public CreateAccountSpecReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<bool> Handle(CreateAccountSpecReq request, CancellationToken cancellationToken)
+    public async Task<ModelIdResp?> Handle(CreateAccountSpecReq request, CancellationToken cancellationToken)
     {
         using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, request, cancellationToken)
             .ConfigureAwait(false);
 
-        return message.IsSuccessStatusCode;
+        return await message.Content.ReadFromJsonAsync<ModelIdResp>(cancellationToken).ConfigureAwait(false);
     }
 }

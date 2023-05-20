@@ -3,9 +3,8 @@
 @inject NavigationManager Navigation
 @inject IMediator Mediator
 @inject ILogger<AccountSpecsPage> Logger
-@using CreateAccountSpecCmd = OnlineMinion.RestApi.Client.Requests.CreateAccountSpecReq
-@using UpdateAccountSpecCmd = OnlineMinion.RestApi.Client.Requests.UpdateAccountSpecReq
 @using OnlineMinion.Contracts
+@using OnlineMinion.Contracts.AppMessaging
 @using OnlineMinion.Contracts.AppMessaging.Requests
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.RestApi.Client.Requests
@@ -20,7 +19,7 @@
   private PagingMetaInfo? _paging;
   private List<AccountSpecResp>? _vm;
 
-  private BaseUpsertAccountSpecReq? _modelUpsert;
+  private BaseUpsertAccountSpecReqData? _modelUpsert;
   private AccountSpecResp? _modelDelete;
   private bool _isSubmitting;
   private ModalDialog _modalUpsert = null!;
@@ -99,9 +98,9 @@
 
   private void OnAddHandler()
   {
-    if (_modelUpsert is not CreateAccountSpecCmd)
+    if (_modelUpsert is not CreateAccountSpecReq)
     {
-      _modelUpsert = new CreateAccountSpecCmd();
+      _modelUpsert = new CreateAccountSpecReq();
     }
 
     _modalUpsertTitle = "Add new Account Specification";
@@ -110,7 +109,7 @@
 
   private async Task OnEditHandler(int id)
   {
-    if (_modelUpsert is UpdateAccountSpecCmd cmd && cmd.Id == id)
+    if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
     {
       _modalUpsertTitle = GetTitle();
       _modalUpsert.Open();
@@ -120,7 +119,7 @@
 
     if (await Mediator.Send(new GetAccountSpecByIdReq(id), _ct) is { } model)
     {
-      _modelUpsert = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
+      _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
       _modalUpsertTitle = GetTitle();
       _modalUpsert.Open();
     }
@@ -140,8 +139,19 @@
     }
 
     _isSubmitting = true;
-    var isSuccess = await Mediator.Send(_modelUpsert!, _ct);
+    var result = await Mediator.Send(_modelUpsert!, _ct);
     _isSubmitting = false;
+
+  // TODO: HACK: till workflows are separated!
+    var isSuccess = false;
+    if (result is bool r)
+    {
+      isSuccess = r;
+    }
+    else if (result is not null)
+    {
+      isSuccess = true;
+    }
 
     if (isSuccess)
     {
@@ -150,14 +160,14 @@
     }
     else
     {
-      var action = _modelUpsert is UpdateAccountSpecCmd ? "update" : "creation";
+      var action = _modelUpsert is UpdateAccountSpecReq ? "update" : "creation";
       Logger.LogWarning("Account Specification {Action} failed", action);
     }
   }
 
   private void HandlePageStateAfterUpsert()
   {
-    if (_modelUpsert is UpdateAccountSpecCmd cmd)
+    if (_modelUpsert is UpdateAccountSpecReq cmd)
     {
       var model = _vm!.Single(m => m.Id == cmd.Id);
       var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description, };

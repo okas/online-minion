@@ -17,12 +17,12 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
     public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq rq, CancellationToken ct)
     {
         PagingMetaInfo pagingMeta = new(
-            await _queryable.CountAsync(ct),
+            await _queryable.CountAsync(ct).ConfigureAwait(false),
             rq.PageSize,
             rq.Page
         );
 
-        var entities =  _queryable
+        var entities = _queryable
             .OrderBy(e => e.Id)
             .Skip(pagingMeta.ItemsOffset)
             .Take(pagingMeta.Size)

@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using MediatR;
@@ -10,6 +9,7 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
+using OnlineMinion.RestApi.AppMessaging.Requests;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -108,14 +108,13 @@ public class AccountSpecsController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
         var resp = await _mediator.Send(req, ct);
-        // TODO: Add check, if result is unfavorable.
-        return CreatedAtAction(nameof(GetById), new { resp.Id, }, null);
+        return CreatedAtAction(nameof(GetById), new { resp.Id, }, resp);
     }
 
     [HttpPut("{id}")]

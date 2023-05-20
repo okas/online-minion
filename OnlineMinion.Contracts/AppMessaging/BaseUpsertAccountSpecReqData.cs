@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineMinion.Contracts.AppMessaging;
 
-// TODO: to ref record?
 /// <summary>
 ///     Base class, that provides some model metadata.
 /// </summary>

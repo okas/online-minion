@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using MediatR;
+using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.RestApi.Client.Infrastructure;
-using OnlineMinion.RestApi.Client.Requests;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
