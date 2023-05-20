@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -27,8 +28,8 @@ public class AccountSpecsController : Controller
     /// <summary>
     ///     To probe some paging related data about this resource.
     /// </summary>
-    /// <param name="pageSize"></param>
     /// <param name="ct"></param>
+    /// <param name="pageSize"></param>
     [HttpHead]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Using page size, get count of total items and count of pages.")]
@@ -51,8 +52,8 @@ public class AccountSpecsController : Controller
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> PagingMetaInfo(
-        [FromQuery][Range(1, 50)][DefaultValue(10)] int pageSize,
-        CancellationToken                               ct
+        CancellationToken             ct,
+        [FromQuery][Range(1, 50)] int pageSize = 10
     )
     {
         var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
@@ -131,10 +132,11 @@ public class AccountSpecsController : Controller
     public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecReq req, CancellationToken ct) =>
         await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
-    private void SetPagingHeaders(PagingMetaInfo pagingMetaInfo)
+    private void SetPagingHeaders(PagingMetaInfo values)
     {
-        Response.Headers[CustomHeaderNames.PagingTotalItems] = pagingMetaInfo.TotalItems.ToString();
-        Response.Headers[CustomHeaderNames.PagingSize] = pagingMetaInfo.Size.ToString();
-        Response.Headers[CustomHeaderNames.PagingPages] = pagingMetaInfo.Pages.ToString();
+        var headers = Response.Headers;
+        headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
+        headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
+        headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
     }
 }
