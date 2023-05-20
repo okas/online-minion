@@ -37,13 +37,15 @@ public class OnlineMinionDbContext : DbContext
         }
     }
 
+    /// <inheritdoc cref="DbContext" />
     public new Task<int> SaveChangesAsync(CancellationToken ct = default) => SaveChangesAsync(true, ct);
 
+    /// <inheritdoc cref="DbContext" />
     public new async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
     {
         try
         {
-            return await base.SaveChangesAsync(ct);
+            return await base.SaveChangesAsync(ct).ConfigureAwait(false);
         }
         catch (UniqueConstraintException ex)
         {
