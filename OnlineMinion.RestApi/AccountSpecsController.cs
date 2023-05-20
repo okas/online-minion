@@ -19,7 +19,7 @@ namespace OnlineMinion.RestApi;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1")]
 [ApiController]
-public class AccountSpecsController : Controller
+public class AccountSpecsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
