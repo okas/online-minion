@@ -1,5 +1,3 @@
-using OnlineMinion.Contracts;
-
 namespace OnlineMinion.Data.BaseEntities;
 
 public class BasePaymentSpec : BaseEntity

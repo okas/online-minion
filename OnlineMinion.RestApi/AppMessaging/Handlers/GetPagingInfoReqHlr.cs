@@ -15,5 +15,5 @@ public sealed class GetPagingInfoReqHlr<TEntity> : IRequestHandler<GetPagingMeta
     public GetPagingInfoReqHlr(OnlineMinionDbContext dbContext) => _dbSet = dbContext.Set<TEntity>();
 
     public async Task<PagingMetaInfo> Handle(GetPagingMetaInfoReq<TEntity> rq, CancellationToken ct) =>
-        new(await _dbSet.CountAsync(ct), rq.PageSize);
+        new(await _dbSet.CountAsync(ct).ConfigureAwait(false), rq.PageSize);
 }

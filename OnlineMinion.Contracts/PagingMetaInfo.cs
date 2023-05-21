@@ -1,7 +1,9 @@
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 namespace OnlineMinion.Contracts;
 
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct PagingMetaInfo(
     int TotalItems,
     int Size    = PagingMetaInfo.DefaultSize,

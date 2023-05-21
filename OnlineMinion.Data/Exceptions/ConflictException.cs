@@ -10,7 +10,7 @@ public class ConflictException : Exception
     public ConflictException(string message, UniqueConstraintException ex) : base(message) =>
         Errors = GetErrorData(ex.Entries, ex.Message, ex.InnerException!.Message);
 
-    public Dictionary<string, string[]> Errors { get; init; }
+    public IDictionary<string, string[]> Errors { get; init; }
 
     private Dictionary<string, string[]> GetErrorData(
         IReadOnlyList<EntityEntry> uniqueConstraintExceptionEntries,
@@ -23,7 +23,7 @@ public class ConflictException : Exception
         var relationalModel = uniqueConstraintExceptionEntries.First().Context.Model.GetRelationalModel();
 
         var distinctTypeIndex = 0;
-        var errors = new Dictionary<string, string[]>();
+        var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
 
         var distinctEntriesByType = uniqueConstraintExceptionEntries.DistinctBy(
             e => e.Metadata.ClrType
@@ -48,7 +48,8 @@ public class ConflictException : Exception
                     mi => mi.Properties.Select(
                         p => p.Name
                     )
-                )
+                ),
+                StringComparer.Ordinal
             );
 
             var violatedIndices = groupsOfIndexAndEntryPropertyNames.Where(

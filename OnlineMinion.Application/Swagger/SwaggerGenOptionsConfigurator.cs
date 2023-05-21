@@ -7,12 +7,12 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OnlineMinion.Application.Swagger;
 
-public class SwaggerGenOptionsConfiguration : IConfigureOptions<SwaggerGenOptions>
+public class SwaggerGenOptionsConfigurator : IConfigureOptions<SwaggerGenOptions>
 {
     private readonly string _apiAssemblyName;
     private readonly IApiVersionDescriptionProvider _apiVersionDescriptionProvider;
 
-    public SwaggerGenOptionsConfiguration(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
+    public SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
     {
         _apiAssemblyName = typeof(AccountSpecsController).Assembly.GetName().Name ??
                            throw new InvalidOperationException();

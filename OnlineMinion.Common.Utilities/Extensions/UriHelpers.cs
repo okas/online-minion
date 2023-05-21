@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.AspNetCore.WebUtilities;
+using static System.String;
 
 namespace OnlineMinion.Common.Utilities.Extensions;
 
@@ -17,9 +18,10 @@ public static class UriHelpers
             parameters.Select(
                 kvp => new KeyValuePair<string, string>(
                     kvp.Key,
-                    string.Join(",", kvp.Value.Select(v => string.IsNullOrWhiteSpace(v?.ToString()) ? "" : v))
+                    Join(",", kvp.Value.Select(v => IsNullOrWhiteSpace(v?.ToString()) ? "" : v))
                 )
-            )
+            ),
+            StringComparer.OrdinalIgnoreCase
         );
 
         return QueryHelpers.AddQueryString(uri, queryStringParameters);
@@ -35,12 +37,13 @@ public static class UriHelpers
                 kvp =>
                     new KeyValuePair<string, string>(
                         kvp.Key,
-                        (string.IsNullOrWhiteSpace(kvp.Value?.ToString())
-                            ? string.Empty
+                        (IsNullOrWhiteSpace(kvp.Value?.ToString())
+                            ? Empty
                             : kvp.Value?.ToString())
-                        ?? string.Empty
+                        ?? Empty
                     )
-            )
+            ),
+            StringComparer.OrdinalIgnoreCase
         );
 
         return QueryHelpers.AddQueryString(uri, queryStringParameters);

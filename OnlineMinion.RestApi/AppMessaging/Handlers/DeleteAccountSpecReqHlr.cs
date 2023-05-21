@@ -11,12 +11,13 @@ public sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecR
 
     public DeleteAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public Task<bool> Handle(DeleteAccountSpecReq rq, CancellationToken ct)
+    public async Task<bool> Handle(DeleteAccountSpecReq rq, CancellationToken ct)
     {
-        var task = _dbContext.AccountSpecs
+        var deletedCount = await _dbContext.AccountSpecs
             .Where(a => a.Id == rq.Id)
-            .ExecuteDeleteAsync(ct);
+            .ExecuteDeleteAsync(ct)
+            .ConfigureAwait(false);
 
-        return Task.FromResult(task.Result > 0);
+        return deletedCount > 0;
     }
 }

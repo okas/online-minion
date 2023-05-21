@@ -20,7 +20,8 @@ builder.Services.AddHttpClient(
 
 builder.Services.AddRestApiClient(
     builder.Configuration,
-    new[] { new SetWebAssemblyStreamingOptionsHandler(), }
+    new[] { new SetWebAssemblyStreamingOptionsHandler(), },
+    Constants.ApiClient
 );
 
 #endregion

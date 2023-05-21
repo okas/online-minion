@@ -7,6 +7,7 @@ namespace OnlineMinion.RestApi.Configuration;
 public class ApiCorsOptionsConfigurator : IConfigureOptions<CorsOptions>
 {
     public const string ExposedHeadersPagingMetaInfo = "ExposedHeadersPagingMetaInfo";
+
     public const string DefaultPolicyName = "BasePolicy";
 
     public void Configure(CorsOptions options)
@@ -27,8 +28,7 @@ public class ApiCorsOptionsConfigurator : IConfigureOptions<CorsOptions>
 
     private static CorsPolicy GetOrCreateDefaultPolicy(CorsOptions options)
     {
-        var basePolicy = options.GetPolicy(DefaultPolicyName);
-        if (basePolicy is not null)
+        if (options.GetPolicy(DefaultPolicyName) is { } basePolicy)
         {
             return basePolicy;
         }

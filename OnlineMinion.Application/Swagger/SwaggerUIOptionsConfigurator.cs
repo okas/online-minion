@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using OnlineMinion.RestApi;
@@ -31,7 +32,7 @@ public class SwaggerUIOptionsConfigurator : IConfigureOptions<SwaggerUIOptions>
         {
             options.SwaggerEndpoint(
                 $"/swagger/{versionDescription.GroupName}/swagger.json",
-                $"{_apiAssemblyName} - {versionDescription.GroupName.ToUpper()}"
+                $"{_apiAssemblyName} - {versionDescription.GroupName.ToUpper(CultureInfo.InvariantCulture)}"
             );
         }
     }

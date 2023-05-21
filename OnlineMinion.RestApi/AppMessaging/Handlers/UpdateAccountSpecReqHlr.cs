@@ -11,9 +11,9 @@ public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecR
 
     public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public Task<bool> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
+    public async Task<bool> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
     {
-        var task = _dbContext.AccountSpecs
+        var updatedCount = await _dbContext.AccountSpecs
             .Where(a => a.Id == rq.Id)
             .ExecuteUpdateAsync(
                 s => s
@@ -21,8 +21,9 @@ public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecR
                     .SetProperty(a => a.Group, rq.Group)
                     .SetProperty(a => a.Description, rq.Description),
                 ct
-            );
+            )
+            .ConfigureAwait(false);
 
-        return Task.FromResult(task.Result > 0);
+        return updatedCount > 0;
     }
 }

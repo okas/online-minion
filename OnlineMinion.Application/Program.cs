@@ -14,14 +14,14 @@ var webAppBuilder = WebApplication.CreateBuilder(args);
 
 var confManager = webAppBuilder.Configuration;
 
-//-- Add services' and their configurations to the container.
-
 webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
     optionsBuilder => optionsBuilder.UseSqlServer(
         "name=ConnectionStrings:DefaultConnection",
         x => x.UseDateOnlyTimeOnly()
     )
 );
+
+webAppBuilder.Services.AddRestApi(webAppBuilder.Configuration);
 
 if (webAppBuilder.Environment.IsDevelopment())
 {
@@ -34,7 +34,7 @@ if (webAppBuilder.Environment.IsDevelopment())
         .Configure<SwaggerGeneratorOptions>(confManager.GetSection(nameof(SwaggerGeneratorOptions)))
         .Configure<SchemaGeneratorOptions>(confManager.GetSection(nameof(SchemaGeneratorOptions)))
         .Configure<SwaggerGenOptions>(confManager.GetSection(nameof(SwaggerGenOptions)))
-        .AddSingleton<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfiguration>();
+        .AddSingleton<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfigurator>();
 
     webAppBuilder.Services
         .Configure<SwaggerUIOptions>(confManager.GetSection(nameof(SwaggerUIOptions)))
@@ -42,8 +42,6 @@ if (webAppBuilder.Environment.IsDevelopment())
 
     webAppBuilder.Services.AddSwaggerGen();
 }
-
-webAppBuilder.Services.AddRestApi(webAppBuilder.Configuration);
 
 #endregion
 

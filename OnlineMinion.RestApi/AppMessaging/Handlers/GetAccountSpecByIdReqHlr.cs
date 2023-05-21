@@ -16,7 +16,9 @@ public sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecByI
 
     public async Task<AccountSpecResp?> Handle(GetAccountSpecByIdReq rq, CancellationToken ct)
     {
-        if (await _queryable.FirstOrDefaultAsync(a => a.Id == rq.Id, ct) is not { } entity)
+        var task = _queryable.FirstOrDefaultAsync(a => a.Id == rq.Id, ct).ConfigureAwait(false);
+
+        if (await task is not { } entity)
         {
             return null;
         }

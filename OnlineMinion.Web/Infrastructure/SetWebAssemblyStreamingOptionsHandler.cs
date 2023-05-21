@@ -22,7 +22,7 @@ public class SetWebAssemblyStreamingOptionsHandler : DelegatingHandler
     {
         if (request.Method == HttpMethod.Get)
         {
-            request.SetBrowserResponseStreamingEnabled(true);
+            request.SetBrowserResponseStreamingEnabled(streamingEnabled: true);
         }
     }
 }

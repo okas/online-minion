@@ -10,12 +10,15 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRestApiClient(
         this IServiceCollection         services,
         IConfigurationRoot              config,
-        IEnumerable<DelegatingHandler>? httpMessageHandlers = null
+        IEnumerable<DelegatingHandler>? httpMessageHandlers = null,
+        string?                         httpClientName      = null
     )
     {
         services.Configure<ApiClientProviderSettings>(config.GetSection(nameof(ApiClientProviderSettings)));
 
-        var httpClientBuilder = services.AddHttpClient<ApiClientProvider>();
+        var httpClientBuilder = string.IsNullOrWhiteSpace(httpClientName)
+            ? services.AddHttpClient<ApiClientProvider>()
+            : services.AddHttpClient<ApiClientProvider>(httpClientName);
 
         if (httpMessageHandlers is not null)
         {
