@@ -64,4 +64,4 @@ app.UseRestApi();
 
 #endregion
 
-await app.RunAsync();
+await app.RunAsync().ConfigureAwait(false);

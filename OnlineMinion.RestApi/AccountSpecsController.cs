@@ -1,5 +1,5 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +9,7 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
+using OnlineMinion.RestApi.AppMessaging.Requests;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -18,7 +19,7 @@ namespace OnlineMinion.RestApi;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1")]
 [ApiController]
-public class AccountSpecsController : Controller
+public class AccountSpecsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -27,8 +28,8 @@ public class AccountSpecsController : Controller
     /// <summary>
     ///     To probe some paging related data about this resource.
     /// </summary>
-    /// <param name="pageSize"></param>
     /// <param name="ct"></param>
+    /// <param name="pageSize"></param>
     [HttpHead]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
     [SwaggerResponse(StatusCodes.Status204NoContent, "Using page size, get count of total items and count of pages.")]
@@ -51,8 +52,8 @@ public class AccountSpecsController : Controller
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> PagingMetaInfo(
-        [FromQuery][Range(1, 50)][DefaultValue(10)] int pageSize,
-        CancellationToken                               ct
+        CancellationToken             ct,
+        [FromQuery][Range(1, 50)] int pageSize = 10
     )
     {
         var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
@@ -63,17 +64,17 @@ public class AccountSpecsController : Controller
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AccountSpecResp), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AccountSpecResp?>> GetById(
+    public async Task<IActionResult> GetById(
         [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
-    ) => await _mediator.Send(cmd, ct);
+    ) => await _mediator.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IAsyncEnumerable<AccountSpecResp>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponseHeader(
@@ -94,7 +95,7 @@ public class AccountSpecsController : Controller
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IAsyncEnumerable<AccountSpecResp>> Get(
+    public async Task<IActionResult> Get(
         [FromQuery] GetAccountSpecsReq req,
         CancellationToken              ct
     )
@@ -103,18 +104,17 @@ public class AccountSpecsController : Controller
 
         SetPagingHeaders(result.Paging);
 
-        return result.Result;
+        return Ok(result.Result);
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
         var resp = await _mediator.Send(req, ct);
-        // TODO: Add check, if result is unfavorable.
-        return CreatedAtAction(nameof(GetById), new { resp.Id, }, null);
+        return CreatedAtAction(nameof(GetById), new { resp.Id, }, resp);
     }
 
     [HttpPut("{id}")]
@@ -128,13 +128,16 @@ public class AccountSpecsController : Controller
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromRoute] DeleteAccountSpecReq req, CancellationToken ct) =>
-        await _mediator.Send(req, ct) ? NoContent() : NotFound();
+    public async Task<IActionResult> Delete(
+        [FromRoute] DeleteAccountSpecReq req,
+        CancellationToken                ct
+    ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
-    private void SetPagingHeaders(PagingMetaInfo pagingMetaInfo)
+    private void SetPagingHeaders(PagingMetaInfo values)
     {
-        Response.Headers[CustomHeaderNames.PagingTotalItems] = pagingMetaInfo.TotalItems.ToString();
-        Response.Headers[CustomHeaderNames.PagingSize] = pagingMetaInfo.Size.ToString();
-        Response.Headers[CustomHeaderNames.PagingPages] = pagingMetaInfo.Pages.ToString();
+        var headers = Response.Headers;
+        headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
+        headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
+        headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
     }
 }

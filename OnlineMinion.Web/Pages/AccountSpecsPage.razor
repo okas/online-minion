@@ -3,9 +3,8 @@
 @inject NavigationManager Navigation
 @inject IMediator Mediator
 @inject ILogger<AccountSpecsPage> Logger
-@using CreateAccountSpecCmd = OnlineMinion.RestApi.Client.Requests.CreateAccountSpecReq
-@using UpdateAccountSpecCmd = OnlineMinion.RestApi.Client.Requests.UpdateAccountSpecReq
 @using OnlineMinion.Contracts
+@using OnlineMinion.Contracts.AppMessaging
 @using OnlineMinion.Contracts.AppMessaging.Requests
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.RestApi.Client.Requests
@@ -20,7 +19,7 @@
   private PagingMetaInfo? _paging;
   private List<AccountSpecResp>? _vm;
 
-  private BaseUpsertAccountSpecReq? _modelUpsert;
+  private BaseUpsertAccountSpecReqData? _modelUpsert;
   private AccountSpecResp? _modelDelete;
   private bool _isSubmitting;
   private ModalDialog _modalUpsert = null!;
@@ -99,9 +98,9 @@
 
   private void OnAddHandler()
   {
-    if (_modelUpsert is not CreateAccountSpecCmd)
+    if (_modelUpsert is not CreateAccountSpecReq)
     {
-      _modelUpsert = new CreateAccountSpecCmd();
+      _modelUpsert = new CreateAccountSpecReq();
     }
 
     _modalUpsertTitle = "Add new Account Specification";
@@ -110,7 +109,7 @@
 
   private async Task OnEditHandler(int id)
   {
-    if (_modelUpsert is UpdateAccountSpecCmd cmd && cmd.Id == id)
+    if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
     {
       _modalUpsertTitle = GetTitle();
       _modalUpsert.Open();
@@ -120,7 +119,7 @@
 
     if (await Mediator.Send(new GetAccountSpecByIdReq(id), _ct) is { } model)
     {
-      _modelUpsert = new UpdateAccountSpecCmd(model.Id, model.Name, model.Group, model.Description);
+      _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
       _modalUpsertTitle = GetTitle();
       _modalUpsert.Open();
     }
@@ -134,42 +133,57 @@
 
   private async Task OnValidSubmitHandler()
   {
-    if (_modelUpsert is null)
+    switch (_modelUpsert)
     {
-      return;
-    }
-
-    _isSubmitting = true;
-    var isSuccess = await Mediator.Send(_modelUpsert!, _ct);
-    _isSubmitting = false;
-
-    if (isSuccess)
-    {
-      _modalUpsert.Close();
-      HandlePageStateAfterUpsert();
-    }
-    else
-    {
-      var action = _modelUpsert is UpdateAccountSpecCmd ? "update" : "creation";
-      Logger.LogWarning("Account Specification {Action} failed", action);
+      case null:
+        return;
+      case UpdateAccountSpecReq req:
+        await SubmitUpdate(req);
+        break;
+      case CreateAccountSpecReq req:
+        await SubmitCreate(req);
+        break;
     }
   }
 
-  private void HandlePageStateAfterUpsert()
+  private async Task SubmitUpdate(UpdateAccountSpecReq request)
   {
-    if (_modelUpsert is UpdateAccountSpecCmd cmd)
+    _isSubmitting = true;
+    var result = await Mediator.Send(request, _ct);
+    _isSubmitting = false;
+
+    if (result)
     {
-      var model = _vm!.Single(m => m.Id == cmd.Id);
-      var clone = model with { Name = cmd.Name, Group = cmd.Group, Description = cmd.Description, };
+      _modalUpsert.Close();
+      var model = _vm!.Single(m => m.Id == request.Id);
+      var clone = model with { Name = request.Name, Group = request.Group, Description = request.Description, };
 
       _vm![_vm.IndexOf(model)] = clone;
+
+      _modelUpsert = null;
     }
     else
     {
-      Task.Run(NavigateToNewItemPage, _ct);
+      Logger.LogWarning("Account Specification {Action} failed", "update");
     }
+  }
 
-    _modelUpsert = null;
+  private async Task SubmitCreate(CreateAccountSpecReq request)
+  {
+    _isSubmitting = true;
+    var result = await Mediator.Send(request, _ct);
+    _isSubmitting = false;
+
+    if (result is not null)
+    {
+      _modalUpsert.Close();
+      await NavigateToNewItemPage();
+      _modelUpsert = null;
+    }
+    else
+    {
+      Logger.LogWarning("Account Specification {Action} failed", "creation");
+    }
   }
 
   private async Task NavigateToNewItemPage()

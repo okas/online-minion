@@ -5,21 +5,22 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, AccountSpecResp>
+public sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ModelIdResp>
 {
     private readonly OnlineMinionDbContext _dbContext;
 
     public CreateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<AccountSpecResp> Handle(CreateAccountSpecReq rq, CancellationToken ct)
+    public async Task<ModelIdResp> Handle(CreateAccountSpecReq rq, CancellationToken ct)
     {
         var entry = await _dbContext.AccountSpecs.AddAsync(
-            new(rq.Name, rq.Group, rq.Description),
-            ct
-        );
+                new(rq.Name, rq.Group, rq.Description),
+                ct
+            )
+            .ConfigureAwait(false);
 
-        await _dbContext.SaveChangesAsync(ct);
+        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
-        return rq.ToResponse(entry.Entity.Id);
+        return new(entry.Entity.Id);
     }
 }

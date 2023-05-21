@@ -1,8 +1,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Data;
+using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.RestApi.AppMessaging.Requests;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 

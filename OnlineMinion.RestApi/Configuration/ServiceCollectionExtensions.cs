@@ -7,9 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.AppMessaging.Handlers;
+using OnlineMinion.RestApi.AppMessaging.Requests;
 
 namespace OnlineMinion.RestApi.Configuration;
 
