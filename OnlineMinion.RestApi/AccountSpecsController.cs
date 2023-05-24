@@ -58,7 +58,7 @@ public class AccountSpecsController : ControllerBase
     {
         var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
-        SetPagingHeaders(pagingMetaInfo);
+        SetPagingHeaders(pagingMetaInfo, Response.Headers);
 
         return NoContent();
     }
@@ -102,7 +102,7 @@ public class AccountSpecsController : ControllerBase
     {
         var result = await _mediator.Send(req, ct);
 
-        SetPagingHeaders(result.Paging);
+        SetPagingHeaders(result.Paging, Response.Headers);
 
         return Ok(result.Result);
     }
@@ -133,9 +133,8 @@ public class AccountSpecsController : ControllerBase
         CancellationToken                ct
     ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
-    private void SetPagingHeaders(PagingMetaInfo values)
+    private static void SetPagingHeaders(PagingMetaInfo values, IHeaderDictionary headers)
     {
-        var headers = Response.Headers;
         headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
         headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
         headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
