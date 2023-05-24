@@ -10,6 +10,8 @@ public static class WebApplicationExtensions
 
         app.UseAuthorization();
 
+        app.UseExceptionHandler("/error");
+
         app.MapControllers();
 
         return app;

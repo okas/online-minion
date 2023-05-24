@@ -174,7 +174,7 @@
     var result = await Mediator.Send(request, _ct);
     _isSubmitting = false;
 
-    if (result is not null)
+    if (result.IsSuccess)
     {
       _modalUpsert.Close();
       await NavigateToNewItemPage();

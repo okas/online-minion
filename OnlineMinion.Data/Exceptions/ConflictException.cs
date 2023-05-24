@@ -10,9 +10,9 @@ public class ConflictException : Exception
     public ConflictException(string message, UniqueConstraintException ex) : base(message) =>
         Errors = GetErrorData(ex.Entries, ex.Message, ex.InnerException!.Message);
 
-    public IDictionary<string, string[]> Errors { get; init; }
+    public IList<ErrorDescriptor> Errors { get; init; }
 
-    private Dictionary<string, string[]> GetErrorData(
+    private static IList<ErrorDescriptor> GetErrorData(
         IReadOnlyList<EntityEntry> uniqueConstraintExceptionEntries,
         string                     dbUpdateExMessage,
         string                     sqlExMessage
@@ -23,7 +23,7 @@ public class ConflictException : Exception
         var relationalModel = uniqueConstraintExceptionEntries.First().Context.Model.GetRelationalModel();
 
         var distinctTypeIndex = 0;
-        var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
+        var errors = new List<ErrorDescriptor>();
 
         var distinctEntriesByType = uniqueConstraintExceptionEntries.DistinctBy(
             e => e.Metadata.ClrType
@@ -31,6 +31,12 @@ public class ConflictException : Exception
 
         foreach (var entityEntry in distinctEntriesByType)
         {
+            var descriptor = new ErrorDescriptor(
+                entityEntry.Metadata.GetKeys().ToString(), // TODO: what does it output?
+                new Dictionary<string, string[]>(StringComparer.Ordinal)
+            );
+            errors.Add(descriptor);
+
             var tablesRelatedToEntry = relationalModel
                 .Tables.Where(
                     t => t.EntityTypeMappings.Any(
@@ -65,7 +71,7 @@ public class ConflictException : Exception
 
             foreach (var propertyName in erroneousPropertyNames)
             {
-                errors.Add(
+                descriptor.Details.Add(
                     $"[{distinctTypeIndex}].{entityEntry.Metadata.ClrType.Name}.{propertyName}",
                     new[] { dbUpdateExMessage, }
                 );
@@ -91,4 +97,6 @@ public class ConflictException : Exception
             );
         }
     }
+
+    public record ErrorDescriptor(object? InstanceId, IDictionary<string, string[]> Details);
 }

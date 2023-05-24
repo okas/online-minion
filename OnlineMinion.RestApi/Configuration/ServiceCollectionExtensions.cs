@@ -2,6 +2,7 @@ using CorsPolicySettings;
 using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.AppMessaging.Handlers;
 using OnlineMinion.RestApi.AppMessaging.Requests;
+using OnlineMinion.RestApi.ProblemHandling;
 
 namespace OnlineMinion.RestApi.Configuration;
 
@@ -26,6 +28,9 @@ public static class ServiceCollectionExtensions
         services
             // .AddSingleton<IConfigureOptions<MvcOptions>, MvcOptionsConfigurator>()
             .AddControllers();
+
+        // Override default one.
+        services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
 
         services
             .AddSingleton<IConfigureOptions<ApiVersioningOptions>, ApiVersioningOptionsConfigurator>()

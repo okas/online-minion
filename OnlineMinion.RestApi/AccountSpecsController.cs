@@ -111,10 +111,14 @@ public class AccountSpecsController : ControllerBase
     [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
         var resp = await _mediator.Send(req, ct);
-        return CreatedAtAction(nameof(GetById), new { resp.Id, }, resp);
+
+        return resp.IsSuccess
+            ? CreatedAtAction(nameof(GetById), new { resp.Data.Id, }, resp.Data)
+            : Problem(resp.ErrorMessage);
     }
 
     [HttpPut("{id}")]

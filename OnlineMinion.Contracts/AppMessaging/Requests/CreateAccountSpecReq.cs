@@ -3,7 +3,7 @@ using OnlineMinion.Contracts.Responses;
 
 namespace OnlineMinion.Contracts.AppMessaging.Requests;
 
-public sealed class CreateAccountSpecReq : BaseUpsertAccountSpecReqData, IRequest<ModelIdResp?>
+public sealed class CreateAccountSpecReq : BaseUpsertAccountSpecReqData, IRequest<HandlerResult<ModelIdResp>>
 {
     public CreateAccountSpecReq() : base(string.Empty, string.Empty, null) { }
 
