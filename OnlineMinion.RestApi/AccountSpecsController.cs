@@ -126,7 +126,7 @@ public class AccountSpecsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateAccountSpecReq req, CancellationToken ct) =>
-        await _mediator.Send(req, ct) ? NoContent() : NotFound();
+        (await _mediator.Send(req, ct)).Value ? NoContent() : NotFound();
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
