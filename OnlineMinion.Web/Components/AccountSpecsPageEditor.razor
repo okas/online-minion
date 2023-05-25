@@ -1,4 +1,6 @@
 @using OnlineMinion.Contracts.AppMessaging
+@using OnlineMinion.Web.Validation
+@using FluentResults
 @code {
 
   [Parameter]
@@ -13,6 +15,10 @@
   [EditorRequired]
   public EventCallback<EditContext> OnValidSubmit { get; set; }
 
+  private ServerSideValidator _serverSideValidator = null!;
+
+  public void SetServerValidationErrors(IError errors) => _serverSideValidator.DisplayErrors(errors.Metadata);
+
 }
 
 @{
@@ -26,8 +32,9 @@
 
 <div class="row">
 
-  <EditForm Model="Model" OnValidSubmit="@OnValidSubmit">
+  <EditForm Model="@Model" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator/>
+    <ServerSideValidator @ref="@_serverSideValidator"/>
     <ValidationSummary/>
 
     <fieldset disabled="@IsSubmitting">

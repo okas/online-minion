@@ -8,7 +8,9 @@
 @using OnlineMinion.Contracts.AppMessaging.Requests
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.RestApi.Client.Requests
+@using FluentResults
 @using MediatR
+@using OnlineMinion.Web.Validation
 @inherits OnlineMinion.Web.Pages.Base.BaseCancellationTokenPage
 
 @code {
@@ -26,6 +28,7 @@
   private string? _modalUpsertTitle;
   private ModalDialog _modalDelete = null!;
   private string? _modalDeleteTitle;
+  private AccountSpecsPageEditor _editorRef = null!;
 
   [Parameter]
   [SupplyParameterFromQuery]
@@ -165,13 +168,12 @@
     }
     else
     {
-      Logger.LogWarning("Account Specification {Action} failed", "update");
+      HandleUpsertProblems("update", result);
     }
   }
 
   private async Task SubmitCreate(CreateAccountSpecReq request)
   {
-    // TODO: problem handling in UI
     _isSubmitting = true;
     var result = await Mediator.Send(request, _ct);
     _isSubmitting = false;
@@ -184,8 +186,21 @@
     }
     else
     {
-      Logger.LogWarning("Account Specification {Action} failed", "creation");
+      HandleUpsertProblems("creation", result);
     }
+  }
+
+  private void HandleUpsertProblems(string action, IResultBase result)
+  {
+    var errors = result.Errors.First();
+
+    _editorRef.SetServerValidationErrors(errors);
+
+    Logger.LogWarning("Account Specification {Action} failed, {Reason}: {Fields}",
+      action,
+      errors.Message,
+      string.Join(", ", errors.Metadata.Select(m => ServerSideValidator.GetFieldName(m.Key)))
+      );
   }
 
   private async Task NavigateToNewItemPage()
@@ -317,7 +332,7 @@ else
 
 @*TODO: Set focus to modal, if it is opened.*@
 <ModalDialog @ref="@_modalUpsert" Title="@_modalUpsertTitle">
-  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnValidSubmit="@OnValidSubmitHandler"/>
+  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnValidSubmit="@OnValidSubmitHandler" @ref="@_editorRef"/>
 </ModalDialog>
 
 <ModalDialog @ref="@_modalDelete" Title="@_modalDeleteTitle">
