@@ -1,22 +1,22 @@
 using System.Net;
 using System.Net.Http.Json;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, HandlerResult<ModelIdResp>>
+internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, Result<ModelIdResp>>
 {
     private readonly ApiClientProvider _api;
 
     public CreateAccountSpecReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<HandlerResult<ModelIdResp>> Handle(
+    public async Task<Result<ModelIdResp>> Handle(
         CreateAccountSpecReq request,
         CancellationToken    cancellationToken
     )
@@ -29,22 +29,44 @@ internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpe
             if (await message.Content.ReadFromJsonAsync<ModelIdResp>(cancellationToken).ConfigureAwait(false)
                 is { Id: > 0, } modelIdResp)
             {
-                return HandlerResult<ModelIdResp>.Success(modelIdResp);
+                return modelIdResp;
             }
 
-            throw new InvalidOperationException("Unknown response, expected type of `ModelIdResp`.");
+            throw CreateException(nameof(ModelIdResp));
         }
 
-        if (message.StatusCode == HttpStatusCode.Conflict
-            && await message.Content.ReadFromJsonAsync<HttpValidationProblemDetails?>(cancellationToken)
-                .ConfigureAwait(false) is { } validationError)
+        if (message.StatusCode == HttpStatusCode.Conflict)
         {
-            return HandlerResult<ModelIdResp>.Failure(validationError!.Detail!, validationError.Errors);
+            if (await message.Content.ReadFromJsonAsync<HttpValidationProblemDetails?>(cancellationToken)
+                    .ConfigureAwait(false) is { } validationError)
+            {
+                return new Error(validationError.Detail).WithMetadata(
+                    validationError.Errors.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => (object)kvp.Value,
+                        StringComparer.Ordinal
+                    )
+                );
+            }
+
+            throw CreateException(nameof(HttpValidationProblemDetails));
         }
 
-        var error = await message.Content.ReadFromJsonAsync<ProblemDetails?>(cancellationToken)
-            .ConfigureAwait(false);
+        if (await message.Content.ReadFromJsonAsync<ProblemDetails?>(cancellationToken)
+                .ConfigureAwait(false) is { } problem)
+        {
+            return new Error(problem.Detail).WithMetadata(
+                problem.Extensions.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value ?? string.Empty,
+                    StringComparer.Ordinal
+                )
+            );
+        }
 
-        return HandlerResult<ModelIdResp>.Failure(error?.Detail, error.Extensions);
+        throw CreateException(nameof(ProblemDetails));
     }
+
+    private static InvalidOperationException CreateException(string name) =>
+        new($"Got unknown response from API, expected type of `{name}`.");
 }

@@ -1,9 +1,10 @@
+using FluentResults;
 using MediatR;
 using OnlineMinion.Contracts.Responses;
 
 namespace OnlineMinion.Contracts.AppMessaging.Requests;
 
-public sealed class CreateAccountSpecReq : BaseUpsertAccountSpecReqData, IRequest<HandlerResult<ModelIdResp>>
+public sealed class CreateAccountSpecReq : BaseUpsertAccountSpecReqData, IRequest<Result<ModelIdResp>>
 {
     public CreateAccountSpecReq() : base(string.Empty, string.Empty, null) { }
 

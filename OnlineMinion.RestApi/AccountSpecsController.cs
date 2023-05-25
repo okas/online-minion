@@ -116,9 +116,9 @@ public class AccountSpecsController : ControllerBase
     {
         var resp = await _mediator.Send(req, ct);
 
-        return resp.IsSuccess
-            ? CreatedAtAction(nameof(GetById), new { resp.Data.Id, }, resp.Data)
-            : Problem(resp.ErrorMessage);
+        return resp is { IsSuccess: true, }
+            ? CreatedAtAction(nameof(GetById), new { resp.Value.Id, }, resp.Value)
+            : Problem(resp.Errors[0].Message);
     }
 
     [HttpPut("{id}")]

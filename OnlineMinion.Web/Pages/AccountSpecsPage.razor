@@ -148,6 +148,7 @@
 
   private async Task SubmitUpdate(UpdateAccountSpecReq request)
   {
+  // TODO: problem handling in UI
     _isSubmitting = true;
     var result = await Mediator.Send(request, _ct);
     _isSubmitting = false;
@@ -170,6 +171,7 @@
 
   private async Task SubmitCreate(CreateAccountSpecReq request)
   {
+    // TODO: problem handling in UI
     _isSubmitting = true;
     var result = await Mediator.Send(request, _ct);
     _isSubmitting = false;

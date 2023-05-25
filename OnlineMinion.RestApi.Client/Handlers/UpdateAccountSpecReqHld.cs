@@ -6,6 +6,7 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
+// TODO: To static Result.
 internal sealed class UpdateAccountSpecReqHld : IRequestHandler<UpdateAccountSpecReq, Result<bool>>
 {
     private readonly ApiClientProvider _api;
