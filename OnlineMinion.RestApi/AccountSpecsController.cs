@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OnlineMinion.Common.Errors;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
@@ -126,8 +127,25 @@ public class AccountSpecsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Update(UpdateAccountSpecReq req, CancellationToken ct) =>
-        (await _mediator.Send(req, ct)).Value ? NoContent() : NotFound();
+    public async Task<IActionResult> Update(UpdateAccountSpecReq req, CancellationToken ct)
+    {
+        var resp = await _mediator.Send(req, ct);
+
+        if (resp.IsSuccess)
+        {
+            return NoContent();
+        }
+
+        if (resp.HasError<NotFoundError>())
+        {
+            return NotFound();
+        }
+
+        return Problem(
+            resp.Errors[0].Message,
+            Url.Action(nameof(GetById), new { req.Id, })
+        );
+    }
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

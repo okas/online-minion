@@ -8,9 +8,8 @@
 @using OnlineMinion.Contracts.AppMessaging.Requests
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.RestApi.Client.Requests
-@using FluentResults
 @using MediatR
-@using OnlineMinion.Web.Validation
+@using FluentResults
 @inherits OnlineMinion.Web.Pages.Base.BaseCancellationTokenPage
 
 @code {
@@ -136,71 +135,43 @@
 
   private async Task OnValidSubmitHandler()
   {
-    switch (_modelUpsert)
+    if (_modelUpsert is null)
     {
-      case null:
-        return;
-      case UpdateAccountSpecReq req:
-        await SubmitUpdate(req);
-        break;
-      case CreateAccountSpecReq req:
-        await SubmitCreate(req);
-        break;
+      return;
     }
-  }
 
-  private async Task SubmitUpdate(UpdateAccountSpecReq request)
-  {
   // TODO: problem handling in UI
     _isSubmitting = true;
-    var result = await Mediator.Send(request, _ct);
+    var result = await Mediator.Send(_modelUpsert, _ct) as ResultBase;
     _isSubmitting = false;
 
-    if (result.Value)
+    if (result!.IsFailed)
     {
-      _modalUpsert.Close();
-      var model = _vm!.Single(m => m.Id == request.Id);
-      var clone = model with { Name = request.Name, Group = request.Group, Description = request.Description, };
-
-      _vm![_vm.IndexOf(model)] = clone;
-
-      _modelUpsert = null;
+      _editorRef.SetServerValidationErrors(result.Errors[0]);
+      return;
     }
-    else
+
+    _modalUpsert.Close();
+
+    switch (_modelUpsert)
     {
-      HandleUpsertProblems("update", result);
+      case UpdateAccountSpecReq req:
+        UpdateViewModel(req);
+        break;
+      case CreateAccountSpecReq:
+        await NavigateToNewItemPage();
+        break;
     }
+
+    _modelUpsert = null;
   }
 
-  private async Task SubmitCreate(CreateAccountSpecReq request)
+  private void UpdateViewModel(UpdateAccountSpecReq request)
   {
-    _isSubmitting = true;
-    var result = await Mediator.Send(request, _ct);
-    _isSubmitting = false;
+    var model = _vm!.Single(m => m.Id == request.Id);
+    var clone = model with { Name = request.Name, Group = request.Group, Description = request.Description, };
 
-    if (result.IsSuccess)
-    {
-      _modalUpsert.Close();
-      await NavigateToNewItemPage();
-      _modelUpsert = null;
-    }
-    else
-    {
-      HandleUpsertProblems("creation", result);
-    }
-  }
-
-  private void HandleUpsertProblems(string action, IResultBase result)
-  {
-    var errors = result.Errors.First();
-
-    _editorRef.SetServerValidationErrors(errors);
-
-    Logger.LogWarning("Account Specification {Action} failed, {Reason}: {Fields}",
-      action,
-      errors.Message,
-      string.Join(", ", errors.Metadata.Select(m => ServerSideValidator.GetFieldName(m.Key)))
-      );
+    _vm![_vm.IndexOf(model)] = clone;
   }
 
   private async Task NavigateToNewItemPage()

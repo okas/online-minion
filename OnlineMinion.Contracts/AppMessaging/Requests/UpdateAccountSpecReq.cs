@@ -4,7 +4,7 @@ using MediatR;
 
 namespace OnlineMinion.Contracts.AppMessaging.Requests;
 
-public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IRequest<Result<bool>>
+public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IRequest<Result>
 {
     public UpdateAccountSpecReq() : base(string.Empty, string.Empty, null) { }
 

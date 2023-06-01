@@ -1,29 +1,40 @@
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Common.Errors;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Data;
+using OnlineMinion.Data.Entities;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, Result<bool>>
+public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, Result>
 {
     private readonly OnlineMinionDbContext _dbContext;
 
     public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<Result<bool>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
+    public async Task<Result> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
     {
         // TODO Handle validation and/or exception logic here
 
-        var accountSpec = await _dbContext.AccountSpecs.FindAsync(new object?[] { rq.Id, }, ct).ConfigureAwait(false);
+        var entity = await _dbContext.AccountSpecs.FindAsync(new object?[] { rq.Id, }, ct)
+            .ConfigureAwait(false);
 
-        accountSpec!.Name = rq.Name;
-        accountSpec.Group = rq.Group;
-        accountSpec.Description = rq.Description;
+        if (entity is not null)
+        {
+            entity.Name = rq.Name;
+            entity.Group = rq.Group;
+            entity.Description = rq.Description;
+        }
+        else
+        {
+            return Result
+                .Fail(new NotFoundError(nameof(AccountSpec), rq.Id))
+                .Log<UpdateAccountSpecReqHlr>();
+        }
 
-        var updatedCount = await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
-        return updatedCount > 0;
+        return Result.Ok();
     }
 }
