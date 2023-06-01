@@ -15,16 +15,14 @@ public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecR
     public async Task<Result<bool>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
     {
         // TODO Handle validation and/or exception logic here
-        var updatedCount = await _dbContext.AccountSpecs
-            .Where(a => a.Id == rq.Id)
-            .ExecuteUpdateAsync(
-                s => s
-                    .SetProperty(a => a.Name, rq.Name)
-                    .SetProperty(a => a.Group, rq.Group)
-                    .SetProperty(a => a.Description, rq.Description),
-                ct
-            )
-            .ConfigureAwait(false);
+
+        var accountSpec = await _dbContext.AccountSpecs.FindAsync(new object?[] { rq.Id, }, ct).ConfigureAwait(false);
+
+        accountSpec!.Name = rq.Name;
+        accountSpec.Group = rq.Group;
+        accountSpec.Description = rq.Description;
+
+        var updatedCount = await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
         return updatedCount > 0;
     }
