@@ -1,6 +1,8 @@
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Application.Swagger;
+using OnlineMinion.Common.Result;
 using OnlineMinion.Data;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.HttpRequestPipeline;
@@ -13,6 +15,8 @@ var webAppBuilder = WebApplication.CreateBuilder(args);
 #region Container setup
 
 var confManager = webAppBuilder.Configuration;
+
+webAppBuilder.Services.AddLogging();
 
 webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
     optionsBuilder => optionsBuilder.UseSqlServer(
@@ -46,6 +50,12 @@ if (webAppBuilder.Environment.IsDevelopment())
 #endregion
 
 var app = webAppBuilder.Build();
+
+#region Other configuration
+
+Result.Setup(cfg => cfg.Logger = new ResultLogger(app.Services.GetService<ILoggerFactory>()!));
+
+#endregion
 
 #region HTTP request pipeline
 

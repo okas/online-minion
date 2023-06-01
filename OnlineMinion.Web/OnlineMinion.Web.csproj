@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj" />
+        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj" />
         <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj" />
         <ProjectReference Include="..\OnlineMinion.RestApi.Client\OnlineMinion.RestApi.Client.csproj" />
     </ItemGroup>
