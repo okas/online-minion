@@ -1,7 +1,5 @@
-using FluentResults;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using OnlineMinion.Common.Result;
 using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Infrastructure;
@@ -38,11 +36,5 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 #endregion
 
 var webAssemblyHost = builder.Build();
-
-#region Other configuration
-
-Result.Setup(cfg => cfg.Logger = new ResultLogger(webAssemblyHost.Services.GetService<ILoggerFactory>()!));
-
-#endregion
 
 await webAssemblyHost.RunAsync().ConfigureAwait(false);

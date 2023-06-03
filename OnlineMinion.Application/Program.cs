@@ -1,8 +1,6 @@
-using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Application.Swagger;
-using OnlineMinion.Common.Result;
 using OnlineMinion.Data;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.HttpRequestPipeline;
@@ -50,12 +48,6 @@ if (webAppBuilder.Environment.IsDevelopment())
 #endregion
 
 var app = webAppBuilder.Build();
-
-#region Other configuration
-
-Result.Setup(cfg => cfg.Logger = new ResultLogger(app.Services.GetService<ILoggerFactory>()!));
-
-#endregion
 
 #region HTTP request pipeline
 
