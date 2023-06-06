@@ -1,72 +1,65 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentResults;
+using ErrorOr;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
+using static OnlineMinion.RestApi.Client.HttpMessageTransformers;
+
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, Result<ModelIdResp>>
+internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
 {
     private readonly ApiClientProvider _api;
+    private readonly ILogger<CreateAccountSpecReqHlr> _logger;
 
-    public CreateAccountSpecReqHlr(ApiClientProvider api) => _api = api;
-
-    public async Task<Result<ModelIdResp>> Handle(
-        CreateAccountSpecReq request,
-        CancellationToken    cancellationToken
-    )
+    public CreateAccountSpecReqHlr(ApiClientProvider api, ILogger<CreateAccountSpecReqHlr> logger)
     {
-        using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, request, cancellationToken)
+        _api = api;
+        _logger = logger;
+    }
+
+    public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq request, CancellationToken ct)
+    {
+        using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, request, ct)
             .ConfigureAwait(false);
 
         if (message.IsSuccessStatusCode)
         {
-            if (await message.Content.ReadFromJsonAsync<ModelIdResp>(cancellationToken).ConfigureAwait(false)
-                is { Id: > 0, } modelIdResp)
-            {
-                return modelIdResp;
-            }
-
-            throw CreateException(nameof(ModelIdResp));
+            return await message.Content.ReadFromJsonAsync<ModelIdResp>(ct).ConfigureAwait(false)
+                is { Id: > 0, } modelIdResp
+                ? modelIdResp
+                : throw ExceptionHelpers.CreateForUnknownResponse(nameof(ModelIdResp));
         }
 
-        if (message.StatusCode == HttpStatusCode.Conflict)
+        switch (message.StatusCode)
         {
-            if (await message.Content.ReadFromJsonAsync<HttpValidationProblemDetails?>(cancellationToken)
-                    .ConfigureAwait(false) is { } validationError)
+            case HttpStatusCode.Conflict:
             {
-                return new Error(validationError.Detail).WithMetadata(
-                    validationError.Errors.ToDictionary(
-                        kvp => kvp.Key,
-                        kvp => (object)kvp.Value,
-                        StringComparer.Ordinal
-                    )
+                _logger.LogWarning("Conflict error while updating Account specification");
+                return await TransformConflictHttpResponse<ModelIdResp>(message, ct).ConfigureAwait(false);
+            }
+            case HttpStatusCode.BadRequest:
+            {
+                _logger.LogWarning("Validation error while creating Account specification");
+                return await TransformBadRequestHttpResponse<ModelIdResp>(message, ct).ConfigureAwait(false);
+            }
+            default:
+            {
+                var reasonPhrase = message.ReasonPhrase ?? string.Empty;
+                var description = message.Content.ToString() ?? string.Empty;
+
+                _logger.LogError(
+                    "Account specification cannot be created. Reason: {ReasonPhrase}. Description: {Description}",
+                    reasonPhrase,
+                    description
                 );
+
+                return Error.Failure(reasonPhrase, description);
             }
-
-            throw CreateException(nameof(HttpValidationProblemDetails));
         }
-
-        if (await message.Content.ReadFromJsonAsync<ProblemDetails?>(cancellationToken)
-                .ConfigureAwait(false) is { } problem)
-        {
-            return new Error(problem.Detail).WithMetadata(
-                problem.Extensions.ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value ?? string.Empty,
-                    StringComparer.Ordinal
-                )
-            );
-        }
-
-        throw CreateException(nameof(ProblemDetails));
     }
-
-    private static InvalidOperationException CreateException(string name) =>
-        new($"Got unknown response from API, expected type of `{name}`.");
 }

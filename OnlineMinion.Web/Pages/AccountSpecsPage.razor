@@ -9,8 +9,8 @@
 @using OnlineMinion.Contracts.Responses
 @using OnlineMinion.RestApi.Client.Requests
 @using MediatR
-@using FluentResults
-@inherits OnlineMinion.Web.Pages.Base.BaseCancellationTokenPage
+@using ErrorOr
+@inherits BaseCancellationTokenPage
 
 @code {
   public AccountSpecsPage() => _ct = CancellationTokenSource.Token;
@@ -41,7 +41,7 @@
   {
   // This order ensures that incoming params are sett before they ar needed by data loading.
     await base.SetParametersAsync(parameters);
-    GetPageViewModel();
+    await GetPageViewModel();
   }
 
   protected override void OnInitialized()
@@ -51,25 +51,22 @@
     base.OnInitialized();
   }
 
-  private void GetPageViewModel()
+  private async Task GetPageViewModel()
   {
-    InvokeAsync(async () =>
+    _vm = null;
+
+    var result = await Mediator.Send(new GetAccountSpecsReq(Page, PageSize), _ct);
+
+    _paging = result.Paging;
+    StateHasChanged();
+
+    _vm = new();
+
+    await foreach (var model in result.Result.WithCancellation(_ct))
     {
-      _vm = null;
-
-      var result = await Mediator.Send(new GetAccountSpecsReq(Page, PageSize), _ct);
-
-      _paging = result.Paging;
+      _vm.Add(model);
       StateHasChanged();
-
-      _vm = new();
-
-      await foreach (var model in result.Result.WithCancellation(_ct))
-      {
-        _vm.Add(model);
-        StateHasChanged();
-      }
-    });
+    }
   }
 
   private void PageChanged(int page)
@@ -95,8 +92,10 @@
 
   private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
     Navigation.GetUriWithQueryParameters(
-      new Dictionary<string, object?> { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize, }
-      ));
+      new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+      { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize, }
+      )
+    );
 
   private void OnAddHandler()
   {
@@ -113,8 +112,7 @@
   {
     if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
     {
-      _modalUpsertTitle = GetTitle();
-      _modalUpsert.Open();
+      OpenModalForEdit(id);
 
       return;
     }
@@ -122,15 +120,19 @@
     if (await Mediator.Send(new GetAccountSpecByIdReq(id), _ct) is { } model)
     {
       _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-      _modalUpsertTitle = GetTitle();
-      _modalUpsert.Open();
+      OpenModalForEdit(id);
     }
     else
     {
+  // TODO: Notify this info to user as well!
       Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
     }
+  }
 
-    string GetTitle() => $"Edit Account Specification: id#{id}";
+  private void OpenModalForEdit(int id)
+  {
+    _modalUpsertTitle = $"Edit Account Specification: id#{id}";
+    _modalUpsert.Open();
   }
 
   private async Task OnValidSubmitHandler()
@@ -140,14 +142,23 @@
       return;
     }
 
-  // TODO: problem handling in UI
     _isSubmitting = true;
-    var result = await Mediator.Send(_modelUpsert, _ct) as ResultBase;
+    var result = await Mediator.Send(_modelUpsert, _ct) as IErrorOr;
     _isSubmitting = false;
 
-    if (result!.IsFailed)
+    if (result!.IsError)
     {
-      _editorRef.SetServerValidationErrors(result.Errors[0]);
+      _editorRef.SetServerValidationErrors(result.Errors!);
+
+      if (result.Errors!.Exists(err => err.Type is ErrorType.NotFound)
+          && _modelUpsert is UpdateAccountSpecReq updateModel)
+      {
+  // TODO: implement UX considering last element on page so that users always sees correct page.
+        _vm!.Remove(_vm.Single(m => m.Id == updateModel.Id));
+      }
+
+  //TODO handel all other errors
+
       return;
     }
 
@@ -185,7 +196,7 @@
 
     if (pages == Page)
     {
-      GetPageViewModel();
+      await GetPageViewModel();
     }
     else
     {
@@ -196,10 +207,8 @@
   private void OnDeleteHandler(int id)
   {
     _modelDelete = _vm!.Single(m => m.Id == id);
-    _modalDeleteTitle = GetTitle();
+    _modalDeleteTitle = $"Delete Account Specification: id#{id}";
     _modalDelete.Open();
-
-    string GetTitle() => $"Delete Account Specification: id#{id}";
   }
 
   private async Task OnDeleteSubmitHandler()
@@ -218,7 +227,7 @@
     if (result)
     {
       _modalDelete.Close();
-      HandlePageStateAfterDelete();
+      await HandlePageStateAfterDelete();
     }
     else
     {
@@ -226,7 +235,7 @@
     }
   }
 
-  private void HandlePageStateAfterDelete()
+  private async Task HandlePageStateAfterDelete()
   {
   // Detect it was last item on page, or very last item of the whole resource.
   // Navigate only, when page has to be changed, get current page's items otherwise.
@@ -237,7 +246,7 @@
     }
     else
     {
-      GetPageViewModel();
+      await GetPageViewModel();
     }
 
     _modelDelete = null;

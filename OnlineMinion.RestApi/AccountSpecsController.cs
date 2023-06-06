@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Common.Errors;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
@@ -96,7 +96,7 @@ public class AccountSpecsController : ControllerBase
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> GetSome(
         [FromQuery] GetAccountSpecsReq req,
         CancellationToken              ct
     )
@@ -111,50 +111,70 @@ public class AccountSpecsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [SwaggerResponse(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
-    {
-        var resp = await _mediator.Send(req, ct);
+    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct) =>
+        (await _mediator.Send(req, ct))
+        .MatchFirst(
+            idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
+            error => Problem(error.Description) // TODO: put info for Problem factory usage
+        );
 
-        return resp is { IsSuccess: true, }
-            ? CreatedAtAction(nameof(GetById), new { resp.Value.Id, }, resp.Value)
-            : Problem(resp.Errors[0].Message);
-    }
-
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Update(UpdateAccountSpecReq req, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, UpdateAccountSpecReq req, CancellationToken ct)
     {
-        var resp = await _mediator.Send(req, ct);
-
-        if (resp.IsSuccess)
+        if (CheckId(id, req) is { } actionResult)
         {
-            return NoContent();
+            return actionResult;
         }
 
-        if (resp.HasError<NotFoundError>())
-        {
-            return NotFound();
-        }
+        var result = await _mediator.Send(req, ct);
 
-        return Problem(
-            resp.Errors[0].Message,
-            Url.Action(nameof(GetById), new { req.Id, })
+        return result.MatchFirst<IActionResult>(
+            _ => NoContent(),
+            error => error.Type switch
+            {
+                ErrorType.NotFound => NotFound(),
+                ErrorType.Conflict => Conflict(),
+                _ => Problem(error.Description, GetInstanceUrl(req.Id)), // TODO: put info for Problem factory usage
+            }
         );
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
+        int                              id,
         [FromRoute] DeleteAccountSpecReq req,
         CancellationToken                ct
-    ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
+    )
+    {
+        if (CheckId(id, req) is { } actionResult)
+        {
+            return actionResult;
+        }
+
+        return await _mediator.Send(req, ct) ? NoContent() : NotFound();
+    }
+
+    private string? GetInstanceUrl(int id) => Url.Action(nameof(GetById), new { id, });
+
+    private ActionResult? CheckId(int id, IHasIntId req)
+    {
+        if (id == req.Id)
+        {
+            return null;
+        }
+
+        ModelState.AddModelError("id", "Id in route and in body are not the same.");
+
+        return ValidationProblem();
+    }
 
     private static void SetPagingHeaders(PagingMetaInfo values, IHeaderDictionary headers)
     {
