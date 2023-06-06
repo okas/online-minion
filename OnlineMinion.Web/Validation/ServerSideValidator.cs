@@ -29,22 +29,27 @@ public class ServerSideValidator : ComponentBase
         CurrentEditContext.OnFieldChanged += (s, e) => _messageStore.Clear(e.FieldIdentifier);
     }
 
-    public void DisplayErrors(IDictionary<string, object> errors)
+    public void DisplayErrors(IDictionary<string, IEnumerable<object>> errors)
     {
-        foreach (var fieldErrors in errors.Where(pair => pair.Value is IEnumerable<object>))
+        foreach (var (field, messages) in errors)
         {
-            var fieldName = GetFieldName(fieldErrors.Key);
-
-            foreach (var message in (IEnumerable<object>)fieldErrors.Value)
-            {
-                _messageStore.Add(CurrentEditContext.Field(fieldName), GetErrorMessage(message));
-            }
+            _messageStore.Add(
+                CurrentEditContext.Field(GetFieldName(field)),
+                messages.Select(GetErrorMessage)
+            );
         }
+
+        CurrentEditContext.NotifyValidationStateChanged();
+    }
+
+    public void DisplayErrors(string message)
+    {
+        _messageStore.Add(CurrentEditContext.Field(""), message);
 
         CurrentEditContext.NotifyValidationStateChanged();
     }
 
     public static string GetFieldName(string rawKey) => rawKey.Split('.')[^1];
 
-    private static string GetErrorMessage(object rawMessage) => rawMessage.ToString() ?? "#error";
+    private static string GetErrorMessage(object? rawMessage) => rawMessage?.ToString() ?? "#error";
 }
