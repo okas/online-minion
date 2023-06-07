@@ -13,6 +13,8 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging")
 );
 
+builder.Services.AddLogging();
+
 builder.Services.AddHttpClient(
     Constants.HostClient,
     client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
@@ -20,7 +22,7 @@ builder.Services.AddHttpClient(
 
 builder.Services.AddRestApiClient(
     builder.Configuration,
-    new[] { new SetWebAssemblyStreamingOptionsHandler(), },
+    new[] { typeof(SetWebAssemblyStreamingOptionsHandler), },
     Constants.ApiClient
 );
 

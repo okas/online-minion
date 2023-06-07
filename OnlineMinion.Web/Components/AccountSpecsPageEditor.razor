@@ -1,20 +1,4 @@
-@using OnlineMinion.Contracts.AppMessaging
-@code {
-
-  [Parameter]
-  [EditorRequired]
-  public BaseUpsertAccountSpecReqData Model { get; set; } = null!;
-
-  [Parameter]
-  [EditorRequired]
-  public bool IsSubmitting { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public EventCallback<EditContext> OnValidSubmit { get; set; }
-
-}
-
+@using OnlineMinion.Web.Validation
 @{
   var name = nameof(Model.Name);
   var nameLower = name.ToLowerInvariant();
@@ -26,8 +10,9 @@
 
 <div class="row">
 
-  <EditForm Model="Model" OnValidSubmit="@OnValidSubmit">
+  <EditForm Model="@Model" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator/>
+    <ServerSideValidator @ref="@_serverSideValidator"/>
     <ValidationSummary/>
 
     <fieldset disabled="@IsSubmitting">
@@ -50,7 +35,7 @@
 
       <div class="form-group row">
         <div class="col-sm-2">
-          <button class="btn btn-primary form-control" type="submit">Submit</button>
+          <button class="btn btn-primary form-control" disabled="@_isEditorActionDisabled" type="submit">Submit</button>
         </div>
       </div>
     </fieldset>

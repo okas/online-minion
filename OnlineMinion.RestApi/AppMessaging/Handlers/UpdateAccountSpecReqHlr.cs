@@ -1,29 +1,43 @@
+using ErrorOr;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Data;
+using OnlineMinion.Data.Entities;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, bool>
+public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<bool>>
 {
     private readonly OnlineMinionDbContext _dbContext;
+    private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
 
-    public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
-
-    public async Task<bool> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
+    public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext, ILogger<UpdateAccountSpecReqHlr> logger)
     {
-        var updatedCount = await _dbContext.AccountSpecs
-            .Where(a => a.Id == rq.Id)
-            .ExecuteUpdateAsync(
-                s => s
-                    .SetProperty(a => a.Name, rq.Name)
-                    .SetProperty(a => a.Group, rq.Group)
-                    .SetProperty(a => a.Description, rq.Description),
-                ct
-            )
+        _dbContext = dbContext;
+        _logger = logger;
+    }
+
+    public async Task<ErrorOr<bool>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
+    {
+        var entity = await _dbContext.AccountSpecs.FindAsync(new object?[] { rq.Id, }, ct)
             .ConfigureAwait(false);
 
-        return updatedCount > 0;
+        if (entity is not null)
+        {
+            entity.Name = rq.Name;
+            entity.Group = rq.Group;
+            entity.Description = rq.Description;
+        }
+        else
+        {
+            _logger.LogWarning("{ModelName} with Id {Id} not found", nameof(AccountSpec), rq.Id);
+
+            return Error.NotFound();
+        }
+
+        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+
+        return default;
     }
 }

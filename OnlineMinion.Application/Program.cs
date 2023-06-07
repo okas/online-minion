@@ -14,6 +14,8 @@ var webAppBuilder = WebApplication.CreateBuilder(args);
 
 var confManager = webAppBuilder.Configuration;
 
+webAppBuilder.Services.AddLogging();
+
 webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
     optionsBuilder => optionsBuilder.UseSqlServer(
         "name=ConnectionStrings:DefaultConnection",

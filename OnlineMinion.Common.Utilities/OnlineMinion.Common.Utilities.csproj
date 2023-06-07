@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1"/>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.52">
+        <PackageReference Include="JetBrains.Annotations" Version="2023.2.0-eap3" />
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.56">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     </ItemGroup>
 
 </Project>

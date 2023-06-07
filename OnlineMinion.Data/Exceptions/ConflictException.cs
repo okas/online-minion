@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using EntityFramework.Exceptions.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace OnlineMinion.Data.Exceptions;
 
@@ -10,9 +11,9 @@ public class ConflictException : Exception
     public ConflictException(string message, UniqueConstraintException ex) : base(message) =>
         Errors = GetErrorData(ex.Entries, ex.Message, ex.InnerException!.Message);
 
-    public IDictionary<string, string[]> Errors { get; init; }
+    public IList<ErrorDescriptor> Errors { get; init; }
 
-    private Dictionary<string, string[]> GetErrorData(
+    private static List<ErrorDescriptor> GetErrorData(
         IReadOnlyList<EntityEntry> uniqueConstraintExceptionEntries,
         string                     dbUpdateExMessage,
         string                     sqlExMessage
@@ -20,66 +21,38 @@ public class ConflictException : Exception
     {
         CheckEntries(uniqueConstraintExceptionEntries);
 
-        var relationalModel = uniqueConstraintExceptionEntries.First().Context.Model.GetRelationalModel();
+        var relationalModel = uniqueConstraintExceptionEntries[0].Context.Model.GetRelationalModel();
 
         var distinctTypeIndex = 0;
-        var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
 
-        var distinctEntriesByType = uniqueConstraintExceptionEntries.DistinctBy(
-            e => e.Metadata.ClrType
-        );
+        var list = new List<ErrorDescriptor>();
 
-        foreach (var entityEntry in distinctEntriesByType)
+        foreach (var entityEntry in uniqueConstraintExceptionEntries.DistinctBy(e => e.Metadata.ClrType))
         {
-            var tablesRelatedToEntry = relationalModel
-                .Tables.Where(
-                    t => t.EntityTypeMappings.Any(
-                        tm => tm.EntityType.ClrType == entityEntry.Metadata.ClrType
-                    )
-                );
+            var allEntryUniqueIndices = FindAllEntryUniqueIndices(relationalModel, entityEntry);
 
-            var allEntryUniqueIndices = tablesRelatedToEntry
-                .SelectMany(t => t.Indexes)
-                .Where(i => i.IsUnique);
+            var groupedProperties = GroupEntryPropertyNamesByIndices(allEntryUniqueIndices);
 
-            var groupsOfIndexAndEntryPropertyNames = allEntryUniqueIndices.GroupBy(
-                i => i.Name,
-                i => i.MappedIndexes.SelectMany(
-                    mi => mi.Properties.Select(
-                        p => p.Name
-                    )
-                ),
-                StringComparer.Ordinal
-            );
+            var violatedIndices = FindViolatedIndices(sqlExMessage, groupedProperties);
 
-            var violatedIndices = groupsOfIndexAndEntryPropertyNames.Where(
-                gIdxPropNames => sqlExMessage.Contains(
-                    gIdxPropNames.Key,
-                    StringComparison.InvariantCultureIgnoreCase
+            var erroneousPropertyNames = GetAllPropertyNames(violatedIndices);
+
+            list.Add(
+                TransformToErrorDescriptor(
+                    distinctTypeIndex++,
+                    dbUpdateExMessage,
+                    entityEntry,
+                    erroneousPropertyNames
                 )
             );
-
-            var erroneousPropertyNames = violatedIndices.SelectMany(
-                gIdxPropNames => gIdxPropNames.SelectMany(names => names)
-            );
-
-            foreach (var propertyName in erroneousPropertyNames)
-            {
-                errors.Add(
-                    $"[{distinctTypeIndex}].{entityEntry.Metadata.ClrType.Name}.{propertyName}",
-                    new[] { dbUpdateExMessage, }
-                );
-            }
-
-            distinctTypeIndex++;
         }
 
-        return errors;
+        return list;
     }
 
     private static void CheckEntries(
         IReadOnlyList<EntityEntry> uniqueConstraintExceptionEntries,
-        [CallerArgumentExpression("uniqueConstraintExceptionEntries")]
+        [CallerArgumentExpression(nameof(uniqueConstraintExceptionEntries))]
         string? argumentExpression = null
     )
     {
@@ -90,5 +63,80 @@ public class ConflictException : Exception
                 nameof(uniqueConstraintExceptionEntries)
             );
         }
+    }
+
+    private static IEnumerable<ITableIndex> FindAllEntryUniqueIndices(
+        IRelationalModel relationalModel,
+        EntityEntry      entityEntry
+    )
+    {
+        var uniqueIndices = relationalModel.Tables
+            .Where(table => EntityTableMatcher(table, entityEntry))
+            .SelectMany(t => t.Indexes)
+            .Where(i => i.IsUnique);
+
+        return uniqueIndices;
+    }
+
+    private static bool EntityTableMatcher(ITable table, EntityEntry entityEntry) =>
+        table.EntityTypeMappings.Any(
+            tableMapping => tableMapping.EntityType.ClrType == entityEntry.Metadata.ClrType
+        );
+
+    private static IEnumerable<IGrouping<string, IEnumerable<string>>> GroupEntryPropertyNamesByIndices(
+        IEnumerable<ITableIndex> allEntryUniqueIndices
+    ) => allEntryUniqueIndices.GroupBy(
+        i => i.Name,
+        i => i.MappedIndexes.SelectMany(
+            mi => mi.Properties.Select(
+                p => p.Name
+            )
+        ),
+        StringComparer.Ordinal
+    );
+
+    private static IEnumerable<IGrouping<string, IEnumerable<string>>> FindViolatedIndices(
+        string                                              exceptionMessage,
+        IEnumerable<IGrouping<string, IEnumerable<string>>> groupedProperties
+    ) => groupedProperties.Where(
+        grIdxPropNames => exceptionMessage.Contains(
+            grIdxPropNames.Key,
+            StringComparison.InvariantCultureIgnoreCase
+        )
+    );
+
+    private static IEnumerable<string> GetAllPropertyNames(
+        IEnumerable<IGrouping<string, IEnumerable<string>>> violatedIndices
+    ) => violatedIndices
+        .SelectMany(grIdxPropNames => grIdxPropNames)
+        .SelectMany(names => names);
+
+    private static ErrorDescriptor TransformToErrorDescriptor(
+        int                 distinctTypeIndex,
+        string              dbUpdateExMessage,
+        EntityEntry         entityEntry,
+        IEnumerable<string> erroneousPropertyNames
+    )
+    {
+        var descriptor = new ErrorDescriptor(entityEntry.Metadata.GetKeys().ToString());
+
+        foreach (var propertyName in erroneousPropertyNames)
+        {
+            descriptor.Details.Add(
+                CreateMemberNameKey(distinctTypeIndex, entityEntry, propertyName),
+                new[] { dbUpdateExMessage, }
+            );
+        }
+
+        return descriptor;
+    }
+
+    private static string CreateMemberNameKey(int distinctTypeIndex, EntityEntry entityEntry, string propertyName) =>
+        $"[{distinctTypeIndex}].{entityEntry.Metadata.ClrType.Name}.{propertyName}";
+
+    public record ErrorDescriptor(object? InstanceId)
+    {
+        public IDictionary<string, string[]> Details { get; } =
+            new Dictionary<string, string[]>(StringComparer.Ordinal);
     }
 }
