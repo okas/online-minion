@@ -4,4 +4,7 @@ using OnlineMinion.Contracts.Responses;
 
 namespace OnlineMinion.Contracts.AppMessaging.Requests;
 
-public record GetAccountSpecByIdReq([Required] int Id) : IHasIntId, IRequest<AccountSpecResp?>;
+public record GetAccountSpecByIdReq(
+    [Required(DisallowAllDefaultValues = true)]
+    int Id
+) : IHasIntId, IRequest<AccountSpecResp?>;
