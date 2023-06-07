@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2023.2.0-eap3" />
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.56">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.60">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
