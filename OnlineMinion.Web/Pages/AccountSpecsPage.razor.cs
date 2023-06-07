@@ -12,7 +12,7 @@ using OnlineMinion.Web.Shared;
 
 namespace OnlineMinion.Web.Pages;
 
-public partial class AccountSpecsPage : BaseCancellationTokenPage
+public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private AccountSpecsPageEditor _editorRef = null!;
     private bool _isSubmitting;

@@ -2,11 +2,12 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
+using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.Validation;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsPageEditor : ComponentBase
+public partial class AccountSpecsPageEditor : ComponentWithCancellationToken
 {
     private bool _isEditorActionDisabled;
     private ServerSideValidator _serverSideValidator = null!;
