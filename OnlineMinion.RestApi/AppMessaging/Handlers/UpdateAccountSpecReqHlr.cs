@@ -7,7 +7,7 @@ using OnlineMinion.Data.Entities;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<bool>>
+public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
 {
     private readonly OnlineMinionDbContext _dbContext;
     private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
@@ -18,7 +18,7 @@ public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecR
         _logger = logger;
     }
 
-    public async Task<ErrorOr<bool>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
+    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
     {
         var entity = await _dbContext.AccountSpecs.FindAsync(new object?[] { rq.Id, }, ct)
             .ConfigureAwait(false);
@@ -38,6 +38,6 @@ public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecR
 
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
-        return default;
+        return Result.Updated;
     }
 }

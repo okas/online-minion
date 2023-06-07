@@ -143,52 +143,79 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private async Task OnValidSubmitHandler()
     {
-        if (_modelUpsert is null)
-        {
-            return;
-        }
-
         _isSubmitting = true;
-        var result = await Mediator.Send(_modelUpsert, CT) as IErrorOr;
-        _isSubmitting = false;
-
-        if (result!.IsError)
-        {
-            _editorRef.SetServerValidationErrors(result.Errors!);
-
-            if (result.Errors!.Exists(err => err.Type is ErrorType.NotFound)
-                && _modelUpsert is UpdateAccountSpecReq updateModel)
-            {
-                // TODO: implement UX considering last element on page so that users always sees correct page.
-                _vm!.Remove(_vm.Single(m => m.Id == updateModel.Id));
-            }
-
-            //TODO handel all other errors
-
-            return;
-        }
-
-        _modalUpsert.Close();
 
         switch (_modelUpsert)
         {
-            case UpdateAccountSpecReq req:
-                UpdateViewModel(req);
+            case null:
                 break;
-            case CreateAccountSpecReq:
-                await NavigateToNewItemPage();
+            case UpdateAccountSpecReq req:
+                await HandleUpdateSubmit(req);
+                break;
+            case CreateAccountSpecReq req:
+                await HandleCreateSubmit(req);
                 break;
         }
 
-        _modelUpsert = null;
+        _isSubmitting = false;
     }
 
-    private void UpdateViewModel(UpdateAccountSpecReq request)
+    private async Task HandleUpdateSubmit(UpdateAccountSpecReq request)
+    {
+        var result = await Mediator.Send(request, CT);
+
+        result.Switch(
+            _ =>
+            {
+                UpdateViewModelAfterEdit(request);
+                ResetUpsertModal();
+            },
+            errors =>
+            {
+                _editorRef.SetServerValidationErrors(errors);
+
+                if (errors.Exists(err => err.Type is ErrorType.NotFound))
+                {
+                    // TODO: implement UX considering last element on page so that users always sees correct page.
+                    _vm!.Remove(_vm.Single(m => m.Id == request.Id));
+                }
+
+                //TODO handel all other errors
+            }
+        );
+    }
+
+    private void UpdateViewModelAfterEdit(UpdateAccountSpecReq request)
     {
         var model = _vm!.Single(m => m.Id == request.Id);
-        var clone = model with { Name = request.Name, Group = request.Group, Description = request.Description, };
+        var clone = model with
+        {
+            Name = request.Name, Group = request.Group, Description = request.Description,
+        };
 
         _vm![_vm.IndexOf(model)] = clone;
+    }
+
+
+    private async Task HandleCreateSubmit(CreateAccountSpecReq req)
+    {
+        var result = await Mediator.Send(req, CT);
+
+        await result.SwitchAsync(
+            async _ =>
+            {
+                await NavigateToNewItemPage();
+                ResetUpsertModal();
+            },
+            errors =>
+            {
+                _editorRef.SetServerValidationErrors(errors);
+
+                //TODO handel all other errors
+
+                return Task.CompletedTask;
+            }
+        );
     }
 
     private async Task NavigateToNewItemPage()
@@ -208,6 +235,12 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         {
             NavigateByPager(pages);
         }
+    }
+
+    private void ResetUpsertModal()
+    {
+        _modalUpsert.Close();
+        _modelUpsert = null;
     }
 
     private void OnDeleteHandler(int id)

@@ -9,7 +9,7 @@ using static OnlineMinion.RestApi.Client.HttpMessageTransformers;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<bool>>
+internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
 {
     private readonly ApiClientProvider _api;
     private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
@@ -20,7 +20,7 @@ internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpe
         _logger = logger;
     }
 
-    public async Task<ErrorOr<bool>> Handle(UpdateAccountSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq request, CancellationToken ct)
     {
         var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
         using var message = await _api.Client.PutAsJsonAsync(uri, request, ct).ConfigureAwait(false);
@@ -40,12 +40,12 @@ internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpe
             case HttpStatusCode.Conflict:
             {
                 _logger.LogWarning("Conflict error while updating Account specification");
-                return await TransformConflictHttpResponse<bool>(message, ct).ConfigureAwait(false);
+                return await TransformConflictHttpResponse<Updated>(message, ct).ConfigureAwait(false);
             }
             case HttpStatusCode.BadRequest:
             {
                 _logger.LogWarning("Validation error while updating Account specification");
-                return await TransformBadRequestHttpResponse<bool>(message, ct).ConfigureAwait(false);
+                return await TransformBadRequestHttpResponse<Updated>(message, ct).ConfigureAwait(false);
             }
             default:
             {
