@@ -1,26 +1,4 @@
-@using OnlineMinion.Contracts.AppMessaging
 @using OnlineMinion.Web.Validation
-@using FluentResults
-@code {
-
-  [Parameter]
-  [EditorRequired]
-  public BaseUpsertAccountSpecReqData Model { get; set; } = null!;
-
-  [Parameter]
-  [EditorRequired]
-  public bool IsSubmitting { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public EventCallback<EditContext> OnValidSubmit { get; set; }
-
-  private ServerSideValidator _serverSideValidator = null!;
-
-  public void SetServerValidationErrors(IError errors) => _serverSideValidator.DisplayErrors(errors.Metadata);
-
-}
-
 @{
   var name = nameof(Model.Name);
   var nameLower = name.ToLowerInvariant();
@@ -57,7 +35,7 @@
 
       <div class="form-group row">
         <div class="col-sm-2">
-          <button class="btn btn-primary form-control" type="submit">Submit</button>
+          <button class="btn btn-primary form-control" disabled="@_isEditorActionDisabled" type="submit">Submit</button>
         </div>
       </div>
     </fieldset>
