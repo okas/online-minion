@@ -2,7 +2,7 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Web.Pages.Base;
+using OnlineMinion.Web.Infrastructure;
 using OnlineMinion.Web.Validation;
 
 namespace OnlineMinion.Web.Components;
