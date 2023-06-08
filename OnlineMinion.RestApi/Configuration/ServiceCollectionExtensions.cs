@@ -1,4 +1,5 @@
 using CorsPolicySettings;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -8,7 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts;
+using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
+using OnlineMinion.RestApi.AppMessaging.Behaviors;
 using OnlineMinion.RestApi.AppMessaging.Handlers;
 using OnlineMinion.RestApi.AppMessaging.Requests;
 using OnlineMinion.RestApi.ProblemHandling;
@@ -44,7 +48,20 @@ public static class ServiceCollectionExtensions
 
         services
             .AddMediatR(
-                cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetPagingInfoReqHlr<>))
+                cfg =>
+                {
+                    cfg.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions));
+
+                    // Pipeline
+                    cfg.AddBehavior(
+                            typeof(IPipelineBehavior<CreateAccountSpecReq, ErrorOr<ModelIdResp>>),
+                            typeof(UnitOfWorkBehavior<CreateAccountSpecReq, ErrorOr<ModelIdResp>>)
+                        )
+                        .AddBehavior(
+                            typeof(IPipelineBehavior<UpdateAccountSpecReq, ErrorOr<Updated>>),
+                            typeof(UnitOfWorkBehavior<UpdateAccountSpecReq, ErrorOr<Updated>>)
+                        );
+                }
             )
             .AddTransient<
                 IRequestHandler<GetPagingMetaInfoReq<AccountSpec>, PagingMetaInfo>,
