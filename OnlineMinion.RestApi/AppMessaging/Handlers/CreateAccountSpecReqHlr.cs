@@ -20,8 +20,6 @@ public sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecR
             )
             .ConfigureAwait(false);
 
-        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
-
         return new ModelIdResp(entry.Entity.Id);
     }
 }

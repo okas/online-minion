@@ -8,9 +8,6 @@ public class BaseTransactionEntityConfig : IEntityTypeConfiguration<BaseTransact
 {
     public void Configure(EntityTypeBuilder<BaseTransaction> builder)
     {
-        builder.Property(e => e.Id)
-            .UseIdentityColumn();
-
         builder.Property(e => e.Subject)
             .HasMaxLength(50);
 

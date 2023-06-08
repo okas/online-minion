@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
         }
 
         services.AddMediatR(
-            opts => opts.RegisterServicesFromAssemblyContaining<ApiClientProvider>()
+            opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions))
         );
 
         return services;
