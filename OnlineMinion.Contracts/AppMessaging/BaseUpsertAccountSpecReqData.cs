@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace OnlineMinion.Contracts.AppMessaging;
 
 /// <summary>
@@ -14,10 +12,8 @@ public abstract class BaseUpsertAccountSpecReqData
         Description = description;
     }
 
-    [Required(DisallowAllDefaultValues = true)]
     public string Name { get; set; }
 
-    [Required(DisallowAllDefaultValues = true)]
     public string Group { get; set; }
 
     public string? Description { get; set; }
