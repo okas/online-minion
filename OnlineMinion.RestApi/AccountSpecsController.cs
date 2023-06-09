@@ -149,18 +149,9 @@ public class AccountSpecsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        int                              id,
         [FromRoute] DeleteAccountSpecReq req,
         CancellationToken                ct
-    )
-    {
-        if (CheckId(id, req) is { } actionResult)
-        {
-            return actionResult;
-        }
-
-        return await _mediator.Send(req, ct) ? NoContent() : NotFound();
-    }
+    ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
 
     private string? GetInstanceUrl(int id) => Url.Action(nameof(GetById), new { id, });
 
