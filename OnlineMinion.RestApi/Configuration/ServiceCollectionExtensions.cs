@@ -1,5 +1,6 @@
 using CorsPolicySettings;
 using ErrorOr;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -45,6 +46,8 @@ public static class ServiceCollectionExtensions
             .AddVersionedApiExplorer();
 
         services.AddEndpointsApiExplorer();
+
+        services.AddValidatorsFromAssemblyContaining<IHasIntId>();
 
         services
             .AddMediatR(

@@ -1,3 +1,4 @@
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Application.Swagger;
@@ -36,7 +37,8 @@ if (webAppBuilder.Environment.IsDevelopment())
         .Configure<SwaggerGeneratorOptions>(confManager.GetSection(nameof(SwaggerGeneratorOptions)))
         .Configure<SchemaGeneratorOptions>(confManager.GetSection(nameof(SchemaGeneratorOptions)))
         .Configure<SwaggerGenOptions>(confManager.GetSection(nameof(SwaggerGenOptions)))
-        .AddSingleton<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfigurator>();
+        .AddSingleton<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfigurator>()
+        .AddFluentValidationRulesToSwagger();
 
     webAppBuilder.Services
         .Configure<SwaggerUIOptions>(confManager.GetSection(nameof(SwaggerUIOptions)))
