@@ -110,15 +110,21 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
+        OpenModelForCreate();
+    }
+
+    private void OpenModelForCreate()
+    {
         _modalUpsertTitle = "Add new Account Specification";
         _modalUpsert.Open();
     }
 
     private async Task OnEditHandler(int id)
     {
+        // If the editing of same item is already in progress, then do nothing.
         if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
         {
-            OpenModalForEdit(id);
+            OpenModalForUpdate(id);
 
             return;
         }
@@ -126,7 +132,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         if (await Mediator.Send(new GetAccountSpecByIdReq(id), CT) is { } model)
         {
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-            OpenModalForEdit(id);
+            OpenModalForUpdate(id);
         }
         else
         {
@@ -135,7 +141,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         }
     }
 
-    private void OpenModalForEdit(int id)
+    private void OpenModalForUpdate(int id)
     {
         _modalUpsertTitle = $"Edit Account Specification: id#{id}";
         _modalUpsert.Open();
