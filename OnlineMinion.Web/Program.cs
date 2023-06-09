@@ -21,7 +21,6 @@ builder.Services.AddHttpClient(
 );
 
 builder.Services.AddRestApiClient(
-    builder.Configuration,
     new[] { typeof(SetWebAssemblyStreamingOptionsHandler), },
     Constants.ApiClient
 );

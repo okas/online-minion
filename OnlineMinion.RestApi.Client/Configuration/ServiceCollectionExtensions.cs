@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Configuration;
+using FluentValidation;
+using IL.FluentValidation.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineMinion.RestApi.Client.Infrastructure;
 using OnlineMinion.RestApi.Client.Settings;
@@ -10,14 +11,17 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRestApiClient(
         this IServiceCollection services,
-        IConfigurationRoot      config,
         Type[]?                 httpMessageHandlers = null,
         string?                 httpClientName      = null
     )
     {
         CheckHandlerTypes(httpMessageHandlers);
 
-        services.Configure<ApiClientProviderSettings>(config.GetSection(nameof(ApiClientProviderSettings)));
+        services.AddValidatorsFromAssemblyContaining(typeof(ServiceCollectionExtensions));
+
+        services.AddOptions<ApiClientProviderSettings>()
+            .BindConfiguration(nameof(ApiClientProviderSettings))
+            .ValidateWithFluentValidator();
 
         var httpClientBuilder = string.IsNullOrWhiteSpace(httpClientName)
             ? services.AddHttpClient<ApiClientProvider>()
