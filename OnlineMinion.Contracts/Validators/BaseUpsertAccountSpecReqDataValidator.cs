@@ -1,11 +1,11 @@
 using FluentValidation;
 using OnlineMinion.Contracts.AppMessaging;
 
-namespace OnlineMinion.Contracts.Validations;
+namespace OnlineMinion.Contracts.Validators;
 
-public class BaseUpsertAccountSpecReqDataValidation : AbstractValidator<BaseUpsertAccountSpecReqData>
+public class BaseUpsertAccountSpecReqDataValidator : AbstractValidator<BaseUpsertAccountSpecReqData>
 {
-    public BaseUpsertAccountSpecReqDataValidation()
+    public BaseUpsertAccountSpecReqDataValidator()
     {
         RuleSet(
             nameof(BaseUpsertAccountSpecReqData),

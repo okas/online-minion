@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace OnlineMinion.Contracts.Validations;
+namespace OnlineMinion.Contracts.Validators;
 
 public class HasIntIdValidator : AbstractValidator<IHasIntId>
 {

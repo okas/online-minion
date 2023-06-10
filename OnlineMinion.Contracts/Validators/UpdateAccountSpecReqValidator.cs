@@ -1,7 +1,7 @@
 using FluentValidation;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 
-namespace OnlineMinion.Contracts.Validations;
+namespace OnlineMinion.Contracts.Validators;
 
 public class UpdateAccountSpecReqValidator : AbstractValidator<UpdateAccountSpecReq>
 {
@@ -9,6 +9,6 @@ public class UpdateAccountSpecReqValidator : AbstractValidator<UpdateAccountSpec
     {
         Include(new HasIntIdValidator());
 
-        Include(new BaseUpsertAccountSpecReqDataValidation());
+        Include(new BaseUpsertAccountSpecReqDataValidator());
     }
 }
