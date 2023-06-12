@@ -31,18 +31,19 @@ public static class ServiceCollectionExtensions
             .AddCors();
 
         services
-            // .AddSingleton<IConfigureOptions<MvcOptions>, MvcOptionsConfigurator>()
+            //.ConfigureOptions<MvcOptionsConfigurator>()
+            .ConfigureOptions<ApiBehaviorOptionsConfigurator>()
             .AddControllers();
 
         // Override default one.
         services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
 
         services
-            .AddSingleton<IConfigureOptions<ApiVersioningOptions>, ApiVersioningOptionsConfigurator>()
+            .ConfigureOptions<ApiVersioningOptionsConfigurator>()
             .AddApiVersioning();
 
         services
-            .AddSingleton<IConfigureOptions<ApiExplorerOptions>, ApiExplorerOptionsConfigurator>()
+            .ConfigureOptions<ApiExplorerOptionsConfigurator>()
             .AddVersionedApiExplorer();
 
         services.AddEndpointsApiExplorer();

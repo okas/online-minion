@@ -9,18 +9,20 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 #region Container setup
 
+var services = builder.Services;
+
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging")
 );
 
-builder.Services.AddLogging();
+services.AddLogging();
 
-builder.Services.AddHttpClient(
+services.AddHttpClient(
     Constants.HostClient,
     client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
 );
 
-builder.Services.AddRestApiClient(
+services.AddRestApiClient(
     new[] { typeof(SetWebAssemblyStreamingOptionsHandler), },
     Constants.ApiClient
 );

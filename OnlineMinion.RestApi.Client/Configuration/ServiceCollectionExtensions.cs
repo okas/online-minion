@@ -23,9 +23,11 @@ public static class ServiceCollectionExtensions
             .BindConfiguration(nameof(ApiClientProviderSettings))
             .ValidateWithFluentValidator();
 
-        var httpClientBuilder = string.IsNullOrWhiteSpace(httpClientName)
-            ? services.AddHttpClient<ApiClientProvider>()
-            : services.AddHttpClient<ApiClientProvider>(httpClientName);
+        var httpClientBuilder = services.AddHttpClient<ApiClientProvider>(
+            string.IsNullOrWhiteSpace(httpClientName)
+                ? nameof(ApiClientProvider)
+                : httpClientName
+        );
 
         if (httpMessageHandlers is not null)
         {
@@ -51,8 +53,8 @@ public static class ServiceCollectionExtensions
         string? paramName = null
     )
     {
-        if (httpMessageHandlers is not null &&
-            httpMessageHandlers.Any(type => !type.IsSubclassOf(typeof(DelegatingHandler))))
+        if (httpMessageHandlers is not null
+            && httpMessageHandlers.Any(type => !type.IsSubclassOf(typeof(DelegatingHandler))))
         {
             throw new ArgumentException(
                 "All handlers must derive from DelegatingHandler.",
