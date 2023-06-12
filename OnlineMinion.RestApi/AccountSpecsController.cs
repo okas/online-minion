@@ -20,7 +20,7 @@ namespace OnlineMinion.RestApi;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1")]
 [ApiController]
-public class AccountSpecsController : ControllerBase
+public class AccountSpecsController : ApiControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -59,7 +59,7 @@ public class AccountSpecsController : ControllerBase
     {
         var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
-        SetPagingHeaders(pagingMetaInfo, Response.Headers);
+        SetPagingHeaders(pagingMetaInfo);
 
         return NoContent();
     }
@@ -103,7 +103,7 @@ public class AccountSpecsController : ControllerBase
     {
         var result = await _mediator.Send(req, ct);
 
-        SetPagingHeaders(result.Paging, Response.Headers);
+        SetPagingHeaders(result.Paging);
 
         return Ok(result.Result);
     }
@@ -139,7 +139,7 @@ public class AccountSpecsController : ControllerBase
             {
                 ErrorType.NotFound => NotFound(),
                 ErrorType.Conflict => Conflict(),
-                _ => Problem(error.Description, GetInstanceUrl(req.Id)), // TODO: put info for Problem factory usage
+                _ => Problem(error.Description, GetInstanceUrl(nameof(GetById), req.Id)),
             }
         );
     }
@@ -152,25 +152,4 @@ public class AccountSpecsController : ControllerBase
         [FromRoute] DeleteAccountSpecReq req,
         CancellationToken                ct
     ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
-
-    private string? GetInstanceUrl(int id) => Url.Action(nameof(GetById), new { id, });
-
-    private ActionResult? CheckId(int id, IHasIntId req)
-    {
-        if (id == req.Id)
-        {
-            return null;
-        }
-
-        ModelState.AddModelError("id", "Id in route and in body are not the same.");
-
-        return ValidationProblem();
-    }
-
-    private static void SetPagingHeaders(PagingMetaInfo values, IHeaderDictionary headers)
-    {
-        headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
-        headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
-        headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
-    }
 }
