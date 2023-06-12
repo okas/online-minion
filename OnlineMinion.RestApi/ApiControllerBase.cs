@@ -1,4 +1,5 @@
 using System.Globalization;
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.HttpHeaders;
@@ -18,6 +19,42 @@ public abstract class ApiControllerBase : ControllerBase
         headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
         headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
         headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
+    }
+
+    /// <summary>
+    ///     Sets ModelState and "converts" <see cref="Error" /> to <see cref="IActionResult" />.
+    /// </summary>
+    /// <param name="error">Error to convert to action result.</param>
+    protected ActionResult CreateProblemResult(Error error)
+    {
+        if (error.Dictionary is not null)
+        {
+            SaveToModelState(error.Dictionary);
+        }
+
+        return error.Type switch
+        {
+            ErrorType.Conflict => Conflict(error.Description),
+            ErrorType.Validation => ValidationProblem(error.Description),
+            _ => Problem(error.Description, title: error.Code),
+        };
+    }
+
+    private void SaveToModelState(IDictionary<string, object> errorMetadata)
+    {
+        foreach (var (key, data) in errorMetadata)
+        {
+            var values = data as IEnumerable<string>
+                         ?? new[] { data.ToString() ?? string.Empty, };
+
+            foreach (var v in values)
+            {
+                ModelState.AddModelError(
+                    key,
+                    string.IsNullOrWhiteSpace(v) ? "<Missing error message>" : v
+                );
+            }
+        }
     }
 
     /// <inheritdoc cref="UrlHelperExtensions.Action(Microsoft.AspNetCore.Mvc.IUrlHelper)" />

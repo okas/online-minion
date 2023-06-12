@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
@@ -112,12 +110,15 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct) =>
-        (await _mediator.Send(req, ct))
-        .MatchFirst(
+    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
+    {
+        var result = await _mediator.Send(req, ct);
+
+        return result.MatchFirst<IActionResult>(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => Problem(error.Description) // TODO: put info for Problem factory usage
+            CreateProblemResult
         );
+    }
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
