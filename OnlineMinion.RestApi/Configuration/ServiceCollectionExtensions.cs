@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions
                     cfg.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions));
 
                     // Pipeline
-                    cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+                    cfg.AddOpenBehavior(typeof(CommandUnitOfWorkBehavior<,>));
                 }
             )
             .AddTransient<

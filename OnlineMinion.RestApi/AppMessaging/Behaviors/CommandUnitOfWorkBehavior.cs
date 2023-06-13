@@ -8,12 +8,12 @@ namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
 /// <summary>
 ///     Credit: https://youtu.be/sSIg3fpflI0
 /// </summary>
-public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICommand
     where TResponse : notnull
 {
     private readonly OnlineMinionDbContext _dbContext;
-    public UnitOfWorkBehavior(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
+    public CommandUnitOfWorkBehavior(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
     /// <inheritdoc />
     public async Task<TResponse> Handle(TRequest req, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
