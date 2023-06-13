@@ -1,5 +1,6 @@
 using System.Transactions;
 using MediatR;
+using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
@@ -8,7 +9,7 @@ namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
 ///     Credit: https://youtu.be/sSIg3fpflI0
 /// </summary>
 public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IBaseRequest
+    where TRequest : ICommand
     where TResponse : notnull
 {
     private readonly OnlineMinionDbContext _dbContext;

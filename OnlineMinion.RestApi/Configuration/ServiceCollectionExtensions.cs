@@ -1,17 +1,12 @@
 using CorsPolicySettings;
-using ErrorOr;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.AppMessaging.Behaviors;
 using OnlineMinion.RestApi.AppMessaging.Handlers;
@@ -57,14 +52,7 @@ public static class ServiceCollectionExtensions
                     cfg.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions));
 
                     // Pipeline
-                    cfg.AddBehavior(
-                            typeof(IPipelineBehavior<CreateAccountSpecReq, ErrorOr<ModelIdResp>>),
-                            typeof(UnitOfWorkBehavior<CreateAccountSpecReq, ErrorOr<ModelIdResp>>)
-                        )
-                        .AddBehavior(
-                            typeof(IPipelineBehavior<UpdateAccountSpecReq, ErrorOr<Updated>>),
-                            typeof(UnitOfWorkBehavior<UpdateAccountSpecReq, ErrorOr<Updated>>)
-                        );
+                    cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
                 }
             )
             .AddTransient<
