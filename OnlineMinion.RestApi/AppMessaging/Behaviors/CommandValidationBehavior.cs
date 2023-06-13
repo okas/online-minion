@@ -35,15 +35,17 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         return await next().ConfigureAwait(false);
     }
 
-    private static async Task<Dictionary<string, object>?> Validate(
+    private static async ValueTask<Dictionary<string, object>?> Validate(
         TRequest                          req,
         IEnumerable<IValidator<TRequest>> validators,
         CancellationToken                 ct
     )
     {
         // TODO : Analyze AsyncState proprty of ValidationContext!
+        // TODO: Using same context causes duplicate validation failures? Investigate!
         var context = ValidationContext<TRequest>.CreateWithOptions(req, strategy => strategy.IncludeAllRuleSets());
 
+        // TODO: IErrorOr creation must happen here, based on validation failure info!
         var validationResults = await Task.WhenAll(
                 validators.Select(x => x.ValidateAsync(context, ct))
             )
