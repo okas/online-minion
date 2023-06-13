@@ -52,6 +52,7 @@ public static class ServiceCollectionExtensions
                     cfg.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions));
 
                     // Pipeline
+                    cfg.AddOpenBehavior(typeof(CommandValidationBehavior<,>));
                     cfg.AddOpenBehavior(typeof(CommandUnitOfWorkBehavior<,>));
                 }
             )
