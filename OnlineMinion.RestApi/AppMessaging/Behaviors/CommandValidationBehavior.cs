@@ -1,14 +1,15 @@
 using ErrorOr;
 using FluentValidation;
 using FluentValidation.Internal;
+using FluentValidation.Results;
 using MediatR;
 using OnlineMinion.Contracts.AppMessaging;
 
 namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
 
 /// <summary>
-///     Supports sync and async validators. Takes in all validators for given request type (from DI). Guarantees validation
-///     of all rulesets using <see cref="RulesetValidatorSelector.WildcardRuleSetName" />.
+///     Supports sync and async validators. Takes in all validators for given request type (from DI).
+///     Guarantees validation of all rulesets using <see cref="RulesetValidatorSelector.WildcardRuleSetName" />.
 /// </summary>
 /// <remarks>
 ///     Type constraints are supposed to defined pipeline "segment" only for command type requests.
@@ -24,10 +25,15 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
     public CommandValidationBehavior(IEnumerable<IValidator<TRequest>> validators) =>
         _validators = validators.ToArray();
 
-    public async Task<TResponse> Handle(TRequest req, RequestHandlerDelegate<TResponse> next, CancellationToken ct) =>
-        _validators.Length != 0 && await Validate(req, _validators, ct).ConfigureAwait(false) is { } dictionary
-            ? (TResponse)(dynamic)Error.Validation(dictionary: dictionary)
-            : await next().ConfigureAwait(false);
+    public async Task<TResponse> Handle(TRequest req, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        if (_validators.Length != 0 && await Validate(req, _validators, ct).ConfigureAwait(false) is { } dictionary)
+        {
+            return (TResponse)(dynamic)Error.Validation(dictionary: dictionary);
+        }
+
+        return await next().ConfigureAwait(false);
+    }
 
     private static async Task<Dictionary<string, object>?> Validate(
         TRequest                          req,
@@ -48,28 +54,25 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
             .Where(x => x != null)
             .ToArray();
 
-        if (validationFailures.Length == 0)
-        {
-            return null;
-        }
-
-        var errorsDictionary = validationFailures
-            .GroupBy(
-                x => x.PropertyName,
-                x => x.ErrorMessage,
-                (propertyName, errorMessages) => new
-                {
-                    Key = propertyName ?? string.Empty,
-                    Values = errorMessages.Distinct(StringComparer.OrdinalIgnoreCase),
-                },
-                StringComparer.OrdinalIgnoreCase
-            )
-            .ToDictionary(
-                x => x.Key,
-                x => x.Values as object, // TODO Stinks!
-                StringComparer.OrdinalIgnoreCase
-            );
-
-        return errorsDictionary;
+        return validationFailures.Length == 0 ? null : TransformFailuresToDictionary(validationFailures);
     }
+
+    private static Dictionary<string, object> TransformFailuresToDictionary(
+        IEnumerable<ValidationFailure> validationFailures
+    ) => validationFailures
+        .GroupBy(
+            x => x.PropertyName,
+            x => x.ErrorMessage,
+            (propertyName, errorMessages) => new
+            {
+                Key = propertyName ?? string.Empty,
+                Values = errorMessages.Distinct(StringComparer.OrdinalIgnoreCase),
+            },
+            StringComparer.OrdinalIgnoreCase
+        )
+        .ToDictionary(
+            x => x.Key,
+            x => x.Values as object, // TODO Stinks!
+            StringComparer.OrdinalIgnoreCase
+        );
 }

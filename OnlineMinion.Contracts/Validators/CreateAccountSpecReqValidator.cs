@@ -5,8 +5,8 @@ namespace OnlineMinion.Contracts.Validators;
 
 public class CreateAccountSpecReqValidator : AbstractValidator<CreateAccountSpecReq>
 {
-    public CreateAccountSpecReqValidator(BaseUpsertAccountSpecReqDataValidator upsertAccountSpecReqDataValidator)
+    public CreateAccountSpecReqValidator(BaseUpsertAccountSpecReqDataValidator baseValidator)
     {
-        Include(upsertAccountSpecReqDataValidator);
+        Include(baseValidator);
     }
 }
