@@ -5,10 +5,12 @@ namespace OnlineMinion.Contracts.Validators;
 
 public class UpdateAccountSpecReqValidator : AbstractValidator<UpdateAccountSpecReq>
 {
-    public UpdateAccountSpecReqValidator()
+    public UpdateAccountSpecReqValidator(
+        HasIntIdValidator                     intIdValidator,
+        BaseUpsertAccountSpecReqDataValidator baseValidator
+    )
     {
-        Include(new HasIntIdValidator());
-
-        Include(new BaseUpsertAccountSpecReqDataValidator());
+        Include(intIdValidator);
+        Include(baseValidator);
     }
 }
