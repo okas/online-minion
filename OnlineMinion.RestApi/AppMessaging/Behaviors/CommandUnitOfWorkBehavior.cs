@@ -1,4 +1,5 @@
 using System.Transactions;
+using ErrorOr;
 using MediatR;
 using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Data;
@@ -6,11 +7,20 @@ using OnlineMinion.Data;
 namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
 
 /// <summary>
+///     NB! Creates explicit transaction scope for each command request. If this behavior need altering, consider
+///     changing type constraints or add other means of filtering.
+///     <br />
 ///     Credit: https://youtu.be/sSIg3fpflI0
 /// </summary>
+/// <remarks>
+///     Type constraints are supposed to defined pipeline "segment" only for command type requests. There is not other
+///     filtering to prevent this behavior to be applied to other types of requests.
+/// </remarks>
+/// <typeparam name="TRequest">Request or model, constrained to <see cref="ICommand" />.</typeparam>
+/// <typeparam name="TResponse">Response model, constrained to <see cref="IErrorOr" />.</typeparam>
 public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICommand
-    where TResponse : notnull
+    where TResponse : IErrorOr
 {
     private readonly OnlineMinionDbContext _dbContext;
     public CommandUnitOfWorkBehavior(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
