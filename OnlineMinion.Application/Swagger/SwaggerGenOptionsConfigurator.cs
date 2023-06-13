@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -9,13 +11,24 @@ namespace OnlineMinion.Application.Swagger;
 
 public class SwaggerGenOptionsConfigurator : IConfigureOptions<SwaggerGenOptions>
 {
+    private readonly IServerAddressesFeature _addressFeature;
     private readonly string _apiAssemblyName;
     private readonly IApiVersionDescriptionProvider _apiVersionDescriptionProvider;
 
-    public SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
+    public SwaggerGenOptionsConfigurator(
+        IApiVersionDescriptionProvider apiVersionDescriptionProvider,
+        IServer                        server
+    )
     {
-        _apiAssemblyName = typeof(AccountSpecsController).Assembly.GetName().Name ??
-                           throw new InvalidOperationException();
+        _apiAssemblyName = typeof(AccountSpecsController).Assembly.GetName().Name
+                           ?? throw new InvalidOperationException(
+                               "Cannot obtain server address feature for SwaggerGenOptions configuration."
+                           );
+
+        _addressFeature = server.Features.Get<IServerAddressesFeature>()
+                          ?? throw new InvalidOperationException(
+                              "Cannot obtain assembly name for SwaggerGenOptions configuration."
+                          );
 
         _apiVersionDescriptionProvider = apiVersionDescriptionProvider;
     }
@@ -52,6 +65,20 @@ public class SwaggerGenOptionsConfigurator : IConfigureOptions<SwaggerGenOptions
         }
 
         CheckContacts(options);
+        CheckServers(options);
+    }
+
+    private void CheckServers(SwaggerGenOptions options)
+    {
+        var server = options.SwaggerGeneratorOptions.Servers;
+
+        foreach (var x in _addressFeature.Addresses)
+        {
+            if (!server.Exists(apiSrv => string.Equals(apiSrv.Url, x, StringComparison.OrdinalIgnoreCase)))
+            {
+                server.Add(new() { Url = x, });
+            }
+        }
     }
 
     private void CheckApiInfo(OpenApiInfo doc, ApiVersionDescription description)
