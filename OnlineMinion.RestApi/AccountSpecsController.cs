@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -116,7 +115,7 @@ public class AccountSpecsController : ApiControllerBase
 
         return result.MatchFirst<IActionResult>(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            CreateProblemResult
+            error => CreateProblemResult(error)
         );
     }
 
@@ -136,12 +135,7 @@ public class AccountSpecsController : ApiControllerBase
 
         return result.MatchFirst<IActionResult>(
             _ => NoContent(),
-            error => error.Type switch
-            {
-                ErrorType.NotFound => NotFound(),
-                ErrorType.Conflict => Conflict(),
-                _ => Problem(error.Description, GetInstanceUrl(nameof(GetById), req.Id)),
-            }
+            error => CreateProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id))
         );
     }
 

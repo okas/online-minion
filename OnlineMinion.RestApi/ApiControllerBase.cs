@@ -25,7 +25,8 @@ public abstract class ApiControllerBase : ControllerBase
     ///     Sets ModelState and "converts" <see cref="Error" /> to <see cref="IActionResult" />.
     /// </summary>
     /// <param name="error">Error to convert to action result.</param>
-    protected ActionResult CreateProblemResult(Error error)
+    /// <param name="instanceUrl">Optional URL similar to <code>GET /api/[controller]/{id}</code>.</param>
+    protected ActionResult CreateProblemResult(Error error, string? instanceUrl = null)
     {
         if (error.Dictionary is not null)
         {
@@ -35,8 +36,8 @@ public abstract class ApiControllerBase : ControllerBase
         return error.Type switch
         {
             ErrorType.Conflict => Conflict(error.Description),
-            ErrorType.Validation => ValidationProblem(error.Description),
-            _ => Problem(error.Description, title: error.Code),
+            ErrorType.Validation => ValidationProblem(error.Description, instanceUrl),
+            _ => Problem(error.Description, title: error.Code, instance: instanceUrl),
         };
     }
 
