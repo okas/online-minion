@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
         {
             throw new ArgumentException(
                 "All handlers must derive from DelegatingHandler.",
-                nameof(httpMessageHandlers)
+                paramName
             );
         }
     }
