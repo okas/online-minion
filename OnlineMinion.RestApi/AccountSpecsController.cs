@@ -63,7 +63,7 @@ public class AccountSpecsController : ApiControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(AccountSpecResp), StatusCodes.Status200OK)]
+    [ProducesResponseType<AccountSpecResp>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
@@ -107,7 +107,7 @@ public class AccountSpecsController : ApiControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
+    [ProducesResponseType<ModelIdResp>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
