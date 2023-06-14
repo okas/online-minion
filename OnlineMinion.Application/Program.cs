@@ -17,10 +17,7 @@ var confManager = webAppBuilder.Configuration;
 webAppBuilder.Services.AddLogging();
 
 webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
-    optionsBuilder => optionsBuilder.UseSqlServer(
-        "name=ConnectionStrings:DefaultConnection",
-        x => x.UseDateOnlyTimeOnly()
-    )
+    builder => builder.UseSqlServer("name=ConnectionStrings:DefaultConnection")
 );
 
 webAppBuilder.Services.AddRestApi(webAppBuilder.Configuration);

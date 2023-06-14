@@ -14,10 +14,10 @@ public abstract class BaseUpsertAccountSpecReqData
         Description = description;
     }
 
-    [Required(DisallowAllDefaultValues = true)]
+    [Required]
     public string Name { get; set; }
 
-    [Required(DisallowAllDefaultValues = true)]
+    [Required]
     public string Group { get; set; }
 
     public string? Description { get; set; }

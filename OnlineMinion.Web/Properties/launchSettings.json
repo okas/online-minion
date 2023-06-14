@@ -26,6 +26,7 @@
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "http://localhost:5208",
+      "commandLineArgs": "-tl",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "DevelopmentHttp"
       }
@@ -47,6 +48,7 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7127",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "commandLineArgs": "-tl",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "DevelopmentHttps"
       }
