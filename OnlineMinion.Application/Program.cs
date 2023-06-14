@@ -34,7 +34,15 @@ if (webAppBuilder.Environment.IsDevelopment())
         .Configure<SchemaGeneratorOptions>(confManager.GetSection(nameof(SchemaGeneratorOptions)))
         .Configure<SwaggerGenOptions>(confManager.GetSection(nameof(SwaggerGenOptions)))
         .ConfigureOptions<SwaggerGenOptionsConfigurator>()
-        .AddFluentValidationRulesToSwagger();
+        .AddFluentValidationRulesToSwagger(
+            options => options.ValidatorSearch = new()
+            {
+                IsOneValidatorForType = false,
+                SearchBaseTypeValidators =
+                    false, // This aligns with the behavior of default MS DI  Service resolution works!
+                // Enforces to use only one validator per type and combine them using 'Include' rules.
+            }
+        );
 
     services
         .Configure<SwaggerUIOptions>(confManager.GetSection(nameof(SwaggerUIOptions)))
