@@ -12,6 +12,6 @@ public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IHasInt
         base(name, group, description) =>
         Id = id;
 
-    [Required(DisallowAllDefaultValues = true)]
+    [Required]
     public int Id { get; set; }
 }
