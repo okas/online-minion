@@ -41,17 +41,14 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         CancellationToken                 ct
     )
     {
-        // TODO : Analyze AsyncState proprty of ValidationContext!
-        // TODO: Using same context causes duplicate validation failures? Investigate!
-        var context = ValidationContext<TRequest>.CreateWithOptions(req, strategy => strategy.IncludeAllRuleSets());
-
         // TODO: IErrorOr creation must happen here, based on validation failure info!
-        var validationResults = await Task.WhenAll(
-                validators.Select(x => x.ValidateAsync(context, ct))
-            )
-            .ConfigureAwait(false);
+        var validationTasks = validators.Select(
+            v => v.ValidateAsync(req, strategy => strategy.IncludeAllRuleSets(), ct)
+        );
 
-        var validationFailures = validationResults
+        var results = await Task.WhenAll(validationTasks).ConfigureAwait(false);
+
+        var validationFailures = results
             .SelectMany(x => x.Errors)
             .Where(x => x != null)
             .ToArray();
