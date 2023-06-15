@@ -1,5 +1,6 @@
 using System.Globalization;
 using ErrorOr;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.HttpHeaders;
@@ -35,7 +36,10 @@ public abstract class ApiControllerBase : ControllerBase
 
         return error.Type switch
         {
-            ErrorType.Conflict => Conflict(error.Description),
+            ErrorType.Conflict => ValidationProblem(
+                title: error.Description,
+                statusCode: StatusCodes.Status409Conflict
+            ),
             ErrorType.Validation => ValidationProblem(error.Description, instanceUrl),
             _ => Problem(error.Description, title: error.Code, instance: instanceUrl),
         };
