@@ -19,9 +19,8 @@ namespace OnlineMinion.RestApi;
 [ApiController]
 public class AccountSpecsController : ApiControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public AccountSpecsController(IMediator mediator) => _mediator = mediator;
+    private readonly ISender _sender;
+    public AccountSpecsController(ISender sender) => _sender = sender;
 
     /// <summary>
     ///     To probe some paging related data about this resource.
@@ -54,7 +53,7 @@ public class AccountSpecsController : ApiControllerBase
         [FromQuery][Range(1, 50)] int pageSize = 10
     )
     {
-        var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
+        var pagingMetaInfo = await _sender.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
         SetPagingHeaders(pagingMetaInfo);
 
@@ -68,7 +67,7 @@ public class AccountSpecsController : ApiControllerBase
     public async Task<IActionResult> GetById(
         [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
-    ) => await _mediator.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
+    ) => await _sender.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -98,7 +97,7 @@ public class AccountSpecsController : ApiControllerBase
         CancellationToken              ct
     )
     {
-        var result = await _mediator.Send(req, ct);
+        var result = await _sender.Send(req, ct);
 
         SetPagingHeaders(result.Paging);
 
@@ -111,7 +110,7 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
-        var result = await _mediator.Send(req, ct);
+        var result = await _sender.Send(req, ct);
 
         return result.MatchFirst<IActionResult>(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
@@ -131,7 +130,7 @@ public class AccountSpecsController : ApiControllerBase
             return actionResult;
         }
 
-        var result = await _mediator.Send(req, ct);
+        var result = await _sender.Send(req, ct);
 
         return result.MatchFirst<IActionResult>(
             _ => NoContent(),
@@ -146,5 +145,5 @@ public class AccountSpecsController : ApiControllerBase
     public async Task<IActionResult> Delete(
         [FromRoute] DeleteAccountSpecReq req,
         CancellationToken                ct
-    ) => await _mediator.Send(req, ct) ? NoContent() : NotFound();
+    ) => await _sender.Send(req, ct) ? NoContent() : NotFound();
 }
