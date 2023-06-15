@@ -7,7 +7,7 @@ using OnlineMinion.RestApi.Client.Settings;
 
 namespace OnlineMinion.RestApi.Client.Configuration;
 
-public static class ServiceCollectionExtensions
+public static class ServicesSetup
 {
     public static IServiceCollection AddRestApiClient(
         this IServiceCollection services,
@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     {
         CheckHandlerTypes(httpMessageHandlers);
 
-        services.AddValidatorsFromAssemblyContaining(typeof(ServiceCollectionExtensions));
+        services.AddValidatorsFromAssemblyContaining(typeof(ServicesSetup));
 
         services.AddOptions<ApiClientProviderSettings>()
             .BindConfiguration(nameof(ApiClientProviderSettings))
@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
         }
 
         services.AddMediatR(
-            opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions))
+            opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup))
         );
 
         return services;

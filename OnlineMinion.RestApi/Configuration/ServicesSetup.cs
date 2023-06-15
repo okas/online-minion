@@ -15,7 +15,7 @@ using OnlineMinion.RestApi.ProblemHandling;
 
 namespace OnlineMinion.RestApi.Configuration;
 
-public static class ServiceCollectionExtensions
+public static class ServicesSetup
 {
     public static IServiceCollection AddRestApi(this IServiceCollection services, IConfigurationRoot config)
     {
@@ -46,14 +46,14 @@ public static class ServiceCollectionExtensions
         // Validation pipeline: CommandValidationBehavior gets type's validators in registered order
         // Here order importance is uniqueness validators, that should be validated first,
         // though at the moment this order is not used, rather than idea.
-        services.AddValidatorsFromAssembly(typeof(ServiceCollectionExtensions).Assembly);
+        services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
         services.AddValidatorsFromAssemblyContaining<IHasIntId>();
 
         services
             .AddMediatR(
                 cfg =>
                 {
-                    cfg.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions));
+                    cfg.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup));
 
                     // Pipeline
                     cfg.AddOpenBehavior(typeof(CommandValidationBehavior<,>));
