@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.RestApi.Validators;
+namespace OnlineMinion.RestApi.Validation;
 
 public sealed class BaseUpsertAccountSpecUniqueNameValidator : AbstractValidator<BaseUpsertAccountSpecReqData>
 {

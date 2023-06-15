@@ -43,11 +43,8 @@ public static class ServicesSetup
 
         services.AddEndpointsApiExplorer();
 
-        // Validation pipeline: CommandValidationBehavior gets type's validators in registered order
-        // Here order importance is uniqueness validators, that should be validated first,
-        // though at the moment this order is not used, rather than idea.
-        services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
         services.AddValidatorsFromAssemblyContaining<IHasIntId>();
+        services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
 
         services
             .AddMediatR(
