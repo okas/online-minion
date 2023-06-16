@@ -27,7 +27,7 @@ public abstract class ApiControllerBase : ControllerBase
     /// </summary>
     /// <param name="error">Error to convert to action result.</param>
     /// <param name="instanceUrl">Optional URL similar to <code>GET /api/[controller]/{id}</code>.</param>
-    protected ActionResult CreateProblemResult(Error error, string? instanceUrl = null)
+    protected ActionResult CreateApiProblemResult(Error error, string? instanceUrl = null)
     {
         if (error.Dictionary is not null)
         {

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -112,9 +113,9 @@ public class AccountSpecsController : ApiControllerBase
     {
         var result = await _sender.Send(req, ct);
 
-        return result.MatchFirst<IActionResult>(
+        return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateProblemResult(error)
+            error => CreateApiProblemResult(error)
         );
     }
 
@@ -132,9 +133,9 @@ public class AccountSpecsController : ApiControllerBase
 
         var result = await _sender.Send(req, ct);
 
-        return result.MatchFirst<IActionResult>(
+        return result.MatchFirst(
             _ => NoContent(),
-            error => CreateProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id))
+            error => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id))
         );
     }
 
@@ -145,5 +146,17 @@ public class AccountSpecsController : ApiControllerBase
     public async Task<IActionResult> Delete(
         [FromRoute] DeleteAccountSpecReq req,
         CancellationToken                ct
-    ) => await _sender.Send(req, ct) ? NoContent() : NotFound();
+    )
+    {
+        var result = await _sender.Send(req, ct);
+
+        return result.MatchFirst(
+            _ => NoContent(),
+            error => error.Type switch
+            {
+                ErrorType.NotFound => NotFound(),
+                _ => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id)),
+            }
+        );
+    }
 }

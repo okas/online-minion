@@ -269,15 +269,26 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         var result = await Mediator.Send(new DeleteAccountSpecReq(id), CT);
         _isSubmitting = false;
 
-        if (result)
-        {
-            _modalDelete.Close();
-            await HandlePageStateAfterDelete();
-        }
-        else
-        {
-            Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
-        }
+        await result.SwitchFirstAsync(
+            async _ =>
+            {
+                _modalDelete.Close();
+                await HandlePageStateAfterDelete();
+            },
+            error =>
+            {
+                if (error.Type is ErrorType.NotFound)
+                {
+                    Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
+                }
+                else
+                {
+                    Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
+                }
+
+                return Task.CompletedTask;
+            }
+        );
     }
 
     private async Task HandlePageStateAfterDelete()
