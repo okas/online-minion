@@ -1,7 +1,7 @@
 using FluentValidation;
 using OnlineMinion.Contracts.AppMessaging;
 
-namespace OnlineMinion.Contracts.Validators;
+namespace OnlineMinion.Common.Validators;
 
 /// <summary>
 ///     It is only meant to be be used ad "Included" set of rules to <see cref="BaseUpsertAccountSpecReqData" />

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using OnlineMinion.Common.Validators;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.AppMessaging.Behaviors;
@@ -43,7 +44,7 @@ public static class ServicesSetup
 
         services.AddEndpointsApiExplorer();
 
-        services.AddValidatorsFromAssemblyContaining<IHasIntId>();
+        services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
         services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
 
         services
