@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
-using OnlineMinion.Web.Infrastructure;
-using OnlineMinion.Web.Settings;
+using OnlineMinion.Web.Configuration;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -23,7 +22,7 @@ services.AddHttpClient(
 );
 
 services.AddRestApiClient(
-    new[] { typeof(SetWebAssemblyStreamingOptionsHandler), },
+    new[] { typeof(SetWebAssemblyStreamingOptionsHttpRequestHandler), },
     Constants.ApiClient
 );
 
