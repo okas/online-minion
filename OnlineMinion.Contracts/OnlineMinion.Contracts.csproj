@@ -10,7 +10,7 @@
         <PackageReference Include="erroror" Version="1.2.1.1-preview" />
         <PackageReference Include="FluentValidation" Version="11.5.2" />
         <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.60">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.61">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ErrorOr" Version="1.2.1.1-preview" />
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.60">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference Include="ErrorOr" Version="1.2.1.1-preview"/>
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.61">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
