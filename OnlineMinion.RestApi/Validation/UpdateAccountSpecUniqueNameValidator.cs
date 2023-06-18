@@ -1,26 +1,24 @@
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.Validation;
 
 public sealed class UpdateAccountSpecUniqueNameValidator : AbstractValidator<UpdateAccountSpecReq>,
     IAsyncUniqueValidator<UpdateAccountSpecReq>
 {
-    private readonly OnlineMinionDbContext _dbContext;
+    private readonly ISender _sender;
 
-    public UpdateAccountSpecUniqueNameValidator(OnlineMinionDbContext dbContext)
+    public UpdateAccountSpecUniqueNameValidator(ISender sender)
     {
-        _dbContext = dbContext;
+        _sender = sender;
 
         RuleFor(x => x.Name)
             .MustAsync(BeUnique)
             .WithMessage("'{PropertyName}' must be unique");
     }
 
+    // TODO: To interface IAsyncUniqueValidator<TModel>  member?
     private async Task<bool> BeUnique(UpdateAccountSpecReq req, string name, CancellationToken ct) =>
-        !await _dbContext.AccountSpecs
-            .AnyAsync(entity => entity.Id != req.Id && entity.Name == name, ct)
-            .ConfigureAwait(false);
+        await _sender.Send(new CheckAccountSpecUniqueExistingReq(name, req.Id), ct).ConfigureAwait(false);
 }
