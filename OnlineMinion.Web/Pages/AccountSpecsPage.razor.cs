@@ -7,7 +7,7 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Requests;
 using OnlineMinion.Web.Components;
-using OnlineMinion.Web.Components.Base;
+using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.Shared;
 
 namespace OnlineMinion.Web.Pages;

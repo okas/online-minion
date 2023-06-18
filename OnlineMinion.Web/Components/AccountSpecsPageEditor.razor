@@ -11,7 +11,7 @@
 <div class="row">
 
   <EditForm Model="@Model" OnValidSubmit="@OnValidSubmit">
-    <DataAnnotationsValidator/>
+    <FluentValidator/>
     <ServerSideValidator @ref="@_serverSideValidator"/>
     <ValidationSummary/>
 
@@ -35,7 +35,9 @@
 
       <div class="form-group row">
         <div class="col-sm-2">
-          <button class="btn btn-primary form-control" disabled="@_isEditorActionDisabled" type="submit">Submit</button>
+          <button class="btn btn-primary form-control" disabled="@(_isEditorActionDisabled || context.GetValidationMessages().Any())" type="submit">
+            Submit
+          </button>
         </div>
       </div>
     </fieldset>
