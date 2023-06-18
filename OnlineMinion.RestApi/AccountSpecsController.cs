@@ -61,6 +61,33 @@ public class AccountSpecsController : ApiControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    ///     Unique name validation for new create workflow.
+    /// </summary>
+    /// <remarks>Check, if any resource already uses interested name.</remarks>
+    /// <param name="name">Interested new <b>name</b>.</param>
+    /// <param name="ct"></param>
+    [HttpHead("validate-available-name/{name:required:length(2,50)}")]
+    [SwaggerResponse(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CheckUniqueNew(string name, CancellationToken ct) =>
+        await _sender.Send(new CheckAccountSpecUniqueNewReq(name), ct) ? NoContent() : Conflict();
+
+    /// <summary>
+    ///     Uniqueness validation for update workflow.
+    /// </summary>
+    /// <remarks>Check, if any <b>other existing</b> resource already uses name.</remarks>
+    /// <param name="name">Name to validate.</param>
+    /// <param name="exceptId">Id of resource that is being updated, must be excluded from check. </param>
+    /// <param name="ct"></param>
+    [HttpHead("validate-available-name/{name:required:length(2,50)}/except-id/{exceptId:min(1)}")]
+    [SwaggerResponse(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CheckUniqueExisting(string name, int exceptId, CancellationToken ct) =>
+        await _sender.Send(new CheckAccountSpecUniqueExistingReq(name, exceptId), ct) ? NoContent() : Conflict();
+
     [HttpGet("{id}")]
     [ProducesResponseType<AccountSpecResp>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -12,6 +12,6 @@ public sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<Check
 
     public async Task<bool> Handle(CheckAccountSpecUniqueExistingReq req, CancellationToken ct) =>
         !await _dbContext.AccountSpecs
-            .AnyAsync(entity => entity.Name == req.Name && entity.Id != req.Id, ct)
+            .AnyAsync(entity => entity.Name == req.Name && entity.Id != req.ExceptId, ct)
             .ConfigureAwait(false);
 }
