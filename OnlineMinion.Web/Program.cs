@@ -28,6 +28,7 @@ services.AddRestApiClient(
     Constants.ApiClient
 );
 
+services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
 
 #endregion
