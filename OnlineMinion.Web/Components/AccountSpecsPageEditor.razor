@@ -1,4 +1,4 @@
-@using OnlineMinion.Web.Components.Validation
+@using OnlineMinion.Web.Components.Forms
 @{
   var name = nameof(Model.Name);
   var nameLower = name.ToLowerInvariant();
@@ -10,11 +10,13 @@
 
 <div class="row">
 
-  <EditForm Model="@Model" OnValidSubmit="@OnValidSubmit">
-    <FluentValidator/>
+  <EditForm Model="@Model" OnSubmit="@OnSubmit">
+    <FluentValidator @ref="@_fluentValidatorRef"/>
     <ServerSideValidator @ref="@_serverSideValidator"/>
     <ValidationSummary/>
-
+    @{
+      var actionDisabled = _isEditorActionDisabledForced /*|| !context.IsModified()*/|| context.GetValidationMessages().Any();
+    }
     <fieldset disabled="@IsSubmitting">
       <div class="form-group">
         <label for="@nameLower">@name</label>
@@ -35,7 +37,7 @@
 
       <div class="form-group row">
         <div class="col-sm-2">
-          <button class="btn btn-primary form-control" disabled="@(_isEditorActionDisabled || context.GetValidationMessages().Any())" type="submit">
+          <button class="btn btn-primary form-control" disabled="@actionDisabled" type="submit">
             Submit
           </button>
         </div>

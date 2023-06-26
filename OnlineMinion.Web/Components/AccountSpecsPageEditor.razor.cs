@@ -2,13 +2,14 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Web.Components.Validation;
+using OnlineMinion.Web.Components.Forms;
 
 namespace OnlineMinion.Web.Components;
 
 public partial class AccountSpecsPageEditor : ComponentBase
 {
-    private bool _isEditorActionDisabled;
+    private FluentValidator _fluentValidatorRef = null!;
+    private bool _isEditorActionDisabledForced;
     private ServerSideValidator _serverSideValidator = null!;
 
     [Parameter]
@@ -21,7 +22,9 @@ public partial class AccountSpecsPageEditor : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public EventCallback<EditContext> OnValidSubmit { get; set; }
+    public EventCallback<EditContext> OnSubmit { get; set; }
+
+    public ValueTask<bool> ValidateEditorAsync() => _fluentValidatorRef.ValidateModelAsync();
 
     public void SetServerValidationErrors(IList<Error> errors)
     {
@@ -49,7 +52,7 @@ public partial class AccountSpecsPageEditor : ComponentBase
         }
 
         _serverSideValidator.DisplayErrors("Account specification do not exist on server anymore.");
-        _isEditorActionDisabled = true;
+        _isEditorActionDisabledForced = true;
     }
 
     private static Dictionary<string, IEnumerable<object>> FlattenFieldErrors(IEnumerable<Error> errors)

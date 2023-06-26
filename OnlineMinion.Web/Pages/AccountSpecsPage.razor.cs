@@ -147,14 +147,17 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _modalUpsert.Open();
     }
 
-    private async Task OnValidSubmitHandler()
+    private async Task OnSubmitHandler()
     {
+        if (!await _editorRef.ValidateEditorAsync())
+        {
+            return;
+        }
+
         _isSubmitting = true;
 
         switch (_modelUpsert)
         {
-            case null:
-                break;
             case UpdateAccountSpecReq req:
                 await HandleUpdateSubmit(req);
                 break;
