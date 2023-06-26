@@ -1,5 +1,6 @@
 using FluentValidation;
 using MediatR;
+using OnlineMinion.Common;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 
 namespace OnlineMinion.RestApi.Validation;

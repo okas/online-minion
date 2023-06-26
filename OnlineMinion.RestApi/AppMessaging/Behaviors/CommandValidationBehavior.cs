@@ -3,8 +3,8 @@ using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Results;
 using MediatR;
+using OnlineMinion.Common;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.RestApi.Validation;
 
 namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
 
