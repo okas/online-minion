@@ -8,9 +8,13 @@ namespace OnlineMinion.Web.Components;
 
 public partial class AccountSpecsPageEditor : ComponentBase
 {
+    private EditContext _editContext = null!;
     private FluentValidator _fluentValidatorRef = null!;
     private bool _isEditorActionDisabledForced;
     private ServerSideValidator _serverSideValidator = null!;
+    private bool _shouldBeDisabledByFormState = true;
+
+    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced;
 
     [Parameter]
     [EditorRequired]
@@ -23,6 +27,18 @@ public partial class AccountSpecsPageEditor : ComponentBase
     [Parameter]
     [EditorRequired]
     public EventCallback<EditContext> OnSubmit { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _editContext = new(Model);
+        _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
+    }
+
+    private void OnValidationStateChangedHandler(object? _, ValidationStateChangedEventArgs __)
+    {
+        _shouldBeDisabledByFormState = _editContext.GetValidationMessages().Any() || !_editContext.IsModified();
+        StateHasChanged();
+    }
 
     public ValueTask<bool> ValidateEditorAsync() => _fluentValidatorRef.ValidateModelAsync();
 
