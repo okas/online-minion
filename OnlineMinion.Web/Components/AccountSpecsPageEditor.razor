@@ -1,6 +1,5 @@
 @using OnlineMinion.Contracts.AppMessaging
-@using OnlineMinion.Web.Validation
-
+@using OnlineMinion.Web.Components.Forms
 @code{
 
   // If L18n is needed, this should be put to code-behind part and obtain translations from there.
@@ -54,7 +53,7 @@
 
       <div class="form-group row">
         <div class="col-sm-2">
-          <button class="btn btn-primary form-control" disabled="@_isEditorActionDisabled" type="submit">@Str.SubmitBtn</button>
+          <button class="btn btn-primary form-control" disabled="@IsActionDisabled" type="submit">@Str.SubmitBtn</button>
         </div>
       </div>
     </fieldset>
