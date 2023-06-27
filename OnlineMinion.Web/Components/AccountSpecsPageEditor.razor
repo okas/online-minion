@@ -1,11 +1,30 @@
-@using OnlineMinion.Web.Components.Forms
-@{
-  var name = nameof(Model.Name);
-  var nameLower = name.ToLowerInvariant();
-  var group = nameof(Model.Group);
-  var groupLower = group.ToLowerInvariant();
-  var description = nameof(Model.Description);
-  var descriptionLower = description.ToLowerInvariant();
+@using OnlineMinion.Contracts.AppMessaging
+@using OnlineMinion.Web.Validation
+
+@code{
+
+  // If L18n is needed, this should be put to code-behind part and obtain translations from there.
+  internal static class Str
+  {
+    public const string SubmitBtn = "Submit";
+
+    public const string Name = nameof(BaseUpsertAccountSpecReqData.Name);
+    public const string Group = nameof(BaseUpsertAccountSpecReqData.Group);
+    public const string Description = nameof(BaseUpsertAccountSpecReqData.Description);
+
+    public static readonly string NamePh = ToPlaceholder(Name);
+    public static readonly string GroupPh = ToPlaceholder(Group);
+    public static readonly string DescriptionPh = ToPlaceholder(Description);
+
+    public static readonly string NameId = ToId(Name);
+    public static readonly string GroupId = ToId(Group);
+    public static readonly string DescriptionId = ToId(Description);
+
+    private static string ToPlaceholder(string data) => $"Enter {data}";
+
+    private static string ToId(string data) => $"frm_{data}".ToLower();
+  }
+
 }
 
 <div class="row">
@@ -17,27 +36,25 @@
 
     <fieldset disabled="@IsSubmitting">
       <div class="form-group">
-        <label for="@nameLower">@name</label>
-        <InputText @bind-Value="@Model!.Name" class="form-control" id="@nameLower" placeholder="@($"Enter {nameLower}")"/>
+        <label for="@Str.NameId">@Str.Name</label>
+        <InputText @bind-Value="@Model!.Name" class="form-control" id="@Str.NameId" placeholder="@Str.NamePh"/>
       </div>
 
       <div class="form-group">
-        <label for="@groupLower">@group</label>
-        <InputText @bind-Value="@Model.Group" class="form-control" id="@groupLower" placeholder="@($"Enter {groupLower}")"/>
+        <label for="@Str.GroupId">@Str.Group</label>
+        <InputText @bind-Value="@Model.Group" class="form-control" id="@Str.GroupId" placeholder="@Str.GroupPh"/>
       </div>
 
       <div class="form-group">
-        <label for="@descriptionLower">@description</label>
-        <InputText @bind-Value="@Model.Description" class="form-control" id="@descriptionLower" placeholder="@($"Enter {descriptionLower}")"/>
+        <label for="@Str.DescriptionId">@Str.Description</label>
+        <InputText @bind-Value="@Model.Description" class="form-control" id="@Str.DescriptionId" placeholder="@Str.DescriptionPh"/>
       </div>
 
       <hr/>
 
       <div class="form-group row">
         <div class="col-sm-2">
-          <button class="btn btn-primary form-control" disabled="@IsActionDisabled" type="submit">
-            Submit
-          </button>
+          <button class="btn btn-primary form-control" disabled="@_isEditorActionDisabled" type="submit">@Str.SubmitBtn</button>
         </div>
       </div>
     </fieldset>
