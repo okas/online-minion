@@ -7,7 +7,7 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Requests;
 using OnlineMinion.Web.Components;
-using OnlineMinion.Web.Infrastructure;
+using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.Shared;
 
 namespace OnlineMinion.Web.Pages;
@@ -110,15 +110,21 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
+        OpenModelForCreate();
+    }
+
+    private void OpenModelForCreate()
+    {
         _modalUpsertTitle = "Add new Account Specification";
         _modalUpsert.Open();
     }
 
     private async Task OnEditHandler(int id)
     {
+        // If the editing of same item is already in progress, then do nothing.
         if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
         {
-            OpenModalForEdit(id);
+            OpenModalForUpdate(id);
 
             return;
         }
@@ -126,7 +132,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         if (await Mediator.Send(new GetAccountSpecByIdReq(id), CT) is { } model)
         {
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-            OpenModalForEdit(id);
+            OpenModalForUpdate(id);
         }
         else
         {
@@ -135,20 +141,23 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         }
     }
 
-    private void OpenModalForEdit(int id)
+    private void OpenModalForUpdate(int id)
     {
         _modalUpsertTitle = $"Edit Account Specification: id#{id}";
         _modalUpsert.Open();
     }
 
-    private async Task OnValidSubmitHandler()
+    private async Task OnSubmitHandler()
     {
+        if (!await _editorRef.ValidateEditorAsync())
+        {
+            return;
+        }
+
         _isSubmitting = true;
 
         switch (_modelUpsert)
         {
-            case null:
-                break;
             case UpdateAccountSpecReq req:
                 await HandleUpdateSubmit(req);
                 break;
@@ -263,15 +272,26 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         var result = await Mediator.Send(new DeleteAccountSpecReq(id), CT);
         _isSubmitting = false;
 
-        if (result)
-        {
-            _modalDelete.Close();
-            await HandlePageStateAfterDelete();
-        }
-        else
-        {
-            Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
-        }
+        await result.SwitchFirstAsync(
+            async _ =>
+            {
+                _modalDelete.Close();
+                await HandlePageStateAfterDelete();
+            },
+            error =>
+            {
+                if (error.Type is ErrorType.NotFound)
+                {
+                    Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
+                }
+                else
+                {
+                    Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
+                }
+
+                return Task.CompletedTask;
+            }
+        );
     }
 
     private async Task HandlePageStateAfterDelete()

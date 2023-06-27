@@ -1,5 +1,5 @@
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using OnlineMinion.Application.Swagger;
 using OnlineMinion.Data;
 using OnlineMinion.RestApi.Configuration;
@@ -14,32 +14,41 @@ var webAppBuilder = WebApplication.CreateBuilder(args);
 
 var confManager = webAppBuilder.Configuration;
 
-webAppBuilder.Services.AddLogging();
+var services = webAppBuilder.Services;
 
 webAppBuilder.Services.AddDbContext<OnlineMinionDbContext>(
     builder => builder.UseSqlServer("name=ConnectionStrings:DefaultConnection")
 );
 
-webAppBuilder.Services.AddRestApi(webAppBuilder.Configuration);
+services.AddRestApi(webAppBuilder.Configuration);
 
 if (webAppBuilder.Environment.IsDevelopment())
 {
-    webAppBuilder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    services.AddDatabaseDeveloperPageExceptionFilter();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    webAppBuilder.Services.Configure<SwaggerOptions>(confManager.GetSection(nameof(SwaggerOptions)));
+    services.Configure<SwaggerOptions>(confManager.GetSection(nameof(SwaggerOptions)));
 
-    webAppBuilder.Services
+    services
         .Configure<SwaggerGeneratorOptions>(confManager.GetSection(nameof(SwaggerGeneratorOptions)))
         .Configure<SchemaGeneratorOptions>(confManager.GetSection(nameof(SchemaGeneratorOptions)))
         .Configure<SwaggerGenOptions>(confManager.GetSection(nameof(SwaggerGenOptions)))
-        .AddSingleton<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfigurator>();
+        .ConfigureOptions<SwaggerGenOptionsConfigurator>()
+        .AddFluentValidationRulesToSwagger(
+            options => options.ValidatorSearch = new()
+            {
+                IsOneValidatorForType = false,
+                SearchBaseTypeValidators =
+                    false, // This aligns with the behavior of default MS DI  Service resolution works!
+                // Enforces to use only one validator per type and combine them using 'Include' rules.
+            }
+        );
 
-    webAppBuilder.Services
+    services
         .Configure<SwaggerUIOptions>(confManager.GetSection(nameof(SwaggerUIOptions)))
-        .AddSingleton<IConfigureOptions<SwaggerUIOptions>, SwaggerUIOptionsConfigurator>();
+        .ConfigureOptions<SwaggerUIOptionsConfigurator>();
 
-    webAppBuilder.Services.AddSwaggerGen();
+    services.AddSwaggerGen();
 }
 
 #endregion

@@ -1,16 +1,13 @@
 using CorsPolicySettings;
-using ErrorOr;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using OnlineMinion.Common.Validators;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.AppMessaging.Behaviors;
 using OnlineMinion.RestApi.AppMessaging.Handlers;
@@ -19,7 +16,7 @@ using OnlineMinion.RestApi.ProblemHandling;
 
 namespace OnlineMinion.RestApi.Configuration;
 
-public static class ServiceCollectionExtensions
+public static class ServicesSetup
 {
     public static IServiceCollection AddRestApi(this IServiceCollection services, IConfigurationRoot config)
     {
@@ -30,37 +27,35 @@ public static class ServiceCollectionExtensions
             .AddCors();
 
         services
-            // .AddSingleton<IConfigureOptions<MvcOptions>, MvcOptionsConfigurator>()
+            //.ConfigureOptions<MvcOptionsConfigurator>()
+            .ConfigureOptions<ApiBehaviorOptionsConfigurator>()
             .AddControllers();
 
         // Override default one.
         services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
 
         services
-            .AddSingleton<IConfigureOptions<ApiVersioningOptions>, ApiVersioningOptionsConfigurator>()
+            .ConfigureOptions<ApiVersioningOptionsConfigurator>()
             .AddApiVersioning();
 
         services
-            .AddSingleton<IConfigureOptions<ApiExplorerOptions>, ApiExplorerOptionsConfigurator>()
+            .ConfigureOptions<ApiExplorerOptionsConfigurator>()
             .AddVersionedApiExplorer();
 
         services.AddEndpointsApiExplorer();
+
+        services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
+        services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
 
         services
             .AddMediatR(
                 cfg =>
                 {
-                    cfg.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions));
+                    cfg.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup));
 
                     // Pipeline
-                    cfg.AddBehavior(
-                            typeof(IPipelineBehavior<CreateAccountSpecReq, ErrorOr<ModelIdResp>>),
-                            typeof(UnitOfWorkBehavior<CreateAccountSpecReq, ErrorOr<ModelIdResp>>)
-                        )
-                        .AddBehavior(
-                            typeof(IPipelineBehavior<UpdateAccountSpecReq, ErrorOr<Updated>>),
-                            typeof(UnitOfWorkBehavior<UpdateAccountSpecReq, ErrorOr<Updated>>)
-                        );
+                    cfg.AddOpenBehavior(typeof(CommandValidationBehavior<,>));
+                    cfg.AddOpenBehavior(typeof(CommandUnitOfWorkBehavior<,>));
                 }
             )
             .AddTransient<

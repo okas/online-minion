@@ -36,8 +36,6 @@ public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecR
             return Error.NotFound();
         }
 
-        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
-
         return Result.Updated;
     }
 }

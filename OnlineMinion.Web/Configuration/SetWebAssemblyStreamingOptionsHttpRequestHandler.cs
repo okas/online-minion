@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
-namespace OnlineMinion.Web.Infrastructure;
+namespace OnlineMinion.Web.Configuration;
 
-public class SetWebAssemblyStreamingOptionsHandler : DelegatingHandler
+public class SetWebAssemblyStreamingOptionsHttpRequestHandler : DelegatingHandler
 {
     protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken ct)
     {

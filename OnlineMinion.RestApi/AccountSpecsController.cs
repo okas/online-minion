@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
@@ -20,11 +18,10 @@ namespace OnlineMinion.RestApi;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1")]
 [ApiController]
-public class AccountSpecsController : ControllerBase
+public class AccountSpecsController : ApiControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public AccountSpecsController(IMediator mediator) => _mediator = mediator;
+    private readonly ISender _sender;
+    public AccountSpecsController(ISender sender) => _sender = sender;
 
     /// <summary>
     ///     To probe some paging related data about this resource.
@@ -57,21 +54,48 @@ public class AccountSpecsController : ControllerBase
         [FromQuery][Range(1, 50)] int pageSize = 10
     )
     {
-        var pagingMetaInfo = await _mediator.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
+        var pagingMetaInfo = await _sender.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
-        SetPagingHeaders(pagingMetaInfo, Response.Headers);
+        SetPagingHeaders(pagingMetaInfo);
 
         return NoContent();
     }
 
+    /// <summary>
+    ///     Unique name validation for new create workflow.
+    /// </summary>
+    /// <remarks>Check, if any resource already uses interested name.</remarks>
+    /// <param name="name">Interested new <b>name</b>.</param>
+    /// <param name="ct"></param>
+    [HttpHead("validate-available-name/{name:required:length(2,50)}")]
+    [SwaggerResponse(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CheckUniqueNew(string name, CancellationToken ct) =>
+        await _sender.Send(new CheckAccountSpecUniqueNewReq(name), ct) ? NoContent() : Conflict();
+
+    /// <summary>
+    ///     Uniqueness validation for update workflow.
+    /// </summary>
+    /// <remarks>Check, if any <b>other existing</b> resource already uses name.</remarks>
+    /// <param name="name">Name to validate.</param>
+    /// <param name="exceptId">Id of resource that is being updated, must be excluded from check. </param>
+    /// <param name="ct"></param>
+    [HttpHead("validate-available-name/{name:required:length(2,50)}/except-id/{exceptId:min(1)}")]
+    [SwaggerResponse(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CheckUniqueExisting(string name, int exceptId, CancellationToken ct) =>
+        await _sender.Send(new CheckAccountSpecUniqueExistingReq(name, exceptId), ct) ? NoContent() : Conflict();
+
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(AccountSpecResp), StatusCodes.Status200OK)]
+    [ProducesResponseType<AccountSpecResp>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
         [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
-    ) => await _mediator.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
+    ) => await _sender.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -101,23 +125,26 @@ public class AccountSpecsController : ControllerBase
         CancellationToken              ct
     )
     {
-        var result = await _mediator.Send(req, ct);
+        var result = await _sender.Send(req, ct);
 
-        SetPagingHeaders(result.Paging, Response.Headers);
+        SetPagingHeaders(result.Paging);
 
         return Ok(result.Result);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ModelIdResp), StatusCodes.Status201Created)]
+    [ProducesResponseType<ModelIdResp>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct) =>
-        (await _mediator.Send(req, ct))
-        .MatchFirst(
+    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
+    {
+        var result = await _sender.Send(req, ct);
+
+        return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => Problem(error.Description) // TODO: put info for Problem factory usage
+            error => CreateApiProblemResult(error)
         );
+    }
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -131,16 +158,11 @@ public class AccountSpecsController : ControllerBase
             return actionResult;
         }
 
-        var result = await _mediator.Send(req, ct);
+        var result = await _sender.Send(req, ct);
 
-        return result.MatchFirst<IActionResult>(
+        return result.MatchFirst(
             _ => NoContent(),
-            error => error.Type switch
-            {
-                ErrorType.NotFound => NotFound(),
-                ErrorType.Conflict => Conflict(),
-                _ => Problem(error.Description, GetInstanceUrl(req.Id)), // TODO: put info for Problem factory usage
-            }
+            error => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id))
         );
     }
 
@@ -149,37 +171,19 @@ public class AccountSpecsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        int                              id,
         [FromRoute] DeleteAccountSpecReq req,
         CancellationToken                ct
     )
     {
-        if (CheckId(id, req) is { } actionResult)
-        {
-            return actionResult;
-        }
+        var result = await _sender.Send(req, ct);
 
-        return await _mediator.Send(req, ct) ? NoContent() : NotFound();
-    }
-
-    private string? GetInstanceUrl(int id) => Url.Action(nameof(GetById), new { id, });
-
-    private ActionResult? CheckId(int id, IHasIntId req)
-    {
-        if (id == req.Id)
-        {
-            return null;
-        }
-
-        ModelState.AddModelError("id", "Id in route and in body are not the same.");
-
-        return ValidationProblem();
-    }
-
-    private static void SetPagingHeaders(PagingMetaInfo values, IHeaderDictionary headers)
-    {
-        headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
-        headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
-        headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
+        return result.MatchFirst(
+            _ => NoContent(),
+            error => error.Type switch
+            {
+                ErrorType.NotFound => NotFound(),
+                _ => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id)),
+            }
+        );
     }
 }

@@ -59,7 +59,9 @@ else
 
 @*TODO: Set focus to modal, if it is opened.*@
 <ModalDialog @ref="@_modalUpsert" Title="@_modalUpsertTitle">
-  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnValidSubmit="@OnValidSubmitHandler" @ref="@_editorRef"/>
+  <CascadingValue Value="@CT">
+    <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnSubmit="@OnSubmitHandler" @ref="@_editorRef"/>
+  </CascadingValue>
 </ModalDialog>
 
 <ModalDialog @ref="@_modalDelete" Title="@_modalDeleteTitle">

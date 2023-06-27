@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace OnlineMinion.RestApi.HttpRequestPipeline;
 
-public static class WebApplicationExtensions
+public static class PipelineSetup
 {
     public static WebApplication UseRestApi(this WebApplication app)
     {

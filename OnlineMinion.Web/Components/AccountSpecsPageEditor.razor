@@ -29,8 +29,8 @@
 
 <div class="row">
 
-  <EditForm Model="@Model" OnValidSubmit="@OnValidSubmit">
-    <DataAnnotationsValidator/>
+  <EditForm EditContext="@_editContext" OnSubmit="@OnSubmit">
+    <FluentValidator @ref="@_fluentValidatorRef"/>
     <ServerSideValidator @ref="@_serverSideValidator"/>
     <ValidationSummary/>
 

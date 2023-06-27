@@ -2,15 +2,19 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Web.Infrastructure;
-using OnlineMinion.Web.Validation;
+using OnlineMinion.Web.Components.Forms;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsPageEditor : ComponentWithCancellationToken
+public partial class AccountSpecsPageEditor : ComponentBase
 {
-    private bool _isEditorActionDisabled;
+    private EditContext _editContext = null!;
+    private FluentValidator _fluentValidatorRef = null!;
+    private bool _isEditorActionDisabledForced;
     private ServerSideValidator _serverSideValidator = null!;
+    private bool _shouldBeDisabledByFormState = true;
+
+    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced;
 
     [Parameter]
     [EditorRequired]
@@ -22,7 +26,21 @@ public partial class AccountSpecsPageEditor : ComponentWithCancellationToken
 
     [Parameter]
     [EditorRequired]
-    public EventCallback<EditContext> OnValidSubmit { get; set; }
+    public EventCallback<EditContext> OnSubmit { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _editContext = new(Model);
+        _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
+    }
+
+    private void OnValidationStateChangedHandler(object? _, ValidationStateChangedEventArgs __)
+    {
+        _shouldBeDisabledByFormState = _editContext.GetValidationMessages().Any() || !_editContext.IsModified();
+        StateHasChanged();
+    }
+
+    public ValueTask<bool> ValidateEditorAsync() => _fluentValidatorRef.ValidateModelAsync();
 
     public void SetServerValidationErrors(IList<Error> errors)
     {
@@ -50,7 +68,7 @@ public partial class AccountSpecsPageEditor : ComponentWithCancellationToken
         }
 
         _serverSideValidator.DisplayErrors("Account specification do not exist on server anymore.");
-        _isEditorActionDisabled = true;
+        _isEditorActionDisabledForced = true;
     }
 
     private static Dictionary<string, IEnumerable<object>> FlattenFieldErrors(IEnumerable<Error> errors)

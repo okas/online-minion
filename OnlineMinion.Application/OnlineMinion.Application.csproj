@@ -31,10 +31,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.60">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.61">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0-beta.3"/>
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0-preview.5.23302.2"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0"/>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0-preview2.23159.1"/>

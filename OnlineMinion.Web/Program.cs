@@ -1,30 +1,35 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using OnlineMinion.Common.Validators;
 using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
-using OnlineMinion.Web.Infrastructure;
-using OnlineMinion.Web.Settings;
+using OnlineMinion.Web.Configuration;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 #region Container setup
 
+var services = builder.Services;
+
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging")
 );
 
-builder.Services.AddLogging();
+services.AddLogging();
 
-builder.Services.AddHttpClient(
+services.AddHttpClient(
     Constants.HostClient,
     client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
 );
 
-builder.Services.AddRestApiClient(
-    builder.Configuration,
-    new[] { typeof(SetWebAssemblyStreamingOptionsHandler), },
+services.AddRestApiClient(
+    new[] { typeof(SetWebAssemblyStreamingOptionsHttpRequestHandler), },
     Constants.ApiClient
 );
+
+services.AddValidatorsFromAssemblyContaining<Program>();
+services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
 
 #endregion
 

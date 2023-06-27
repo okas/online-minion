@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using ErrorOr;
 using MediatR;
 
@@ -12,6 +11,5 @@ public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IHasInt
         base(name, group, description) =>
         Id = id;
 
-    [Required]
     public int Id { get; set; }
 }

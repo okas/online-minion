@@ -4,6 +4,9 @@ using static System.String;
 
 namespace OnlineMinion.Common.Utilities.Extensions;
 
+// TODO: needs fixes and optimizations, see MA analyzer result for input! Also,  QueryHelpers.AddQueryString
+// is already taking care of null values, so we can remove that check.
+
 public static class UriHelpers
 {
     public static string AddQueryString(this Uri uri, IReadOnlyDictionary<string, IEnumerable<object?>> parameters) =>

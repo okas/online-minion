@@ -1,4 +1,4 @@
-namespace OnlineMinion.Web.Settings;
+namespace OnlineMinion.Web.Configuration;
 
 public static class Constants
 {

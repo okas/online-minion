@@ -9,7 +9,6 @@ namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 public sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
 {
     private readonly OnlineMinionDbContext _dbContext;
-
     public CreateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq rq, CancellationToken ct)

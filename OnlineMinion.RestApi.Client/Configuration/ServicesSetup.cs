@@ -1,27 +1,33 @@
 using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Configuration;
+using FluentValidation;
+using IL.FluentValidation.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineMinion.RestApi.Client.Infrastructure;
 using OnlineMinion.RestApi.Client.Settings;
 
 namespace OnlineMinion.RestApi.Client.Configuration;
 
-public static class ServiceCollectionExtensions
+public static class ServicesSetup
 {
     public static IServiceCollection AddRestApiClient(
         this IServiceCollection services,
-        IConfigurationRoot      config,
         Type[]?                 httpMessageHandlers = null,
         string?                 httpClientName      = null
     )
     {
         CheckHandlerTypes(httpMessageHandlers);
 
-        services.Configure<ApiClientProviderSettings>(config.GetSection(nameof(ApiClientProviderSettings)));
+        services.AddValidatorsFromAssemblyContaining(typeof(ServicesSetup));
 
-        var httpClientBuilder = string.IsNullOrWhiteSpace(httpClientName)
-            ? services.AddHttpClient<ApiClientProvider>()
-            : services.AddHttpClient<ApiClientProvider>(httpClientName);
+        services.AddOptions<ApiClientProviderSettings>()
+            .BindConfiguration(nameof(ApiClientProviderSettings))
+            .ValidateWithFluentValidator();
+
+        var httpClientBuilder = services.AddHttpClient<ApiClientProvider>(
+            string.IsNullOrWhiteSpace(httpClientName)
+                ? nameof(ApiClientProvider)
+                : httpClientName
+        );
 
         if (httpMessageHandlers is not null)
         {
@@ -35,7 +41,7 @@ public static class ServiceCollectionExtensions
         }
 
         services.AddMediatR(
-            opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServiceCollectionExtensions))
+            opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup))
         );
 
         return services;
@@ -47,12 +53,12 @@ public static class ServiceCollectionExtensions
         string? paramName = null
     )
     {
-        if (httpMessageHandlers is not null &&
-            httpMessageHandlers.Any(type => !type.IsSubclassOf(typeof(DelegatingHandler))))
+        if (httpMessageHandlers is not null
+            && httpMessageHandlers.Any(type => !type.IsSubclassOf(typeof(DelegatingHandler))))
         {
             throw new ArgumentException(
                 "All handlers must derive from DelegatingHandler.",
-                nameof(httpMessageHandlers)
+                paramName
             );
         }
     }
