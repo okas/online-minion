@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Web.Components.Forms;
+using OnlineMinion.Web.Shared;
 
 namespace OnlineMinion.Web.Components;
 
@@ -11,10 +12,12 @@ public partial class AccountSpecsPageEditor : ComponentBase
     private EditContext _editContext = null!;
     private FluentValidator _fluentValidatorRef = null!;
     private bool _isEditorActionDisabledForced;
+    private ModalDialog _modalRef = null!;
+    private string? _modalTitle;
     private ServerSideValidator _serverSideValidator = null!;
     private bool _shouldBeDisabledByFormState = true;
 
-    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced;
+    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || IsSubmitting;
 
     [Parameter]
     [EditorRequired]
@@ -32,6 +35,25 @@ public partial class AccountSpecsPageEditor : ComponentBase
     {
         _editContext = new(Model);
         _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
+    }
+
+    public void OpenForCreate()
+    {
+        _modalTitle = "Add new Account Specification";
+        _modalRef.Open();
+    }
+
+    public void OpenForUpdate(int id)
+    {
+        _modalTitle = $"Edit Account Specification: id#{id}";
+        _modalRef.Open();
+    }
+
+    public void ResetUpsertModal()
+    {
+        _modalRef.Close();
+        _editContext.MarkAsUnmodified();
+        _isEditorActionDisabledForced = false;
     }
 
     private void OnValidationStateChangedHandler(object? _, ValidationStateChangedEventArgs __)

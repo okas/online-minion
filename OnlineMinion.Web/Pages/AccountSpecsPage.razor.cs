@@ -18,8 +18,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private bool _isSubmitting;
     private ModalDialog _modalDelete = null!;
     private string? _modalDeleteTitle;
-    private ModalDialog _modalUpsert = null!;
-    private string? _modalUpsertTitle;
     private AccountSpecResp? _modelDelete;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
 
@@ -110,21 +108,16 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
-        OpenModelForCreate();
+        _editorRef.OpenForCreate();
     }
 
-    private void OpenModelForCreate()
-    {
-        _modalUpsertTitle = "Add new Account Specification";
-        _modalUpsert.Open();
-    }
 
     private async Task OnEditHandler(int id)
     {
         // If the editing of same item is already in progress, then do nothing.
         if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
         {
-            OpenModalForUpdate(id);
+            _editorRef.OpenForUpdate(id);
 
             return;
         }
@@ -132,19 +125,13 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         if (await Mediator.Send(new GetAccountSpecByIdReq(id), CT) is { } model)
         {
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-            OpenModalForUpdate(id);
+            _editorRef.OpenForUpdate(id);
         }
         else
         {
             // TODO: Notify this info to user as well!
             Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
         }
-    }
-
-    private void OpenModalForUpdate(int id)
-    {
-        _modalUpsertTitle = $"Edit Account Specification: id#{id}";
-        _modalUpsert.Open();
     }
 
     private async Task OnSubmitHandler()
@@ -177,7 +164,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _ =>
             {
                 UpdateViewModelAfterEdit(request);
-                ResetUpsertModal();
+                ResetEditor();
             },
             errors =>
             {
@@ -214,7 +201,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             async _ =>
             {
                 await NavigateToNewItemPage();
-                ResetUpsertModal();
+                ResetEditor();
             },
             errors =>
             {
@@ -225,6 +212,12 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 return Task.CompletedTask;
             }
         );
+    }
+
+    private void ResetEditor()
+    {
+        _modelUpsert = null;
+        _editorRef.ResetUpsertModal();
     }
 
     private async Task NavigateToNewItemPage()
@@ -246,11 +239,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         }
     }
 
-    private void ResetUpsertModal()
-    {
-        _modalUpsert.Close();
-        _modelUpsert = null;
-    }
 
     private void OnDeleteHandler(int id)
     {
