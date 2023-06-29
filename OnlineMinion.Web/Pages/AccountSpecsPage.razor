@@ -63,9 +63,9 @@ else
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm">
       <tr>
-        <td>@Str.Name</td>
-        <td>@Str.Group</td>
-        <td>@Str.Description</td>
+        <td>@m.Name</td>
+        <td>@m.Group</td>
+        <td>@m.Description</td>
         <td>
           <button class="btn btn-outline-danger" @onclick="@(() => OnDeleteHandler(m.Id))">@Str.DeleteBtn</button>
           <button class="btn btn-outline-warning" @onclick="@(() => OnEditHandler(m.Id))">@Str.EditBtn</button>
