@@ -1,14 +1,34 @@
 ﻿@page "/account-specs"
+@using OnlineMinion.Contracts.Responses
 
-<AppPageTitle>Account Specs</AppPageTitle>
+@code
+{
+  internal static class Str
+  {
+    public const string PageTitle = "Account Specs";
+    public const string MainHeading = "Account Specifications";
+    public const string MainDescription = "Manage Account Specifications";
+    public const string NoContent = "No content to page | loading ...";
+    public const string Loading = "Loading ...";
+    public const string NoItems = "No items.";
+    public const string DeleteBtn = "❌";
+    public const string EditBtn = "✏️|🛠️";
+    public const string Name = nameof(AccountSpecResp.Name);
+    public const string Group = nameof(AccountSpecResp.Group);
+    public const string Description = nameof(AccountSpecResp.Description);
+  }
 
-<h1>Account Specifications</h1>
+}
 
-<p>Manage Account Specifications</p>
+<AppPageTitle>@Str.PageTitle</AppPageTitle>
+
+<h1>@Str.MainHeading</h1>
+
+<p>@Str.MainDescription</p>
 
 @if (_paging is null)
 {
-  <p>No content to page | loading ...</p>
+  <p>@Str.NoContent</p>
 }
 else
 {
@@ -20,13 +40,13 @@ else
 @if (_vm is null)
 {
   <p>
-    <em>Loading...</em>
+    <em>@Str.Loading</em>
   </p>
 }
 else if (!_vm.Any())
 {
   <p>
-    <em>No items.</em>
+    <em>@Str.NoItems</em>
   </p>
 }
 else
@@ -34,21 +54,21 @@ else
   <table class="table">
     <thead>
     <tr>
-      <th>@nameof(_modelUpsert.Name)</th>
-      <th>@nameof(_modelUpsert.Group)</th>
-      <th>@nameof(_modelUpsert.Description)</th>
+      <th>@Str.Name</th>
+      <th>@Str.Group</th>
+      <th>@Str.Description</th>
       <th></th>
     </tr>
     </thead>
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm">
       <tr>
-        <td>@m.Name</td>
-        <td>@m.Group</td>
-        <td>@m.Description</td>
+        <td>@Str.Name</td>
+        <td>@Str.Group</td>
+        <td>@Str.Description</td>
         <td>
-          <button class="btn btn-outline-danger" @onclick="@(() => OnDeleteHandler(m.Id))">❌</button>
-          <button class="btn btn-outline-warning" @onclick="@(() => OnEditHandler(m.Id))">🛠️</button>
+          <button class="btn btn-outline-danger" @onclick="@(() => OnDeleteHandler(m.Id))">@Str.DeleteBtn</button>
+          <button class="btn btn-outline-warning" @onclick="@(() => OnEditHandler(m.Id))">@Str.EditBtn</button>
         </td>
       </tr>
     </Virtualize>
