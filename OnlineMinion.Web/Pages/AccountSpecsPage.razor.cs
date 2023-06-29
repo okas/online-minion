@@ -8,16 +8,13 @@ using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
-using OnlineMinion.Web.Shared;
 
 namespace OnlineMinion.Web.Pages;
 
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
-    private AccountSpecsPageEditor _editorRef = null!;
+    private AccountSpecsDeleteDialog _deleteDialogRef = null!;
     private bool _isSubmitting;
-    private ModalDialog _modalDelete = null!;
-    private string? _modalDeleteTitle;
     private AccountSpecResp? _modelDelete;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
 
@@ -239,15 +236,13 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         }
     }
 
-
     private void OnDeleteHandler(int id)
     {
         _modelDelete = _vm!.Single(m => m.Id == id);
-        _modalDeleteTitle = $"Delete Account Specification: id#{id}";
-        _modalDelete.Open();
+        _deleteDialogRef.OpenForDelete(id);
     }
 
-    private async Task OnDeleteSubmitHandler()
+    private async Task OnDeleteConfirmHandler()
     {
         if (_modelDelete is null)
         {
@@ -263,7 +258,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         await result.SwitchFirstAsync(
             async _ =>
             {
-                _modalDelete.Close();
+                _deleteDialogRef.Reset();
                 await HandlePageStateAfterDelete();
             },
             error =>

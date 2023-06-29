@@ -1,0 +1,32 @@
+@code{
+
+  internal static class Str
+  {
+    public const string Title = "Confirm deletion";
+    public const string DeleteBtn = "DeleteBtn";
+
+    public const string Name = nameof(Model.Name);
+    public const string Group = nameof(Model.Group);
+    public const string Description = nameof(Model.Description);
+  }
+
+}
+
+<ModalDialog @ref="@_modalRef" Title="@_modalTitle">
+
+  <div class="row">
+    <h3>@Str.Title</h3>
+
+    <h6>@Str.Name</h6>
+    <h5>@Model.Name</h5>
+
+    <h6>@Str.Group</h6>
+    <h5>@Model.Group</h5>
+
+    <h6>@Str.Description</h6>
+    <h5>@Model.Description</h5>
+
+    <button class="btn btn-outline-danger" @onclick="@OnConfirm">@Str.DeleteBtn</button>
+  </div>
+
+</ModalDialog>

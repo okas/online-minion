@@ -1,5 +1,4 @@
 ﻿@page "/account-specs"
-@using OnlineMinion.Contracts.Responses
 
 <AppPageTitle>Account Specs</AppPageTitle>
 
@@ -62,21 +61,4 @@ else
   <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnSubmit="@OnSubmitHandler" @ref="@_editorRef"/>
 </CascadingValue>
 
-<ModalDialog @ref="@_modalDelete" Title="@_modalDeleteTitle">
-  <div class="row">
-    <h3>
-      Confirm deletion
-    </h3>
-
-    <h6>@nameof(AccountSpecResp.Name)</h6>
-    <h5>@_modelDelete?.Name</h5>
-
-    <h6>@nameof(AccountSpecResp.Group)</h6>
-    <h5>@_modelDelete?.Group</h5>
-
-    <h6>@nameof(AccountSpecResp.Description)</h6>
-    <h5>@_modelDelete?.Description</h5>
-
-    <button class="btn btn-outline-danger" @onclick="@OnDeleteSubmitHandler">Submit</button>
-  </div>
-</ModalDialog>
+<AccountSpecsDeleteDialog Model="@_modelDelete" OnConfirm="OnDeleteConfirmHandler" @ref="@_deleteDialogRef"/>
