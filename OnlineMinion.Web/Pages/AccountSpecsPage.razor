@@ -62,7 +62,7 @@ else
     </thead>
     <tbody style="overflow-y:scroll" tabindex="-1">
     <Virtualize Context="m" Items="_vm">
-      <tr>
+      <tr @key=m.Id>
         <td>@m.Name</td>
         <td>@m.Group</td>
         <td>@m.Description</td>
