@@ -11,7 +11,7 @@ public partial class AccountSpecsDeleteDialog : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public AccountSpecResp Model { get; set; }
+    public AccountSpecResp? Model { get; set; }
 
     [Parameter]
     [EditorRequired]
