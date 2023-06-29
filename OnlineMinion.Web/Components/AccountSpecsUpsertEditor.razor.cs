@@ -7,7 +7,7 @@ using OnlineMinion.Web.Shared;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsPageEditor : ComponentBase
+public partial class AccountSpecsUpsertEditor : ComponentBase
 {
     private EditContext _editContext = null!;
     private FluentValidator _fluentValidatorRef = null!;
@@ -52,6 +52,7 @@ public partial class AccountSpecsPageEditor : ComponentBase
     public void ResetUpsertModal()
     {
         _modalRef.Close();
+        _modalTitle = null;
         _editContext.MarkAsUnmodified();
         _isEditorActionDisabledForced = false;
     }

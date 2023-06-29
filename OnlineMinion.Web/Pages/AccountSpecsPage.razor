@@ -58,7 +58,7 @@ else
 
 @*TODO: Set focus to modal, if it is opened.*@
 <CascadingValue IsFixed="@true" Value="@CT">
-  <AccountSpecsPageEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnSubmit="@OnSubmitHandler" @ref="@_editorRef"/>
+  <AccountSpecsUpsertEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnSubmit="@OnUpsertSubmitHandler" @ref="@_upsertEditorRef"/>
 </CascadingValue>
 
 <AccountSpecsDeleteDialog Model="@_modelDelete" OnConfirm="OnDeleteConfirmHandler" @ref="@_deleteDialogRef"/>

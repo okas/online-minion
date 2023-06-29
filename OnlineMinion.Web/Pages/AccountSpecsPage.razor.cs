@@ -17,8 +17,8 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private bool _isSubmitting;
     private AccountSpecResp? _modelDelete;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
-
     private PagingMetaInfo? _paging;
+    private AccountSpecsUpsertEditor _upsertEditorRef = null!;
     private List<AccountSpecResp>? _vm;
 
     [Inject]
@@ -105,7 +105,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
-        _editorRef.OpenForCreate();
+        _upsertEditorRef.OpenForCreate();
     }
 
 
@@ -114,7 +114,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         // If the editing of same item is already in progress, then do nothing.
         if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
         {
-            _editorRef.OpenForUpdate(id);
+            _upsertEditorRef.OpenForUpdate(id);
 
             return;
         }
@@ -122,7 +122,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         if (await Mediator.Send(new GetAccountSpecByIdReq(id), CT) is { } model)
         {
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-            _editorRef.OpenForUpdate(id);
+            _upsertEditorRef.OpenForUpdate(id);
         }
         else
         {
@@ -131,9 +131,9 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         }
     }
 
-    private async Task OnSubmitHandler()
+    private async Task OnUpsertSubmitHandler()
     {
-        if (!await _editorRef.ValidateEditorAsync())
+        if (!await _upsertEditorRef.ValidateEditorAsync())
         {
             return;
         }
@@ -165,7 +165,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             },
             errors =>
             {
-                _editorRef.SetServerValidationErrors(errors);
+                _upsertEditorRef.SetServerValidationErrors(errors);
 
                 if (errors.Exists(err => err.Type is ErrorType.NotFound))
                 {
@@ -202,7 +202,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             },
             errors =>
             {
-                _editorRef.SetServerValidationErrors(errors);
+                _upsertEditorRef.SetServerValidationErrors(errors);
 
                 //TODO handel all other errors
 
@@ -214,7 +214,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private void ResetEditor()
     {
         _modelUpsert = null;
-        _editorRef.ResetUpsertModal();
+        _upsertEditorRef.ResetUpsertModal();
     }
 
     private async Task NavigateToNewItemPage()
