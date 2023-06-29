@@ -9,7 +9,7 @@ namespace OnlineMinion.Web.Components;
 
 public partial class AccountSpecsUpsertEditor : ComponentBase
 {
-    private EditContext _editContext = null!;
+    private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
     private bool _isEditorActionDisabledForced;
     private ModalDialog _modalRef = null!;
@@ -21,7 +21,7 @@ public partial class AccountSpecsUpsertEditor : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public BaseUpsertAccountSpecReqData Model { get; set; } = null!;
+    public BaseUpsertAccountSpecReqData? Model { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
@@ -31,10 +31,18 @@ public partial class AccountSpecsUpsertEditor : ComponentBase
     [EditorRequired]
     public EventCallback<EditContext> OnSubmit { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        _editContext = new(Model);
-        _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
+        if (Model is not null)
+        {
+            _editContext = new(Model);
+            _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
+        }
+        else if (_editContext is not null)
+        {
+            _editContext.OnValidationStateChanged -= OnValidationStateChangedHandler;
+            _editContext = null;
+        }
     }
 
     public void OpenForCreate()
@@ -53,13 +61,13 @@ public partial class AccountSpecsUpsertEditor : ComponentBase
     {
         _modalRef.Close();
         _modalTitle = null;
-        _editContext.MarkAsUnmodified();
+        _editContext!.MarkAsUnmodified();
         _isEditorActionDisabledForced = false;
     }
 
     private void OnValidationStateChangedHandler(object? _, ValidationStateChangedEventArgs __)
     {
-        _shouldBeDisabledByFormState = _editContext.GetValidationMessages().Any() || !_editContext.IsModified();
+        _shouldBeDisabledByFormState = _editContext!.GetValidationMessages().Any() || !_editContext.IsModified();
         StateHasChanged();
     }
 
