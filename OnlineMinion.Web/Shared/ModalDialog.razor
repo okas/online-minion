@@ -6,8 +6,7 @@
 
         <div class="modal-header">
           <h5 class="modal-title">@Title</h5>
-          <button aria-label="Close" class="btn-close" data-dismiss="modal" @onclick="@Close" type="button">
-          </button>
+          <button aria-label="Close" class="btn-close" data-dismiss="modal" @onclick="@Close" type="button"></button>
         </div>
 
         <div class="modal-body">
@@ -31,14 +30,8 @@
 
   private bool _isOpen;
 
-  public void Open()
-  {
-    _isOpen = true;
-  }
+  public void Open() => _isOpen = true;
 
-  public void Close()
-  {
-    _isOpen = false;
-  }
+  public void Close() => _isOpen = false;
 
 }
