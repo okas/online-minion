@@ -2,8 +2,8 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Web.Components.Forms;
 using OnlineMinion.Web.Shared;
+using OnlineMinion.Web.Shared.Forms;
 
 namespace OnlineMinion.Web.Components;
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Common;
 using OnlineMinion.Common.Utilities;
 
-namespace OnlineMinion.Web.Components.Forms;
+namespace OnlineMinion.Web.Shared.Forms;
 
 /// <summary>
 ///     Validates model instance using FluentValidation's <see cref="FluentValidation.IValidator" /> validator instances

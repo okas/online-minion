@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace OnlineMinion.Web.Components.Forms;
+namespace OnlineMinion.Web.Shared.Forms;
 
 public class ServerSideValidator : ComponentBase
 {
