@@ -1,9 +1,18 @@
 ﻿@page "/"
 
-<AppPageTitle>Home</AppPageTitle>
+@code
+{
+  private static class Str
+  {
+    public const string PageTitle = "Home";
+    public const string MainHeading = "Hello, world!";
+    public const string Paragraph1 = "Welcome to your new app.";
+    public const string Paragraph2 = "Let's add simple change to test GPG signing for commit, shall we.";
+  }
+}
 
-<h1>Hello, world!</h1>
+<AppPageTitle Text="@Str.PageTitle"/>
 
-<p >Welcome to your new app.</p>
-
-<p >Let's add simple change to test GPG signing for commit, shall we.</p>
+<RadzenText Text="@Str.MainHeading" TextStyle="@TextStyle.H3"/>
+<RadzenText Text="@Str.Paragraph1"/>
+<RadzenText Text="@Str.Paragraph2"/>
