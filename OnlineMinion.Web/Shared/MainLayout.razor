@@ -8,6 +8,7 @@
   private static class Str
   {
     public const string HeaderLabel = "OnlineMinion.Web";
+    public const string FooterLabel = "Lorem ipsum footer";
   }
 
 }
@@ -20,7 +21,7 @@
           JustifyContent="@JustifyContent.SpaceBetween"
           Orientation="@Orientation.Horizontal">
         <RadzenSidebarToggle Click="@ToggleSideBar"/>
-        <RadzenLabel Text="@Str.HeaderLabel"/>
+        <RadzenText Class="rz-m-0" Text="@Str.HeaderLabel" TextStyle="@TextStyle.H6"/>
       </RadzenStack>
 
       <div class="rz-p-4">
@@ -44,7 +45,7 @@
 
   <RadzenFooter>
     <RadzenStack AlignItems="@AlignItems.Center" JustifyContent="@JustifyContent.Center">
-      Lorem ipsum footer
+      <RadzenText Class="rz-m-0" Text="@Str.FooterLabel"/>
     </RadzenStack>
   </RadzenFooter>
 </RadzenLayout>
