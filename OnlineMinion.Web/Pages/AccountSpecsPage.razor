@@ -3,7 +3,7 @@
 
 @code
 {
-  internal static class Str
+  private static class Str
   {
     public const string PageTitle = "Account Specs";
     public const string MainHeading = "Account Specifications";
@@ -20,15 +20,14 @@
 
 }
 
-<AppPageTitle>@Str.PageTitle</AppPageTitle>
+<AppPageTitle Text="@Str.PageTitle"/>
 
-<h1>@Str.MainHeading</h1>
-
-<p>@Str.MainDescription</p>
+<RadzenText Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
+<RadzenText Text="@Str.MainDescription"/>
 
 @if (_paging is null)
 {
-  <p>@Str.NoContent</p>
+  <RadzenText Text="@Str.NoContent"/>
 }
 else
 {
@@ -39,15 +38,11 @@ else
 
 @if (_vm is null)
 {
-  <p>
-    <em>@Str.Loading</em>
-  </p>
+  <RadzenText Style="font-style: italic" Text="@Str.Loading"/>
 }
 else if (!_vm.Any())
 {
-  <p>
-    <em>@Str.NoItems</em>
-  </p>
+  <RadzenText Style="font-style: italic" Text="@Str.NoItems"/>
 }
 else
 {
