@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Contracts;
+using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
@@ -26,6 +26,7 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
             .Select(e => new AccountSpecResp(e.Id, e.Name, e.Group, e.Description))
             .AsAsyncEnumerable();
 
-        return new(Paging: pagingMeta, Result: entities);
+        // TODO: Shouldn't  be used in production code, or should be able to opt-in from config.
+        return new(Paging: pagingMeta, Result: entities.ToDelayedAsyncEnumerable(20, ct));
     }
 }
