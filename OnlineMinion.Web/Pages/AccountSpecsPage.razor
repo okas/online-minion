@@ -1,5 +1,6 @@
 ﻿@page "/account-specs"
 @using OnlineMinion.Contracts.Responses
+@using OnlineMinion.Contracts
 
 @code
 {
@@ -8,9 +9,6 @@
     public const string PageTitle = "Account Specs";
     public const string MainHeading = "Account Specifications";
     public const string MainDescription = "Manage Account Specifications";
-    public const string NoContent = "No content to page | loading ...";
-    public const string Loading = "Loading ...";
-    public const string NoItems = "No items.";
     public const string DeleteBtn = "❌";
     public const string EditBtn = "✏️";
     public const string Name = nameof(AccountSpecResp.Name);
@@ -25,51 +23,36 @@
 <RadzenText Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
 <RadzenText Text="@Str.MainDescription"/>
 
-@if (_paging is null)
-{
-  <RadzenText Text="@Str.NoContent"/>
-}
-else
-{
-  <ToolbarForTabular OnAdd="@OnAddHandler">
-    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="@_paging.Value"/>
-  </ToolbarForTabular>
-}
+<ToolbarForTabular OnAdd="@OnAddHandler"/>
 
-@if (_vm is null)
-{
-  <RadzenText Style="font-style: italic" Text="@Str.Loading"/>
-}
-else if (!_vm.Any())
-{
-  <RadzenText Style="font-style: italic" Text="@Str.NoItems"/>
-}
-else
-{
-  <table class="table">
-    <thead>
-    <tr>
-      <th>@Str.Name</th>
-      <th>@Str.Group</th>
-      <th>@Str.Description</th>
-      <th></th>
-    </tr>
-    </thead>
-    <tbody style="overflow-y:scroll" tabindex="-1">
-    <Virtualize Context="m" Items="_vm">
-      <tr @key=m.Id>
-        <td>@m.Name</td>
-        <td>@m.Group</td>
-        <td>@m.Description</td>
-        <td>
-          <button class="btn btn-outline-danger" @onclick="@(() => OnDeleteHandler(m.Id))">@Str.DeleteBtn</button>
-          <button class="btn btn-outline-warning" @onclick="@(() => OnEditHandler(m.Id))">@Str.EditBtn</button>
-        </td>
-      </tr>
-    </Virtualize>
-    </tbody>
-  </table>
-}
+@* `Data="@_vm.AsODataEnumerable()"`: This seems to work better with LoadData event. *@
+<RadzenDataGrid
+    AllowPaging
+    Count="@_totalItemsCount"
+    Data="@_vm.AsODataEnumerable()"
+    Density="@Density.Compact"
+    IsLoading="@_isLoadingVm"
+    LoadData="@OnLoadDataHandler"
+    PagerPosition="@PagerPosition.TopAndBottom"
+    PageSize="@PagingMetaInfo.DefaultSize"
+    PageSizeOptions="@_pageSizeOptions"
+    ShowPagingSummary>
+  <Columns>
+    <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
+    <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
+    <RadzenDataGridColumn Property="@Str.Description" TItem="AccountSpecResp" Title="@Str.Description"/>
+    <RadzenDataGridColumn TItem="AccountSpecResp" Title="Actions">
+      <Template Context="m">
+        <RadzenButton ButtonStyle="@ButtonStyle.Warning" Click="@(() => OnEditHandler(m.Id))" Variant="@Variant.Text">
+          @Str.EditBtn
+        </RadzenButton>
+        <RadzenButton ButtonStyle="@ButtonStyle.Danger" Click="@(() => OnDeleteHandler(m.Id))" Variant="@Variant.Text">
+          @Str.DeleteBtn
+        </RadzenButton>
+      </Template>
+    </RadzenDataGridColumn>
+  </Columns>
+</RadzenDataGrid>
 
 @*TODO: Set focus to modal, if it is opened.*@
 <CascadingValue IsFixed="@true" Value="@CT">

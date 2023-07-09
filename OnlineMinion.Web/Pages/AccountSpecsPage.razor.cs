@@ -5,21 +5,30 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
-using OnlineMinion.RestApi.Client.Requests;
 using OnlineMinion.Web.Components;
+using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
+using Radzen;
 
 namespace OnlineMinion.Web.Pages;
 
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
+    private readonly IEnumerable<int> _pageSizeOptions;
+    private readonly List<AccountSpecResp> _vm;
     private AccountSpecsDeleteDialog _deleteDialogRef = null!;
+    private bool _isLoadingVm;
     private bool _isSubmitting;
     private AccountSpecResp? _modelDelete;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
-    private PagingMetaInfo? _paging;
+    private int _totalItemsCount;
     private AccountSpecsUpsertEditor _upsertEditorRef = null!;
-    private List<AccountSpecResp>? _vm;
+
+    public AccountSpecsPage()
+    {
+        _vm = new(PagingMetaInfo.DefaultSize);
+        _pageSizeOptions = new[] { 5, 10, 20, 50, 100, };
+    }
 
     [Inject]
     public IMediator Mediator { get; set; } = default!;
@@ -30,73 +39,37 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     [Inject]
     public ILogger<AccountSpecsPage> Logger { get; set; } = default!;
 
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int Page { get; set; }
-
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int PageSize { get; set; }
-
-    public override async Task SetParametersAsync(ParameterView parameters)
+    protected override async Task OnInitializedAsync()
     {
-        // This order ensures that incoming params are sett before they ar needed by data loading.
-        await base.SetParametersAsync(parameters);
+        await base.OnInitializedAsync();
         await GetPageViewModel();
     }
 
-    protected override void OnInitialized()
+    private async Task OnLoadDataHandler(LoadDataArgs args)
     {
-        Page = Page == default ? PagingMetaInfo.DefaultCurrent : Page;
-        PageSize = PageSize == default ? PagingMetaInfo.DefaultSize : PageSize;
-        base.OnInitialized();
+        var pageSize = args.Top.GetValueOrDefault(args.Top.GetValueOrDefault());
+        var pageNumber = (int)Math.Ceiling((decimal)(args.Skip.GetValueOrDefault() + 1) / pageSize);
+
+        await GetPageViewModel(pageNumber, pageSize);
     }
 
-    private async Task GetPageViewModel()
+    private async Task GetPageViewModel(
+        int page = PagingMetaInfo.First,
+        int size = PagingMetaInfo.DefaultSize
+    )
     {
-        _vm = null;
-
-        var result = await Mediator.Send(new GetAccountSpecsReq(Page, PageSize), CT);
-
-        _paging = result.Paging;
+        _isLoadingVm = true;
         StateHasChanged();
 
-        _vm = new();
+        var result = await Mediator.Send(new GetAccountSpecsReq(page, size), CT);
 
-        await foreach (var model in result.Result.WithCancellation(CT))
-        {
-            _vm.Add(model);
-            StateHasChanged();
-        }
+        _totalItemsCount = result.Paging.TotalItems;
+        _vm.Clear();
+        await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
+
+        _isLoadingVm = false;
+        StateHasChanged();
     }
-
-    private void PageChanged(int page)
-    {
-        var old = Page;
-
-        Page = _paging?.SanitizePage(page) ?? PagingMetaInfo.First;
-        if (Page == old)
-        {
-            return;
-        }
-
-        NavigateByPager();
-    }
-
-    private void PageSizeChanged(int size)
-    {
-        PageSize = size;
-        Page = _paging?.GetNewCurrentBySize(PageSize) ?? PagingMetaInfo.First;
-
-        NavigateByPager();
-    }
-
-    private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
-        Navigation.GetUriWithQueryParameters(
-            new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
-                { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize, }
-        )
-    );
 
     private void OnAddHandler()
     {
@@ -107,7 +80,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
         _upsertEditorRef.OpenForCreate();
     }
-
 
     private async Task OnEditHandler(int id)
     {
@@ -194,19 +166,13 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     {
         var result = await Mediator.Send(req, CT);
 
-        await result.SwitchAsync(
-            async _ =>
-            {
-                await NavigateToNewItemPage();
-                ResetEditor();
-            },
+        result.Switch(
+            _ => ResetEditor(),
             errors =>
             {
                 _upsertEditorRef.SetServerValidationErrors(errors);
 
                 //TODO handel all other errors
-
-                return Task.CompletedTask;
             }
         );
     }
@@ -215,25 +181,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     {
         _modelUpsert = null;
         _upsertEditorRef.ResetUpsertModal();
-    }
-
-    private async Task NavigateToNewItemPage()
-    {
-        if (await Mediator.Send(new GetAccountSpecPageCountBySizeReq(PageSize), CT) is not { } pages)
-        {
-            Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
-
-            return;
-        }
-
-        if (pages == Page)
-        {
-            await GetPageViewModel();
-        }
-        else
-        {
-            NavigateByPager(pages);
-        }
     }
 
     private void OnDeleteHandler(int id)
@@ -259,7 +206,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             async _ =>
             {
                 _deleteDialogRef.Reset();
-                await HandlePageStateAfterDelete();
+                // await HandlePageStateAfterDelete();
             },
             error =>
             {
@@ -275,22 +222,5 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 return Task.CompletedTask;
             }
         );
-    }
-
-    private async Task HandlePageStateAfterDelete()
-    {
-        // Detect it was last item on page, or very last item of the whole resource.
-        // Navigate only, when page has to be changed, get current page's items otherwise.
-        if (_paging?.TotalItems > 1 && _vm?.Count == 1)
-        {
-            Page = _paging!.Value.Previous;
-            NavigateByPager();
-        }
-        else
-        {
-            await GetPageViewModel();
-        }
-
-        _modelDelete = null;
     }
 }
