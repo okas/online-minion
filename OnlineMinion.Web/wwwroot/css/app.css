@@ -2,6 +2,7 @@ html, body {
     font-family: var(--rz-text-font-family);
     font-size: var(--rz-root-font-size);
     color: var(--rz-text-color);
+    background-color: var(--rz-body-background-color);
 }
 
 body {
