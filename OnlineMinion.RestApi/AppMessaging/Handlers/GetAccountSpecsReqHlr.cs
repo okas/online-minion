@@ -5,6 +5,7 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.Entities;
+using OnlineMinion.RestApi.Helpers;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
@@ -16,11 +17,7 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
 
     public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq rq, CancellationToken ct)
     {
-        PagingMetaInfo pagingMeta = new(
-            await _queryable.CountAsync(ct).ConfigureAwait(false),
-            rq.PageSize,
-            rq.Page
-        );
+        var pagingMeta = await PagingHelpers.CreateFromQueryable(_queryable, rq, ct).ConfigureAwait(false);
 
         var entities = _queryable
             .OrderBy(e => e.Id)
