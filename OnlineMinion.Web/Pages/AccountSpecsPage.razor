@@ -9,8 +9,6 @@
     public const string PageTitle = "Account Specs";
     public const string MainHeading = "Account Specifications";
     public const string MainDescription = "Manage Account Specifications";
-    public const string DeleteBtn = "❌";
-    public const string EditBtn = "✏️";
     public const string Name = nameof(AccountSpecResp.Name);
     public const string Group = nameof(AccountSpecResp.Group);
     public const string Description = nameof(AccountSpecResp.Description);
@@ -20,14 +18,13 @@
 
 <AppPageTitle Text="@Str.PageTitle"/>
 
-<RadzenText Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
+<RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
 <RadzenText Text="@Str.MainDescription"/>
-
-<ToolbarForTabular OnAdd="@OnAddHandler"/>
 
 @* `Data="@_vm.AsODataEnumerable()"`: This seems to work better with LoadData event. *@
 <RadzenDataGrid
     AllowPaging
+    class="rz-mt-4"
     Count="@_totalItemsCount"
     Data="@_vm.AsODataEnumerable()"
     Density="@Density.Compact"
@@ -41,14 +38,32 @@
     <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
     <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
     <RadzenDataGridColumn Property="@Str.Description" TItem="AccountSpecResp" Title="@Str.Description"/>
-    <RadzenDataGridColumn TItem="AccountSpecResp" Title="Actions">
+    <RadzenDataGridColumn TextAlign="@TextAlign.Center" TItem="AccountSpecResp" Width="100px">
+      <HeaderTemplate>
+        <div class="rz-px-2">
+          <RadzenButton
+              ButtonStyle="@ButtonStyle.Info"
+              Click="@OnAddHandler"
+              Icon="add"
+              Shade="@Shade.Lighter"
+              Variant="@Variant.Outlined"/>
+        </div>
+      </HeaderTemplate>
       <Template Context="m">
-        <RadzenButton ButtonStyle="@ButtonStyle.Warning" Click="@(() => OnEditHandler(m.Id))" Variant="@Variant.Text">
-          @Str.EditBtn
-        </RadzenButton>
-        <RadzenButton ButtonStyle="@ButtonStyle.Danger" Click="@(() => OnDeleteHandler(m.Id))" Variant="@Variant.Text">
-          @Str.DeleteBtn
-        </RadzenButton>
+        <RadzenButton
+            ButtonStyle="@ButtonStyle.Warning"
+            class="rz-mr-1"
+            Click="@(() => OnEditHandler(m.Id))"
+            Icon="edit"
+            Shade="@Shade.Lighter"
+            Variant="@Variant.Outlined"/>
+        <RadzenButton
+            ButtonStyle="@ButtonStyle.Danger"
+            class="rz-ml-1"
+            Click="@(() => OnDeleteHandler(m.Id))"
+            Icon="delete_forever"
+            Shade="@Shade.Lighter"
+            Variant="@Variant.Outlined"/>
       </Template>
     </RadzenDataGridColumn>
   </Columns>
