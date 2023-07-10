@@ -11,24 +11,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj" />
-        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj" />
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj" />
+        <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
-        <PackageReference Include="IL.FluentValidation.Extensions.Options" Version="11.0.2" />
-        <PackageReference Include="MediatR" Version="12.0.1" />
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.62">
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0"/>
+        <PackageReference Include="IL.FluentValidation.Extensions.Options" Version="11.0.2"/>
+        <PackageReference Include="MediatR" Version="12.1.1"/>
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.63">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-preview.5.23280.8" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-preview.5.23280.8" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-preview.5.23280.8" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0-preview.5.23280.8" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-preview.5.23280.8" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-preview.5.23280.8"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-preview.5.23280.8"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-preview.5.23280.8"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0-preview.5.23280.8"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-preview.5.23280.8"/>
     </ItemGroup>
 
     <ItemGroup>
