@@ -5,6 +5,7 @@ using OnlineMinion.Common.Validators;
 using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Configuration;
+using Radzen;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -30,6 +31,8 @@ services.AddRestApiClient(
 
 services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
+
+services.AddScoped<DialogService>();
 
 #endregion
 
