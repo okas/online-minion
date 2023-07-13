@@ -2,17 +2,15 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Web.Shared;
 using OnlineMinion.Web.Shared.Forms;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsUpsertEditor : ComponentBase
+public partial class AccountSpecsEditor : ComponentBase
 {
     private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
     private bool _isEditorActionDisabledForced;
-    private ModalDialog _modalRef = null!;
     private string? _modalTitle;
     private ServerSideValidator _serverSideValidator = null!;
     private bool _shouldBeDisabledByFormState = true;
@@ -21,7 +19,7 @@ public partial class AccountSpecsUpsertEditor : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public BaseUpsertAccountSpecReqData? Model { get; set; } = null!;
+    public BaseUpsertAccountSpecReqData? Model { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -45,22 +43,8 @@ public partial class AccountSpecsUpsertEditor : ComponentBase
         }
     }
 
-    public void OpenForCreate()
+    public void ResetEditor()
     {
-        _modalTitle = "Add new Account Specification";
-        _modalRef.Open();
-    }
-
-    public void OpenForUpdate(int id)
-    {
-        _modalTitle = $"Edit Account Specification: id#{id}";
-        _modalRef.Open();
-    }
-
-    public void ResetUpsertModal()
-    {
-        _modalRef.Close();
-        _modalTitle = null;
         _editContext!.MarkAsUnmodified();
         _isEditorActionDisabledForced = false;
     }

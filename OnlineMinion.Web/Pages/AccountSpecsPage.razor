@@ -4,6 +4,14 @@
 
 @code
 {
+  private RenderFragment RenderEditorComponent() =>
+    @<CascadingValue IsFixed="@true" Value="@CT">
+      <AccountSpecsEditor
+          IsSubmitting="@_isSubmitting"
+          Model="@_modelUpsert"
+          OnSubmit="@OnUpsertSubmitHandler" @ref="@_editorRef"/>
+    </CascadingValue>;
+
   private static class Str
   {
     public const string PageTitle = "Account Specs";
@@ -53,14 +61,14 @@
         <RadzenButton
             ButtonStyle="@ButtonStyle.Warning"
             class="rz-mr-1"
-            Click="@(() => OnEditHandler(m.Id))"
+            Click="@(_ => OnEditHandler(m))"
             Icon="edit"
             Shade="@Shade.Lighter"
             Variant="@Variant.Outlined"/>
         <RadzenButton
             ButtonStyle="@ButtonStyle.Danger"
             class="rz-ml-1"
-            Click="@(() => OnDeleteHandler(m.Id))"
+            Click="@(_ => OnDeleteHandler(m.Id))"
             Icon="delete_forever"
             Shade="@Shade.Lighter"
             Variant="@Variant.Outlined"/>
@@ -68,10 +76,5 @@
     </RadzenDataGridColumn>
   </Columns>
 </RadzenDataGrid>
-
-@*TODO: Set focus to modal, if it is opened.*@
-<CascadingValue IsFixed="@true" Value="@CT">
-  <AccountSpecsUpsertEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnSubmit="@OnUpsertSubmitHandler" @ref="@_upsertEditorRef"/>
-</CascadingValue>
 
 <AccountSpecsDeleteDialog Model="@_modelDelete" OnConfirm="OnDeleteConfirmHandler" @ref="@_deleteDialogRef"/>
