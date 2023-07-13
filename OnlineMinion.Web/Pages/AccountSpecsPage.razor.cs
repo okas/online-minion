@@ -37,6 +37,9 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     public NavigationManager Navigation { get; set; } = default!;
 
     [Inject]
+    public DialogService DialogService { get; set; } = default!;
+
+    [Inject]
     public ILogger<AccountSpecsPage> Logger { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
@@ -78,23 +81,24 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
-        _upsertEditorRef.OpenForCreate();
+        OpenEditorDialog("Add new Account Specification");
     }
 
     private async Task OnEditHandler(int id)
     {
+        var title = $"Edit Account Specification: id#{id}";
+
         // If the editing of same item is already in progress, then do nothing.
         if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
         {
-            _upsertEditorRef.OpenForUpdate(id);
-
+            OpenEditorDialog(title);
             return;
         }
 
         if (await Mediator.Send(new GetAccountSpecByIdReq(id), CT) is { } model)
         {
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-            _upsertEditorRef.OpenForUpdate(id);
+            OpenEditorDialog(title);
         }
         else
         {
@@ -102,6 +106,8 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
         }
     }
+
+    private void OpenEditorDialog(string title) => DialogService.Open(title, _ => RenderEditorComponent());
 
     private async Task OnUpsertSubmitHandler()
     {
@@ -161,7 +167,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _vm![_vm.IndexOf(model)] = clone;
     }
 
-
     private async Task HandleCreateSubmit(CreateAccountSpecReq req)
     {
         var result = await Mediator.Send(req, CT);
@@ -180,7 +185,8 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private void ResetEditor()
     {
         _modelUpsert = null;
-        _upsertEditorRef.ResetUpsertModal();
+        _upsertEditorRef.ResetEditor();
+        DialogService.Close();
     }
 
     private void OnDeleteHandler(int id)
