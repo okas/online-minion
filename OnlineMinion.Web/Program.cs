@@ -29,6 +29,8 @@ services.AddRestApiClient(
     Constants.ApiClient
 );
 
+services.AddSingleton<StateContainer>();
+
 services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
 
