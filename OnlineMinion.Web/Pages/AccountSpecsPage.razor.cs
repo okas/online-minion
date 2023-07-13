@@ -12,6 +12,8 @@ using Radzen;
 
 namespace OnlineMinion.Web.Pages;
 
+// TODO: Restore functionality where on add it can jump to last or page of new item.
+// TODO: Also restore funtionality to reload given page on delete.
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private readonly IEnumerable<int> _pageSizeOptions;
@@ -19,7 +21,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private AccountSpecsEditor _editorRef = null!;
     private bool _isLoadingVm;
     private bool _isSubmitting;
-    private AccountSpecResp? _modelDelete;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -176,23 +177,30 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         DialogService.Close();
     }
 
-    private void OnDeleteHandler(int id)
+    private async Task OnDeleteHandler(AccountSpecResp model)
     {
-        _modelDelete = _vm!.Single(m => m.Id == id);
-        _deleteDialogRef.OpenForDelete(id);
+        var hasConfirmed = await DialogService.Confirm(
+            $"Are you sure to delete Account spec with name <em>{model.Name}</em>?",
+            "Confirm deletion",
+            new()
+            {
+                OkButtonText = "Confirm",
+                CancelButtonText = "Cancel",
+                Draggable = true,
+                CloseDialogOnOverlayClick = true,
+            }
+        );
+
+        if (hasConfirmed is true)
+        {
+            await OnDeleteConfirmHandler(model.Id);
+        }
     }
 
-    private async Task OnDeleteConfirmHandler()
+    private async Task OnDeleteConfirmHandler(int modelId)
     {
-        if (_modelDelete is null)
-        {
-            return;
-        }
-
-        var id = _modelDelete.Value.Id;
-
         _isSubmitting = true;
-        var result = await Mediator.Send(new DeleteAccountSpecReq(id), CT);
+        var result = await Mediator.Send(new DeleteAccountSpecReq(modelId), CT);
         _isSubmitting = false;
 
         await result.SwitchFirstAsync(
@@ -204,11 +212,11 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             {
                 if (error.Type is ErrorType.NotFound)
                 {
-                    Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
+                    Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", modelId);
                 }
                 else
                 {
-                    Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
+                    Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", modelId);
                 }
 
                 return Task.CompletedTask;

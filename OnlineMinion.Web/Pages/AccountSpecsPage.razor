@@ -68,7 +68,7 @@
         <RadzenButton
             ButtonStyle="@ButtonStyle.Danger"
             class="rz-ml-1"
-            Click="@(_ => OnDeleteHandler(m.Id))"
+            Click="@(_ => OnDeleteHandler(m))"
             Icon="delete_forever"
             Shade="@Shade.Lighter"
             Variant="@Variant.Outlined"/>
@@ -76,5 +76,3 @@
     </RadzenDataGridColumn>
   </Columns>
 </RadzenDataGrid>
-
-<AccountSpecsDeleteDialog Model="@_modelDelete" OnConfirm="OnDeleteConfirmHandler" @ref="@_deleteDialogRef"/>
