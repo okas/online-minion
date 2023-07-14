@@ -39,9 +39,11 @@
     Density="@Density.Compact"
     IsLoading="@_isLoadingVm"
     LoadData="@OnLoadDataHandler"
-    PagerPosition="@PagerPosition.TopAndBottom"
+    Page="@PagerChangeHandler"
+    PagerPosition="@PagerPosition.Top"
     PageSize="@PagingMetaInfo.DefaultSize"
     PageSizeOptions="@_pageSizeOptions"
+    @ref="@_dataGridRef"
     ShowPagingSummary>
   <Columns>
     <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
@@ -55,7 +57,7 @@
               Click="@OnAddHandler"
               Icon="add"
               Shade="@Shade.Lighter"
-              Variant="@Variant.Outlined"/>
+              Variant="@Variant.Filled"/>
         </div>
       </HeaderTemplate>
       <Template Context="m">

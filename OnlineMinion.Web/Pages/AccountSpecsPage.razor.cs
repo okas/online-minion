@@ -5,10 +5,12 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
+using OnlineMinion.RestApi.Client.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
 using Radzen;
+using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
@@ -18,6 +20,9 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private readonly IEnumerable<int> _pageSizeOptions;
     private readonly List<AccountSpecResp> _vm;
+    private int _currentPage;
+    private int _currentPageSize;
+    private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
     private bool _isLoadingVm;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
@@ -25,15 +30,14 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     public AccountSpecsPage()
     {
-        _vm = new(PagingMetaInfo.DefaultSize);
+        _currentPage = PagingMetaInfo.First;
+        _currentPageSize = PagingMetaInfo.DefaultSize;
+        _vm = new(_currentPageSize);
         _pageSizeOptions = new[] { 5, 10, 20, 50, 100, };
     }
 
     [Inject]
     public ISender Sender { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager Navigation { get; set; } = default!;
 
     [Inject]
     public DialogService DialogService { get; set; } = default!;
@@ -47,21 +51,19 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await GetPageViewModel();
+        await LoadViewModelFromApi(_currentPage, _currentPageSize);
     }
 
     private async Task OnLoadDataHandler(LoadDataArgs args)
     {
-        var pageSize = args.Top.GetValueOrDefault(args.Top.GetValueOrDefault());
-        var pageNumber = (int)Math.Ceiling((decimal)(args.Skip.GetValueOrDefault() + 1) / pageSize);
+        var pageSize = args.Top.GetValueOrDefault(PagingMetaInfo.DefaultSize);
+        var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
+        var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
 
-        await GetPageViewModel(pageNumber, pageSize);
+        await LoadViewModelFromApi(pageNumber, pageSize);
     }
 
-    private async Task GetPageViewModel(
-        int page = PagingMetaInfo.First,
-        int size = PagingMetaInfo.DefaultSize
-    )
+    private async Task LoadViewModelFromApi(int page, int size)
     {
         _isLoadingVm = true;
         StateHasChanged();
@@ -143,7 +145,8 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         return result.Match(
             _ =>
             {
-                UpdateViewModelAfterEdit(request);
+                HandlePageStateAfterUpdate(request);
+
                 return true;
             },
             errors =>
@@ -162,7 +165,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         );
     }
 
-    private void UpdateViewModelAfterEdit(UpdateAccountSpecReq request)
+    private void HandlePageStateAfterUpdate(UpdateAccountSpecReq request)
     {
         var model = _vm!.Single(m => m.Id == request.Id);
         var clone = model with
@@ -177,24 +180,56 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     {
         var result = await Sender.Send(req, CT);
 
-        return result.Match(
-            _ => true,
+        return await result.MatchAsync(
+            async _ =>
+            {
+                await HandlePageStateAfterCreate();
+                return true;
+            },
             errors =>
             {
                 _editorRef.SetServerValidationErrors(errors);
 
                 //TODO handel all other errors
 
-                return false;
+                return Task.FromResult(false);
             }
         );
     }
 
+    private async Task HandlePageStateAfterCreate()
+    {
+        if (await Sender.Send(new GetAccountSpecPageCountBySizeReq(_currentPageSize), CT) is { } pagesCount)
+        {
+            var lastPageAfterCreate = _currentPage == pagesCount
+                ? _currentPage
+                : pagesCount;
+
+            await _dataGridRef.GoToPage(ToGridPage(lastPageAfterCreate), true);
+
+            return;
+        }
+
+        Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+    }
 
     private async Task OnDeleteHandler(AccountSpecResp model)
     {
-        var hasConfirmed = await DialogService.Confirm(
-            $"Are you sure to delete Account spec with name <em>{model.Name}</em>?",
+        var (id, name, _, _) = model;
+
+        if (!await GetUserConfirmation(name))
+        {
+            return;
+        }
+
+        SC.IsBusy = true;
+        await DeleteModelFromApi(id);
+        SC.IsBusy = false;
+    }
+
+    private async Task<bool> GetUserConfirmation(string modelName) =>
+        await DialogService.Confirm(
+            $"Are you sure to delete Account spec with name <em>{modelName}</em>?",
             "Confirm deletion",
             new()
             {
@@ -203,39 +238,57 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 Draggable = true,
                 CloseDialogOnOverlayClick = true,
             }
-        );
+        ) ?? false;
 
-        if (hasConfirmed is true)
-        {
-            await OnDeleteConfirmHandler(model.Id);
-        }
-    }
-
-    private async Task OnDeleteConfirmHandler(int modelId)
+    private async Task<bool> DeleteModelFromApi(int id)
     {
-        SC.IsBusy = true;
+        var result = await Sender.Send(new DeleteAccountSpecReq(id), CT);
 
-        var result = await Sender.Send(new DeleteAccountSpecReq(modelId), CT);
-        await result.SwitchFirstAsync(
+        return await result.MatchFirstAsync(
             async _ =>
             {
-                // await HandlePageStateAfterDelete();
+                await HandlePageStateAfterDelete();
+
+                return true;
             },
             error =>
             {
-                if (error.Type is ErrorType.NotFound)
-                {
-                    Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", modelId);
-                }
-                else
-                {
-                    Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", modelId);
-                }
+                HandleApiDeleteErrors(id, error);
 
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
         );
-
-        SC.IsBusy = false;
     }
+
+    private async Task HandlePageStateAfterDelete()
+    {
+        var visiblePageAfterDelete = _vm.Count == 1
+            ? _currentPage - 1
+            : _currentPage;
+
+        await _dataGridRef.GoToPage(ToGridPage(visiblePageAfterDelete), true);
+    }
+
+    private void HandleApiDeleteErrors(int id, Error error)
+    {
+        if (error.Type is ErrorType.NotFound)
+        {
+            Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
+        }
+        else
+        {
+            Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
+        }
+    }
+
+    private void PagerChangeHandler(PagerEventArgs changeData)
+    {
+        // Grid page is 0-based;
+        _currentPage = ToApiPage(changeData.PageIndex);
+        _currentPageSize = changeData.Top;
+    }
+
+    private static int ToGridPage(int apiPage) => apiPage - 1;
+
+    private static int ToApiPage(int gridPage) => gridPage + 1;
 }
