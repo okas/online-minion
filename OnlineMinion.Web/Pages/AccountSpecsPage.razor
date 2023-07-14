@@ -7,9 +7,10 @@
   private RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
       <AccountSpecsEditor
-          IsSubmitting="@_isSubmitting"
           Model="@_modelUpsert"
-          OnSubmit="@OnUpsertSubmitHandler" @ref="@_editorRef"/>
+          OnCancel="@CloseEditorDialog"
+          OnSubmit="@OnUpsertSubmitHandler"
+          @ref="@_editorRef"/>
     </CascadingValue>;
 
   private static class Str

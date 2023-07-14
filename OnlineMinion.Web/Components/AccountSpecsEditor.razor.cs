@@ -6,7 +6,7 @@ using OnlineMinion.Web.Shared.Forms;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsEditor : ComponentBase
+public partial class AccountSpecsEditor : ComponentBase, IDisposable
 {
     private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
@@ -15,7 +15,10 @@ public partial class AccountSpecsEditor : ComponentBase
     private ServerSideValidator _serverSideValidator = null!;
     private bool _shouldBeDisabledByFormState = true;
 
-    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || IsSubmitting;
+    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || SC.IsBusy;
+
+    [Inject]
+    public StateContainer SC { get; set; } = default!;
 
     [Parameter]
     [EditorRequired]
@@ -23,11 +26,13 @@ public partial class AccountSpecsEditor : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public bool IsSubmitting { get; set; }
+    public EventCallback<EditContext> OnSubmit { get; set; }
 
     [Parameter]
-    [EditorRequired]
-    public EventCallback<EditContext> OnSubmit { get; set; }
+    public EventCallback OnCancel { get; set; }
+
+    void IDisposable.Dispose() => SC.OnChange -= StateHasChanged;
+
 
     protected override void OnParametersSet()
     {
@@ -42,6 +47,8 @@ public partial class AccountSpecsEditor : ComponentBase
             _editContext = null;
         }
     }
+
+    protected override void OnInitialized() => SC.OnChange += StateHasChanged;
 
     public void ResetEditor()
     {

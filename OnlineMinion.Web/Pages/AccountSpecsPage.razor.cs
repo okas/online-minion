@@ -20,7 +20,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private readonly List<AccountSpecResp> _vm;
     private AccountSpecsEditor _editorRef = null!;
     private bool _isLoadingVm;
-    private bool _isSubmitting;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -31,13 +30,16 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     }
 
     [Inject]
-    public IMediator Mediator { get; set; } = default!;
+    public ISender Sender { get; set; } = default!;
 
     [Inject]
     public NavigationManager Navigation { get; set; } = default!;
 
     [Inject]
     public DialogService DialogService { get; set; } = default!;
+
+    [Inject]
+    public StateContainer SC { get; set; } = default!;
 
     [Inject]
     public ILogger<AccountSpecsPage> Logger { get; set; } = default!;
@@ -64,7 +66,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _isLoadingVm = true;
         StateHasChanged();
 
-        var result = await Mediator.Send(new GetAccountSpecsReq(page, size), CT);
+        var result = await Sender.Send(new GetAccountSpecsReq(page, size), CT);
 
         _totalItemsCount = result.Paging.TotalItems;
         _vm.Clear();
@@ -95,39 +97,54 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         OpenEditorDialog($"Edit Account Specification: id #{model.Id}");
     }
 
-    private void OpenEditorDialog(string title) => DialogService.Open(title, _ => RenderEditorComponent());
+    private void OpenEditorDialog(string title) => DialogService.Open(
+        title,
+        _ => RenderEditorComponent(),
+        new() { Draggable = true, }
+    );
+
+    private void CloseEditorDialog()
+    {
+        _modelUpsert = null;
+        _editorRef.ResetEditor();
+        DialogService.Close();
+    }
 
     private async Task OnUpsertSubmitHandler()
     {
+        SC.IsBusy = true;
+
         if (!await _editorRef.ValidateEditorAsync())
         {
+            SC.IsBusy = false;
+
             return;
         }
 
-        _isSubmitting = true;
-
-        switch (_modelUpsert)
+        var succeed = _modelUpsert switch
         {
-            case UpdateAccountSpecReq req:
-                await HandleUpdateSubmit(req);
-                break;
-            case CreateAccountSpecReq req:
-                await HandleCreateSubmit(req);
-                break;
-        }
+            UpdateAccountSpecReq req => await HandleUpdateSubmit(req),
+            CreateAccountSpecReq req => await HandleCreateSubmit(req),
+            _ => throw new InvalidOperationException("Unknown model type."),
+        };
 
-        _isSubmitting = false;
+        SC.IsBusy = false;
+
+        if (succeed)
+        {
+            CloseEditorDialog();
+        }
     }
 
-    private async Task HandleUpdateSubmit(UpdateAccountSpecReq request)
+    private async Task<bool> HandleUpdateSubmit(UpdateAccountSpecReq request)
     {
-        var result = await Mediator.Send(request, CT);
+        var result = await Sender.Send(request, CT);
 
-        result.Switch(
+        return result.Match(
             _ =>
             {
                 UpdateViewModelAfterEdit(request);
-                ResetEditor();
+                return true;
             },
             errors =>
             {
@@ -140,6 +157,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 }
 
                 //TODO handel all other errors
+                return false;
             }
         );
     }
@@ -155,27 +173,23 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _vm![_vm.IndexOf(model)] = clone;
     }
 
-    private async Task HandleCreateSubmit(CreateAccountSpecReq req)
+    private async Task<bool> HandleCreateSubmit(CreateAccountSpecReq req)
     {
-        var result = await Mediator.Send(req, CT);
+        var result = await Sender.Send(req, CT);
 
-        result.Switch(
-            _ => ResetEditor(),
+        return result.Match(
+            _ => true,
             errors =>
             {
                 _editorRef.SetServerValidationErrors(errors);
 
                 //TODO handel all other errors
+
+                return false;
             }
         );
     }
 
-    private void ResetEditor()
-    {
-        _modelUpsert = null;
-        _editorRef.ResetEditor();
-        DialogService.Close();
-    }
 
     private async Task OnDeleteHandler(AccountSpecResp model)
     {
@@ -199,10 +213,9 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private async Task OnDeleteConfirmHandler(int modelId)
     {
-        _isSubmitting = true;
-        var result = await Mediator.Send(new DeleteAccountSpecReq(modelId), CT);
-        _isSubmitting = false;
+        SC.IsBusy = true;
 
+        var result = await Sender.Send(new DeleteAccountSpecReq(modelId), CT);
         await result.SwitchFirstAsync(
             async _ =>
             {
@@ -222,5 +235,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 return Task.CompletedTask;
             }
         );
+
+        SC.IsBusy = false;
     }
 }
