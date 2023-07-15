@@ -37,7 +37,7 @@
     Count="@_totalItemsCount"
     Data="@_vm.AsODataEnumerable()"
     Density="@Density.Compact"
-    IsLoading="@_isLoadingVm"
+    IsLoading="@SC.IsBusy"
     LoadData="@OnLoadDataHandler"
     Page="@PagerChangeHandler"
     PagerPosition="@PagerPosition.Top"

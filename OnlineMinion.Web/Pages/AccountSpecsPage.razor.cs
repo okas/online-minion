@@ -24,7 +24,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private int _currentPageSize;
     private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
-    private bool _isLoadingVm;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -65,7 +64,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private async Task LoadViewModelFromApi(int page, int size)
     {
-        _isLoadingVm = true;
+        SC.IsBusy = true;
         StateHasChanged();
 
         var result = await Sender.Send(new GetAccountSpecsReq(page, size), CT);
@@ -74,7 +73,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _vm.Clear();
         await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
 
-        _isLoadingVm = false;
+        SC.IsBusy = false;
         StateHasChanged();
     }
 
