@@ -155,8 +155,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 // It can happen, it is not unexpected error per se.
                 if (errors.Exists(err => err.Type is ErrorType.NotFound))
                 {
-                    // TODO: implement UX considering last element on page so that users always sees correct page.
-                    _vm!.Remove(_vm.Single(m => m.Id == request.Id));
+                    _dataGridRef.GoToPage(ToGridPage(_currentPage), true);
                 }
 
                 //TODO handel all other errors
