@@ -1,19 +1,51 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-  <div class="sidebar">
-    <NavMenu />
-  </div>
+@code {
+  private bool _isSideBarExpanded = true;
 
-  <main>
-    <div class="px-4 top-row">
-      <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">
-        About
-      </a>
+  private void ToggleSideBar() => _isSideBarExpanded = !_isSideBarExpanded;
+
+  private static class Str
+  {
+    public const string HeaderLabel = "OnlineMinion.Web";
+    public const string FooterLabel = "Lorem ipsum footer";
+  }
+
+}
+
+<RadzenLayout Style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body' 'rz-footer'">
+  <RadzenHeader>
+    <RadzenRow AlignItems="@AlignItems.Center" JustifyContent="@JustifyContent.SpaceBetween">
+      <RadzenStack
+          AlignItems="@AlignItems.Center"
+          JustifyContent="@JustifyContent.SpaceBetween"
+          Orientation="@Orientation.Horizontal">
+        <RadzenSidebarToggle Click="@ToggleSideBar"/>
+        <RadzenText Class="rz-m-0" Text="@Str.HeaderLabel" TextStyle="@TextStyle.H6"/>
+      </RadzenStack>
+
+      <div class="rz-p-4">
+        <RadzenLink Path="https://learn.microsoft.com/aspnet/core" Target="_blank" Text="About"/>
+      </div>
+    </RadzenRow>
+
+  </RadzenHeader>
+
+  <RadzenSidebar @bind-Expanded="@_isSideBarExpanded">
+    <div class="rz-p-4">
+      <NavMenu/>
     </div>
+  </RadzenSidebar>
 
-    <article class="content px-4">
-      @Body
-    </article>
-  </main>
-</div>
+  <RadzenBody>
+    @Body
+  </RadzenBody>
+
+  <RadzenFooter>
+    <RadzenStack AlignItems="@AlignItems.Center" JustifyContent="@JustifyContent.Center">
+      <RadzenText Class="rz-m-0" Text="@Str.FooterLabel"/>
+    </RadzenStack>
+  </RadzenFooter>
+</RadzenLayout>
+
+<RadzenDialog/>

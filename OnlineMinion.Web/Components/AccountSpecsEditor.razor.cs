@@ -2,34 +2,37 @@ using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Web.Shared;
 using OnlineMinion.Web.Shared.Forms;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsUpsertEditor : ComponentBase
+public partial class AccountSpecsEditor : ComponentBase, IDisposable
 {
     private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
     private bool _isEditorActionDisabledForced;
-    private ModalDialog _modalRef = null!;
     private string? _modalTitle;
     private ServerSideValidator _serverSideValidator = null!;
     private bool _shouldBeDisabledByFormState = true;
 
-    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || IsSubmitting;
+    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || SC.IsBusy;
+
+    [Inject]
+    public StateContainer SC { get; set; } = default!;
 
     [Parameter]
     [EditorRequired]
-    public BaseUpsertAccountSpecReqData? Model { get; set; } = null!;
-
-    [Parameter]
-    [EditorRequired]
-    public bool IsSubmitting { get; set; }
+    public BaseUpsertAccountSpecReqData? Model { get; set; }
 
     [Parameter]
     [EditorRequired]
     public EventCallback<EditContext> OnSubmit { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    void IDisposable.Dispose() => SC.OnChange -= StateHasChanged;
+
 
     protected override void OnParametersSet()
     {
@@ -45,22 +48,10 @@ public partial class AccountSpecsUpsertEditor : ComponentBase
         }
     }
 
-    public void OpenForCreate()
-    {
-        _modalTitle = "Add new Account Specification";
-        _modalRef.Open();
-    }
+    protected override void OnInitialized() => SC.OnChange += StateHasChanged;
 
-    public void OpenForUpdate(int id)
+    public void ResetEditor()
     {
-        _modalTitle = $"Edit Account Specification: id#{id}";
-        _modalRef.Open();
-    }
-
-    public void ResetUpsertModal()
-    {
-        _modalRef.Close();
-        _modalTitle = null;
         _editContext!.MarkAsUnmodified();
         _isEditorActionDisabledForced = false;
     }

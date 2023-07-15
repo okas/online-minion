@@ -1,10 +1,11 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Contracts;
+using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.Entities;
+using OnlineMinion.RestApi.Helpers;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
@@ -16,11 +17,7 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
 
     public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq rq, CancellationToken ct)
     {
-        PagingMetaInfo pagingMeta = new(
-            await _queryable.CountAsync(ct).ConfigureAwait(false),
-            rq.PageSize,
-            rq.Page
-        );
+        var pagingMeta = await PagingHelpers.CreateFromQueryable(_queryable, rq, ct).ConfigureAwait(false);
 
         var entities = _queryable
             .OrderBy(e => e.Id)
@@ -29,6 +26,7 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
             .Select(e => new AccountSpecResp(e.Id, e.Name, e.Group, e.Description))
             .AsAsyncEnumerable();
 
-        return new(Paging: pagingMeta, Result: entities);
+        // TODO: Shouldn't  be used in production code, or should be able to opt-in from config.
+        return new(Paging: pagingMeta, Result: entities.ToDelayedAsyncEnumerable(20, ct));
     }
 }

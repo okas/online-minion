@@ -1,18 +1,23 @@
 ﻿@page "/account-specs"
 @using OnlineMinion.Contracts.Responses
+@using OnlineMinion.Contracts
 
 @code
 {
-  internal static class Str
+  private RenderFragment RenderEditorComponent() =>
+    @<CascadingValue IsFixed="@true" Value="@CT">
+      <AccountSpecsEditor
+          Model="@_modelUpsert"
+          OnCancel="@CloseEditorDialog"
+          OnSubmit="@OnUpsertSubmitHandler"
+          @ref="@_editorRef"/>
+    </CascadingValue>;
+
+  private static class Str
   {
     public const string PageTitle = "Account Specs";
     public const string MainHeading = "Account Specifications";
     public const string MainDescription = "Manage Account Specifications";
-    public const string NoContent = "No content to page | loading ...";
-    public const string Loading = "Loading ...";
-    public const string NoItems = "No items.";
-    public const string DeleteBtn = "❌";
-    public const string EditBtn = "✏️";
     public const string Name = nameof(AccountSpecResp.Name);
     public const string Group = nameof(AccountSpecResp.Group);
     public const string Description = nameof(AccountSpecResp.Description);
@@ -20,65 +25,57 @@
 
 }
 
-<AppPageTitle>@Str.PageTitle</AppPageTitle>
+<AppPageTitle Text="@Str.PageTitle"/>
 
-<h1>@Str.MainHeading</h1>
+<RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
+<RadzenText Text="@Str.MainDescription"/>
 
-<p>@Str.MainDescription</p>
-
-@if (_paging is null)
-{
-  <p>@Str.NoContent</p>
-}
-else
-{
-  <ToolbarForTabular OnAdd="@OnAddHandler">
-    <Pager OnPageChanged="@PageChanged" OnPageSizeChanged="@PageSizeChanged" PagingMetaInfo="@_paging.Value"/>
-  </ToolbarForTabular>
-}
-
-@if (_vm is null)
-{
-  <p>
-    <em>@Str.Loading</em>
-  </p>
-}
-else if (!_vm.Any())
-{
-  <p>
-    <em>@Str.NoItems</em>
-  </p>
-}
-else
-{
-  <table class="table">
-    <thead>
-    <tr>
-      <th>@Str.Name</th>
-      <th>@Str.Group</th>
-      <th>@Str.Description</th>
-      <th></th>
-    </tr>
-    </thead>
-    <tbody style="overflow-y:scroll" tabindex="-1">
-    <Virtualize Context="m" Items="_vm">
-      <tr @key=m.Id>
-        <td>@m.Name</td>
-        <td>@m.Group</td>
-        <td>@m.Description</td>
-        <td>
-          <button class="btn btn-outline-danger" @onclick="@(() => OnDeleteHandler(m.Id))">@Str.DeleteBtn</button>
-          <button class="btn btn-outline-warning" @onclick="@(() => OnEditHandler(m.Id))">@Str.EditBtn</button>
-        </td>
-      </tr>
-    </Virtualize>
-    </tbody>
-  </table>
-}
-
-@*TODO: Set focus to modal, if it is opened.*@
-<CascadingValue IsFixed="@true" Value="@CT">
-  <AccountSpecsUpsertEditor IsSubmitting="@_isSubmitting" Model="@_modelUpsert" OnSubmit="@OnUpsertSubmitHandler" @ref="@_upsertEditorRef"/>
-</CascadingValue>
-
-<AccountSpecsDeleteDialog Model="@_modelDelete" OnConfirm="OnDeleteConfirmHandler" @ref="@_deleteDialogRef"/>
+@* `Data="@_vm.AsODataEnumerable()"`: This seems to work better with LoadData event. *@
+<RadzenDataGrid
+    AllowPaging
+    class="rz-mt-4"
+    Count="@_totalItemsCount"
+    Data="@_vm.AsODataEnumerable()"
+    Density="@Density.Compact"
+    IsLoading="@_isLoadingVm"
+    LoadData="@OnLoadDataHandler"
+    Page="@PagerChangeHandler"
+    PagerPosition="@PagerPosition.Top"
+    PageSize="@PagingMetaInfo.DefaultSize"
+    PageSizeOptions="@_pageSizeOptions"
+    @ref="@_dataGridRef"
+    ShowPagingSummary>
+  <Columns>
+    <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
+    <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
+    <RadzenDataGridColumn Property="@Str.Description" TItem="AccountSpecResp" Title="@Str.Description"/>
+    <RadzenDataGridColumn TextAlign="@TextAlign.Center" TItem="AccountSpecResp" Width="100px">
+      <HeaderTemplate>
+        <div class="rz-px-2">
+          <RadzenButton
+              ButtonStyle="@ButtonStyle.Info"
+              Click="@OnAddHandler"
+              Icon="add"
+              Shade="@Shade.Lighter"
+              Variant="@Variant.Filled"/>
+        </div>
+      </HeaderTemplate>
+      <Template Context="m">
+        <RadzenButton
+            ButtonStyle="@ButtonStyle.Warning"
+            class="rz-mr-1"
+            Click="@(_ => OnEditHandler(m))"
+            Icon="edit"
+            Shade="@Shade.Lighter"
+            Variant="@Variant.Outlined"/>
+        <RadzenButton
+            ButtonStyle="@ButtonStyle.Danger"
+            class="rz-ml-1"
+            Click="@(_ => OnDeleteHandler(m))"
+            Icon="delete_forever"
+            Shade="@Shade.Lighter"
+            Variant="@Variant.Outlined"/>
+      </Template>
+    </RadzenDataGridColumn>
+  </Columns>
+</RadzenDataGrid>

@@ -7,96 +7,76 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Requests;
 using OnlineMinion.Web.Components;
+using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
+using Radzen;
+using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
+// TODO: Restore functionality where on add it can jump to last or page of new item.
+// TODO: Also restore funtionality to reload given page on delete.
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
-    private AccountSpecsDeleteDialog _deleteDialogRef = null!;
-    private bool _isSubmitting;
-    private AccountSpecResp? _modelDelete;
+    private readonly IEnumerable<int> _pageSizeOptions;
+    private readonly List<AccountSpecResp> _vm;
+    private int _currentPage;
+    private int _currentPageSize;
+    private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
+    private AccountSpecsEditor _editorRef = null!;
+    private bool _isLoadingVm;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
-    private PagingMetaInfo? _paging;
-    private AccountSpecsUpsertEditor _upsertEditorRef = null!;
-    private List<AccountSpecResp>? _vm;
+    private int _totalItemsCount;
+
+    public AccountSpecsPage()
+    {
+        _currentPage = PagingMetaInfo.First;
+        _currentPageSize = PagingMetaInfo.DefaultSize;
+        _vm = new(_currentPageSize);
+        _pageSizeOptions = new[] { 5, 10, 20, 50, 100, };
+    }
 
     [Inject]
-    public IMediator Mediator { get; set; } = default!;
+    public ISender Sender { get; set; } = default!;
 
     [Inject]
-    public NavigationManager Navigation { get; set; } = default!;
+    public DialogService DialogService { get; set; } = default!;
+
+    [Inject]
+    public StateContainer SC { get; set; } = default!;
 
     [Inject]
     public ILogger<AccountSpecsPage> Logger { get; set; } = default!;
 
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int Page { get; set; }
-
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int PageSize { get; set; }
-
-    public override async Task SetParametersAsync(ParameterView parameters)
+    protected override async Task OnInitializedAsync()
     {
-        // This order ensures that incoming params are sett before they ar needed by data loading.
-        await base.SetParametersAsync(parameters);
-        await GetPageViewModel();
+        await base.OnInitializedAsync();
+        await LoadViewModelFromApi(_currentPage, _currentPageSize);
     }
 
-    protected override void OnInitialized()
+    private async Task OnLoadDataHandler(LoadDataArgs args)
     {
-        Page = Page == default ? PagingMetaInfo.DefaultCurrent : Page;
-        PageSize = PageSize == default ? PagingMetaInfo.DefaultSize : PageSize;
-        base.OnInitialized();
+        var pageSize = args.Top.GetValueOrDefault(PagingMetaInfo.DefaultSize);
+        var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
+        var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
+
+        await LoadViewModelFromApi(pageNumber, pageSize);
     }
 
-    private async Task GetPageViewModel()
+    private async Task LoadViewModelFromApi(int page, int size)
     {
-        _vm = null;
-
-        var result = await Mediator.Send(new GetAccountSpecsReq(Page, PageSize), CT);
-
-        _paging = result.Paging;
+        _isLoadingVm = true;
         StateHasChanged();
 
-        _vm = new();
+        var result = await Sender.Send(new GetAccountSpecsReq(page, size), CT);
 
-        await foreach (var model in result.Result.WithCancellation(CT))
-        {
-            _vm.Add(model);
-            StateHasChanged();
-        }
+        _totalItemsCount = result.Paging.TotalItems;
+        _vm.Clear();
+        await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
+
+        _isLoadingVm = false;
+        StateHasChanged();
     }
-
-    private void PageChanged(int page)
-    {
-        var old = Page;
-
-        Page = _paging?.SanitizePage(page) ?? PagingMetaInfo.First;
-        if (Page == old)
-        {
-            return;
-        }
-
-        NavigateByPager();
-    }
-
-    private void PageSizeChanged(int size)
-    {
-        PageSize = size;
-        Page = _paging?.GetNewCurrentBySize(PageSize) ?? PagingMetaInfo.First;
-
-        NavigateByPager();
-    }
-
-    private void NavigateByPager(int? page = null) => Navigation.NavigateTo(
-        Navigation.GetUriWithQueryParameters(
-            new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
-                { [nameof(Page)] = page ?? Page, [nameof(PageSize)] = PageSize, }
-        )
-    );
 
     private void OnAddHandler()
     {
@@ -105,80 +85,86 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
-        _upsertEditorRef.OpenForCreate();
+        OpenEditorDialog("Add new Account Specification");
     }
 
-
-    private async Task OnEditHandler(int id)
+    private void OnEditHandler(AccountSpecResp model)
     {
-        // If the editing of same item is already in progress, then do nothing.
-        if (_modelUpsert is UpdateAccountSpecReq cmd && cmd.Id == id)
-        {
-            _upsertEditorRef.OpenForUpdate(id);
-
-            return;
-        }
-
-        if (await Mediator.Send(new GetAccountSpecByIdReq(id), CT) is { } model)
+        // If the editing of same item is already in progress, then continue editing it.
+        if (_modelUpsert is not UpdateAccountSpecReq cmd || cmd.Id != model.Id)
         {
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-            _upsertEditorRef.OpenForUpdate(id);
         }
-        else
-        {
-            // TODO: Notify this info to user as well!
-            Logger.LogWarning("Account Specification {Id} do not exist anymore in database", id);
-        }
+
+        OpenEditorDialog($"Edit Account Specification: id #{model.Id}");
+    }
+
+    private void OpenEditorDialog(string title) => DialogService.Open(
+        title,
+        _ => RenderEditorComponent(),
+        new() { Draggable = true, }
+    );
+
+    private void CloseEditorDialog()
+    {
+        _modelUpsert = null;
+        _editorRef.ResetEditor();
+        DialogService.Close();
     }
 
     private async Task OnUpsertSubmitHandler()
     {
-        if (!await _upsertEditorRef.ValidateEditorAsync())
+        SC.IsBusy = true;
+
+        if (!await _editorRef.ValidateEditorAsync())
         {
+            SC.IsBusy = false;
+
             return;
         }
 
-        _isSubmitting = true;
-
-        switch (_modelUpsert)
+        var succeed = _modelUpsert switch
         {
-            case UpdateAccountSpecReq req:
-                await HandleUpdateSubmit(req);
-                break;
-            case CreateAccountSpecReq req:
-                await HandleCreateSubmit(req);
-                break;
-        }
+            UpdateAccountSpecReq req => await HandleUpdateSubmit(req),
+            CreateAccountSpecReq req => await HandleCreateSubmit(req),
+            _ => throw new InvalidOperationException("Unknown model type."),
+        };
 
-        _isSubmitting = false;
+        SC.IsBusy = false;
+
+        if (succeed)
+        {
+            CloseEditorDialog();
+        }
     }
 
-    private async Task HandleUpdateSubmit(UpdateAccountSpecReq request)
+    private async Task<bool> HandleUpdateSubmit(UpdateAccountSpecReq request)
     {
-        var result = await Mediator.Send(request, CT);
+        var result = await Sender.Send(request, CT);
 
-        result.Switch(
+        return result.Match(
             _ =>
             {
-                UpdateViewModelAfterEdit(request);
-                ResetEditor();
+                HandlePageStateAfterUpdate(request);
+
+                return true;
             },
             errors =>
             {
-                _upsertEditorRef.SetServerValidationErrors(errors);
-
+                _editorRef.SetServerValidationErrors(errors);
+                // It can happen, it is not unexpected error per se.
                 if (errors.Exists(err => err.Type is ErrorType.NotFound))
                 {
-                    // TODO: implement UX considering last element on page so that users always sees correct page.
-                    _vm!.Remove(_vm.Single(m => m.Id == request.Id));
+                    _dataGridRef.GoToPage(ToGridPage(_currentPage), true);
                 }
 
                 //TODO handel all other errors
+                return false;
             }
         );
     }
 
-    private void UpdateViewModelAfterEdit(UpdateAccountSpecReq request)
+    private void HandlePageStateAfterUpdate(UpdateAccountSpecReq request)
     {
         var model = _vm!.Single(m => m.Id == request.Id);
         var clone = model with
@@ -189,108 +175,119 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _vm![_vm.IndexOf(model)] = clone;
     }
 
-
-    private async Task HandleCreateSubmit(CreateAccountSpecReq req)
+    private async Task<bool> HandleCreateSubmit(CreateAccountSpecReq req)
     {
-        var result = await Mediator.Send(req, CT);
+        var result = await Sender.Send(req, CT);
 
-        await result.SwitchAsync(
+        return await result.MatchAsync(
             async _ =>
             {
-                await NavigateToNewItemPage();
-                ResetEditor();
+                await HandlePageStateAfterCreate();
+                return true;
             },
             errors =>
             {
-                _upsertEditorRef.SetServerValidationErrors(errors);
+                _editorRef.SetServerValidationErrors(errors);
 
                 //TODO handel all other errors
 
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
         );
     }
 
-    private void ResetEditor()
+    private async Task HandlePageStateAfterCreate()
     {
-        _modelUpsert = null;
-        _upsertEditorRef.ResetUpsertModal();
-    }
-
-    private async Task NavigateToNewItemPage()
-    {
-        if (await Mediator.Send(new GetAccountSpecPageCountBySizeReq(PageSize), CT) is not { } pages)
+        if (await Sender.Send(new GetAccountSpecPageCountBySizeReq(_currentPageSize), CT) is { } pagesCount)
         {
-            Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+            var lastPageAfterCreate = _currentPage == pagesCount
+                ? _currentPage
+                : pagesCount;
+
+            await _dataGridRef.GoToPage(ToGridPage(lastPageAfterCreate), true);
 
             return;
         }
 
-        if (pages == Page)
-        {
-            await GetPageViewModel();
-        }
-        else
-        {
-            NavigateByPager(pages);
-        }
+        Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
     }
 
-    private void OnDeleteHandler(int id)
+    private async Task OnDeleteHandler(AccountSpecResp model)
     {
-        _modelDelete = _vm!.Single(m => m.Id == id);
-        _deleteDialogRef.OpenForDelete(id);
-    }
+        var (id, name, _, _) = model;
 
-    private async Task OnDeleteConfirmHandler()
-    {
-        if (_modelDelete is null)
+        if (!await GetUserConfirmation(name))
         {
             return;
         }
 
-        var id = _modelDelete.Value.Id;
+        SC.IsBusy = true;
+        await DeleteModelFromApi(id);
+        SC.IsBusy = false;
+    }
 
-        _isSubmitting = true;
-        var result = await Mediator.Send(new DeleteAccountSpecReq(id), CT);
-        _isSubmitting = false;
+    private async Task<bool> GetUserConfirmation(string modelName) =>
+        await DialogService.Confirm(
+            $"Are you sure to delete Account spec with name <em>{modelName}</em>?",
+            "Confirm deletion",
+            new()
+            {
+                OkButtonText = "Confirm",
+                CancelButtonText = "Cancel",
+                Draggable = true,
+                CloseDialogOnOverlayClick = true,
+            }
+        ) ?? false;
 
-        await result.SwitchFirstAsync(
+    private async Task<bool> DeleteModelFromApi(int id)
+    {
+        var result = await Sender.Send(new DeleteAccountSpecReq(id), CT);
+
+        return await result.MatchFirstAsync(
             async _ =>
             {
-                _deleteDialogRef.Reset();
                 await HandlePageStateAfterDelete();
+
+                return true;
             },
             error =>
             {
-                if (error.Type is ErrorType.NotFound)
-                {
-                    Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
-                }
-                else
-                {
-                    Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
-                }
+                HandleApiDeleteErrors(id, error);
 
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
         );
     }
 
     private async Task HandlePageStateAfterDelete()
     {
-        // Detect it was last item on page, or very last item of the whole resource.
-        // Navigate only, when page has to be changed, get current page's items otherwise.
-        if (_paging?.TotalItems > 1 && _vm?.Count == 1)
+        var visiblePageAfterDelete = _vm.Count == 1
+            ? _currentPage - 1
+            : _currentPage;
+
+        await _dataGridRef.GoToPage(ToGridPage(visiblePageAfterDelete), true);
+    }
+
+    private void HandleApiDeleteErrors(int id, Error error)
+    {
+        if (error.Type is ErrorType.NotFound)
         {
-            Page = _paging!.Value.Previous;
-            NavigateByPager();
+            Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
         }
         else
         {
-            await GetPageViewModel();
+            Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
         }
-
-        _modelDelete = null;
     }
+
+    private void PagerChangeHandler(PagerEventArgs changeData)
+    {
+        // Grid page is 0-based;
+        _currentPage = ToApiPage(changeData.PageIndex);
+        _currentPageSize = changeData.Top;
+    }
+
+    private static int ToGridPage(int apiPage) => apiPage - 1;
+
+    private static int ToApiPage(int gridPage) => gridPage + 1;
 }

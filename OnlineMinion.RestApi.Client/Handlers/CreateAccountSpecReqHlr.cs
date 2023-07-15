@@ -22,7 +22,7 @@ internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpe
         _logger = logger;
     }
 
-    public async Task<ErrorOr<ModelIdResp>> Handle(  CreateAccountSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq request, CancellationToken ct)
     {
         using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, request, ct)
             .ConfigureAwait(false);
