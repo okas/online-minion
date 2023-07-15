@@ -9,7 +9,7 @@
     <ItemGroup>
         <PackageReference Include="erroror" Version="1.2.1.1-preview" />
         <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.63">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.66">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

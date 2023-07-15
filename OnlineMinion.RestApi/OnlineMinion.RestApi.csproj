@@ -38,7 +38,7 @@
         <PackageReference Include="CorsPolicySettings" Version="2.0.0"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0"/>
         <PackageReference Include="MediatR" Version="12.1.1"/>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.63">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.66">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -51,7 +51,7 @@
         <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0-preview.6.23329.7"/>
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-preview.6.23329.7"/>
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore.Filters.Abstractions" Version="7.0.6"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters.Abstractions" Version="7.0.8"/>
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>
 
