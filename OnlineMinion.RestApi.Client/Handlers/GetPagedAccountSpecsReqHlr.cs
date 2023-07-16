@@ -10,12 +10,12 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, BasePagedResult<AccountSpecResp>>
+internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, PagedResult<AccountSpecResp>>
 {
     private readonly ApiClientProvider _api;
     public GetPagedAccountSpecsReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<BasePagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq request, CancellationToken ct)
+    public async Task<PagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq request, CancellationToken ct)
     {
         var message = CreateGetMessage(request);
 
