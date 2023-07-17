@@ -59,15 +59,23 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
         var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
 
-        await LoadViewModelFromApi(pageNumber, pageSize, args.Filter);
+        await LoadViewModelFromApi(pageNumber, pageSize, args.Filter, args.OrderBy);
     }
 
-    private async Task LoadViewModelFromApi(int page, int size, string? filterOdata = default)
+    /// <summary>
+    ///     Using Dynamic LINQ expressions sends filter, sort and paging requests to API.
+    ///     <a href="https://dynamic-linq.net/expression-language">Dynamic LINQ</a>
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="size"></param>
+    /// <param name="filterExps">Filtering expression, multi or single property.</param>
+    /// <param name="sortExps">Sorting expression, multi or single property.</param>
+    private async Task LoadViewModelFromApi(int page, int size, string? filterExps = default, string sortExps = default)
     {
         SC.IsBusy = true;
         StateHasChanged();
 
-        var result = await Sender.Send(new GetAccountSpecsReq(filterOdata, page, size), CT);
+        var result = await Sender.Send(new GetAccountSpecsReq(filterExps, sortExps, page, size), CT);
 
         _totalItemsCount = result.Paging.TotalItems;
         _vm.Clear();

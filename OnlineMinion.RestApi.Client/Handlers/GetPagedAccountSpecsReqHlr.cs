@@ -32,17 +32,19 @@ internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpe
 
     private string CreateUri(GetAccountSpecsReq request)
     {
-        var parameters = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
-
+        var qsParams = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
         if (!string.IsNullOrWhiteSpace(request.Filter))
         {
-            parameters[nameof(request.Filter)] = request.Filter;
+            qsParams[nameof(request.Filter)] = request.Filter;
         }
 
-        parameters[nameof(request.Page)] = request.Page;
-        parameters[nameof(request.Size)] = request.Size;
+        if (!string.IsNullOrWhiteSpace(request.Sort))
+        {
+            qsParams[nameof(request.Sort)] = request.Sort;
+        }
 
-        var uri = _api.ApiV1AccountSpecsUri.AddQueryString(parameters);
+        qsParams[nameof(request.Page)] = request.Page;
+        qsParams[nameof(request.Size)] = request.Size;
 
         return _api.ApiV1AccountSpecsUri.AddQueryString(qsParams);
     }

@@ -25,8 +25,7 @@ public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, 
             query = query.Where(rq.Filter);
         }
 
-        // Default ordering.
-        query = query.OrderBy(e => e.Id);
+        query = string.IsNullOrWhiteSpace(rq.Sort) ? query.OrderBy(e => e.Id) : query.OrderBy(rq.Sort);
 
         var projectedQuery = query.Select(
             e => new AccountSpecResp(e.Id, e.Name, e.Group, e.Description)
