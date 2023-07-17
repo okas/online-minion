@@ -6,9 +6,9 @@ namespace OnlineMinion.Contracts;
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct PagingMetaInfo(
     int TotalItems,
-    int Size    = PagingMetaInfo.DefaultSize,
-    int Current = PagingMetaInfo.DefaultCurrent
-)
+    int Size = PagingMetaInfo.DefaultSize,
+    int Page = PagingMetaInfo.DefaultCurrent
+) : IPagingInfo
 {
     [JsonIgnore] public const int DefaultSize = 10;
 
@@ -20,15 +20,15 @@ public readonly record struct PagingMetaInfo(
     public int Pages => (int)Math.Ceiling((decimal)TotalItems / SanitizeSize(Size));
 
     [JsonIgnore]
-    public int ItemsOffset => (Current > 1 ? Current - 1 : 0) * SanitizeSize(Size);
+    public int ItemsOffset => (Page > 1 ? Page - 1 : 0) * SanitizeSize(Size);
 
     [JsonIgnore]
-    public int Previous => SanitizePage(Current - 1);
+    public int Previous => SanitizePage(Page - 1);
 
     [JsonIgnore]
-    public int Next => SanitizePage(Current + 1);
+    public int Next => SanitizePage(Page + 1);
 
-    public int SanitizePage(int page) => page >= First && page <= Pages ? page : Current;
+    public int SanitizePage(int page) => page >= First && page <= Pages ? page : Page;
 
     public int GetNewCurrentBySize(int size) => (int)Math.Ceiling((decimal)(ItemsOffset + 1) / SanitizeSize(size));
 

@@ -120,18 +120,14 @@ public class AccountSpecsController : ApiControllerBase
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IActionResult> GetSome(
-        [FromQuery][Range(1, 50)]  int page     = 1,
-        [FromQuery][Range(1, 100)] int pageSize = 10,
-        CancellationToken              ct       = default
-    )
+    public async Task<IActionResult> GetSome([FromQuery] GetAccountSpecsReq rq, CancellationToken ct)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var result = await _sender.Send(new GetAccountSpecsReq(page, pageSize), ct);
+        var result = await _sender.Send(rq, ct);
 
         SetPagingHeaders(result.Paging);
 

@@ -59,15 +59,15 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
         var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
 
-        await LoadViewModelFromApi(pageNumber, pageSize);
+        await LoadViewModelFromApi(pageNumber, pageSize, args.Filter);
     }
 
-    private async Task LoadViewModelFromApi(int page, int size)
+    private async Task LoadViewModelFromApi(int page, int size, string? filterOdata = default)
     {
         SC.IsBusy = true;
         StateHasChanged();
 
-        var result = await Sender.Send(new GetAccountSpecsReq(page, size), CT);
+        var result = await Sender.Send(new GetAccountSpecsReq(filterOdata, page, size), CT);
 
         _totalItemsCount = result.Paging.TotalItems;
         _vm.Clear();

@@ -27,7 +27,7 @@ public static class UriHelpers
             StringComparer.OrdinalIgnoreCase
         );
 
-        return QueryHelpers.AddQueryString(uri, queryStringParameters);
+        return QueryHelpers.AddQueryString(uri, queryStringParameters!);
     }
 
     public static string AddQueryString(this Uri uri, IReadOnlyDictionary<string, object?> parameters) =>
@@ -49,6 +49,6 @@ public static class UriHelpers
             StringComparer.OrdinalIgnoreCase
         );
 
-        return QueryHelpers.AddQueryString(uri, queryStringParameters);
+        return QueryHelpers.AddQueryString(uri, queryStringParameters!);
     }
 }

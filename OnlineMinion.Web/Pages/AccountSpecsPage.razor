@@ -30,12 +30,13 @@
 <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
 <RadzenText Text="@Str.MainDescription"/>
 
-@* `Data="@_vm.AsODataEnumerable()"`: This seems to work better with LoadData event. *@
+@* `Data="@_vm.AsODataEnumerable()/.ToList()"`: This seems to work better with LoadData event. *@
 <RadzenDataGrid
+    AllowFiltering="@true"
     AllowPaging
     class="rz-mt-4"
     Count="@_totalItemsCount"
-    Data="@_vm.AsODataEnumerable()"
+    Data="@_vm.ToList()"
     Density="@Density.Compact"
     IsLoading="@SC.IsBusy"
     LoadData="@OnLoadDataHandler"
@@ -49,7 +50,7 @@
     <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
     <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
     <RadzenDataGridColumn Property="@Str.Description" TItem="AccountSpecResp" Title="@Str.Description"/>
-    <RadzenDataGridColumn TextAlign="@TextAlign.Center" TItem="AccountSpecResp" Width="100px">
+    <RadzenDataGridColumn Filterable="@false" TextAlign="@TextAlign.Center" TItem="AccountSpecResp" Width="100px">
       <HeaderTemplate>
         <div class="rz-px-2">
           <RadzenButton

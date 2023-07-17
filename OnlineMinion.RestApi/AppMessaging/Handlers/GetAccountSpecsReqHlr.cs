@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Common.Utilities;
@@ -5,19 +6,24 @@ using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.RestApi.Helpers;
+using AccountSpecRespPagedResult =
+    OnlineMinion.Contracts.Responses.PagedResult<OnlineMinion.Contracts.Responses.AccountSpecResp>;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, PagedResult<AccountSpecResp>>
+public sealed class GetAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, AccountSpecRespPagedResult>
 {
     private readonly OnlineMinionDbContext _dbContext;
     public GetAccountSpecsReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<PagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq rq, CancellationToken ct)
+    public async Task<AccountSpecRespPagedResult> Handle(GetAccountSpecsReq rq, CancellationToken ct)
     {
         var query = _dbContext.AccountSpecs.AsNoTracking();
 
-        // TODO: Filtering here
+        if (!string.IsNullOrWhiteSpace(rq.Filter))
+        {
+            query = query.Where(rq.Filter);
+        }
 
         // Default ordering.
         query = query.OrderBy(e => e.Id);

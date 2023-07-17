@@ -38,13 +38,17 @@ internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpe
 
     private HttpRequestMessage CreateGetMessage(GetAccountSpecsReq request)
     {
-        var uri = _api.ApiV1AccountSpecsUri.AddQueryString(
-            new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
-            {
-                [nameof(request.Page)] = request.Page,
-                [nameof(request.PageSize)] = request.PageSize,
-            }
-        );
+        var parameters = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
+
+        if (!string.IsNullOrWhiteSpace(request.Filter))
+        {
+            parameters[nameof(request.Filter)] = request.Filter;
+        }
+
+        parameters[nameof(request.Page)] = request.Page;
+        parameters[nameof(request.Size)] = request.Size;
+
+        var uri = _api.ApiV1AccountSpecsUri.AddQueryString(parameters);
 
         return new(HttpMethod.Get, uri);
     }
