@@ -7,12 +7,12 @@ namespace OnlineMinion.Contracts;
 public readonly record struct PagingMetaInfo(
     int TotalItems,
     int Size = PagingMetaInfo.DefaultSize,
-    int Page = PagingMetaInfo.DefaultCurrent
+    int Page = PagingMetaInfo.DefaultPage
 ) : IPagingInfo
 {
     [JsonIgnore] public const int DefaultSize = 10;
 
-    [JsonIgnore] public const int DefaultCurrent = 1;
+    [JsonIgnore] public const int DefaultPage = 1;
 
     [JsonIgnore] public const int First = 1;
 
