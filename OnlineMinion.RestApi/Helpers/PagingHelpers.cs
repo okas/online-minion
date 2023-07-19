@@ -7,7 +7,7 @@ namespace OnlineMinion.RestApi.Helpers;
 public static class PagingHelpers
 {
     [Pure]
-    public static async ValueTask<PagingMetaInfo> CreateFromQueryableAsync<TSource>(
+    public static async ValueTask<PagingMetaInfo> CreatePagingMetaAsync<TSource>(
         IQueryable<TSource> query,
         IPagingInfo         pagingInfo,
         CancellationToken   ct

@@ -1,7 +1,7 @@
-using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
+using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Helpers;
@@ -14,33 +14,20 @@ internal abstract class BaseQueryHandler<TRequest, TResponse>
     protected readonly OnlineMinionDbContext DbContext;
     protected BaseQueryHandler(OnlineMinionDbContext dbContext) => DbContext = dbContext;
 
-    protected async Task<Contracts.Responses.PagedResult<TResponse>> GetDataFromStoreAsync<TEntity>(
+    protected static async ValueTask<PagedResult<TResponse>> GetDataFromStoreAsync<TEntity>(
+        IQueryable<TEntity>                  query,
         TRequest                             queryParams,
         Expression<Func<TEntity, TResponse>> projection,
-        IQueryable<TEntity>?                 query = null,
-        CancellationToken                    ct    = default
+        CancellationToken                    ct = default
     ) where TEntity : BaseEntity
     {
-        query = ConfigureStoreQuery(
-            queryParams,
-            query ?? DbContext.Set<TEntity>().AsNoTracking()
-        );
+        var pagingMeta = await PagingHelpers.CreatePagingMetaAsync(query, queryParams, ct).ConfigureAwait(false);
 
-        return await query.Select(projection).RetrieveDataAsync(queryParams, ct);
-    }
+        var resultStream = QueryHelpers
+            .ConfigureStoreQuery(queryParams, query)
+            .Select(projection)
+            .AsAsyncEnumerable();
 
-    private static IQueryable<TEntity> ConfigureStoreQuery<TEntity>(TRequest queryParams, IQueryable<TEntity> query)
-        where TEntity : BaseEntity
-    {
-        if (!string.IsNullOrWhiteSpace(queryParams.Filter))
-        {
-            query = query.Where(queryParams.Filter);
-        }
-
-        query = string.IsNullOrWhiteSpace(queryParams.Sort)
-            ? query.OrderBy(e => e.Id)
-            : query.OrderBy(queryParams.Sort);
-
-        return query.Skip((queryParams.Page - 1) * queryParams.Size).Take(queryParams.Size);
+        return new(resultStream, pagingMeta);
     }
 }
