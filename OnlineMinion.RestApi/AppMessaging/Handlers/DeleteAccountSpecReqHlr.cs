@@ -6,7 +6,7 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, ErrorOr<Deleted>>
+internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, ErrorOr<Deleted>>
 {
     private readonly OnlineMinionDbContext _dbContext;
 

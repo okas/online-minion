@@ -5,7 +5,7 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<CheckAccountSpecUniqueExistingReq, bool>
+internal sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<CheckAccountSpecUniqueExistingReq, bool>
 {
     private readonly OnlineMinionDbContext _dbContext;
     public CheckAccountSpecUniqueExistingReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;

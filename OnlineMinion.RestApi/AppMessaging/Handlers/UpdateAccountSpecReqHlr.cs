@@ -7,7 +7,7 @@ using OnlineMinion.Data.Entities;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
+internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
 {
     private readonly OnlineMinionDbContext _dbContext;
     private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
