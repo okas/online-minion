@@ -63,7 +63,7 @@ internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpe
     private static PagingMetaInfo GetPagingInfo(IPagingInfo request, HttpResponseHeaders headers)
     {
         var size = headers.GetHeaderFirstValue<int>(CustomHeaderNames.PagingSize);
-        var totalItems = headers.GetHeaderFirstValue<int>(CustomHeaderNames.PagingTotalItems);
+        var totalItems = headers.GetHeaderFirstValue<int>(CustomHeaderNames.PagingRows);
 
         return new(totalItems, size, request.Page);
     }

@@ -17,7 +17,7 @@ public abstract class ApiControllerBase : ControllerBase
     {
         var headers = HttpContext.Response.Headers;
 
-        headers[CustomHeaderNames.PagingTotalItems] = values.TotalItems.ToString(NumberFormatInfo.InvariantInfo);
+        headers[CustomHeaderNames.PagingRows] = values.Rows.ToString(NumberFormatInfo.InvariantInfo);
         headers[CustomHeaderNames.PagingSize] = values.Size.ToString(NumberFormatInfo.InvariantInfo);
         headers[CustomHeaderNames.PagingPages] = values.Pages.ToString(NumberFormatInfo.InvariantInfo);
     }

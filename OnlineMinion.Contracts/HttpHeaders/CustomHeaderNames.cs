@@ -2,9 +2,7 @@ namespace OnlineMinion.Contracts.HttpHeaders;
 
 public static class CustomHeaderNames
 {
-    private const string Prefix = "Paging";
-
-    public const string PagingTotalItems = $"{Prefix}-{nameof(PagingMetaInfo.TotalItems)}";
-    public const string PagingSize = $"{Prefix}-{nameof(PagingMetaInfo.Size)}";
-    public const string PagingPages = $"{Prefix}-{nameof(PagingMetaInfo.Pages)}";
+    public const string PagingRows = nameof(PagingRows);
+    public const string PagingSize = nameof(PagingSize);
+    public const string PagingPages = nameof(PagingPages);
 }

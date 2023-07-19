@@ -33,7 +33,7 @@ public class AccountSpecsController : ApiControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent, "Using page size, get count of total items and count of pages.")]
     [SwaggerResponseHeader(
         StatusCodes.Status204NoContent,
-        CustomHeaderNames.PagingTotalItems,
+        CustomHeaderNames.PagingRows,
         "integer",
         "Total items of resource."
     )]
@@ -104,7 +104,7 @@ public class AccountSpecsController : ApiControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponseHeader(
         StatusCodes.Status200OK,
-        CustomHeaderNames.PagingTotalItems,
+        CustomHeaderNames.PagingRows,
         "integer",
         "Total items of resource."
     )]

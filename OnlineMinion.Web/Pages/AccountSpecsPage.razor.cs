@@ -29,10 +29,10 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     public AccountSpecsPage()
     {
-        _currentPage = PagingMetaInfo.First;
-        _currentPageSize = PagingMetaInfo.DefaultSize;
+        _currentPage = BasePagingParams.FirstPage;
+        _currentPageSize = BasePagingParams.DefaultSize;
         _vm = new(_currentPageSize);
-        _pageSizeOptions = new[] { 5, 10, 20, 50, 100, };
+        _pageSizeOptions = BasePagingParams.AllowedSizes;
     }
 
     [Inject]
@@ -55,7 +55,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private async Task OnLoadDataHandler(LoadDataArgs args)
     {
-        var pageSize = args.Top.GetValueOrDefault(PagingMetaInfo.DefaultSize);
+        var pageSize = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
         var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
         var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
 
@@ -70,14 +70,19 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     /// <param name="size"></param>
     /// <param name="filterExps">Filtering expression, multi or single property.</param>
     /// <param name="sortExps">Sorting expression, multi or single property.</param>
-    private async Task LoadViewModelFromApi(int page, int size, string? filterExps = default, string sortExps = default)
+    private async Task LoadViewModelFromApi(
+        int     page,
+        int     size,
+        string? filterExps = default,
+        string? sortExps   = default
+    )
     {
         SC.IsBusy = true;
         StateHasChanged();
 
         var result = await Sender.Send(new GetAccountSpecsReq(filterExps, sortExps, page, size), CT);
 
-        _totalItemsCount = result.Paging.TotalItems;
+        _totalItemsCount = result.Paging.Rows;
         _vm.Clear();
         await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
 
