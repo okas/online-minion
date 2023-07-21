@@ -14,8 +14,6 @@ using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
-// TODO: Restore functionality where on add it can jump to last or page of new item.
-// TODO: Also restore funtionality to reload given page on delete.
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private readonly IEnumerable<int> _pageSizeOptions;
@@ -24,6 +22,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private int _currentPageSize;
     private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
+    private bool _isDisabled = true;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -294,12 +293,31 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private void PagerChangeHandler(PagerEventArgs changeData)
     {
-        // Grid page is 0-based;
         _currentPage = ToApiPage(changeData.PageIndex);
         _currentPageSize = changeData.Top;
     }
 
+    private async Task HandleResetGridAsync()
+    {
+        _dataGridRef.Reset(true, true);
+        _dataGridRef.Groups.Clear();
+        await _dataGridRef.Reload();
+    }
+
+    private void HandleSettingsChanged(DataGridSettings settings)
+    {
+        _isDisabled = !settings.Groups.Any() && !settings.Columns.Any(
+            c =>
+                c.FilterValue is not null
+                || c.SortOrder is not null
+        );
+    }
+
+    /// <summary>
+    ///     Radzen DataGrid uses 0-based page index, but API uses 1-based page index.
+    /// </summary>
     private static int ToGridPage(int apiPage) => apiPage - 1;
 
+    /// <inheritdoc cref="ToGridPage" />
     private static int ToApiPage(int gridPage) => gridPage + 1;
 }

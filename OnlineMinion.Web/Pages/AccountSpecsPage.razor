@@ -30,10 +30,6 @@
 <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
 <RadzenText Text="@Str.MainDescription"/>
 
-<RadzenText class="rz-color-series-3">
-  // TODO: Buttons to reset filters and sorting and to refresh the data.
-</RadzenText>
-
 @* `Data="@_vm.AsODataEnumerable()/.ToList()"`: This seems to work better with LoadData event. *@
 <RadzenDataGrid
     AllowFiltering
@@ -50,10 +46,15 @@
     LoadData="@OnLoadDataHandler"
     Page="@PagerChangeHandler"
     PagerPosition="@PagerPosition.Top"
-    PageSize="@PagingMetaInfo.DefaultSize"
+    PageSize="@BasePagingParams.DefaultSize"
     PageSizeOptions="@_pageSizeOptions"
     @ref="@_dataGridRef"
+    SettingsChanged="@HandleSettingsChanged"
     ShowPagingSummary>
+  <HeaderTemplate>
+    <RadzenButton ButtonStyle="@ButtonStyle.Info" Click="@_dataGridRef.Reload" Icon="refresh" IsBusy="@SC.IsBusy"/>
+    <RadzenButton ButtonStyle="@ButtonStyle.Warning" Click="@HandleResetGridAsync" Disabled="@_isDisabled" Icon="stop"/>
+  </HeaderTemplate>
   <Columns>
     <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
     <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
