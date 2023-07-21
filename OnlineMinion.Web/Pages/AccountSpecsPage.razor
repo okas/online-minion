@@ -45,6 +45,7 @@
     Data="@_vm.ToList()"
     Density="@Density.Compact"
     FilterMode="@FilterMode.SimpleWithMenu"
+    GridLines="DataGridGridLines.Both"
     HideGroupedColumn
     IsLoading="@SC.IsBusy"
     LoadData="@OnLoadDataHandler"
@@ -58,7 +59,13 @@
     <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
     <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
     <RadzenDataGridColumn Property="@Str.Description" TItem="AccountSpecResp" Title="@Str.Description"/>
-    <RadzenDataGridColumn Filterable="@false" Groupable="@false" Sortable="@false" TextAlign="@TextAlign.Center" TItem="AccountSpecResp" Width="100px">
+    <RadzenDataGridColumn
+        Filterable="@false"
+        Groupable="@false"
+        Sortable="@false"
+        TextAlign="@TextAlign.Center"
+        TItem="AccountSpecResp"
+        Width="80px">
       <HeaderTemplate>
         <div class="rz-px-2">
           <RadzenButton
@@ -66,6 +73,7 @@
               Click="@OnAddHandler"
               Icon="add"
               Shade="@Shade.Lighter"
+              Size="@ButtonSize.Small"
               Variant="@Variant.Filled"/>
         </div>
       </HeaderTemplate>
@@ -76,13 +84,14 @@
             Click="@(_ => OnEditHandler(m))"
             Icon="edit"
             Shade="@Shade.Lighter"
+            Size="@ButtonSize.Small"
             Variant="@Variant.Outlined"/>
         <RadzenButton
             ButtonStyle="@ButtonStyle.Danger"
-            class="rz-ml-1"
             Click="@(_ => OnDeleteHandler(m))"
             Icon="delete_forever"
             Shade="@Shade.Lighter"
+            Size="@ButtonSize.Small"
             Variant="@Variant.Outlined"/>
       </Template>
     </RadzenDataGridColumn>
