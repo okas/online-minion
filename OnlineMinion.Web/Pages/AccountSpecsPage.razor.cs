@@ -22,7 +22,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private int _currentPageSize;
     private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
-    private bool _isDisabled = true;
+    private bool _isResetDisabled;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -32,6 +32,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _currentPageSize = BasePagingParams.DefaultSize;
         _vm = new(_currentPageSize);
         _pageSizeOptions = BasePagingParams.AllowedSizes;
+        _isResetDisabled = true;
     }
 
     [Inject]
@@ -69,26 +70,24 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     /// </summary>
     /// <param name="page" />
     /// <param name="size" />
-    /// <param name="filterExps">Filtering expression, multi or single property.</param>
-    /// <param name="sortExps">Sorting expression, multi or single property.</param>
+    /// <param name="filterExpression">Filtering expression, multi or single property.</param>
+    /// <param name="sortExpression">Sorting expression, multi or single property.</param>
     private async Task LoadViewModelFromApi(
         int     page,
         int     size,
-        string? filterExps = default,
-        string? sortExps   = default
+        string? filterExpression = default,
+        string? sortExpression   = default
     )
     {
         SC.IsBusy = true;
-        StateHasChanged();
 
-        var result = await Sender.Send(new GetAccountSpecsReq(filterExps, sortExps, page, size), CT);
+        var result = await Sender.Send(new GetAccountSpecsReq(filterExpression, sortExpression, page, size), CT);
 
         _totalItemsCount = result.Paging.Rows;
         _vm.Clear();
         await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
 
         SC.IsBusy = false;
-        StateHasChanged();
     }
 
     private void OnAddHandler()
@@ -308,7 +307,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private void HandleSettingsChanged(DataGridSettings settings)
     {
-        _isDisabled = !settings.Groups.Any() && !settings.Columns.Any(
+        _isResetDisabled = !settings.Groups.Any() && !settings.Columns.Any(
             c =>
                 c.FilterValue is not null
                 || c.SortOrder is not null
