@@ -70,26 +70,24 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     /// </summary>
     /// <param name="page" />
     /// <param name="size" />
-    /// <param name="filterExps">Filtering expression, multi or single property.</param>
-    /// <param name="sortExps">Sorting expression, multi or single property.</param>
+    /// <param name="filterExpression">Filtering expression, multi or single property.</param>
+    /// <param name="sortExpression">Sorting expression, multi or single property.</param>
     private async Task LoadViewModelFromApi(
         int     page,
         int     size,
-        string? filterExps = default,
-        string? sortExps   = default
+        string? filterExpression = default,
+        string? sortExpression   = default
     )
     {
         SC.IsBusy = true;
-        StateHasChanged();
 
-        var result = await Sender.Send(new GetAccountSpecsReq(filterExps, sortExps, page, size), CT);
+        var result = await Sender.Send(new GetAccountSpecsReq(filterExpression, sortExpression, page, size), CT);
 
         _totalItemsCount = result.Paging.Rows;
         _vm.Clear();
         await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
 
         SC.IsBusy = false;
-        StateHasChanged();
     }
 
     private void OnAddHandler()
