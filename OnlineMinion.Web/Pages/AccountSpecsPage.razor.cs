@@ -1,4 +1,5 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using OnlineMinion.Contracts;
@@ -14,6 +15,7 @@ using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
+[UsedImplicitly]
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private readonly IEnumerable<int> _pageSizeOptions;
