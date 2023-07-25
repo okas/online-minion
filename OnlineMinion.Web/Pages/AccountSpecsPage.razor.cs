@@ -1,4 +1,5 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using OnlineMinion.Contracts;
@@ -14,8 +15,7 @@ using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
-// TODO: Restore functionality where on add it can jump to last or page of new item.
-// TODO: Also restore funtionality to reload given page on delete.
+[UsedImplicitly]
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private readonly IEnumerable<int> _pageSizeOptions;
