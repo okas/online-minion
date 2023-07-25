@@ -54,19 +54,21 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private async Task OnLoadDataHandler(LoadDataArgs args)
     {
-        var pageSize = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
-        var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
-        var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
+        var size = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
+        var offset = args.Skip.GetValueOrDefault();
+        var page = offset > 0
+            ? (int)Math.Ceiling((decimal)offset / size)
+            : 1;
 
-        await LoadViewModelFromApi(pageNumber, pageSize, args.Filter, args.OrderBy);
+        await LoadViewModelFromApi(page, size, args.Filter, args.OrderBy);
     }
 
     /// <summary>
     ///     Using Dynamic LINQ expressions sends filter, sort and paging requests to API.
     ///     <a href="https://dynamic-linq.net/expression-language">Dynamic LINQ</a>
     /// </summary>
-    /// <param name="page"></param>
-    /// <param name="size"></param>
+    /// <param name="page" />
+    /// <param name="size" />
     /// <param name="filterExps">Filtering expression, multi or single property.</param>
     /// <param name="sortExps">Sorting expression, multi or single property.</param>
     private async Task LoadViewModelFromApi(
