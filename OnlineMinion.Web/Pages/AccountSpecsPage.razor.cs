@@ -24,7 +24,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private int _currentPageSize;
     private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
-    private bool _isResetDisabled;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -34,7 +33,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
         _currentPageSize = BasePagingParams.DefaultSize;
         _vm = new(_currentPageSize);
         _pageSizeOptions = BasePagingParams.AllowedSizes;
-        _isResetDisabled = true;
     }
 
     [Inject]
@@ -298,22 +296,6 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     {
         _currentPage = ToApiPage(changeData.PageIndex);
         _currentPageSize = changeData.Top;
-    }
-
-    private async Task HandleResetGridAsync()
-    {
-        _dataGridRef.Reset(true, true);
-        _dataGridRef.Groups.Clear();
-        await _dataGridRef.Reload();
-    }
-
-    private void HandleSettingsChanged(DataGridSettings settings)
-    {
-        _isResetDisabled = !settings.Groups.Any() && !settings.Columns.Any(
-            c =>
-                c.FilterValue is not null
-                || c.SortOrder is not null
-        );
     }
 
     /// <summary>
