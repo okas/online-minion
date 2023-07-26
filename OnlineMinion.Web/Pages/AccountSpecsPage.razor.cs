@@ -57,9 +57,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     {
         var size = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
         var offset = args.Skip.GetValueOrDefault();
-        var page = offset > 0
-            ? (int)Math.Ceiling((decimal)offset / size)
-            : 1;
+        var page = (int)Math.Floor((decimal)offset / size) + 1;
 
         await LoadViewModelFromApi(page, size, args.Filter, args.OrderBy);
     }
