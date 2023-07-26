@@ -8,7 +8,7 @@ using static System.String;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-public class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<CheckAccountSpecUniqueExistingReq, bool>
+internal sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<CheckAccountSpecUniqueExistingReq, bool>
 {
     private readonly ApiClientProvider _api;
     private readonly ILogger<CheckAccountSpecUniqueExistingReqHlr> _logger;

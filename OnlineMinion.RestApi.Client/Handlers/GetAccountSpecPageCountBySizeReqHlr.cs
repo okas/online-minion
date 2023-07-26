@@ -6,8 +6,7 @@ using OnlineMinion.RestApi.Client.Requests;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class GetAccountSpecPageCountBySizeReqHlr :
-    IRequestHandler<GetAccountSpecPageCountBySizeReq, int?>
+internal sealed class GetAccountSpecPageCountBySizeReqHlr : IRequestHandler<GetAccountSpecPageCountBySizeReq, int?>
 {
     private readonly ApiClientProvider _api;
     public GetAccountSpecPageCountBySizeReqHlr(ApiClientProvider api) => _api = api;

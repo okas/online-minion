@@ -35,5 +35,21 @@ public class SwaggerUIOptionsConfigurator : IConfigureOptions<SwaggerUIOptions>
                 $"{_apiAssemblyName} - {versionDescription.GroupName.ToUpper(CultureInfo.InvariantCulture)}"
             );
         }
+
+        SetCustomCss(options);
+    }
+
+    private static void SetCustomCss(SwaggerUIOptions options)
+    {
+        const string key = "CustomCssPath";
+        if (!options.ConfigObject.AdditionalItems.TryGetValue(key, out var val) || val is not string cssPath)
+        {
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(cssPath))
+        {
+            options.InjectStylesheet(cssPath);
+        }
     }
 }

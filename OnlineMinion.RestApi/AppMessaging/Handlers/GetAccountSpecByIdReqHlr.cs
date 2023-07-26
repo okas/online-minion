@@ -7,7 +7,7 @@ using OnlineMinion.Data.Entities;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecByIdReq, AccountSpecResp?>
+internal sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecByIdReq, AccountSpecResp?>
 {
     private readonly IQueryable<AccountSpec> _queryable;
 

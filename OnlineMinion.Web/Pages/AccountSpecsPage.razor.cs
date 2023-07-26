@@ -1,4 +1,5 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using OnlineMinion.Contracts;
@@ -14,8 +15,7 @@ using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
-// TODO: Restore functionality where on add it can jump to last or page of new item.
-// TODO: Also restore funtionality to reload given page on delete.
+[UsedImplicitly]
 public partial class AccountSpecsPage : ComponentWithCancellationToken
 {
     private readonly IEnumerable<int> _pageSizeOptions;
@@ -24,16 +24,15 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private int _currentPageSize;
     private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
-    private bool _isLoadingVm;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
     public AccountSpecsPage()
     {
-        _currentPage = PagingMetaInfo.First;
-        _currentPageSize = PagingMetaInfo.DefaultSize;
+        _currentPage = BasePagingParams.FirstPage;
+        _currentPageSize = BasePagingParams.DefaultSize;
         _vm = new(_currentPageSize);
-        _pageSizeOptions = new[] { 5, 10, 20, 50, 100, };
+        _pageSizeOptions = BasePagingParams.AllowedSizes;
     }
 
     [Inject]
@@ -56,26 +55,37 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private async Task OnLoadDataHandler(LoadDataArgs args)
     {
-        var pageSize = args.Top.GetValueOrDefault(PagingMetaInfo.DefaultSize);
-        var apiPage = ToApiPage(args.Skip.GetValueOrDefault());
-        var pageNumber = (int)Math.Ceiling((decimal)apiPage / pageSize);
+        var size = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
+        var offset = args.Skip.GetValueOrDefault();
+        var page = (int)Math.Floor((decimal)offset / size) + 1;
 
-        await LoadViewModelFromApi(pageNumber, pageSize);
+        await LoadViewModelFromApi(page, size, args.Filter, args.OrderBy);
     }
 
-    private async Task LoadViewModelFromApi(int page, int size)
+    /// <summary>
+    ///     Using Dynamic LINQ expressions sends filter, sort and paging requests to API.
+    ///     <a href="https://dynamic-linq.net/expression-language">Dynamic LINQ</a>
+    /// </summary>
+    /// <param name="page" />
+    /// <param name="size" />
+    /// <param name="filterExpression">Filtering expression, multi or single property.</param>
+    /// <param name="sortExpression">Sorting expression, multi or single property.</param>
+    private async Task LoadViewModelFromApi(
+        int     page,
+        int     size,
+        string? filterExpression = default,
+        string? sortExpression   = default
+    )
     {
-        _isLoadingVm = true;
-        StateHasChanged();
+        SC.IsBusy = true;
 
-        var result = await Sender.Send(new GetAccountSpecsReq(page, size), CT);
+        var result = await Sender.Send(new GetAccountSpecsReq(filterExpression, sortExpression, page, size), CT);
 
-        _totalItemsCount = result.Paging.TotalItems;
+        _totalItemsCount = result.Paging.Rows;
         _vm.Clear();
         await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
 
-        _isLoadingVm = false;
-        StateHasChanged();
+        SC.IsBusy = false;
     }
 
     private void OnAddHandler()
@@ -282,12 +292,15 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
     private void PagerChangeHandler(PagerEventArgs changeData)
     {
-        // Grid page is 0-based;
         _currentPage = ToApiPage(changeData.PageIndex);
         _currentPageSize = changeData.Top;
     }
 
+    /// <summary>
+    ///     Radzen DataGrid uses 0-based page index, but API uses 1-based page index.
+    /// </summary>
     private static int ToGridPage(int apiPage) => apiPage - 1;
 
+    /// <inheritdoc cref="ToGridPage" />
     private static int ToApiPage(int gridPage) => gridPage + 1;
 }

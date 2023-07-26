@@ -16,7 +16,7 @@ public class ApiCorsOptionsConfigurator : IConfigureOptions<CorsOptions>
 
         var specificPolicyBuilder = new CorsPolicyBuilder(basePolicy)
             .WithExposedHeaders(
-                CustomHeaderNames.PagingTotalItems,
+                CustomHeaderNames.PagingRows,
                 CustomHeaderNames.PagingSize,
                 CustomHeaderNames.PagingPages
             );

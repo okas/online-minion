@@ -6,7 +6,7 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 
-public sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
+internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
 {
     private readonly OnlineMinionDbContext _dbContext;
     public CreateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
