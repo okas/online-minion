@@ -2,7 +2,7 @@ using OnlineMinion.Data.BaseEntities;
 
 namespace OnlineMinion.Data.Entities;
 
-public class CryptoAccountSpec : BasePaymentSpec
+public class CryptoExchangeAccountSpec : BasePaymentSpec
 {
     public required string ExchangeName { get; set; }
 

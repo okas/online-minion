@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineMinion.Data;
 
@@ -11,9 +12,11 @@ using OnlineMinion.Data;
 namespace OnlineMinion.Data.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    partial class OnlineMinionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230727212310_CHANGE_Entity_and_member_renames")]
+    partial class CHANGE_Entity_and_member_renames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

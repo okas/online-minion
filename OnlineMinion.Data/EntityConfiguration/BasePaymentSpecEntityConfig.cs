@@ -8,7 +8,7 @@ public class BasePaymentSpecEntityConfig : IEntityTypeConfiguration<BasePaymentS
 {
     public void Configure(EntityTypeBuilder<BasePaymentSpec> builder)
     {
-        builder.Property(e => e.CurrencyIso)
+        builder.Property(e => e.CurrencyCode)
             .HasMaxLength(3);
 
         builder.Property(e => e.Name)

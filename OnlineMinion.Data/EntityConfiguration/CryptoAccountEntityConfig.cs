@@ -4,9 +4,9 @@ using OnlineMinion.Data.Entities;
 
 namespace OnlineMinion.Data.EntityConfiguration;
 
-public class CryptoAccountEntityConfig : IEntityTypeConfiguration<CryptoAccountSpec>
+public class CryptoAccountEntityConfig : IEntityTypeConfiguration<CryptoExchangeAccountSpec>
 {
-    public void Configure(EntityTypeBuilder<CryptoAccountSpec> builder)
+    public void Configure(EntityTypeBuilder<CryptoExchangeAccountSpec> builder)
     {
         builder.Property(e => e.ExchangeName)
             .HasMaxLength(75);
