@@ -23,6 +23,8 @@ public class OnlineMinionDbContext : DbContext
 
     public DbSet<CashAccountSpec> CashAccountsSpecs { get; set; } = null!;
 
+    public DbSet<CryptoAccountSpec> CryptoAccountSpecs { get; set; } = null!;
+
     public new int SaveChanges() => SaveChanges(true);
 
     public new int SaveChanges(bool acceptAllChangesOnSuccess)
