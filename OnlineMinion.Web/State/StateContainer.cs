@@ -1,4 +1,4 @@
-namespace OnlineMinion.Web;
+namespace OnlineMinion.Web.State;
 
 public class StateContainer
 {
