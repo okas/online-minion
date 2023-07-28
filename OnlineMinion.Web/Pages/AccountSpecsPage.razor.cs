@@ -83,7 +83,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
 
         _totalItemsCount = result.Paging.Rows;
         _vm.Clear();
-        await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
+        await result.Result.PullItemsFromStream(_vm, CT, StateHasChanged);
 
         SC.IsBusy = false;
     }
