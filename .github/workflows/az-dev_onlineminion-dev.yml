@@ -1,0 +1,62 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - OnlineMinion-dev
+
+on:
+  push:
+    branches:
+      - az-dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+
+      - name: Log into private GitHub package registry
+        run: >
+          dotnet nuget add source --name github ${{ vars.MY_PRIVATE_NUGET_REGISTRY_URL }}
+          --username ${{ vars.MY_PRIVATE_NUGET_REGISTRY_USER }}
+          --password ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Backend/Application project with dotnet
+        run: dotnet build OnlineMinion.Application/OnlineMinion.Application.csproj --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish OnlineMinion.Application -c Release -o OnlineMinion.Application/myapp --runtime win-x86 --self-contained
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: OnlineMinion.Application/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'OnlineMinion-dev'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6F3604DBF4754CB69CDDA17CC166DD8B }}
+          package: .
