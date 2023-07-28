@@ -49,7 +49,7 @@ public class OnlineMinionDbContext : DbContext
     {
         try
         {
-            return await base.SaveChangesAsync(ct).ConfigureAwait(false);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, ct).ConfigureAwait(false);
         }
         catch (UniqueConstraintException ex)
         {
