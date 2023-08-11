@@ -13,9 +13,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.0"/>
         <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.66">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.82">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
