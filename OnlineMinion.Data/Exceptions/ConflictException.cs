@@ -80,7 +80,7 @@ public class ConflictException : Exception
 
     private static bool EntityTableMatcher(ITable table, EntityEntry entityEntry) =>
         table.EntityTypeMappings.Any(
-            tableMapping => tableMapping.EntityType.ClrType == entityEntry.Metadata.ClrType
+            tableMapping => tableMapping.TypeBase.ClrType == entityEntry.Metadata.ClrType
         );
 
     private static IEnumerable<IGrouping<string, IEnumerable<string>>> GroupEntryPropertyNamesByIndices(
