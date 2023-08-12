@@ -1,5 +1,6 @@
 using System.Globalization;
 using ErrorOr;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
@@ -7,8 +8,13 @@ using OnlineMinion.Contracts.HttpHeaders;
 
 namespace OnlineMinion.RestApi;
 
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
 public abstract class ApiControllerBase : ControllerBase
 {
+    protected readonly ISender Sender;
+    protected ApiControllerBase(ISender sender) => Sender = sender;
+
     /// <summary>
     ///     Sets response headers of paging related data.
     /// </summary>

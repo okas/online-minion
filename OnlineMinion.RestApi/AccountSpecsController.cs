@@ -15,13 +15,10 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace OnlineMinion.RestApi;
 
-[Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1")]
-[ApiController]
 public class AccountSpecsController : ApiControllerBase
 {
-    private readonly ISender _sender;
-    public AccountSpecsController(ISender sender) => _sender = sender;
+    public AccountSpecsController(ISender sender) : base(sender) { }
 
     /// <summary>
     ///     To probe some paging related data about this resource.
@@ -54,7 +51,7 @@ public class AccountSpecsController : ApiControllerBase
         CancellationToken              ct       = default
     )
     {
-        var pagingMetaInfo = await _sender.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
+        var pagingMetaInfo = await Sender.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
 
         SetPagingHeaders(pagingMetaInfo);
 
@@ -72,7 +69,7 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CheckUniqueNew(string name, CancellationToken ct) =>
-        await _sender.Send(new CheckAccountSpecUniqueNewReq(name), ct) ? NoContent() : Conflict();
+        await Sender.Send(new CheckAccountSpecUniqueNewReq(name), ct) ? NoContent() : Conflict();
 
     /// <summary>
     ///     Uniqueness validation for update workflow.
@@ -86,7 +83,7 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CheckUniqueExisting(string name, int exceptId, CancellationToken ct) =>
-        await _sender.Send(new CheckAccountSpecUniqueExistingReq(name, exceptId), ct) ? NoContent() : Conflict();
+        await Sender.Send(new CheckAccountSpecUniqueExistingReq(name, exceptId), ct) ? NoContent() : Conflict();
 
     [HttpGet("{id}")]
     [ProducesResponseType<AccountSpecResp>(StatusCodes.Status200OK)]
@@ -95,7 +92,7 @@ public class AccountSpecsController : ApiControllerBase
     public async Task<IActionResult> GetById(
         [FromRoute] GetAccountSpecByIdReq cmd,
         CancellationToken                 ct
-    ) => await _sender.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
+    ) => await Sender.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -127,7 +124,7 @@ public class AccountSpecsController : ApiControllerBase
             return BadRequest(ModelState);
         }
 
-        var result = await _sender.Send(rq, ct);
+        var result = await Sender.Send(rq, ct);
 
         SetPagingHeaders(result.Paging);
 
@@ -140,7 +137,7 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
     {
-        var result = await _sender.Send(req, ct);
+        var result = await Sender.Send(req, ct);
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
@@ -160,7 +157,7 @@ public class AccountSpecsController : ApiControllerBase
             return actionResult;
         }
 
-        var result = await _sender.Send(req, ct);
+        var result = await Sender.Send(req, ct);
 
         return result.MatchFirst(
             _ => NoContent(),
@@ -177,7 +174,7 @@ public class AccountSpecsController : ApiControllerBase
         CancellationToken                ct
     )
     {
-        var result = await _sender.Send(req, ct);
+        var result = await Sender.Send(req, ct);
 
         return result.MatchFirst(
             _ => NoContent(),
