@@ -53,9 +53,9 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
-        [FromRoute] GetAccountSpecByIdReq cmd,
+        [FromRoute] GetAccountSpecByIdReq rq,
         CancellationToken                 ct
-    ) => await Sender.Send(cmd, ct) is { } model ? Ok(model) : NotFound();
+    ) => await Sender.Send(rq, ct) is { } model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -98,9 +98,9 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType<ModelIdResp>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create(CreateAccountSpecReq req, CancellationToken ct)
+    public async Task<IActionResult> Create(CreateAccountSpecReq rq, CancellationToken ct)
     {
-        var result = await Sender.Send(req, ct);
+        var result = await Sender.Send(rq, ct);
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
@@ -113,18 +113,18 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Update(int id, UpdateAccountSpecReq req, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, UpdateAccountSpecReq rq, CancellationToken ct)
     {
-        if (CheckId(id, req) is { } actionResult)
+        if (CheckId(id, rq) is { } actionResult)
         {
             return actionResult;
         }
 
-        var result = await Sender.Send(req, ct);
+        var result = await Sender.Send(rq, ct);
 
         return result.MatchFirst(
             _ => NoContent(),
-            error => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id))
+            error => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), rq.Id))
         );
     }
 
@@ -133,18 +133,18 @@ public class AccountSpecsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        [FromRoute] DeleteAccountSpecReq req,
+        [FromRoute] DeleteAccountSpecReq rq,
         CancellationToken                ct
     )
     {
-        var result = await Sender.Send(req, ct);
+        var result = await Sender.Send(rq, ct);
 
         return result.MatchFirst(
             _ => NoContent(),
             error => error.Type switch
             {
                 ErrorType.NotFound => NotFound(),
-                _ => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), req.Id)),
+                _ => CreateApiProblemResult(error, GetInstanceUrl(nameof(GetById), rq.Id)),
             }
         );
     }
