@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -8,6 +7,7 @@ using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
+using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.AppMessaging.Requests;
 using OnlineMinion.RestApi.Configuration;
@@ -20,44 +20,6 @@ namespace OnlineMinion.RestApi;
 public class AccountSpecsController : ApiControllerBase
 {
     public AccountSpecsController(ISender sender) : base(sender) { }
-
-    /// <summary>
-    ///     To probe some paging related data about this resource.
-    /// </summary>
-    /// <param name="ct"></param>
-    /// <param name="pageSize"></param>
-    [HttpHead]
-    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
-    [SwaggerResponse(StatusCodes.Status204NoContent, "Using page size, get count of total items and count of pages.")]
-    [SwaggerResponseHeader(
-        StatusCodes.Status204NoContent,
-        CustomHeaderNames.PagingRows,
-        "integer",
-        "Total items of resource."
-    )]
-    [SwaggerResponseHeader(
-        StatusCodes.Status204NoContent,
-        CustomHeaderNames.PagingSize,
-        "integer",
-        "Page size used."
-    )]
-    [SwaggerResponseHeader(
-        StatusCodes.Status204NoContent,
-        CustomHeaderNames.PagingPages,
-        "integer",
-        "Pages, based on provided page size."
-    )]
-    public async Task<IActionResult> PagingMetaInfo(
-        [FromQuery][Range(1, 100)] int pageSize = 10,
-        CancellationToken              ct       = default
-    )
-    {
-        var pagingMetaInfo = await Sender.Send(new GetPagingMetaInfoReq<AccountSpec>(pageSize), ct);
-
-        SetPagingHeaders(pagingMetaInfo);
-
-        return NoContent();
-    }
 
     /// <summary>
     ///     Unique name validation for new create workflow.
@@ -186,4 +148,7 @@ public class AccountSpecsController : ApiControllerBase
             }
         );
     }
+
+    protected override IPagedResourceRequest<BaseEntity> PagingMetaInfoRequestFactory(int pageSize) =>
+        new GetPagingMetaInfoReq<AccountSpec>(pageSize);
 }

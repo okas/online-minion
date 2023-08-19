@@ -1,7 +1,12 @@
-using MediatR;
-using OnlineMinion.Contracts;
 using OnlineMinion.Data.BaseEntities;
 
 namespace OnlineMinion.RestApi.AppMessaging.Requests;
 
-public record GetPagingMetaInfoReq<TEntity>(int PageSize = 10) : IRequest<PagingMetaInfo> where TEntity : BaseEntity;
+/// <summary>
+///     These request handlers must be defined per type in program startup, because MS DI cannot resolve them
+///     automatically.
+/// </summary>
+/// <param name="PageSize"></param>
+/// <typeparam name="TEntity"></typeparam>
+public record GetPagingMetaInfoReq<TEntity>(int PageSize = 10) : IPagedResourceRequest<TEntity>
+    where TEntity : BaseEntity;
