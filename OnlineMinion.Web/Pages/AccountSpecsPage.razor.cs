@@ -79,7 +79,10 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     {
         SC.IsBusy = true;
 
-        var result = await Sender.Send(new GetAccountSpecsReq(filterExpression, sortExpression, page, size), CT);
+        var result = await Sender.Send(
+            new BaseGetSomeReq<AccountSpecResp>(filterExpression, sortExpression, page, size),
+            CT
+        );
 
         _totalItemsCount = result.Paging.Rows;
         _vm.Clear();

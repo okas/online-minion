@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
@@ -117,7 +118,7 @@ public class AccountSpecsController : ApiControllerBase
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IActionResult> GetSome([FromQuery] GetAccountSpecsReq rq, CancellationToken ct)
+    public async Task<IActionResult> GetSome([FromQuery] BaseGetSomeReq<AccountSpecResp> rq, CancellationToken ct)
     {
         if (!ModelState.IsValid)
         {

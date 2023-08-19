@@ -3,19 +3,23 @@ using System.Text.Json;
 using MediatR;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
-internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpecsReq, PagedResult<AccountSpecResp>>
+internal sealed class GetPagedAccountSpecsReqHlr
+    : IRequestHandler<BaseGetSomeReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
 {
     private readonly ApiClientProvider _api;
     public GetPagedAccountSpecsReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<PagedResult<AccountSpecResp>> Handle(GetAccountSpecsReq request, CancellationToken ct)
+    public async Task<PagedResult<AccountSpecResp>> Handle(
+        BaseGetSomeReq<AccountSpecResp> request,
+        CancellationToken               ct
+    )
     {
         var message = new HttpRequestMessage(HttpMethod.Get, CreateUri(request));
 
@@ -30,7 +34,7 @@ internal sealed class GetPagedAccountSpecsReqHlr : IRequestHandler<GetAccountSpe
         return new(modelsAsyncStream, pagingMetaInfo);
     }
 
-    private string CreateUri(GetAccountSpecsReq request)
+    private string CreateUri(IQueryParams request)
     {
         var qsParams = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
         if (!string.IsNullOrWhiteSpace(request.Filter))
