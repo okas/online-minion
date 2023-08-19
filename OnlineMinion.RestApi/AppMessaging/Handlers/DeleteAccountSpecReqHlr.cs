@@ -9,7 +9,6 @@ namespace OnlineMinion.RestApi.AppMessaging.Handlers;
 internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, ErrorOr<Deleted>>
 {
     private readonly OnlineMinionDbContext _dbContext;
-
     public DeleteAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<ErrorOr<Deleted>> Handle(DeleteAccountSpecReq rq, CancellationToken ct)
