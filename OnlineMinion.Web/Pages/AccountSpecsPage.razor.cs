@@ -11,7 +11,6 @@ using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
 using Radzen;
-using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
@@ -22,8 +21,8 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
     private readonly List<AccountSpecResp> _vm;
     private int _currentPage;
     private int _currentPageSize;
-    private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
     private AccountSpecsEditor _editorRef = null!;
+    private RadzenDataGridWrapper<AccountSpecResp> _gridWrapperRef = null!;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
     private int _totalItemsCount;
 
@@ -168,7 +167,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 // It can happen, it is not unexpected error per se.
                 if (errors.Exists(err => err.Type is ErrorType.NotFound))
                 {
-                    _dataGridRef.GoToPage(ToGridPage(_currentPage), true);
+                    _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(_currentPage), true);
                 }
 
                 //TODO handel all other errors
@@ -217,7 +216,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
                 ? _currentPage
                 : pagesCount;
 
-            await _dataGridRef.GoToPage(ToGridPage(lastPageAfterCreate), true);
+            await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(lastPageAfterCreate), true);
 
             return;
         }
@@ -278,7 +277,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             ? _currentPage - 1
             : _currentPage;
 
-        await _dataGridRef.GoToPage(ToGridPage(visiblePageAfterDelete), true);
+        await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(visiblePageAfterDelete), true);
     }
 
     private void HandleApiDeleteErrors(int id, Error error)

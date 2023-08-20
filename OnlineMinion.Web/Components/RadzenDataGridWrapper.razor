@@ -1,0 +1,116 @@
+@typeparam TItem
+@using OnlineMinion.Contracts
+@implements IDisposable
+
+@code {
+
+  [Parameter]
+  public RadzenDataGrid<TItem> DataGridRef { get; set; } = null!;
+
+  [Inject]
+  public StateContainer SC { get; set; } = default!;
+
+  [Parameter]
+  [EditorRequired]
+  public int TotalItemsCount { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public IEnumerable<TItem> Data { get; set; } = Enumerable.Empty<TItem>();
+
+  [Parameter]
+  [EditorRequired]
+  public IEnumerable<int> PageSizeOptions { get; set; } = Enumerable.Empty<int>();
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<LoadDataArgs> LoadData { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<PagerEventArgs> Page { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback AddClick { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<TItem> EditClick { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<TItem> DeleteClick { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public required RenderFragment Columns { get; set; }
+
+  void IDisposable.Dispose() => SC.OnChange -= StateHasChanged;
+}
+
+@* `Data="@_vm.AsODataEnumerable()/.ToList()"`: This seems to work better with LoadData event. *@
+<RadzenDataGrid
+    AllowFiltering
+    AllowGrouping
+    AllowPaging
+    AllowSorting
+    class="rz-mt-4"
+    Count="@TotalItemsCount"
+    Data="@Data.ToList()"
+    Density="@Density.Compact"
+    FilterMode="@FilterMode.SimpleWithMenu"
+    GridLines="DataGridGridLines.Both"
+    HideGroupedColumn
+    IsLoading="@SC.IsBusy"
+    LoadData="@LoadData"
+    Page="@Page"
+    PagerPosition="@PagerPosition.Top"
+    PageSize="@BasePagingParams.DefaultSize"
+    PageSizeOptions="@PageSizeOptions"
+    @ref="@DataGridRef"
+    ShowPagingSummary
+    TItem="TItem">
+  <HeaderTemplate>
+    <RadzenButton ButtonStyle="@ButtonStyle.Info" Click="@DataGridRef.Reload" Icon="refresh" IsBusy="@SC.IsBusy"/>
+  </HeaderTemplate>
+  <Columns>
+    @Columns
+    <RadzenDataGridColumn
+        Filterable="@false"
+        Groupable="@false"
+        Sortable="@false"
+        TextAlign="@TextAlign.Center"
+        TItem="TItem"
+        Width="80px">
+      <HeaderTemplate>
+        <div class="rz-px-2">
+          <RadzenButton
+              ButtonStyle="@ButtonStyle.Info"
+              Click="@AddClick"
+              Icon="add"
+              Shade="@Shade.Lighter"
+              Size="@ButtonSize.Small"
+              Variant="@Variant.Filled"/>
+        </div>
+      </HeaderTemplate>
+      <Template Context="m">
+        <RadzenButton
+            ButtonStyle="@ButtonStyle.Warning"
+            class="rz-mr-1"
+            Click="@(_ => EditClick.InvokeAsync(m))"
+            Icon="edit"
+            Shade="@Shade.Lighter"
+            Size="@ButtonSize.Small"
+            Variant="@Variant.Outlined"/>
+        <RadzenButton
+            ButtonStyle="@ButtonStyle.Danger"
+            Click="@(_ => DeleteClick.InvokeAsync(m))"
+            Icon="delete_forever"
+            Shade="@Shade.Lighter"
+            Size="@ButtonSize.Small"
+            Variant="@Variant.Outlined"/>
+      </Template>
+    </RadzenDataGridColumn>
+  </Columns>
+</RadzenDataGrid>
