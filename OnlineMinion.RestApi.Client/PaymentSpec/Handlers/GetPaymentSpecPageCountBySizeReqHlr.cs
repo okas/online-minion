@@ -3,19 +3,19 @@ using MediatR;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.RestApi.Client.Infrastructure;
-using OnlineMinion.RestApi.Client.Requests;
+using OnlineMinion.RestApi.Client.PaymentSpec.Requests;
 
-namespace OnlineMinion.RestApi.Client.Handlers;
+namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetAccountSpecPageCountBySizeReqHlr : IRequestHandler<GetAccountSpecPageCountBySizeReq, int?>
+internal sealed class GetPaymentSpecPageCountBySizeReqHlr : IRequestHandler<GetPaymentSpecPageCountBySizeReq, int?>
 {
     private readonly ApiClientProvider _api;
-    public GetAccountSpecPageCountBySizeReqHlr(ApiClientProvider api) => _api = api;
+    public GetPaymentSpecPageCountBySizeReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<int?> Handle(GetAccountSpecPageCountBySizeReq rq, CancellationToken ct)
+    public async Task<int?> Handle(GetPaymentSpecPageCountBySizeReq rq, CancellationToken ct)
     {
-        var uri = _api.ApiV1AccountSpecsUri.AddQueryString(
+        var uri = _api.ApiV1PaymentSpecsUri.AddQueryString(
             new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
                 { [nameof(rq.PageSize)] = rq.PageSize, }
         );

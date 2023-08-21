@@ -3,32 +3,28 @@ using System.Net;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.RestApi.Client.Infrastructure;
-using static System.String;
 
-namespace OnlineMinion.RestApi.Client.Handlers;
+namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<CheckAccountSpecUniqueExistingReq, bool>
+internal sealed class CheckPaymentSpecUniqueNewReqHlr : IRequestHandler<CheckPaymentSpecUniqueNewReq, bool>
 {
     private readonly ApiClientProvider _api;
-    private readonly ILogger<CheckAccountSpecUniqueExistingReqHlr> _logger;
+    private readonly ILogger<CheckPaymentSpecUniqueNewReqHlr> _logger;
 
-    public CheckAccountSpecUniqueExistingReqHlr(
-        ApiClientProvider                             api,
-        ILogger<CheckAccountSpecUniqueExistingReqHlr> logger
-    )
+    public CheckPaymentSpecUniqueNewReqHlr(ApiClientProvider api, ILogger<CheckPaymentSpecUniqueNewReqHlr> logger)
     {
         _api = api;
         _logger = logger;
     }
 
-    public async Task<bool> Handle(CheckAccountSpecUniqueExistingReq req, CancellationToken ct)
+    public async Task<bool> Handle(CheckPaymentSpecUniqueNewReq req, CancellationToken ct)
     {
-        var uri = Create(
+        var uri = string.Create(
             CultureInfo.InvariantCulture,
-            $"{_api.ApiV1AccountSpecsUri}/validate-available-name/{req.Name}/except-id/{req.ExceptId}"
+            $"{_api.ApiV1PaymentSpecsUri}/validate-available-name/{req.Name}"
         );
 
         var message = new HttpRequestMessage(HttpMethod.Head, uri);

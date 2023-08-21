@@ -1,8 +1,5 @@
 namespace OnlineMinion.Contracts.AppMessaging;
 
-/// <summary>
-///     Base class, that provides some model metadata.
-/// </summary>
 public abstract class BaseUpsertAccountSpecReqData
 {
     protected BaseUpsertAccountSpecReqData(string name, string group, string? description)

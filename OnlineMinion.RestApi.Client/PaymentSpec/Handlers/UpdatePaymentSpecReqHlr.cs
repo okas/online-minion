@@ -4,27 +4,27 @@ using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.RestApi.Client.Infrastructure;
 using static OnlineMinion.RestApi.Client.HttpMessageTransformers;
 
-namespace OnlineMinion.RestApi.Client.Handlers;
+namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
+internal sealed class UpdatePaymentSpecReqHlr : IRequestHandler<UpdatePaymentSpecReq, ErrorOr<Updated>>
 {
     private readonly ApiClientProvider _api;
-    private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
+    private readonly ILogger<UpdatePaymentSpecReqHlr> _logger;
 
-    public UpdateAccountSpecReqHlr(ApiClientProvider api, ILogger<UpdateAccountSpecReqHlr> logger)
+    public UpdatePaymentSpecReqHlr(ApiClientProvider api, ILogger<UpdatePaymentSpecReqHlr> logger)
     {
         _api = api;
         _logger = logger;
     }
 
-    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<Updated>> Handle(UpdatePaymentSpecReq request, CancellationToken ct)
     {
-        var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
+        var uri = $"{_api.ApiV1PaymentSpecsUri}/{request.Id}";
         using var message = await _api.Client.PutAsJsonAsync(uri, request, ct).ConfigureAwait(false);
 
         if (message.IsSuccessStatusCode)
@@ -36,17 +36,17 @@ internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpe
         {
             case HttpStatusCode.NotFound:
             {
-                _logger.LogWarning("Account specification with `Id={ModelId}` not found", request.Id);
+                _logger.LogWarning("Payment specification with `Id={ModelId}` not found", request.Id);
                 return Error.NotFound();
             }
             case HttpStatusCode.Conflict:
             {
-                _logger.LogWarning("Conflict error while updating Account specification");
+                _logger.LogWarning("Conflict error while updating Payment specification");
                 return await TransformConflictHttpResponse<Updated>(message, ct).ConfigureAwait(false);
             }
             case HttpStatusCode.BadRequest:
             {
-                _logger.LogWarning("Validation error while updating Account specification");
+                _logger.LogWarning("Validation error while updating Payment specification");
                 return await TransformBadRequestHttpResponse<Updated>(message, ct).ConfigureAwait(false);
             }
             default:
@@ -55,7 +55,7 @@ internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpe
                 var description = message.Content.ToString() ?? string.Empty;
 
                 _logger.LogError(
-                    "Account specification cannot be updated. Reason: {ReasonPhrase}. Description: {Description}",
+                    "Payment specification cannot be updated. Reason: {ReasonPhrase}. Description: {Description}",
                     reasonPhrase,
                     description
                 );

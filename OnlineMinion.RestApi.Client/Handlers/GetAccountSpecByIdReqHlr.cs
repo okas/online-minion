@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Contracts.AppMessaging.Requests;
 using OnlineMinion.Contracts.Responses;
@@ -6,6 +7,7 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
+[UsedImplicitly]
 internal sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecByIdReq, AccountSpecResp?>
 {
     private readonly ApiClientProvider _api;

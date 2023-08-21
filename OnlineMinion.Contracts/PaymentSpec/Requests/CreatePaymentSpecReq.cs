@@ -1,11 +1,8 @@
-using ErrorOr;
-using MediatR;
 using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Contracts.Responses;
 
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 
-public sealed class CreatePaymentSpecReq : BaseUpsertPaymentSpecReqData, IRequest<ErrorOr<ModelIdResp>>
+public sealed class CreatePaymentSpecReq : BaseUpsertPaymentSpecReqData, ICreateCommand
 {
     public CreatePaymentSpecReq() : base(string.Empty, string.Empty, null) { }
 

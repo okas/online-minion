@@ -4,28 +4,28 @@ using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
 using static OnlineMinion.RestApi.Client.HttpMessageTransformers;
 
-namespace OnlineMinion.RestApi.Client.Handlers;
+namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
+internal sealed class CreatePaymentSpecReqHlr : IRequestHandler<CreatePaymentSpecReq, ErrorOr<ModelIdResp>>
 {
     private readonly ApiClientProvider _api;
-    private readonly ILogger<CreateAccountSpecReqHlr> _logger;
+    private readonly ILogger<CreatePaymentSpecReqHlr> _logger;
 
-    public CreateAccountSpecReqHlr(ApiClientProvider api, ILogger<CreateAccountSpecReqHlr> logger)
+    public CreatePaymentSpecReqHlr(ApiClientProvider api, ILogger<CreatePaymentSpecReqHlr> logger)
     {
         _api = api;
         _logger = logger;
     }
 
-    public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<ModelIdResp>> Handle(CreatePaymentSpecReq request, CancellationToken ct)
     {
-        using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, request, ct)
+        using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1PaymentSpecsUri, request, ct)
             .ConfigureAwait(false);
 
         if (message.IsSuccessStatusCode)
@@ -40,13 +40,15 @@ internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpe
         {
             case HttpStatusCode.Conflict:
             {
-                _logger.LogWarning("Conflict error while updating Account specification");
-                return await TransformConflictHttpResponse<ModelIdResp>(message, ct).ConfigureAwait(false);
+                _logger.LogWarning("Conflict error while updating Payment specification");
+                return await TransformConflictHttpResponse<ModelIdResp>(message, ct)
+                    .ConfigureAwait(false);
             }
             case HttpStatusCode.BadRequest:
             {
-                _logger.LogWarning("Validation error while creating Account specification");
-                return await TransformBadRequestHttpResponse<ModelIdResp>(message, ct).ConfigureAwait(false);
+                _logger.LogWarning("Validation error while creating Payment specification");
+                return await TransformBadRequestHttpResponse<ModelIdResp>(message, ct)
+                    .ConfigureAwait(false);
             }
             default:
             {
@@ -54,7 +56,7 @@ internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpe
                 var description = message.Content.ToString() ?? string.Empty;
 
                 _logger.LogError(
-                    "Account specification cannot be created. Reason: {ReasonPhrase}. Description: {Description}",
+                    "Payment specification cannot be created. Reason: {ReasonPhrase}. Description: {Description}",
                     reasonPhrase,
                     description
                 );

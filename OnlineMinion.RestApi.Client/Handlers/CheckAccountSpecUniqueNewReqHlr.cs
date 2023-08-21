@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AppMessaging.Requests;
@@ -8,6 +9,7 @@ using static System.String;
 
 namespace OnlineMinion.RestApi.Client.Handlers;
 
+[UsedImplicitly]
 internal class CheckAccountSpecUniqueNewReqHlr : IRequestHandler<CheckAccountSpecUniqueNewReq, bool>
 {
     private readonly ApiClientProvider _api;

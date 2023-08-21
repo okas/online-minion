@@ -1,10 +1,8 @@
-using ErrorOr;
-using MediatR;
 using OnlineMinion.Contracts.AppMessaging;
 
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 
-public sealed class UpdatePaymentSpecReq : BaseUpsertPaymentSpecReqData, IHasIntId, IRequest<ErrorOr<Updated>>
+public sealed class UpdatePaymentSpecReq : BaseUpsertPaymentSpecReqData, IUpdateCommand
 {
     public UpdatePaymentSpecReq() : base(string.Empty, string.Empty, null) { }
 

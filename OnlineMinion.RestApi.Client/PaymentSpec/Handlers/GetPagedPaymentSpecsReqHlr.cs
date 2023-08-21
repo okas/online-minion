@@ -6,20 +6,21 @@ using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.HttpHeaders;
+using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
 
-namespace OnlineMinion.RestApi.Client.Handlers;
+namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetPagedAccountSpecsReqHlr
-    : IRequestHandler<BaseGetSomeReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
+internal sealed class GetPagedPaymentSpecsReqHlr
+    : IRequestHandler<BaseGetSomeReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
 {
     private readonly ApiClientProvider _api;
-    public GetPagedAccountSpecsReqHlr(ApiClientProvider api) => _api = api;
+    public GetPagedPaymentSpecsReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<PagedResult<AccountSpecResp>> Handle(
-        BaseGetSomeReq<AccountSpecResp> request,
+    public async Task<PagedResult<PaymentSpecResp>> Handle(
+        BaseGetSomeReq<PaymentSpecResp> request,
         CancellationToken               ct
     )
     {
@@ -52,7 +53,7 @@ internal sealed class GetPagedAccountSpecsReqHlr
         qsParams[nameof(request.Page)] = request.Page;
         qsParams[nameof(request.Size)] = request.Size;
 
-        return _api.ApiV1AccountSpecsUri.AddQueryString(qsParams);
+        return _api.ApiV1PaymentSpecsUri.AddQueryString(qsParams);
     }
 
     private Task<HttpResponseMessage> GetRequestResponse(HttpRequestMessage message, CancellationToken ct) =>
@@ -74,7 +75,7 @@ internal sealed class GetPagedAccountSpecsReqHlr
         return new(totalItems, size, request.Page);
     }
 
-    private static async Task<IAsyncEnumerable<AccountSpecResp>> GetResultAsStreamAsync(
+    private static async Task<IAsyncEnumerable<PaymentSpecResp>> GetResultAsStreamAsync(
         HttpResponseMessage httpResponseMessage,
         CancellationToken   ct
     )
@@ -87,6 +88,6 @@ internal sealed class GetPagedAccountSpecsReqHlr
 
         var stream = await httpResponseMessage.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
 
-        return JsonSerializer.DeserializeAsyncEnumerable<AccountSpecResp>(stream, options, ct);
+        return JsonSerializer.DeserializeAsyncEnumerable<PaymentSpecResp>(stream, options, ct);
     }
 }
