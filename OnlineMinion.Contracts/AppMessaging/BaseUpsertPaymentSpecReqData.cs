@@ -1,6 +1,6 @@
 namespace OnlineMinion.Contracts.AppMessaging;
 
-public abstract class BaseUpsertPaymentSpecReqData : ICommand
+public abstract class BaseUpsertPaymentSpecReqData : IUpsertCommand
 {
     protected BaseUpsertPaymentSpecReqData(string name, string currencyCode, string? tags)
     {

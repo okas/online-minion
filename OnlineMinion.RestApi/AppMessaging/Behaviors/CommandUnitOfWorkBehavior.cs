@@ -16,10 +16,10 @@ namespace OnlineMinion.RestApi.AppMessaging.Behaviors;
 ///     Type constraints are supposed to defined pipeline "segment" only for command type requests. There is not other
 ///     filtering to prevent this behavior to be applied to other types of requests.
 /// </remarks>
-/// <typeparam name="TRequest">Request or model, constrained to <see cref="ICommand" />.</typeparam>
+/// <typeparam name="TRequest">Request or model, constrained to <see cref="IUpsertCommand" />.</typeparam>
 /// <typeparam name="TResponse">Response model, constrained to <see cref="IErrorOr" />.</typeparam>
 public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : ICommand
+    where TRequest : IUpsertCommand
     where TResponse : IErrorOr
 {
     private readonly OnlineMinionDbContext _dbContext;

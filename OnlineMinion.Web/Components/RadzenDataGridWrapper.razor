@@ -4,11 +4,11 @@
 
 @code {
 
-  [Parameter]
-  public RadzenDataGrid<TItem> DataGridRef { get; set; } = null!;
-
   [Inject]
   public StateContainer SC { get; set; } = default!;
+
+  [Parameter]
+  public RadzenDataGrid<TItem> DataGridRef { get; set; } = null!;
 
   [Parameter]
   [EditorRequired]

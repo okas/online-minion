@@ -1,9 +1,10 @@
 ﻿@page "/account-specs"
 @using OnlineMinion.Contracts.Responses
+@inherits OnlineMinion.Web.Pages.Base.BaseCRUDPage<AccountSpecResp>
 
 @code
 {
-  private RenderFragment RenderEditorComponent() =>
+  protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
       <AccountSpecsEditor
           Model="@_modelUpsert"
@@ -16,7 +17,7 @@
   {
     public const string PageTitle = "Account Specs";
     public const string MainHeading = "Account Specifications";
-    public const string MainDescription = "Manage Account Specifications";
+    public const string MainDescription = $"Manage {MainHeading}";
     public const string Name = nameof(AccountSpecResp.Name);
     public const string Group = nameof(AccountSpecResp.Group);
     public const string Description = nameof(AccountSpecResp.Description);
@@ -30,7 +31,7 @@
   <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
   <RadzenText Text="@Str.MainDescription"/>
   <RadzenDataGridWrapper AddClick="@OnAddHandler"
-      Data="@_vm"
+      Data="@ViewModels"
       DeleteClick="@OnDeleteHandler"
       EditClick="@OnEditHandler"
       LoadData="@OnLoadDataHandler"
@@ -38,7 +39,7 @@
       PageSizeOptions="@_pageSizeOptions"
       @ref="@_gridWrapperRef"
       TItem="AccountSpecResp"
-      TotalItemsCount="_totalItemsCount">
+      TotalItemsCount="@TotalItemsCount">
     <Columns>
       <RadzenDataGridColumn Property="@Str.Name" TItem="AccountSpecResp" Title="@Str.Name"/>
       <RadzenDataGridColumn Property="@Str.Group" TItem="AccountSpecResp" Title="@Str.Group"/>
