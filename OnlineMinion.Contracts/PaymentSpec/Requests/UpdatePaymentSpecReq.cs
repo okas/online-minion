@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.AppMessaging;
+using OnlineMinion.Contracts.Requests;
 
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 

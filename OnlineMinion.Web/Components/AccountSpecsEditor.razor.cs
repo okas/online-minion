@@ -1,7 +1,7 @@
 using ErrorOr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Contracts.AppMessaging;
+using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Web.Shared.Forms;
 
 namespace OnlineMinion.Web.Components;

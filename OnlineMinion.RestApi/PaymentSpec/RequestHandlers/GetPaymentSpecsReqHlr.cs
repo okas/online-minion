@@ -1,12 +1,12 @@
 using System.Linq.Expressions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Contracts.AppMessaging;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Contracts.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.AppMessaging.Handlers;
+using OnlineMinion.RestApi.Handlers;
 
 namespace OnlineMinion.RestApi.PaymentSpec.RequestHandlers;
 

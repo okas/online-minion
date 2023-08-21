@@ -3,14 +3,14 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.HttpHeaders;
+using OnlineMinion.Contracts.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.Data.Entities;
-using OnlineMinion.RestApi.AppMessaging.Requests;
 using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -150,5 +150,5 @@ public class AccountSpecsController : ApiControllerBase
     }
 
     protected override IPagedResourceRequest<BaseEntity> PagingMetaInfoRequestFactory(int pageSize) =>
-        new GetPagingMetaInfoReq<AccountSpec>(pageSize);
+        new GetPagingMetaInfoReq<Data.Entities.AccountSpec>(pageSize);
 }

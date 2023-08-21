@@ -2,7 +2,7 @@ using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging;
+using OnlineMinion.Contracts.Requests;
 using OnlineMinion.Web.Helpers;
 using Radzen;
 

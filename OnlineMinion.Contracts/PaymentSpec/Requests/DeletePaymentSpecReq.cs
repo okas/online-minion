@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using OnlineMinion.Contracts.AppMessaging;
+using OnlineMinion.Contracts.Requests;
 
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 

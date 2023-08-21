@@ -2,10 +2,10 @@ using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Contracts.Responses;
-using OnlineMinion.RestApi.Client.Requests;
+using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Contracts.AccountSpec.Responses;
+using OnlineMinion.Contracts.Requests;
+using OnlineMinion.RestApi.Client.AccountSpec.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 

@@ -9,11 +9,10 @@ using Microsoft.Extensions.Options;
 using OnlineMinion.Common.Validators;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.Data.Entities;
-using OnlineMinion.RestApi.AppMessaging.Behaviors;
-using OnlineMinion.RestApi.AppMessaging.Handlers;
-using OnlineMinion.RestApi.AppMessaging.Requests;
+using OnlineMinion.RestApi.Handlers;
+using OnlineMinion.RestApi.MediatorBehaviors;
 using OnlineMinion.RestApi.ProblemHandling;
+using OnlineMinion.RestApi.Requests;
 
 namespace OnlineMinion.RestApi.Configuration;
 
@@ -60,8 +59,8 @@ public static class ServicesSetup
                 }
             )
             .AddTransient<
-                IRequestHandler<GetPagingMetaInfoReq<AccountSpec>, PagingMetaInfo>,
-                GetPagingInfoReqHlr<AccountSpec>
+                IRequestHandler<GetPagingMetaInfoReq<Data.Entities.AccountSpec>, PagingMetaInfo>,
+                GetPagingInfoReqHlr<Data.Entities.AccountSpec>
             >()
             .AddTransient<
                 IRequestHandler<GetPagingMetaInfoReq<BasePaymentSpec>, PagingMetaInfo>,

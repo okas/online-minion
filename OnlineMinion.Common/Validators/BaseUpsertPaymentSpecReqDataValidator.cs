@@ -1,5 +1,5 @@
 using FluentValidation;
-using OnlineMinion.Contracts.AppMessaging;
+using OnlineMinion.Contracts.PaymentSpec.Requests;
 
 namespace OnlineMinion.Common.Validators;
 
