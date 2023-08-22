@@ -1,14 +1,72 @@
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using ErrorOr;
+using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.HttpHeaders;
+using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Requests;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace OnlineMinion.RestApi;
 
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
 public abstract class ApiControllerBase : ControllerBase
 {
+    protected readonly ISender Sender;
+    protected ApiControllerBase(ISender sender) => Sender = sender;
+
+    /// <summary>
+    ///     To probe some paging related data about this resource.
+    /// </summary>
+    /// <param name="ct"></param>
+    /// <param name="pageSize"></param>
+    [HttpHead]
+    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
+    [SwaggerResponse(
+        StatusCodes.Status204NoContent,
+        "Using page size, get count of total items and count of pages."
+    )]
+    [SwaggerResponseHeader(
+        StatusCodes.Status204NoContent,
+        CustomHeaderNames.PagingRows,
+        "integer",
+        "Total items of resource."
+    )]
+    [SwaggerResponseHeader(
+        StatusCodes.Status204NoContent,
+        CustomHeaderNames.PagingSize,
+        "integer",
+        "Page size used."
+    )]
+    [SwaggerResponseHeader(
+        StatusCodes.Status204NoContent,
+        CustomHeaderNames.PagingPages,
+        "integer",
+        "Pages, based on provided page size."
+    )]
+    public async Task<IActionResult> PagingMetaInfo(
+        [FromQuery][Range(1, 100)] int pageSize = 10,
+        CancellationToken              ct       = default
+    )
+    {
+        var req = PagingMetaInfoRequestFactory(pageSize);
+
+        var pagingMetaInfo = await Sender.Send(req, ct);
+
+        SetPagingHeaders(pagingMetaInfo);
+
+        return NoContent();
+    }
+
+    protected abstract IPagedResourceRequest<BaseEntity> PagingMetaInfoRequestFactory(int pageSize);
+
     /// <summary>
     ///     Sets response headers of paging related data.
     /// </summary>

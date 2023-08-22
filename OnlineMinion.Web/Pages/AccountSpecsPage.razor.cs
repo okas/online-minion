@@ -1,91 +1,30 @@
 using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.AspNetCore.Components;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AppMessaging;
-using OnlineMinion.Contracts.AppMessaging.Requests;
-using OnlineMinion.Contracts.Responses;
-using OnlineMinion.RestApi.Client.Requests;
+using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Contracts.AccountSpec.Responses;
+using OnlineMinion.Contracts.Requests;
+using OnlineMinion.RestApi.Client.AccountSpec.Requests;
 using OnlineMinion.Web.Components;
-using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
-using Radzen;
-using Radzen.Blazor;
 
 namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
-public partial class AccountSpecsPage : ComponentWithCancellationToken
+public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
 {
-    private readonly IEnumerable<int> _pageSizeOptions;
-    private readonly List<AccountSpecResp> _vm;
-    private int _currentPage;
-    private int _currentPageSize;
-    private RadzenDataGrid<AccountSpecResp> _dataGridRef = null!;
+    private const string ModelTypeName = "Account Specification";
+
+    private readonly IEnumerable<int> _pageSizeOptions = BasePagingParams.AllowedSizes;
     private AccountSpecsEditor _editorRef = null!;
+    private RadzenDataGridWrapper<AccountSpecResp> _gridWrapperRef = null!;
     private BaseUpsertAccountSpecReqData? _modelUpsert;
-    private int _totalItemsCount;
-
-    public AccountSpecsPage()
-    {
-        _currentPage = BasePagingParams.FirstPage;
-        _currentPageSize = BasePagingParams.DefaultSize;
-        _vm = new(_currentPageSize);
-        _pageSizeOptions = BasePagingParams.AllowedSizes;
-    }
-
-    [Inject]
-    public ISender Sender { get; set; } = default!;
-
-    [Inject]
-    public DialogService DialogService { get; set; } = default!;
-
-    [Inject]
-    public StateContainer SC { get; set; } = default!;
-
-    [Inject]
-    public ILogger<AccountSpecsPage> Logger { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await LoadViewModelFromApi(_currentPage, _currentPageSize);
-    }
-
-    private async Task OnLoadDataHandler(LoadDataArgs args)
-    {
-        var size = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
-        var offset = args.Skip.GetValueOrDefault();
-        var page = (int)Math.Floor((decimal)offset / size) + 1;
-
-        await LoadViewModelFromApi(page, size, args.Filter, args.OrderBy);
-    }
-
-    /// <summary>
-    ///     Using Dynamic LINQ expressions sends filter, sort and paging requests to API.
-    ///     <a href="https://dynamic-linq.net/expression-language">Dynamic LINQ</a>
-    /// </summary>
-    /// <param name="page" />
-    /// <param name="size" />
-    /// <param name="filterExpression">Filtering expression, multi or single property.</param>
-    /// <param name="sortExpression">Sorting expression, multi or single property.</param>
-    private async Task LoadViewModelFromApi(
-        int     page,
-        int     size,
-        string? filterExpression = default,
-        string? sortExpression   = default
-    )
-    {
-        SC.IsBusy = true;
-
-        var result = await Sender.Send(new GetAccountSpecsReq(filterExpression, sortExpression, page, size), CT);
-
-        _totalItemsCount = result.Paging.Rows;
-        _vm.Clear();
-        await result.Result.PullItemsFromStream(_vm, StateHasChanged, CT);
-
-        SC.IsBusy = false;
+        await LoadViewModelFromApi(CurrentPage, CurrentPageSize);
     }
 
     private void OnAddHandler()
@@ -95,7 +34,7 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new CreateAccountSpecReq();
         }
 
-        OpenEditorDialog("Add new Account Specification");
+        OpenEditorDialog($"Add new {ModelTypeName}");
     }
 
     private void OnEditHandler(AccountSpecResp model)
@@ -106,201 +45,58 @@ public partial class AccountSpecsPage : ComponentWithCancellationToken
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
         }
 
-        OpenEditorDialog($"Edit Account Specification: id #{model.Id}");
+        OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id}");
     }
 
-    private void OpenEditorDialog(string title) => DialogService.Open(
-        title,
-        _ => RenderEditorComponent(),
-        new() { Draggable = true, }
-    );
+    protected override ValueTask<bool> Validate() => _editorRef.WrapperRef.ValidateEditorAsync();
 
-    private void CloseEditorDialog()
+    protected override void SetServerValidationErrors(IList<Error> errors) =>
+        _editorRef.WrapperRef.SetServerValidationErrors(errors);
+
+    protected override void CloseEditorDialog()
     {
         _modelUpsert = null;
-        _editorRef.ResetEditor();
-        DialogService.Close();
+        _editorRef.WrapperRef.ResetEditor();
+        base.CloseEditorDialog();
     }
 
-    private async Task OnUpsertSubmitHandler()
+    protected override async ValueTask<bool> HandleUpsertSubmit() => _modelUpsert switch
     {
-        SC.IsBusy = true;
+        UpdateAccountSpecReq req => await HandleUpdateSubmit(req),
+        CreateAccountSpecReq req => await HandleCreateSubmit(req),
+        null => throw new InvalidOperationException("Upsert model is null."),
+        _ => throw new InvalidOperationException("Unknown model type."),
+    };
 
-        if (!await _editorRef.ValidateEditorAsync())
+    protected override AccountSpecResp ApplyUpdateToModel(AccountSpecResp model, IUpdateCommand updateRequest)
+    {
+        var request = (UpdateAccountSpecReq)updateRequest;
+
+        return model with
         {
-            SC.IsBusy = false;
-
-            return;
-        }
-
-        var succeed = _modelUpsert switch
-        {
-            UpdateAccountSpecReq req => await HandleUpdateSubmit(req),
-            CreateAccountSpecReq req => await HandleCreateSubmit(req),
-            _ => throw new InvalidOperationException("Unknown model type."),
+            Name = request.Name,
+            Group = request.Group,
+            Description = request.Description,
         };
-
-        SC.IsBusy = false;
-
-        if (succeed)
-        {
-            CloseEditorDialog();
-        }
     }
 
-    private async Task<bool> HandleUpdateSubmit(UpdateAccountSpecReq request)
-    {
-        var result = await Sender.Send(request, CT);
-
-        return result.Match(
-            _ =>
-            {
-                HandlePageStateAfterUpdate(request);
-
-                return true;
-            },
-            errors =>
-            {
-                _editorRef.SetServerValidationErrors(errors);
-                // It can happen, it is not unexpected error per se.
-                if (errors.Exists(err => err.Type is ErrorType.NotFound))
-                {
-                    _dataGridRef.GoToPage(ToGridPage(_currentPage), true);
-                }
-
-                //TODO handel all other errors
-                return false;
-            }
-        );
-    }
-
-    private void HandlePageStateAfterUpdate(UpdateAccountSpecReq request)
-    {
-        var model = _vm!.Single(m => m.Id == request.Id);
-        var clone = model with
-        {
-            Name = request.Name, Group = request.Group, Description = request.Description,
-        };
-
-        _vm![_vm.IndexOf(model)] = clone;
-    }
-
-    private async Task<bool> HandleCreateSubmit(CreateAccountSpecReq req)
-    {
-        var result = await Sender.Send(req, CT);
-
-        return await result.MatchAsync(
-            async _ =>
-            {
-                await HandlePageStateAfterCreate();
-                return true;
-            },
-            errors =>
-            {
-                _editorRef.SetServerValidationErrors(errors);
-
-                //TODO handel all other errors
-
-                return Task.FromResult(false);
-            }
-        );
-    }
-
-    private async Task HandlePageStateAfterCreate()
-    {
-        if (await Sender.Send(new GetAccountSpecPageCountBySizeReq(_currentPageSize), CT) is { } pagesCount)
-        {
-            var lastPageAfterCreate = _currentPage == pagesCount
-                ? _currentPage
-                : pagesCount;
-
-            await _dataGridRef.GoToPage(ToGridPage(lastPageAfterCreate), true);
-
-            return;
-        }
-
-        Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
-    }
+    protected override IRequest<int?> PageCountRequestFactory(int pageSize) =>
+        new GetAccountSpecPageCountBySizeReq(pageSize);
 
     private async Task OnDeleteHandler(AccountSpecResp model)
     {
         var (id, name, _, _) = model;
 
-        if (!await GetUserConfirmation(name))
+        if (!await GetUserConfirmation(name, ModelTypeName))
         {
             return;
         }
 
         SC.IsBusy = true;
-        await DeleteModelFromApi(id);
+        await DeleteModelFromApi(new DeleteAccountSpecReq(id), ModelTypeName);
         SC.IsBusy = false;
     }
 
-    private async Task<bool> GetUserConfirmation(string modelName) =>
-        await DialogService.Confirm(
-            $"Are you sure to delete Account spec with name <em>{modelName}</em>?",
-            "Confirm deletion",
-            new()
-            {
-                OkButtonText = "Confirm",
-                CancelButtonText = "Cancel",
-                Draggable = true,
-                CloseDialogOnOverlayClick = true,
-            }
-        ) ?? false;
-
-    private async Task<bool> DeleteModelFromApi(int id)
-    {
-        var result = await Sender.Send(new DeleteAccountSpecReq(id), CT);
-
-        return await result.MatchFirstAsync(
-            async _ =>
-            {
-                await HandlePageStateAfterDelete();
-
-                return true;
-            },
-            error =>
-            {
-                HandleApiDeleteErrors(id, error);
-
-                return Task.FromResult(false);
-            }
-        );
-    }
-
-    private async Task HandlePageStateAfterDelete()
-    {
-        var visiblePageAfterDelete = _vm.Count == 1
-            ? _currentPage - 1
-            : _currentPage;
-
-        await _dataGridRef.GoToPage(ToGridPage(visiblePageAfterDelete), true);
-    }
-
-    private void HandleApiDeleteErrors(int id, Error error)
-    {
-        if (error.Type is ErrorType.NotFound)
-        {
-            Logger.LogWarning("Account Specification '{Id}' do not exist anymore in database", id);
-        }
-        else
-        {
-            Logger.LogError("Unexpected failure while trying to delete Account Specification '{Id}'", id);
-        }
-    }
-
-    private void PagerChangeHandler(PagerEventArgs changeData)
-    {
-        _currentPage = ToApiPage(changeData.PageIndex);
-        _currentPageSize = changeData.Top;
-    }
-
-    /// <summary>
-    ///     Radzen DataGrid uses 0-based page index, but API uses 1-based page index.
-    /// </summary>
-    private static int ToGridPage(int apiPage) => apiPage - 1;
-
-    /// <inheritdoc cref="ToGridPage" />
-    private static int ToApiPage(int gridPage) => gridPage + 1;
+    protected override async ValueTask AfterSuccessfulChange(int apiPage) =>
+        await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
 }

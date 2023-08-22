@@ -17,7 +17,7 @@ namespace OnlineMinion.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-preview.3.23174.2")
+                .HasAnnotation("ProductVersion", "8.0.0-preview.7.23375.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
@@ -33,15 +33,15 @@ namespace OnlineMinion.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
 
-                    b.Property<string>("CurrencyIso")
+                    b.Property<string>("CurrencyCode")
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
+                        .HasMaxLength(34)
+                        .HasColumnType("nvarchar(34)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -49,9 +49,13 @@ namespace OnlineMinion.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Tags")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("PaymentSpecs");
 
@@ -156,6 +160,21 @@ namespace OnlineMinion.Data.Migrations
                     b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
 
                     b.HasDiscriminator().HasValue("CashAccountSpec");
+                });
+
+            modelBuilder.Entity("OnlineMinion.Data.Entities.CryptoExchangeAccountSpec", b =>
+                {
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
+
+                    b.Property<string>("ExchangeName")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
+
+                    b.Property<bool>("IsFiat")
+                        .HasColumnType("bit");
+
+                    b.HasDiscriminator().HasValue("CryptoExchangeAccountSpec");
                 });
 
             modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionCredit", b =>

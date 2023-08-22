@@ -23,8 +23,12 @@ public class OnlineMinionDbContext : DbContext
 
     public DbSet<CashAccountSpec> CashAccountsSpecs { get; set; } = null!;
 
+    public DbSet<CryptoExchangeAccountSpec> CryptoExchangeAccountSpecs { get; set; } = null!;
+
+    /// <inheritdoc cref="DbContext" />
     public new int SaveChanges() => SaveChanges(true);
 
+    /// <inheritdoc cref="DbContext" />
     public new int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         try
@@ -45,7 +49,7 @@ public class OnlineMinionDbContext : DbContext
     {
         try
         {
-            return await base.SaveChangesAsync(ct).ConfigureAwait(false);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, ct).ConfigureAwait(false);
         }
         catch (UniqueConstraintException ex)
         {

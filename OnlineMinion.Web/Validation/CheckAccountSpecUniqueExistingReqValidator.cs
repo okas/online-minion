@@ -1,11 +1,13 @@
 using FluentValidation;
+using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Common;
-using OnlineMinion.Contracts.AppMessaging.Requests;
+using OnlineMinion.Contracts.AccountSpec.Requests;
 
 namespace OnlineMinion.Web.Validation;
 
-public class CheckAccountSpecUniqueExistingReqValidator : AbstractValidator<UpdateAccountSpecReq>,
+[UsedImplicitly]
+public sealed class CheckAccountSpecUniqueExistingReqValidator : AbstractValidator<UpdateAccountSpecReq>,
     IAsyncUniqueValidator<UpdateAccountSpecReq>
 {
     private readonly ISender _sender;

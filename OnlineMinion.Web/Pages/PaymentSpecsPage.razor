@@ -1,0 +1,57 @@
+@page "/payment-specs"
+@using OnlineMinion.Contracts.PaymentSpec.Responses
+@inherits BaseCRUDPage<PaymentSpecResp>
+
+@code
+{
+  protected override RenderFragment RenderEditorComponent() =>
+    @<CascadingValue IsFixed="@true" Value="@CT">
+      <UpsertEditorWrapper Model="@_modelUpsert" OnCancel="@CloseEditorDialog" OnSubmit="@OnUpsertSubmitHandler" @ref="@_editorRef">
+        <EditorFormFields>
+          <RadzenFormField Component="@Str.Name" Style="width:74%" Text="@Str.Name" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.CurrencyCode" Style="width: 25%" Text="@Str.CurrencyCode" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context!.CurrencyCode" Trim="@true"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.Tags" Style="width: 100%" Text="@Str.Tags" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
+          </RadzenFormField>
+        </EditorFormFields>
+      </UpsertEditorWrapper>
+    </CascadingValue>;
+
+  private static class Str
+  {
+    public const string PageTitle = "Payment Specs";
+    public const string MainHeading = "Payment Specifications";
+    public const string MainDescription = $"Manage {MainHeading}";
+    public const string Name = nameof(PaymentSpecResp.Name);
+    public const string CurrencyCode = nameof(PaymentSpecResp.CurrencyCode);
+    public const string Tags = nameof(PaymentSpecResp.Tags);
+  }
+
+}
+
+<AppPageTitle Text="@Str.PageTitle"/>
+
+<main>
+  <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
+  <RadzenText Text="@Str.MainDescription"/>
+  <RadzenDataGridWrapper AddClick="@OnAddHandler"
+      Data="@ViewModels"
+      DeleteClick="@OnDeleteHandler"
+      EditClick="@OnEditHandler"
+      LoadData="@OnLoadDataHandler"
+      Page="@PagerChangeHandler"
+      PageSizeOptions="@_pageSizeOptions"
+      @ref="@_gridWrapperRef"
+      TItem="PaymentSpecResp"
+      TotalItemsCount="@TotalItemsCount">
+    <Columns>
+      <RadzenDataGridColumn Property="@Str.Name" TItem="PaymentSpecResp" Title="@Str.Name"/>
+      <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCode"/>
+      <RadzenDataGridColumn Property="@Str.Tags" TItem="PaymentSpecResp" Title="@Str.Tags"/>
+    </Columns>
+  </RadzenDataGridWrapper>
+</main>

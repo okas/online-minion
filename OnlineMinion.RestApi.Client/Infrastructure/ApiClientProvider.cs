@@ -11,6 +11,8 @@ public class ApiClientProvider
 {
     public readonly Uri ApiV1AccountSpecsUri = new("api/v1/AccountSpecs", UriKind.Relative);
 
+    public readonly Uri ApiV1PaymentSpecsUri = new("api/v1/PaymentSpecs", UriKind.Relative);
+
     public ApiClientProvider(HttpClient httpClient, IOptions<ApiClientProviderSettings> options)
     {
         httpClient.BaseAddress = new(

@@ -48,9 +48,15 @@ public class FluentValidator : ComponentBase
     public IEnumerable<IValidator>? Validators { get; set; }
 
     /// <inheritdoc />
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        CheckEditorContext();
+        if (CurrentEditContext is null)
+        {
+            throw new InvalidOperationException(
+                $"{_fluentValidatorName} requires a cascading parameter of type {nameof(EditContext)}."
+                + $" For example, you can use {_fluentValidatorName} inside an {nameof(EditForm)}."
+            );
+        }
 
         _messageStore = new(CurrentEditContext);
 
@@ -64,17 +70,6 @@ public class FluentValidator : ComponentBase
         await ModelValidationHandler();
 
         return !CurrentEditContext.GetValidationMessages().Any();
-    }
-
-    private void CheckEditorContext()
-    {
-        if (CurrentEditContext is null)
-        {
-            throw new InvalidOperationException(
-                $"{_fluentValidatorName} requires a cascading parameter of type {nameof(EditContext)}."
-                + $" For example, you can use {_fluentValidatorName} inside an {nameof(EditForm)}."
-            );
-        }
     }
 
     private void SetUpValidators()

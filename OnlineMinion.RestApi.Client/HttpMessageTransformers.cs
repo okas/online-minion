@@ -26,7 +26,6 @@ public static class HttpMessageTransformers
         );
     }
 
-
     /// <exception cref="InvalidOperationException">
     ///     If message content is not understood,
     ///     it is not <see cref="HttpValidationProblemDetails" />.
