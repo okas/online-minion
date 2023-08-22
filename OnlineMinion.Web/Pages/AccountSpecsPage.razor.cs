@@ -64,6 +64,7 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
     {
         UpdateAccountSpecReq req => await HandleUpdateSubmit(req),
         CreateAccountSpecReq req => await HandleCreateSubmit(req),
+        null => throw new InvalidOperationException("Upsert model is null."),
         _ => throw new InvalidOperationException("Unknown model type."),
     };
 
