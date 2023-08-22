@@ -11,7 +11,7 @@ public class ServerSideValidator : ComponentBase
     public EditContext CurrentEditContext { get; set; } = null!;
 
     /// <inheritdoc />
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         if (CurrentEditContext == null)
         {
