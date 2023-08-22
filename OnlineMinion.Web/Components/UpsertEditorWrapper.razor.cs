@@ -1,28 +1,29 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Web.Shared.Forms;
 
 namespace OnlineMinion.Web.Components;
 
-public partial class AccountSpecsEditor : ComponentBase, IDisposable
+[UsedImplicitly]
+public partial class UpsertEditorWrapper<TModel> : ComponentBase, IDisposable
 {
     private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
     private bool _isEditorActionDisabledForced;
-    private string? _modalTitle;
     private ServerSideValidator _serverSideValidator = null!;
     private bool _shouldBeDisabledByFormState = true;
 
-    private bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || SC.IsBusy;
+    protected bool IsActionDisabled => _shouldBeDisabledByFormState || _isEditorActionDisabledForced || SC.IsBusy;
 
     [Inject]
     public StateContainer SC { get; set; } = default!;
 
+    // TODO: To Cascading Parameter
     [Parameter]
     [EditorRequired]
-    public BaseUpsertAccountSpecReqData? Model { get; set; }
+    public TModel? Model { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -31,28 +32,48 @@ public partial class AccountSpecsEditor : ComponentBase, IDisposable
     [Parameter]
     public EventCallback OnCancel { get; set; }
 
-    void IDisposable.Dispose() => SC.OnChange -= StateHasChanged;
+    [Parameter]
+    [EditorRequired]
+    public required RenderFragment EditorFormFields { get; set; }
 
+    void IDisposable.Dispose()
+    {
+        SC.OnChange -= StateHasChanged;
+        DetachValidationStateChangedListener();
+    }
 
     protected override void OnParametersSet()
     {
-        if (Model is not null)
+        if (Model is null)
         {
-            _editContext = new(Model);
-            _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
+            throw new InvalidOperationException(
+                $"Parameter {nameof(Model)} is required for {nameof(UpsertEditorWrapper<TModel>)} component."
+            );
         }
-        else if (_editContext is not null)
+
+        if (_editContext?.Model.Equals(Model) ?? false)
         {
-            _editContext.OnValidationStateChanged -= OnValidationStateChangedHandler;
-            _editContext = null;
+            return;
         }
+
+        DetachValidationStateChangedListener();
+        _editContext = new(Model!);
+        _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
     }
 
     protected override void OnInitialized() => SC.OnChange += StateHasChanged;
 
+    private void DetachValidationStateChangedListener()
+    {
+        if (_editContext is not null)
+        {
+            _editContext.OnValidationStateChanged -= OnValidationStateChangedHandler;
+        }
+    }
+
     public void ResetEditor()
     {
-        _editContext!.MarkAsUnmodified();
+        _editContext?.MarkAsUnmodified();
         _isEditorActionDisabledForced = false;
     }
 

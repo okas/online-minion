@@ -16,8 +16,8 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
 {
     private readonly IEnumerable<int> _pageSizeOptions = BasePagingParams.AllowedSizes;
     private AccountSpecsEditor _editorRef = null!;
-    private BaseUpsertAccountSpecReqData? _modelUpsert;
     private RadzenDataGridWrapper<AccountSpecResp> _gridWrapperRef = null!;
+    private BaseUpsertAccountSpecReqData? _modelUpsert;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,15 +46,15 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
         OpenEditorDialog($"Edit Account Specification: id #{model.Id}");
     }
 
-    protected override ValueTask<bool> Validate() => _editorRef.ValidateEditorAsync();
+    protected override ValueTask<bool> Validate() => _editorRef.WrapperRef.ValidateEditorAsync();
 
     protected override void SetServerValidationErrors(IList<Error> errors) =>
-        _editorRef.SetServerValidationErrors(errors);
+        _editorRef.WrapperRef.SetServerValidationErrors(errors);
 
     protected override void CloseEditorDialog()
     {
         _modelUpsert = null;
-        _editorRef.ResetEditor();
+        _editorRef.WrapperRef.ResetEditor();
         base.CloseEditorDialog();
     }
 

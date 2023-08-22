@@ -1,6 +1,21 @@
-@using OnlineMinion.Web.Shared.Forms
+@using OnlineMinion.Contracts.AccountSpec.Requests
 
 @code{
+
+  [Parameter]
+  public UpsertEditorWrapper<BaseUpsertAccountSpecReqData> WrapperRef { get; set; } = default!;
+
+  // TODO: To Cascading Parameter
+  [Parameter]
+  [EditorRequired]
+  public BaseUpsertAccountSpecReqData? Model { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<EditContext> OnSubmit { get; set; }
+
+  [Parameter]
+  public EventCallback OnCancel { get; set; }
 
   // If L18n is needed, this should be put to code-behind part and obtain translations from there.
   private static class Str
@@ -8,48 +23,20 @@
     public const string Name = nameof(Model.Name);
     public const string Group = nameof(Model.Group);
     public const string Description = nameof(Model.Description);
-    public const string SaveBtn = "Save";
-    public const string BusyText = "Saving...";
-    public const string CancelBtn = "Cancel";
   }
 
 }
 
-<EditForm EditContext="@_editContext" OnSubmit="@OnSubmit">
-  <FluentValidator @ref="@_fluentValidatorRef"/>
-  <ServerSideValidator @ref="@_serverSideValidator"/>
-  <ValidationSummary class="rz-mt-0"/>
-  <RadzenStack
-      AlignItems="@AlignItems.Center"
-      class="rz-my-4"
-      JustifyContent="@JustifyContent.SpaceEvenly"
-      Orientation="@Orientation.Horizontal"
-      Wrap="@FlexWrap.Wrap">
-    <RadzenFieldset disabled="@SC.IsBusy">
-      <RadzenFormField Component="@Str.Name" Style="width: 48%" Text="@Str.Name" Variant="@Variant.Text">
-        <RadzenTextBox @bind-Value="@Model!.Name" Trim="@true"/>
-      </RadzenFormField>
-      <RadzenFormField Component="@Str.Group" Style="width: 48%" Text="@Str.Group" Variant="@Variant.Text">
-        <RadzenTextBox @bind-Value="@Model!.Group" Trim="@true"/>
-      </RadzenFormField>
-      <RadzenFormField Component="@Str.Description" Style="width: 100%" Text="@Str.Description" Variant="@Variant.Text">
-        <RadzenTextBox @bind-Value="@Model!.Description" Trim="@true"/>
-      </RadzenFormField>
-    </RadzenFieldset>
-  </RadzenStack>
-  <RadzenStack AlignItems="@AlignItems.Center" JustifyContent="@JustifyContent.Center" Orientation="@Orientation.Horizontal">
-    <RadzenButton
-        BusyText="@Str.BusyText"
-        ButtonType="@ButtonType.Submit"
-        Disabled="@IsActionDisabled"
-        Icon="save"
-        IsBusy="@SC.IsBusy"
-        Text="@Str.SaveBtn"/>
-    <RadzenButton
-        ButtonStyle="ButtonStyle.Light"
-        Click="@(_ => OnCancel.InvokeAsync())"
-        Icon="cancel"
-        Text="@Str.CancelBtn"
-        Variant="Variant.Flat"/>
-  </RadzenStack>
-</EditForm>
+<UpsertEditorWrapper Model="@Model" OnCancel="@OnCancel" OnSubmit="@OnSubmit" @ref="@WrapperRef">
+  <EditorFormFields>
+    <RadzenFormField Component="@Str.Name" Style="width: 48%" Text="@Str.Name" Variant="@Variant.Text">
+      <RadzenTextBox @bind-Value="@Model!.Name" Trim="@true"/>
+    </RadzenFormField>
+    <RadzenFormField Component="@Str.Group" Style="width: 48%" Text="@Str.Group" Variant="@Variant.Text">
+      <RadzenTextBox @bind-Value="@Model!.Group" Trim="@true"/>
+    </RadzenFormField>
+    <RadzenFormField Component="@Str.Description" Style="width: 100%" Text="@Str.Description" Variant="@Variant.Text">
+      <RadzenTextBox @bind-Value="@Model!.Description" Trim="@true"/>
+    </RadzenFormField>
+  </EditorFormFields>
+</UpsertEditorWrapper>
