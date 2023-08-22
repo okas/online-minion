@@ -2,17 +2,17 @@ using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Common;
-using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Contracts.PaymentSpec.Requests;
 
 namespace OnlineMinion.Web.Validation;
 
 [UsedImplicitly]
-public sealed class CreateAccountSpecUniqueNameValidator : AbstractValidator<CreateAccountSpecReq>,
-    IAsyncUniqueValidator<CreateAccountSpecReq>
+public sealed class CreatePaymentSpecUniqueNameValidator : AbstractValidator<CreatePaymentSpecReq>,
+    IAsyncUniqueValidator<CreatePaymentSpecReq>
 {
     private readonly ISender _sender;
 
-    public CreateAccountSpecUniqueNameValidator(ISender sender)
+    public CreatePaymentSpecUniqueNameValidator(ISender sender)
     {
         _sender = sender;
 
@@ -22,5 +22,5 @@ public sealed class CreateAccountSpecUniqueNameValidator : AbstractValidator<Cre
     }
 
     private async Task<bool> BeUnique(string name, CancellationToken ct) =>
-        await _sender.Send(new CheckAccountSpecUniqueNewReq(name), ct).ConfigureAwait(false);
+        await _sender.Send(new CheckPaymentSpecUniqueNewReq(name), ct).ConfigureAwait(false);
 }
