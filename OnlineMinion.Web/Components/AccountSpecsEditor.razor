@@ -30,13 +30,13 @@
 <UpsertEditorWrapper Model="@Model" OnCancel="@OnCancel" OnSubmit="@OnSubmit" @ref="@WrapperRef">
   <EditorFormFields>
     <RadzenFormField Component="@Str.Name" Style="width: 48%" Text="@Str.Name" Variant="@Variant.Text">
-      <RadzenTextBox @bind-Value="@Model!.Name" Trim="@true"/>
+      <RadzenTextBox @bind-Value="@context!.Name" Trim="@true"/>
     </RadzenFormField>
     <RadzenFormField Component="@Str.Group" Style="width: 48%" Text="@Str.Group" Variant="@Variant.Text">
-      <RadzenTextBox @bind-Value="@Model!.Group" Trim="@true"/>
+      <RadzenTextBox @bind-Value="@context!.Group" Trim="@true"/>
     </RadzenFormField>
     <RadzenFormField Component="@Str.Description" Style="width: 100%" Text="@Str.Description" Variant="@Variant.Text">
-      <RadzenTextBox @bind-Value="@Model!.Description" Trim="@true"/>
+      <RadzenTextBox @bind-Value="@context!.Description" Trim="@true"/>
     </RadzenFormField>
   </EditorFormFields>
 </UpsertEditorWrapper>

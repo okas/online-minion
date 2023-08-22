@@ -34,7 +34,7 @@ public partial class UpsertEditorWrapper<TModel> : ComponentBase, IDisposable
 
     [Parameter]
     [EditorRequired]
-    public required RenderFragment EditorFormFields { get; set; }
+    public required RenderFragment<TModel> EditorFormFields { get; set; }
 
     void IDisposable.Dispose()
     {
