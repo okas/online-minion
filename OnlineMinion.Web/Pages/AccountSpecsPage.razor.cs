@@ -14,6 +14,8 @@ namespace OnlineMinion.Web.Pages;
 [UsedImplicitly]
 public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
 {
+    private const string ModelTypeName = "Account Specification";
+
     private readonly IEnumerable<int> _pageSizeOptions = BasePagingParams.AllowedSizes;
     private AccountSpecsEditor _editorRef = null!;
     private RadzenDataGridWrapper<AccountSpecResp> _gridWrapperRef = null!;
@@ -32,7 +34,7 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
             _modelUpsert = new CreateAccountSpecReq();
         }
 
-        OpenEditorDialog("Add new Account Specification");
+        OpenEditorDialog($"Add new {ModelTypeName}");
     }
 
     private void OnEditHandler(AccountSpecResp model)
@@ -43,7 +45,7 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
             _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
         }
 
-        OpenEditorDialog($"Edit Account Specification: id #{model.Id}");
+        OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id}");
     }
 
     protected override ValueTask<bool> Validate() => _editorRef.WrapperRef.ValidateEditorAsync();
@@ -82,17 +84,15 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
 
     private async Task OnDeleteHandler(AccountSpecResp model)
     {
-        const string modelType = "Account Specification";
-
         var (id, name, _, _) = model;
 
-        if (!await GetUserConfirmation(name, modelType))
+        if (!await GetUserConfirmation(name, ModelTypeName))
         {
             return;
         }
 
         SC.IsBusy = true;
-        await DeleteModelFromApi(new DeleteAccountSpecReq(id), modelType);
+        await DeleteModelFromApi(new DeleteAccountSpecReq(id), ModelTypeName);
         SC.IsBusy = false;
     }
 
