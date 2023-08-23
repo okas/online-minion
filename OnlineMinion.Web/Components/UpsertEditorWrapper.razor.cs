@@ -7,7 +7,7 @@ using OnlineMinion.Web.Shared.Forms;
 namespace OnlineMinion.Web.Components;
 
 [UsedImplicitly]
-public partial class UpsertEditorWrapper<TModel> : ComponentBase, IDisposable
+public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
 {
     private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
@@ -23,7 +23,7 @@ public partial class UpsertEditorWrapper<TModel> : ComponentBase, IDisposable
     // TODO: To Cascading Parameter
     [Parameter]
     [EditorRequired]
-    public TModel? Model { get; set; }
+    public TVModel? Model { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -34,7 +34,7 @@ public partial class UpsertEditorWrapper<TModel> : ComponentBase, IDisposable
 
     [Parameter]
     [EditorRequired]
-    public required RenderFragment<TModel> EditorFormFields { get; set; }
+    public required RenderFragment<TVModel> EditorFormFields { get; set; }
 
     void IDisposable.Dispose()
     {
@@ -47,7 +47,7 @@ public partial class UpsertEditorWrapper<TModel> : ComponentBase, IDisposable
         if (Model is null)
         {
             throw new InvalidOperationException(
-                $"Parameter {nameof(Model)} is required for {nameof(UpsertEditorWrapper<TModel>)} component."
+                $"Parameter {nameof(Model)} is required for {nameof(UpsertEditorWrapper<TVModel>)} component."
             );
         }
 
