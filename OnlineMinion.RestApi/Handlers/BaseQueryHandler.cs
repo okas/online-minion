@@ -21,10 +21,9 @@ internal abstract class BaseQueryHandler<TRequest, TResponse>
         CancellationToken                    ct = default
     ) where TEntity : BaseEntity
     {
-        var pagingMeta = await PagingHelpers.CreatePagingMetaAsync(query, queryParams, ct).ConfigureAwait(false);
+        var pagingMeta = await query.GetPagingMetaInfoAsync(queryParams, ct).ConfigureAwait(false);
 
-        var resultStream = QueryHelpers
-            .ConfigureStoreQuery(queryParams, query)
+        var resultStream = query.ConfigureStoreQuery(queryParams)
             .Select(projection)
             .AsAsyncEnumerable();
 

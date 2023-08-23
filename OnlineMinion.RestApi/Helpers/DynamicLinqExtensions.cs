@@ -4,10 +4,12 @@ using OnlineMinion.Data.BaseEntities;
 
 namespace OnlineMinion.RestApi.Helpers;
 
-public static class QueryHelpers
+public static class DynamicLinqExtensions
 {
-    public static IQueryable<TEntity> ConfigureStoreQuery<TEntity>(IQueryParams queryParams, IQueryable<TEntity> query)
-        where TEntity : BaseEntity
+    public static IQueryable<TEntity> ConfigureStoreQuery<TEntity>(
+        this IQueryable<TEntity> query,
+        IQueryParams             queryParams
+    ) where TEntity : BaseEntity
     {
         if (!string.IsNullOrWhiteSpace(queryParams.Filter))
         {
