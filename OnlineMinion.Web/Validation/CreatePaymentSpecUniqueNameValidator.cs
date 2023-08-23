@@ -1,3 +1,4 @@
+using ErrorOr;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
@@ -7,8 +8,8 @@ using OnlineMinion.Contracts.PaymentSpec.Requests;
 namespace OnlineMinion.Web.Validation;
 
 [UsedImplicitly]
-public sealed class CreatePaymentSpecUniqueNameValidator : AbstractValidator<CreatePaymentSpecReq>,
-    IAsyncUniqueValidator<CreatePaymentSpecReq>
+public sealed class CreatePaymentSpecUniqueNameValidator
+    : AbstractValidator<CreatePaymentSpecReq>, IAsyncUniqueValidator<CreatePaymentSpecReq>
 {
     private readonly ISender _sender;
 
@@ -17,10 +18,22 @@ public sealed class CreatePaymentSpecUniqueNameValidator : AbstractValidator<Cre
         _sender = sender;
 
         RuleFor(x => x.Name)
-            .MustAsync(BeUnique)
+            .MustAsync(BeUniqueAsync)
             .WithMessage("'{PropertyName}' must be unique");
     }
 
-    private async Task<bool> BeUnique(string name, CancellationToken ct) =>
-        await _sender.Send(new CheckPaymentSpecUniqueNewReq(name), ct).ConfigureAwait(false);
+    private async Task<bool> BeUniqueAsync(string name, CancellationToken ct)
+    {
+        var rq = new CheckPaymentSpecUniqueNewReq(name);
+        var result = await _sender.Send(rq, ct).ConfigureAwait(false);
+
+        return result.MatchFirst(
+            _ => true,
+            firstError => firstError.Type is ErrorType.Conflict
+                ? false
+                : throw new ValidationException(
+                    "Unexpected error while checking uniqueness of Payment specification name"
+                )
+        );
+    }
 }

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,8 @@ using static System.String;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<CheckAccountSpecUniqueExistingReq, bool>
+internal sealed class CheckAccountSpecUniqueExistingReqHlr
+    : IRequestHandler<CheckAccountSpecUniqueExistingReq, ErrorOr<Success>>
 {
     private readonly ApiClientProvider _api;
     private readonly ILogger<CheckAccountSpecUniqueExistingReqHlr> _logger;
@@ -24,11 +26,11 @@ internal sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<Che
         _logger = logger;
     }
 
-    public async Task<bool> Handle(CheckAccountSpecUniqueExistingReq req, CancellationToken ct)
+    public async Task<ErrorOr<Success>> Handle(CheckAccountSpecUniqueExistingReq rq, CancellationToken ct)
     {
         var uri = Create(
             CultureInfo.InvariantCulture,
-            $"{_api.ApiV1AccountSpecsUri}/validate-available-name/{req.Name}/except-id/{req.ExceptId}"
+            $"{_api.ApiV1AccountSpecsUri}/validate-available-name/{rq.Name}/except-id/{rq.ExceptId}"
         );
 
         var message = new HttpRequestMessage(HttpMethod.Head, uri);
@@ -36,15 +38,11 @@ internal sealed class CheckAccountSpecUniqueExistingReqHlr : IRequestHandler<Che
         var result = await _api.Client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
             .ConfigureAwait(false);
 
-        switch (result.StatusCode)
+        return result.StatusCode switch
         {
-            case HttpStatusCode.NoContent:
-                return true;
-            case HttpStatusCode.Conflict:
-                return false;
-            default:
-                _logger.LogError("Unexpected status code {StatusCode} for {Uri}", result.StatusCode, uri);
-                return false;
-        }
+            HttpStatusCode.NoContent => Result.Success,
+            HttpStatusCode.Conflict => Error.Conflict(),
+            _ => Error.Unexpected(),
+        };
     }
 }

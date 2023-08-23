@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,7 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckPaymentSpecUniqueNewReqHlr : IRequestHandler<CheckPaymentSpecUniqueNewReq, bool>
+internal sealed class CheckPaymentSpecUniqueNewReqHlr : IRequestHandler<CheckPaymentSpecUniqueNewReq, ErrorOr<Success>>
 {
     private readonly ApiClientProvider _api;
     private readonly ILogger<CheckPaymentSpecUniqueNewReqHlr> _logger;
@@ -20,11 +21,11 @@ internal sealed class CheckPaymentSpecUniqueNewReqHlr : IRequestHandler<CheckPay
         _logger = logger;
     }
 
-    public async Task<bool> Handle(CheckPaymentSpecUniqueNewReq req, CancellationToken ct)
+    public async Task<ErrorOr<Success>> Handle(CheckPaymentSpecUniqueNewReq rq, CancellationToken ct)
     {
         var uri = string.Create(
             CultureInfo.InvariantCulture,
-            $"{_api.ApiV1PaymentSpecsUri}/validate-available-name/{req.Name}"
+            $"{_api.ApiV1PaymentSpecsUri}/validate-available-name/{rq.Name}"
         );
 
         var message = new HttpRequestMessage(HttpMethod.Head, uri);
@@ -32,15 +33,11 @@ internal sealed class CheckPaymentSpecUniqueNewReqHlr : IRequestHandler<CheckPay
         var result = await _api.Client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
             .ConfigureAwait(false);
 
-        switch (result.StatusCode)
+        return result.StatusCode switch
         {
-            case HttpStatusCode.NoContent:
-                return true;
-            case HttpStatusCode.Conflict:
-                return false;
-            default:
-                _logger.LogError("Unexpected status code {StatusCode} for {Uri}", result.StatusCode, uri);
-                return false;
-        }
+            HttpStatusCode.NoContent => Result.Success,
+            HttpStatusCode.Conflict => Error.Conflict(),
+            _ => Error.Unexpected(),
+        };
     }
 }

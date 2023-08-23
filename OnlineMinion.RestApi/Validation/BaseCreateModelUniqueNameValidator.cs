@@ -1,22 +1,32 @@
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OnlineMinion.Common;
 
 namespace OnlineMinion.RestApi.Validation;
 
-public abstract class BaseCreateModelUniqueNameValidator<TModel> : AbstractValidator<TModel>,
-    IAsyncUniqueValidator<TModel>
+public abstract class BaseCreateModelUniqueNameValidator<TModel>
+    : AbstractValidator<TModel>, IAsyncUniqueValidator<TModel>
 {
     protected const string FailureMessageFormat = "'{PropertyName}' must be unique";
 
     private readonly ISender _sender;
     protected BaseCreateModelUniqueNameValidator(ISender sender) => _sender = sender;
 
-    protected async Task<bool> BeUnique(TModel model, string value, CancellationToken ct)
+    protected async Task<bool> BeUniqueAsync(TModel model, string value, CancellationToken ct)
     {
-        var request = ValidationRequestFactory(model, value);
-        return await _sender.Send(request, ct).ConfigureAwait(false);
+        var rq = ValidationRequestFactory(model, value);
+        var result = await _sender.Send(rq, ct).ConfigureAwait(false);
+
+        return result.MatchFirst(
+            _ => true,
+            firstError => firstError.Type is ErrorType.Conflict
+                ? false
+                : throw new ValidationException(
+                    "Unexpected error while checking uniqueness of Payment specification name."
+                )
+        );
     }
 
-    protected abstract IRequest<bool> ValidationRequestFactory(TModel model, string value);
+    protected abstract IRequest<ErrorOr<Success>> ValidationRequestFactory(TModel model, string value);
 }

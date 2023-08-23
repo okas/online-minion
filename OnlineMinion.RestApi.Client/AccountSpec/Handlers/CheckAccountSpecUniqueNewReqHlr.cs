@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using static System.String;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal class CheckAccountSpecUniqueNewReqHlr : IRequestHandler<CheckAccountSpecUniqueNewReq, bool>
+internal class CheckAccountSpecUniqueNewReqHlr : IRequestHandler<CheckAccountSpecUniqueNewReq, ErrorOr<Success>>
 {
     private readonly ApiClientProvider _api;
     private readonly ILogger<CheckAccountSpecUniqueNewReqHlr> _logger;
@@ -21,11 +22,11 @@ internal class CheckAccountSpecUniqueNewReqHlr : IRequestHandler<CheckAccountSpe
         _logger = logger;
     }
 
-    public async Task<bool> Handle(CheckAccountSpecUniqueNewReq req, CancellationToken ct)
+    public async Task<ErrorOr<Success>> Handle(CheckAccountSpecUniqueNewReq rq, CancellationToken ct)
     {
         var uri = Create(
             CultureInfo.InvariantCulture,
-            $"{_api.ApiV1AccountSpecsUri}/validate-available-name/{req.Name}"
+            $"{_api.ApiV1AccountSpecsUri}/validate-available-name/{rq.Name}"
         );
 
         var message = new HttpRequestMessage(HttpMethod.Head, uri);
@@ -33,15 +34,11 @@ internal class CheckAccountSpecUniqueNewReqHlr : IRequestHandler<CheckAccountSpe
         var result = await _api.Client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
             .ConfigureAwait(false);
 
-        switch (result.StatusCode)
+        return result.StatusCode switch
         {
-            case HttpStatusCode.NoContent:
-                return true;
-            case HttpStatusCode.Conflict:
-                return false;
-            default:
-                _logger.LogError("Unexpected status code {StatusCode} for {Uri}", result.StatusCode, uri);
-                return false;
-        }
+            HttpStatusCode.NoContent => Result.Success,
+            HttpStatusCode.Conflict => Error.Conflict(),
+            _ => Error.Unexpected(),
+        };
     }
 }

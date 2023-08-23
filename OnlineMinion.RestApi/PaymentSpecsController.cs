@@ -32,8 +32,17 @@ public class PaymentSpecsController : ApiControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> CheckUniqueNew(string name, CancellationToken ct) =>
-        await Sender.Send(new CheckPaymentSpecUniqueNewReq(name), ct) ? NoContent() : Conflict();
+    public async Task<IActionResult> CheckUniqueNew(string name, CancellationToken ct)
+    {
+        var result = await Sender.Send(new CheckPaymentSpecUniqueNewReq(name), ct);
+
+        return result.MatchFirst(
+            _ => NoContent(),
+            firstError => firstError.Type == ErrorType.Conflict
+                ? Conflict()
+                : CreateApiProblemResult(firstError)
+        );
+    }
 
     /// <summary>
     ///     Uniqueness validation for update workflow.
@@ -46,8 +55,17 @@ public class PaymentSpecsController : ApiControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> CheckUniqueExisting(string name, int exceptId, CancellationToken ct) =>
-        await Sender.Send(new CheckPaymentSpecUniqueExistingReq(name, exceptId), ct) ? NoContent() : Conflict();
+    public async Task<IActionResult> CheckUniqueExisting(string name, int exceptId, CancellationToken ct)
+    {
+        var result = await Sender.Send(new CheckPaymentSpecUniqueExistingReq(name, exceptId), ct);
+
+        return result.MatchFirst(
+            _ => NoContent(),
+            firstError => firstError.Type == ErrorType.Conflict
+                ? Conflict()
+                : CreateApiProblemResult(firstError)
+        );
+    }
 
     [HttpGet("{id}")]
     [ProducesResponseType<PaymentSpecResp>(StatusCodes.Status200OK)]
