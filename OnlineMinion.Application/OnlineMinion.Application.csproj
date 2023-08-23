@@ -57,4 +57,10 @@
         <ProjectReference Include="..\OnlineMinion.Data\OnlineMinion.Data.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="artifacts\obj\OnlineMinion.Application\OnlineMinion.Application.csproj.nuget.dgspec.json"/>
+        <_ContentIncludedByDefault Remove="artifacts\obj\OnlineMinion.Application\project.assets.json"/>
+        <_ContentIncludedByDefault Remove="artifacts\obj\OnlineMinion.Application\project.packagespec.json"/>
+    </ItemGroup>
+
 </Project>

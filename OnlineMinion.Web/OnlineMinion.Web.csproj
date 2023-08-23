@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.0"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
         <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
         <PackageReference Include="Meziantou.Analyzer" Version="2.0.82">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,14 +24,14 @@
         <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-preview.7.23375.6"/>
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0-preview.7.23375.6"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0-preview.7.23375.6"/>
-        <PackageReference Include="Radzen.Blazor" Version="4.13.6"/>
+        <PackageReference Include="Radzen.Blazor" Version="4.15.6"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj" />
-        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj" />
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj" />
-        <ProjectReference Include="..\OnlineMinion.RestApi.Client\OnlineMinion.RestApi.Client.csproj" />
+        <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.RestApi.Client\OnlineMinion.RestApi.Client.csproj"/>
     </ItemGroup>
 
 </Project>
