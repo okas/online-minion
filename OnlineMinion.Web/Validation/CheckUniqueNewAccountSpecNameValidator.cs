@@ -8,12 +8,12 @@ using OnlineMinion.Contracts.AccountSpec.Requests;
 namespace OnlineMinion.Web.Validation;
 
 [UsedImplicitly]
-public sealed class CreateAccountSpecUniqueNameValidator
+public sealed class CheckUniqueNewAccountSpecNameValidator
     : AbstractValidator<CreateAccountSpecReq>, IAsyncUniqueValidator<CreateAccountSpecReq>
 {
     private readonly ISender _sender;
 
-    public CreateAccountSpecUniqueNameValidator(ISender sender)
+    public CheckUniqueNewAccountSpecNameValidator(ISender sender)
     {
         _sender = sender;
 

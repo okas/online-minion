@@ -5,11 +5,11 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.Common.Handlers;
 
-internal abstract class BaseUniquenessCheckReqHlr<TRequest> : IRequestHandler<TRequest, ErrorOr<Success>>
+internal abstract class BaseCheckUniqueReqHlr<TRequest> : IRequestHandler<TRequest, ErrorOr<Success>>
     where TRequest : IRequest<ErrorOr<Success>>
 {
     protected readonly ApiClientProvider Api;
-    protected BaseUniquenessCheckReqHlr(ApiClientProvider api) => Api = api;
+    protected BaseCheckUniqueReqHlr(ApiClientProvider api) => Api = api;
 
     public async Task<ErrorOr<Success>> Handle(TRequest rq, CancellationToken ct)
     {

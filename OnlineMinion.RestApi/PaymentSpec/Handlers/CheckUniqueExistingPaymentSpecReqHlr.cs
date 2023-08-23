@@ -8,10 +8,10 @@ using OnlineMinion.RestApi.Common.Handlers;
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckPaymentSpecUniqueExistingReqHlr
-    : BaseUniquenessCheckReqHlr<CheckPaymentSpecUniqueExistingReq, BasePaymentSpec>
+internal sealed class CheckUniqueExistingPaymentSpecReqHlr
+    : BaseCheckUniqueModelReqHlr<CheckPaymentSpecUniqueExistingReq, BasePaymentSpec>
 {
-    public CheckPaymentSpecUniqueExistingReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
+    public CheckUniqueExistingPaymentSpecReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
     protected override Expression<Func<BasePaymentSpec, bool>> GetConflictPredicate(
         CheckPaymentSpecUniqueExistingReq rq

@@ -5,13 +5,12 @@ using OnlineMinion.Common;
 
 namespace OnlineMinion.RestApi.Validation;
 
-public abstract class BaseCreateModelUniqueNameValidator<TModel>
-    : AbstractValidator<TModel>, IAsyncUniqueValidator<TModel>
+public abstract class BaseCheckUniqueModelValidator<TModel> : AbstractValidator<TModel>, IAsyncUniqueValidator<TModel>
 {
     protected const string FailureMessageFormat = "'{PropertyName}' must be unique";
 
     private readonly ISender _sender;
-    protected BaseCreateModelUniqueNameValidator(ISender sender) => _sender = sender;
+    protected BaseCheckUniqueModelValidator(ISender sender) => _sender = sender;
 
     protected async Task<bool> BeUniqueAsync(TModel model, string value, CancellationToken ct)
     {

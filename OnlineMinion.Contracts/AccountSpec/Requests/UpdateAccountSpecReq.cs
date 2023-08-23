@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.Requests;
+using OnlineMinion.Contracts.Common.Requests;
 
 namespace OnlineMinion.Contracts.AccountSpec.Requests;
 

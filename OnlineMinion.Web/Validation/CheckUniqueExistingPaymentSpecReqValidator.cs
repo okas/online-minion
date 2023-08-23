@@ -8,12 +8,12 @@ using OnlineMinion.Contracts.PaymentSpec.Requests;
 namespace OnlineMinion.Web.Validation;
 
 [UsedImplicitly]
-public class CheckPaymentSpecUniqueExistingReqValidator
+public class CheckUniqueExistingPaymentSpecReqValidator
     : AbstractValidator<UpdatePaymentSpecReq>, IAsyncUniqueValidator<UpdatePaymentSpecReq>
 {
     private readonly ISender _sender;
 
-    public CheckPaymentSpecUniqueExistingReqValidator(ISender sender)
+    public CheckUniqueExistingPaymentSpecReqValidator(ISender sender)
     {
         _sender = sender;
 

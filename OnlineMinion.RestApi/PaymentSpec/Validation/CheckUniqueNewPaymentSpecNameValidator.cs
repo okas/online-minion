@@ -8,9 +8,9 @@ using OnlineMinion.RestApi.Validation;
 namespace OnlineMinion.RestApi.PaymentSpec.Validation;
 
 [UsedImplicitly]
-public sealed class CreatePaymentSpecUniqueNameValidator : BaseCreateModelUniqueNameValidator<CreatePaymentSpecReq>
+public sealed class CheckUniqueNewPaymentSpecNameValidator : BaseCheckUniqueModelValidator<CreatePaymentSpecReq>
 {
-    public CreatePaymentSpecUniqueNameValidator(ISender sender) : base(sender)
+    public CheckUniqueNewPaymentSpecNameValidator(ISender sender) : base(sender)
     {
         RuleFor(x => x.Name)
             .MustAsync(BeUniqueAsync)

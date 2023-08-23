@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.Contracts.Responses;
+using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
 using static OnlineMinion.RestApi.Client.HttpMessageTransformers;
 

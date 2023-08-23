@@ -7,10 +7,10 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckAccountSpecUniqueExistingReqHlr
-    : BaseUniquenessCheckReqHlr<CheckAccountSpecUniqueExistingReq>
+internal sealed class CheckUniqueExistingAccountSpecReqHlr
+    : BaseCheckUniqueReqHlr<CheckAccountSpecUniqueExistingReq>
 {
-    public CheckAccountSpecUniqueExistingReqHlr(ApiClientProvider api) : base(api) { }
+    public CheckUniqueExistingAccountSpecReqHlr(ApiClientProvider api) : base(api) { }
 
     protected override string BuildUrl(CheckAccountSpecUniqueExistingReq rq) =>
         string.Create(

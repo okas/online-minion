@@ -7,12 +7,12 @@ using OnlineMinion.Data.BaseEntities;
 
 namespace OnlineMinion.RestApi.Common.Handlers;
 
-internal abstract class BaseUniquenessCheckReqHlr<TRequest, TEntity> : IRequestHandler<TRequest, ErrorOr<Success>>
+internal abstract class BaseCheckUniqueModelReqHlr<TRequest, TEntity> : IRequestHandler<TRequest, ErrorOr<Success>>
     where TRequest : IRequest<ErrorOr<Success>>
     where TEntity : BaseEntity
 {
     private readonly OnlineMinionDbContext _dbContext;
-    protected BaseUniquenessCheckReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
+    protected BaseCheckUniqueModelReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<ErrorOr<Success>> Handle(TRequest rq, CancellationToken ct)
     {

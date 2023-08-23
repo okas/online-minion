@@ -5,9 +5,9 @@ using MediatR;
 using OnlineMinion.Common.Utilities.Extensions;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Responses;
+using OnlineMinion.Contracts.Common.Requests;
+using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Contracts.HttpHeaders;
-using OnlineMinion.Contracts.Requests;
-using OnlineMinion.Contracts.Responses;
 using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;

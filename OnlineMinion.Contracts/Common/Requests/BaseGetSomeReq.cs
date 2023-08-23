@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using MediatR;
-using OnlineMinion.Contracts.Responses;
+using OnlineMinion.Contracts.Common.Responses;
 
-namespace OnlineMinion.Contracts.Requests;
+namespace OnlineMinion.Contracts.Common.Requests;
 
 /// <param name="Filter">
 ///     Filter string <a href="https://dynamic-linq.net/basic-simple-query#more-where-examples">see docs</a>.

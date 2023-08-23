@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace OnlineMinion.Contracts.Requests;
+namespace OnlineMinion.Contracts.Common.Requests;
 
 /// <summary>
 ///     General purpose marker interface, without any members. For <see cref="MediatR" /> command pipeline filtering.

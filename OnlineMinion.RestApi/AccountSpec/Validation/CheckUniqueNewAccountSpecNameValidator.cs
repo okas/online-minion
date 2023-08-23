@@ -8,9 +8,9 @@ using OnlineMinion.RestApi.Validation;
 namespace OnlineMinion.RestApi.AccountSpec.Validation;
 
 [UsedImplicitly]
-public sealed class CreateAccountSpecUniqueNameValidator : BaseCreateModelUniqueNameValidator<CreateAccountSpecReq>
+public sealed class CheckUniqueNewAccountSpecNameValidator : BaseCheckUniqueModelValidator<CreateAccountSpecReq>
 {
-    public CreateAccountSpecUniqueNameValidator(ISender sender) : base(sender)
+    public CheckUniqueNewAccountSpecNameValidator(ISender sender) : base(sender)
     {
         RuleFor(x => x.Name)
             .MustAsync(BeUniqueAsync)

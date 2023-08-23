@@ -7,9 +7,9 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckAccountSpecUniqueNewReqHlr : BaseUniquenessCheckReqHlr<CheckAccountSpecUniqueNewReq>
+internal sealed class CheckUniqueNewAccountSpecReqHlr : BaseCheckUniqueReqHlr<CheckAccountSpecUniqueNewReq>
 {
-    public CheckAccountSpecUniqueNewReqHlr(ApiClientProvider api) : base(api) { }
+    public CheckUniqueNewAccountSpecReqHlr(ApiClientProvider api) : base(api) { }
 
     protected override string BuildUrl(CheckAccountSpecUniqueNewReq rq) =>
         string.Create(

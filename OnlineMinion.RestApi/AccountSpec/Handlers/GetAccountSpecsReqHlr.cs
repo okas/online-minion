@@ -4,8 +4,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.Requests;
-using OnlineMinion.Contracts.Responses;
+using OnlineMinion.Contracts.Common.Requests;
+using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.RestApi.Handlers;
 

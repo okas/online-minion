@@ -4,7 +4,7 @@ using MediatR;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.Requests;
+using OnlineMinion.Contracts.Common.Requests;
 using OnlineMinion.RestApi.Client.AccountSpec.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;

@@ -7,10 +7,10 @@ using OnlineMinion.RestApi.Common.Handlers;
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckAccountSpecUniqueExistingReqHlr
-    : BaseUniquenessCheckReqHlr<CheckAccountSpecUniqueExistingReq, Data.Entities.AccountSpec>
+internal sealed class CheckUniqueExistingAccountSpecReqHlr
+    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueExistingReq, Data.Entities.AccountSpec>
 {
-    public CheckAccountSpecUniqueExistingReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
+    public CheckUniqueExistingAccountSpecReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
     protected override Expression<Func<Data.Entities.AccountSpec, bool>> GetConflictPredicate(
         CheckAccountSpecUniqueExistingReq rq

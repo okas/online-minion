@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Responses;
+using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Helpers;

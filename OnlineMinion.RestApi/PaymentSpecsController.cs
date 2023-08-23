@@ -3,12 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts.AccountSpec.Responses;
+using OnlineMinion.Contracts.Common.Requests;
+using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.Contracts.Requests;
-using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.Requests;
@@ -78,7 +77,7 @@ public class PaymentSpecsController : ApiControllerBase
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
-    [ProducesResponseType(typeof(IAsyncEnumerable<AccountSpecResp>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IAsyncEnumerable<PaymentSpecResp>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponseHeader(

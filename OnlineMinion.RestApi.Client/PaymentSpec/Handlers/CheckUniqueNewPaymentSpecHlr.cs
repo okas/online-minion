@@ -7,9 +7,9 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckPaymentSpecUniqueNewReqHlr : BaseUniquenessCheckReqHlr<CheckPaymentSpecUniqueNewReq>
+internal sealed class CheckUniqueNewPaymentSpecHlr : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueNewReq>
 {
-    public CheckPaymentSpecUniqueNewReqHlr(ApiClientProvider api) : base(api) { }
+    public CheckUniqueNewPaymentSpecHlr(ApiClientProvider api) : base(api) { }
 
     protected override string BuildUrl(CheckPaymentSpecUniqueNewReq rq) =>
         string.Create(
