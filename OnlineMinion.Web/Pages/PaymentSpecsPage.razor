@@ -8,7 +8,7 @@
     @<CascadingValue IsFixed="@true" Value="@CT">
       <UpsertEditorWrapper Model="@_modelUpsert" OnCancel="@CloseEditorDialog" OnSubmit="@OnUpsertSubmitHandler" @ref="@_editorRef">
         <EditorFormFields>
-          <RadzenFormField Component="@Str.Name" Style="width:74%" Text="@Str.Name" Variant="@Variant.Text">
+          <RadzenFormField Component="@Str.Name" Style="width:71%" Text="@Str.Name" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
           </RadzenFormField>
           <RadzenFormField Component="@Str.CurrencyCode" Style="width: 25%" Text="@Str.CurrencyCode" Variant="@Variant.Text">
