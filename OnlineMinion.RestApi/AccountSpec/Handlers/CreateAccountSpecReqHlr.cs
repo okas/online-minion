@@ -1,4 +1,5 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.Responses;
@@ -6,6 +7,7 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
 {
     private readonly OnlineMinionDbContext _dbContext;

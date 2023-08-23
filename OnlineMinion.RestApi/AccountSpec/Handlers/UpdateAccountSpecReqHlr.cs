@@ -1,4 +1,5 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AccountSpec.Requests;
@@ -6,16 +7,14 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
 {
     private readonly OnlineMinionDbContext _dbContext;
     private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
 
-    public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext, ILogger<UpdateAccountSpecReqHlr> logger)
-    {
-        _dbContext = dbContext;
-        _logger = logger;
-    }
+    public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext, ILogger<UpdateAccountSpecReqHlr> logger) =>
+        (_dbContext, _logger) = (dbContext, logger);
 
     public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
     {

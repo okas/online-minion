@@ -1,11 +1,13 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.Responses;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.RestApi.PaymentSpec.RequestHandlers;
+namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class CreatePaymentSpecReqHlr : IRequestHandler<CreatePaymentSpecReq, ErrorOr<ModelIdResp>>
 {
     private readonly OnlineMinionDbContext _dbContext;

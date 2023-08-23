@@ -1,11 +1,13 @@
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.RestApi.PaymentSpec.RequestHandlers;
+namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
+[UsedImplicitly]
 internal class GetPaymentSpecByIdReqHlr : IRequestHandler<GetPaymentSpecByIdReq, PaymentSpecResp?>
 {
     private readonly OnlineMinionDbContext _dbContext;

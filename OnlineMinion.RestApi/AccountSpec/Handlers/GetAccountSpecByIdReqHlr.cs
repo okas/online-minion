@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.AccountSpec.Requests;
@@ -6,6 +7,7 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecByIdReq, AccountSpecResp?>
 {
     private readonly OnlineMinionDbContext _dbContext;

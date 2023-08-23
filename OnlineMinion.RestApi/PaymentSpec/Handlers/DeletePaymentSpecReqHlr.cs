@@ -1,11 +1,13 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Data;
 
-namespace OnlineMinion.RestApi.PaymentSpec.RequestHandlers;
+namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class DeletePaymentSpecReqHlr : IRequestHandler<DeletePaymentSpecReq, ErrorOr<Deleted>>
 {
     private readonly OnlineMinionDbContext _dbContext;

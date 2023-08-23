@@ -1,24 +1,19 @@
-using ErrorOr;
+using System.Linq.Expressions;
 using JetBrains.Annotations;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Data;
+using OnlineMinion.RestApi.Common.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckAccountSpecUniqueNewReqHlr : IRequestHandler<CheckAccountSpecUniqueNewReq, ErrorOr<Success>>
+internal sealed class CheckAccountSpecUniqueNewReqHlr
+    : BaseUniquenessCheckReqHlr<CheckAccountSpecUniqueNewReq, Data.Entities.AccountSpec>
 {
-    private readonly OnlineMinionDbContext _dbContext;
-    public CheckAccountSpecUniqueNewReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
+    public CheckAccountSpecUniqueNewReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
-    public async Task<ErrorOr<Success>> Handle(CheckAccountSpecUniqueNewReq rq, CancellationToken ct)
-    {
-        var result = await _dbContext.AccountSpecs
-            .AnyAsync(entity => entity.Name == rq.Name, ct)
-            .ConfigureAwait(false);
-
-        return result ? Error.Conflict() : Result.Success;
-    }
+    protected override Expression<Func<Data.Entities.AccountSpec, bool>> GetConflictPredicate(
+        CheckAccountSpecUniqueNewReq rq
+    ) =>
+        entity => entity.Name == rq.Name;
 }

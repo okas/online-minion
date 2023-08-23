@@ -1,4 +1,5 @@
 using ErrorOr;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.AccountSpec.Requests;
@@ -6,6 +7,7 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, ErrorOr<Deleted>>
 {
     private readonly OnlineMinionDbContext _dbContext;

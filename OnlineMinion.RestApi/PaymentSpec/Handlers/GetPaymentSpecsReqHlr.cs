@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
@@ -8,8 +9,9 @@ using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Handlers;
 
-namespace OnlineMinion.RestApi.PaymentSpec.RequestHandlers;
+namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
+[UsedImplicitly]
 internal sealed class GetPaymentSpecsReqHlr : BaseQueryHandler<BaseGetSomeReq<PaymentSpecResp>, PaymentSpecResp>,
     IRequestHandler<BaseGetSomeReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
 {
