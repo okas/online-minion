@@ -1,7 +1,8 @@
 using FluentValidation;
+using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 
-namespace OnlineMinion.Common.Validators;
+namespace OnlineMinion.Common.AccountSpec.Validators;
 
 public class UpdateAccountSpecReqValidator : AbstractValidator<UpdateAccountSpecReq>
 {

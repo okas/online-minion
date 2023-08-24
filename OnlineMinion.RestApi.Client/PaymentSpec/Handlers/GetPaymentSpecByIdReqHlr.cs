@@ -13,9 +13,9 @@ internal sealed class GetPaymentSpecByIdReqHlr : IRequestHandler<GetPaymentSpecB
     private readonly ApiClientProvider _api;
     public GetPaymentSpecByIdReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<PaymentSpecResp?> Handle(GetPaymentSpecByIdReq request, CancellationToken cancellationToken)
+    public async Task<PaymentSpecResp?> Handle(GetPaymentSpecByIdReq rq, CancellationToken cancellationToken)
     {
-        var uri = $"{_api.ApiV1PaymentSpecsUri}/{request.Id}";
+        var uri = $"{_api.ApiV1PaymentSpecsUri}/{rq.Id}";
 
         return await _api.Client.GetFromJsonAsync<PaymentSpecResp?>(uri, cancellationToken).ConfigureAwait(false);
     }

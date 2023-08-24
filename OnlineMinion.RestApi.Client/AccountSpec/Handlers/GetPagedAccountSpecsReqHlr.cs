@@ -19,18 +19,15 @@ internal sealed class GetPagedAccountSpecsReqHlr
     private readonly ApiClientProvider _api;
     public GetPagedAccountSpecsReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<PagedResult<AccountSpecResp>> Handle(
-        BaseGetSomeReq<AccountSpecResp> request,
-        CancellationToken               ct
-    )
+    public async Task<PagedResult<AccountSpecResp>> Handle(BaseGetSomeReq<AccountSpecResp> rq, CancellationToken ct)
     {
-        var message = new HttpRequestMessage(HttpMethod.Get, CreateUri(request));
+        var message = new HttpRequestMessage(HttpMethod.Get, CreateUri(rq));
 
         var httpResponseMessage = await GetRequestResponse(message, ct).ConfigureAwait(false);
 
         httpResponseMessage.EnsureSuccessStatusCode();
 
-        var pagingMetaInfo = GetPagingInfo(request, httpResponseMessage.Headers);
+        var pagingMetaInfo = GetPagingInfo(rq, httpResponseMessage.Headers);
 
         var modelsAsyncStream = await GetResultAsStreamAsync(httpResponseMessage, ct).ConfigureAwait(false);
 

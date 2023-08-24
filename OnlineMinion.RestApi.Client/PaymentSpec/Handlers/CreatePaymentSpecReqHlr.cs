@@ -17,11 +17,8 @@ internal sealed class CreatePaymentSpecReqHlr : IRequestHandler<CreatePaymentSpe
     private readonly ApiClientProvider _api;
     private readonly ILogger<CreatePaymentSpecReqHlr> _logger;
 
-    public CreatePaymentSpecReqHlr(ApiClientProvider api, ILogger<CreatePaymentSpecReqHlr> logger)
-    {
-        _api = api;
-        _logger = logger;
-    }
+    public CreatePaymentSpecReqHlr(ApiClientProvider api, ILogger<CreatePaymentSpecReqHlr> logger) =>
+        (_api, _logger) = (api, logger);
 
     public async Task<ErrorOr<ModelIdResp>> Handle(CreatePaymentSpecReq request, CancellationToken ct)
     {

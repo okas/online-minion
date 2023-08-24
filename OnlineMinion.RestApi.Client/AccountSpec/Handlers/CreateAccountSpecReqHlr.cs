@@ -17,15 +17,12 @@ internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpe
     private readonly ApiClientProvider _api;
     private readonly ILogger<CreateAccountSpecReqHlr> _logger;
 
-    public CreateAccountSpecReqHlr(ApiClientProvider api, ILogger<CreateAccountSpecReqHlr> logger)
-    {
-        _api = api;
-        _logger = logger;
-    }
+    public CreateAccountSpecReqHlr(ApiClientProvider api, ILogger<CreateAccountSpecReqHlr> logger) =>
+        (_api, _logger) = (api, logger);
 
-    public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq rq, CancellationToken ct)
     {
-        using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, request, ct)
+        using var message = await _api.Client.PostAsJsonAsync(_api.ApiV1AccountSpecsUri, rq, ct)
             .ConfigureAwait(false);
 
         if (message.IsSuccessStatusCode)

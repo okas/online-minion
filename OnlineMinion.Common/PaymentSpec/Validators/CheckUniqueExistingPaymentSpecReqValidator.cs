@@ -2,10 +2,10 @@ using ErrorOr;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
+using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.RestApi.Validation;
 
-namespace OnlineMinion.RestApi.PaymentSpec.Validation;
+namespace OnlineMinion.Common.PaymentSpec.Validators;
 
 [UsedImplicitly]
 public sealed class CheckUniqueExistingPaymentSpecReqValidator : BaseCheckUniqueModelValidator<UpdatePaymentSpecReq>
@@ -16,6 +16,8 @@ public sealed class CheckUniqueExistingPaymentSpecReqValidator : BaseCheckUnique
             .MustAsync(BeUniqueAsync)
             .WithMessage(FailureMessageFormat);
     }
+
+    protected override string ModelName => "Payment specification";
 
     protected override IRequest<ErrorOr<Success>> ValidationRequestFactory(UpdatePaymentSpecReq model, string value) =>
         new CheckPaymentSpecUniqueExistingReq(value, model.Id);

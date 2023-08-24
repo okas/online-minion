@@ -13,9 +13,9 @@ internal sealed class GetAccountSpecByIdReqHlr : IRequestHandler<GetAccountSpecB
     private readonly ApiClientProvider _api;
     public GetAccountSpecByIdReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<AccountSpecResp?> Handle(GetAccountSpecByIdReq request, CancellationToken cancellationToken)
+    public async Task<AccountSpecResp?> Handle(GetAccountSpecByIdReq rq, CancellationToken cancellationToken)
     {
-        var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
+        var uri = $"{_api.ApiV1AccountSpecsUri}/{rq.Id}";
 
         return await _api.Client.GetFromJsonAsync<AccountSpecResp?>(uri, cancellationToken).ConfigureAwait(false);
     }

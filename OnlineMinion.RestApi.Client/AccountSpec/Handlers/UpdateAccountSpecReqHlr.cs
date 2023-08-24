@@ -16,16 +16,13 @@ internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpe
     private readonly ApiClientProvider _api;
     private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
 
-    public UpdateAccountSpecReqHlr(ApiClientProvider api, ILogger<UpdateAccountSpecReqHlr> logger)
-    {
-        _api = api;
-        _logger = logger;
-    }
+    public UpdateAccountSpecReqHlr(ApiClientProvider api, ILogger<UpdateAccountSpecReqHlr> logger) =>
+        (_api, _logger) = (api, logger);
 
-    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
     {
-        var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
-        using var message = await _api.Client.PutAsJsonAsync(uri, request, ct).ConfigureAwait(false);
+        var uri = $"{_api.ApiV1AccountSpecsUri}/{rq.Id}";
+        using var message = await _api.Client.PutAsJsonAsync(uri, rq, ct).ConfigureAwait(false);
 
         if (message.IsSuccessStatusCode)
         {
@@ -36,7 +33,7 @@ internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpe
         {
             case HttpStatusCode.NotFound:
             {
-                _logger.LogWarning("Account specification with `Id={ModelId}` not found", request.Id);
+                _logger.LogWarning("Account specification with `Id={ModelId}` not found", rq.Id);
                 return Error.NotFound();
             }
             case HttpStatusCode.Conflict:

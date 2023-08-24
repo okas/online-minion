@@ -1,12 +1,14 @@
 using FluentValidation;
+using JetBrains.Annotations;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 
-namespace OnlineMinion.Common.Validators;
+namespace OnlineMinion.Common.AccountSpec.Validators;
 
 /// <summary>
 ///     It is only meant to be be used ad "Included" set of rules to <see cref="BaseUpsertAccountSpecReqData" />
 ///     inheritors. It is not abstract, because for it's usage instantiation is required.
 /// </summary>
+[UsedImplicitly]
 public sealed class BaseUpsertAccountSpecReqDataValidator : AbstractValidator<BaseUpsertAccountSpecReqData>
 {
     public BaseUpsertAccountSpecReqDataValidator()

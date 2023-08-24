@@ -7,8 +7,7 @@ using OnlineMinion.RestApi.Client.Infrastructure;
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckUniqueExistingPaymentSpecReqHlr
-    : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueExistingReq>
+internal sealed class CheckUniqueExistingPaymentSpecReqHlr : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueExistingReq>
 {
     public CheckUniqueExistingPaymentSpecReqHlr(ApiClientProvider api) : base(api) { }
 

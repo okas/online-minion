@@ -1,9 +1,8 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OnlineMinion.Common;
 
-namespace OnlineMinion.RestApi.Validation;
+namespace OnlineMinion.Common.Common.Validation;
 
 public abstract class BaseCheckUniqueModelValidator<TModel> : AbstractValidator<TModel>, IAsyncUniqueValidator<TModel>
 {
@@ -11,6 +10,8 @@ public abstract class BaseCheckUniqueModelValidator<TModel> : AbstractValidator<
 
     private readonly ISender _sender;
     protected BaseCheckUniqueModelValidator(ISender sender) => _sender = sender;
+
+    protected abstract string ModelName { get; }
 
     protected async Task<bool> BeUniqueAsync(TModel model, string value, CancellationToken ct)
     {
@@ -21,9 +22,7 @@ public abstract class BaseCheckUniqueModelValidator<TModel> : AbstractValidator<
             _ => true,
             firstError => firstError.Type is ErrorType.Conflict
                 ? false
-                : throw new ValidationException(
-                    "Unexpected error while checking uniqueness of Payment specification name."
-                )
+                : throw new ValidationException($"Unexpected error while checking uniqueness of `{ModelName}`.")
         );
     }
 

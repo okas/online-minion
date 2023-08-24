@@ -1,8 +1,11 @@
 using FluentValidation;
+using JetBrains.Annotations;
+using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 
-namespace OnlineMinion.Common.Validators;
+namespace OnlineMinion.Common.PaymentSpec.Validators;
 
+[UsedImplicitly]
 public class UpdatePaymentSpecReqValidator : AbstractValidator<UpdatePaymentSpecReq>
 {
     public UpdatePaymentSpecReqValidator(

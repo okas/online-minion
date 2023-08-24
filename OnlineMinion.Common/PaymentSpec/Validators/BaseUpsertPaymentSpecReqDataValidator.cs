@@ -1,8 +1,10 @@
 using FluentValidation;
+using JetBrains.Annotations;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 
-namespace OnlineMinion.Common.Validators;
+namespace OnlineMinion.Common.PaymentSpec.Validators;
 
+[UsedImplicitly]
 public sealed class BaseUpsertPaymentSpecReqDataValidator : AbstractValidator<BaseUpsertPaymentSpecReqData>
 {
     public BaseUpsertPaymentSpecReqDataValidator()

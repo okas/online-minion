@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using OnlineMinion.Common.Validators;
+using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Configuration;
@@ -31,7 +31,6 @@ services.AddRestApiClient(
 
 services.AddSingleton<StateContainer>();
 
-services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
 
 services.AddScoped<DialogService>();

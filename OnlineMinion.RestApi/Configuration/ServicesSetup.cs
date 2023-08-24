@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using OnlineMinion.Common.Validators;
+using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Handlers;

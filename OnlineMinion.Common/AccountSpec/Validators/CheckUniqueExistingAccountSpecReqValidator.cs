@@ -2,10 +2,10 @@ using ErrorOr;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
+using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.RestApi.Validation;
 
-namespace OnlineMinion.RestApi.AccountSpec.Validation;
+namespace OnlineMinion.Common.AccountSpec.Validators;
 
 [UsedImplicitly]
 public sealed class CheckUniqueExistingAccountSpecReqValidator : BaseCheckUniqueModelValidator<UpdateAccountSpecReq>
@@ -16,6 +16,8 @@ public sealed class CheckUniqueExistingAccountSpecReqValidator : BaseCheckUnique
             .MustAsync(BeUniqueAsync)
             .WithMessage(FailureMessageFormat);
     }
+
+    protected override string ModelName => "Account specification";
 
     protected override IRequest<ErrorOr<Success>> ValidationRequestFactory(UpdateAccountSpecReq model, string value) =>
         new CheckAccountSpecUniqueExistingReq(value, model.Id);

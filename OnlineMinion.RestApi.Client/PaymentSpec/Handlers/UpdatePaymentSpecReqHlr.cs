@@ -22,10 +22,10 @@ internal sealed class UpdatePaymentSpecReqHlr : IRequestHandler<UpdatePaymentSpe
         _logger = logger;
     }
 
-    public async Task<ErrorOr<Updated>> Handle(UpdatePaymentSpecReq request, CancellationToken ct)
+    public async Task<ErrorOr<Updated>> Handle(UpdatePaymentSpecReq rq, CancellationToken ct)
     {
-        var uri = $"{_api.ApiV1PaymentSpecsUri}/{request.Id}";
-        using var message = await _api.Client.PutAsJsonAsync(uri, request, ct).ConfigureAwait(false);
+        var uri = $"{_api.ApiV1PaymentSpecsUri}/{rq.Id}";
+        using var message = await _api.Client.PutAsJsonAsync(uri, rq, ct).ConfigureAwait(false);
 
         if (message.IsSuccessStatusCode)
         {
@@ -36,7 +36,7 @@ internal sealed class UpdatePaymentSpecReqHlr : IRequestHandler<UpdatePaymentSpe
         {
             case HttpStatusCode.NotFound:
             {
-                _logger.LogWarning("Payment specification with `Id={ModelId}` not found", request.Id);
+                _logger.LogWarning("Payment specification with `Id={ModelId}` not found", rq.Id);
                 return Error.NotFound();
             }
             case HttpStatusCode.Conflict:

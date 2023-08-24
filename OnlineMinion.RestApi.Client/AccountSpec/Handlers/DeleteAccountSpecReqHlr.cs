@@ -13,9 +13,9 @@ internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpe
     private readonly ApiClientProvider _api;
     public DeleteAccountSpecReqHlr(ApiClientProvider api) => _api = api;
 
-    public async Task<ErrorOr<Deleted>> Handle(DeleteAccountSpecReq request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Deleted>> Handle(DeleteAccountSpecReq rq, CancellationToken cancellationToken)
     {
-        var uri = $"{_api.ApiV1AccountSpecsUri}/{request.Id}";
+        var uri = $"{_api.ApiV1AccountSpecsUri}/{rq.Id}";
         var responseMessage = await _api.Client.DeleteAsync(uri, cancellationToken).ConfigureAwait(false);
 
         return responseMessage.StatusCode switch
