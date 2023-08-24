@@ -28,6 +28,7 @@ public class FluentValidator : ComponentBase
     private static string _fluentValidatorName = nameof(FluentValidator);
 
     private ValidationMessageStore _messageStore = null!;
+    private Type _modelType = null!;
 
     private List<IValidator> _normalAsyncUniqueValidators = new();
     private List<IValidator> _uniqueAsyncValidators = new();
@@ -58,6 +59,8 @@ public class FluentValidator : ComponentBase
             );
         }
 
+        _modelType = CurrentEditContext.Model.GetType();
+
         _messageStore = new(CurrentEditContext);
 
         SetUpValidators();
@@ -75,17 +78,20 @@ public class FluentValidator : ComponentBase
     private void SetUpValidators()
     {
         List<IValidator> sourceValidators;
+        bool isFromDI;
 
         if (Validators is not null && Validators.Any())
         {
             sourceValidators = Validators.ToList();
-            Logger.LogDebug("Using validators from parameter only");
+            isFromDI = false;
         }
         else
         {
             sourceValidators = GetValidatorsFromDIContainer();
-            Logger.LogDebug("Using validators from DI container only");
+            isFromDI = true;
         }
+
+        LogValidators(sourceValidators, isFromDI);
 
         _uniqueAsyncValidators.AddRange(
             sourceValidators.Where(
@@ -98,20 +104,28 @@ public class FluentValidator : ComponentBase
         );
     }
 
+    private void LogValidators(List<IValidator> sourceValidators, bool isFromDI) =>
+        Logger.LogDebug(
+            "Got {Count} validators from `{Source}` for model `{ModelType}`: {Validators}",
+            sourceValidators.Count,
+            isFromDI ? "DI container" : "parameter",
+            _modelType.FullName,
+            sourceValidators.Select(v => $"\n- {v.GetType().FullName}")
+        );
+
     /// <exception cref="InvalidOperationException">
     ///     In case no validators exist in DI container for <see cref="EditForm" />
     ///     model's type.
     /// </exception>
     private List<IValidator> GetValidatorsFromDIContainer()
     {
-        var modelType = CurrentEditContext.Model.GetType();
-        var validatorType = typeof(IValidator<>).MakeGenericType(modelType);
+        var validatorType = typeof(IValidator<>).MakeGenericType(_modelType);
 
         return ServiceProvider.GetServices(validatorType).Cast<IValidator>().ToList() is { Count: > 0, } validators
             ? validators
             : throw new InvalidOperationException(
                 $"{_fluentValidatorName} expects that validators are registered in DI container before usage. "
-                + $"No validators for type of model '{modelType.FullName}' where found."
+                + $"No validators for type of model '{_modelType.FullName}' where found."
             );
     }
 
