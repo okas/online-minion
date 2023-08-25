@@ -1,6 +1,5 @@
 using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
@@ -80,7 +79,7 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
         };
     }
 
-    protected override IRequest<int?> PageCountRequestFactory(int pageSize) =>
+    protected override IGetPagingInfoReq PageCountRequestFactory(int pageSize) =>
         new GetAccountSpecPageCountBySizeReq(pageSize);
 
     private async Task OnDeleteHandler(AccountSpecResp model)
@@ -97,6 +96,6 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
         SC.IsBusy = false;
     }
 
-    protected override async ValueTask AfterSuccessfulChange(int apiPage) =>
+    protected override async Task AfterSuccessfulChange(int apiPage) =>
         await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
 }

@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.RestApi.Common.Requests;
 using OnlineMinion.RestApi.Configuration;
-using OnlineMinion.RestApi.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 

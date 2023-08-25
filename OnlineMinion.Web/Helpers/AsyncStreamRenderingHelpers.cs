@@ -30,7 +30,7 @@ public static class AsyncStreamRenderingHelpers
 
         var lastRender = DateTime.UtcNow;
 
-        await foreach (var item in sourceStream.WithCancellation(ct))
+        await foreach (var item in sourceStream.WithCancellation(ct).ConfigureAwait(false))
         {
             targetList.Add(item);
 

@@ -6,7 +6,7 @@ using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Helpers;
 
-namespace OnlineMinion.RestApi.Handlers;
+namespace OnlineMinion.RestApi.Common.Handlers;
 
 internal abstract class BaseQueryHandler<TRequest, TResponse>
     where TRequest : IQueryParams

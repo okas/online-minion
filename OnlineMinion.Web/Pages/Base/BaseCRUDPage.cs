@@ -65,7 +65,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         SC.IsBusy = true;
 
         var result = await Sender.Send(
-            new BaseGetSomeReq<TModel>(filterExpression, sortExpression, page, size),
+            new BaseGetSomePagedReq<TModel>(filterExpression, sortExpression, page, size),
             CT
         );
 
@@ -168,22 +168,38 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         );
     }
 
-    protected abstract IRequest<int?> PageCountRequestFactory(int pageSize);
+    protected abstract IGetPagingInfoReq PageCountRequestFactory(int pageSize);
 
-    private async ValueTask HandlePageStateAfterCreate(IRequest<int?> metaInfoRequest)
+    private async ValueTask HandlePageStateAfterCreate(IGetPagingInfoReq metaInfoRequest)
     {
-        if (await Sender.Send(metaInfoRequest, CT) is { } pagesCount)
+        var result = await Sender.Send(metaInfoRequest, CT);
+
+        await result.SwitchFirstAsync(
+            AfterSuccessfulChange,
+            firstError =>
+            {
+                HandlePagingMetadataQueryErrors(firstError);
+
+                return Task.CompletedTask;
+            }
+        );
+    }
+
+    private void HandlePagingMetadataQueryErrors(Error error)
+    {
+        if (error.Type is ErrorType.Failure)
         {
-            var lastPageAfterCreate = CurrentPage == pagesCount
-                ? CurrentPage
-                : pagesCount;
-
-            await AfterSuccessfulChange(lastPageAfterCreate);
-
-            return;
+            Logger.LogWarning(
+                "Table pagination to new element's page skipped: {ErrorDescription}",
+                error.Description
+            );
+            // TODO: show error to user
+            // TODO: "Table pagination to new element's page skipped"
         }
-
-        Logger.LogWarning("Table pagination to new element's page skipped, didn't got paging metadata");
+        else
+        {
+            Logger.LogError("Unexpected error while getting paging metadata to re-paginate table");
+        }
     }
 
     protected abstract void SetServerValidationErrors(IList<Error> errors);
@@ -219,7 +235,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         await AfterSuccessfulChange(visiblePageAfterDelete);
     }
 
-    protected abstract ValueTask AfterSuccessfulChange(int apiPage);
+    protected abstract Task AfterSuccessfulChange(int apiPage);
 
     private void HandleApiDeleteErrors(int id, Error error, string modelType)
     {

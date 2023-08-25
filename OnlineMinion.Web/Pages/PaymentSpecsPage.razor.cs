@@ -1,6 +1,5 @@
 using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Common.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
@@ -80,7 +79,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp>
         };
     }
 
-    protected override IRequest<int?> PageCountRequestFactory(int pageSize) =>
+    protected override IGetPagingInfoReq PageCountRequestFactory(int pageSize) =>
         new GetPaymentSpecPageCountBySizeReq(pageSize);
 
     private async Task OnDeleteHandler(PaymentSpecResp model)
@@ -97,6 +96,6 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp>
         SC.IsBusy = false;
     }
 
-    protected override async ValueTask AfterSuccessfulChange(int apiPage) =>
+    protected override async Task AfterSuccessfulChange(int apiPage) =>
         await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
 }

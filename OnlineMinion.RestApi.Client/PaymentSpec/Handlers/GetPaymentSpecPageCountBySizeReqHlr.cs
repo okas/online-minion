@@ -1,31 +1,18 @@
 using JetBrains.Annotations;
-using MediatR;
-using OnlineMinion.Common.Utilities.Extensions;
-using OnlineMinion.Contracts.HttpHeaders;
+using OnlineMinion.RestApi.Client.Common.Handlers;
 using OnlineMinion.RestApi.Client.Infrastructure;
 using OnlineMinion.RestApi.Client.PaymentSpec.Requests;
 
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetPaymentSpecPageCountBySizeReqHlr : IRequestHandler<GetPaymentSpecPageCountBySizeReq, int?>
+internal sealed class GetPaymentSpecPageCountBySizeReqHlr
+    : BaseGetModelPageCountReqHlr<GetPaymentSpecPageCountBySizeReq>
 {
-    private readonly ApiClientProvider _api;
-    public GetPaymentSpecPageCountBySizeReqHlr(ApiClientProvider api) => _api = api;
+    private readonly Uri _resource;
 
-    public async Task<int?> Handle(GetPaymentSpecPageCountBySizeReq rq, CancellationToken ct)
-    {
-        var uri = _api.ApiV1PaymentSpecsUri.AddQueryString(
-            new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)
-                { [nameof(rq.PageSize)] = rq.PageSize, }
-        );
+    public GetPaymentSpecPageCountBySizeReqHlr(ApiClientProvider api) : base(api.Client) =>
+        _resource = api.ApiV1PaymentSpecsUri;
 
-        var message = new HttpRequestMessage(HttpMethod.Head, uri);
-
-        using var result = await _api.Client
-            .SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
-            .ConfigureAwait(false);
-
-        return result.Headers.GetHeaderFirstValue<int?>(CustomHeaderNames.PagingPages);
-    }
+    protected override Uri BuildUrl(GetPaymentSpecPageCountBySizeReq rq) => AddQueryString(_resource, rq);
 }

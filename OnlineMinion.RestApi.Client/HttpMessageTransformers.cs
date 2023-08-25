@@ -10,9 +10,9 @@ public static class HttpMessageTransformers
     ///     If message content is not understood,
     ///     it is not <see cref="HttpValidationProblemDetails" />.
     /// </exception>
-    public static async Task<ErrorOr<TValue>> TransformConflictHttpResponse<TValue>(
-        HttpResponseMessage message,
-        CancellationToken   ct
+    public static async Task<Error> TransformConflictHttpResponse(
+        this HttpResponseMessage message,
+        CancellationToken        ct
     )
     {
         var validationProblemDetails = await ReadHttpValidationProblemDetails(message, ct).ConfigureAwait(false);
@@ -30,9 +30,9 @@ public static class HttpMessageTransformers
     ///     If message content is not understood,
     ///     it is not <see cref="HttpValidationProblemDetails" />.
     /// </exception>
-    public static async Task<ErrorOr<TValue>> TransformBadRequestHttpResponse<TValue>(
-        HttpResponseMessage message,
-        CancellationToken   ct
+    public static async Task<Error> TransformBadRequestHttpResponse(
+        this HttpResponseMessage message,
+        CancellationToken        ct
     )
     {
         var validationProblemDetails = await ReadHttpValidationProblemDetails(message, ct).ConfigureAwait(false);

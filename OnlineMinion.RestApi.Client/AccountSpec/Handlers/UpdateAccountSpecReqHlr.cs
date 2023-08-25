@@ -1,64 +1,28 @@
-using System.Net;
-using System.Net.Http.Json;
-using ErrorOr;
+using System.Globalization;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.RestApi.Client.Common.Handlers;
 using OnlineMinion.RestApi.Client.Infrastructure;
-using static OnlineMinion.RestApi.Client.HttpMessageTransformers;
 
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
+internal sealed class UpdateAccountSpecReqHlr : BaseUpdateModelReqHlr<UpdateAccountSpecReq>
 {
-    private readonly ApiClientProvider _api;
-    private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
+    private readonly Uri _resource;
 
-    public UpdateAccountSpecReqHlr(ApiClientProvider api, ILogger<UpdateAccountSpecReqHlr> logger) =>
-        (_api, _logger) = (api, logger);
+    public UpdateAccountSpecReqHlr(ApiClientProvider api, ILogger<UpdateAccountSpecReqHlr> logger)
+        : base(api.Client, logger) =>
+        _resource = api.ApiV1AccountSpecsUri;
 
-    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
-    {
-        var uri = $"{_api.ApiV1AccountSpecsUri}/{rq.Id}";
-        using var message = await _api.Client.PutAsJsonAsync(uri, rq, ct).ConfigureAwait(false);
+    protected override string ModelName => "Account Specification";
 
-        if (message.IsSuccessStatusCode)
-        {
-            return default;
-        }
-
-        switch (message.StatusCode)
-        {
-            case HttpStatusCode.NotFound:
-            {
-                _logger.LogWarning("Account specification with `Id={ModelId}` not found", rq.Id);
-                return Error.NotFound();
-            }
-            case HttpStatusCode.Conflict:
-            {
-                _logger.LogWarning("Conflict error while updating Account specification");
-                return await TransformConflictHttpResponse<Updated>(message, ct).ConfigureAwait(false);
-            }
-            case HttpStatusCode.BadRequest:
-            {
-                _logger.LogWarning("Validation error while updating Account specification");
-                return await TransformBadRequestHttpResponse<Updated>(message, ct).ConfigureAwait(false);
-            }
-            default:
-            {
-                var reasonPhrase = message.ReasonPhrase ?? string.Empty;
-                var description = message.Content.ToString() ?? string.Empty;
-
-                _logger.LogError(
-                    "Account specification cannot be updated. Reason: {ReasonPhrase}. Description: {Description}",
-                    reasonPhrase,
-                    description
-                );
-
-                return Error.Failure(reasonPhrase, description);
-            }
-        }
-    }
+    protected override Uri BuildUri(UpdateAccountSpecReq rq) => new(
+        string.Create(
+            CultureInfo.InvariantCulture,
+            $"{_resource}/{rq.Id}"
+        ),
+        UriKind.RelativeOrAbsolute
+    );
 }

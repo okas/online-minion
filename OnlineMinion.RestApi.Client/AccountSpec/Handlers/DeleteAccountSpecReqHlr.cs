@@ -1,28 +1,24 @@
-using System.Net;
-using ErrorOr;
+using System.Globalization;
 using JetBrains.Annotations;
-using MediatR;
 using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.RestApi.Client.Common.Handlers;
 using OnlineMinion.RestApi.Client.Infrastructure;
 
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class DeleteAccountSpecReqHlr : IRequestHandler<DeleteAccountSpecReq, ErrorOr<Deleted>>
+internal sealed class DeleteAccountSpecReqHlr : BaseDeleteModelReqHlr<DeleteAccountSpecReq>
 {
-    private readonly ApiClientProvider _api;
-    public DeleteAccountSpecReqHlr(ApiClientProvider api) => _api = api;
+    private readonly Uri _resource;
 
-    public async Task<ErrorOr<Deleted>> Handle(DeleteAccountSpecReq rq, CancellationToken cancellationToken)
-    {
-        var uri = $"{_api.ApiV1AccountSpecsUri}/{rq.Id}";
-        var responseMessage = await _api.Client.DeleteAsync(uri, cancellationToken).ConfigureAwait(false);
+    public DeleteAccountSpecReqHlr(ApiClientProvider apiClient) : base(apiClient.Client) =>
+        _resource = apiClient.ApiV1AccountSpecsUri;
 
-        return responseMessage.StatusCode switch
-        {
-            HttpStatusCode.NoContent => Result.Deleted,
-            HttpStatusCode.NotFound => Error.NotFound(),
-            _ => Error.Unexpected(),
-        };
-    }
+    protected override Uri BuildUrl(DeleteAccountSpecReq request) => new(
+        string.Create(
+            CultureInfo.InvariantCulture,
+            $"{_resource}/{request.Id}"
+        ),
+        UriKind.RelativeOrAbsolute
+    );
 }

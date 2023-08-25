@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.Requests;
+using OnlineMinion.RestApi.Common.Requests;
 
-namespace OnlineMinion.RestApi.Handlers;
+namespace OnlineMinion.RestApi.Common.Handlers;
 
 internal sealed class GetPagingInfoReqHlr<TEntity> : IRequestHandler<GetPagingMetaInfoReq<TEntity>, PagingMetaInfo>
     where TEntity : BaseEntity

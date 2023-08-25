@@ -11,9 +11,11 @@ internal sealed class CheckUniqueNewPaymentSpecHlr : BaseCheckUniqueReqHlr<Check
 {
     public CheckUniqueNewPaymentSpecHlr(ApiClientProvider api) : base(api) { }
 
-    protected override string BuildUrl(CheckPaymentSpecUniqueNewReq rq) =>
+    protected override Uri BuildUrl(CheckPaymentSpecUniqueNewReq rq) => new(
         string.Create(
             CultureInfo.InvariantCulture,
             $"{Api.ApiV1PaymentSpecsUri}/validate-available-name/{rq.Name}"
-        );
+        ),
+        UriKind.RelativeOrAbsolute
+    );
 }

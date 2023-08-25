@@ -2,7 +2,7 @@ using MediatR;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data.BaseEntities;
 
-namespace OnlineMinion.RestApi.Requests;
+namespace OnlineMinion.RestApi.Common.Requests;
 
 /// <summary>
 ///     With the help of covariance, it helps do abstract the request handler from the entity type. Also helps to

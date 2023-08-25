@@ -9,8 +9,8 @@ using OnlineMinion.Contracts.HttpHeaders;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.RestApi.Common.Requests;
 using OnlineMinion.RestApi.Configuration;
-using OnlineMinion.RestApi.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -98,7 +98,10 @@ public class PaymentSpecsController : ApiControllerBase
         "integer",
         "Pages, based on provided page size."
     )]
-    public async Task<IActionResult> GetSome([FromQuery] BaseGetSomeReq<PaymentSpecResp> rq, CancellationToken ct)
+    public async Task<IActionResult> GetSomePaged(
+        [FromQuery] BaseGetSomePagedReq<PaymentSpecResp> rq,
+        CancellationToken                                ct
+    )
     {
         if (!ModelState.IsValid)
         {

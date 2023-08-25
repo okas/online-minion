@@ -10,7 +10,7 @@ namespace OnlineMinion.Contracts.Common.Requests;
 /// <param name="Sort">
 ///     Sort/OrderBy string <a href="https://dynamic-linq.net/basic-simple-query#ordering-results">see docs</a>.
 /// </param>
-public record BaseGetSomeReq<TResp>(
+public record BaseGetSomePagedReq<TResp>(
     string?             Filter = default,
     string?             Sort   = default,
     [Range(1, 50)]  int Page   = 1,

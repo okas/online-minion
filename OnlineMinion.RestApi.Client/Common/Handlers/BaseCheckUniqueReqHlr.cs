@@ -28,5 +28,5 @@ internal abstract class BaseCheckUniqueReqHlr<TRequest> : IRequestHandler<TReque
         };
     }
 
-    protected abstract string BuildUrl(TRequest rq);
+    protected abstract Uri BuildUrl(TRequest rq);
 }

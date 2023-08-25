@@ -11,9 +11,11 @@ internal sealed class CheckUniqueExistingAccountSpecReqHlr : BaseCheckUniqueReqH
 {
     public CheckUniqueExistingAccountSpecReqHlr(ApiClientProvider api) : base(api) { }
 
-    protected override string BuildUrl(CheckAccountSpecUniqueExistingReq rq) =>
+    protected override Uri BuildUrl(CheckAccountSpecUniqueExistingReq rq) => new(
         string.Create(
             CultureInfo.InvariantCulture,
             $"{Api.ApiV1AccountSpecsUri}/validate-available-name/{rq.Name}/except-id/{rq.ExceptId}"
-        );
+        ),
+        UriKind.RelativeOrAbsolute
+    );
 }

@@ -7,19 +7,19 @@ using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.Handlers;
+using OnlineMinion.RestApi.Common.Handlers;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetPaymentSpecsReqHlr : BaseQueryHandler<BaseGetSomeReq<PaymentSpecResp>, PaymentSpecResp>,
-    IRequestHandler<BaseGetSomeReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
+internal sealed class GetPaymentSpecsReqHlr : BaseQueryHandler<BaseGetSomePagedReq<PaymentSpecResp>, PaymentSpecResp>,
+    IRequestHandler<BaseGetSomePagedReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
 {
     public GetPaymentSpecsReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
     public async Task<PagedResult<PaymentSpecResp>> Handle(
-        BaseGetSomeReq<PaymentSpecResp> rq,
-        CancellationToken               ct
+        BaseGetSomePagedReq<PaymentSpecResp> rq,
+        CancellationToken                    ct
     )
     {
         var query = DbContext.PaymentSpecs.AsNoTracking();

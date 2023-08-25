@@ -9,10 +9,10 @@ using Microsoft.Extensions.Options;
 using OnlineMinion.Common.Common.Validation;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.Handlers;
+using OnlineMinion.RestApi.Common.Handlers;
+using OnlineMinion.RestApi.Common.Requests;
 using OnlineMinion.RestApi.MediatorBehaviors;
 using OnlineMinion.RestApi.ProblemHandling;
-using OnlineMinion.RestApi.Requests;
 
 namespace OnlineMinion.RestApi.Configuration;
 

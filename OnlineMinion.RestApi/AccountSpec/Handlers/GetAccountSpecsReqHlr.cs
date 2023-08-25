@@ -7,17 +7,20 @@ using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Common.Requests;
 using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Data;
-using OnlineMinion.RestApi.Handlers;
+using OnlineMinion.RestApi.Common.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetAccountSpecsReqHlr : BaseQueryHandler<BaseGetSomeReq<AccountSpecResp>, AccountSpecResp>,
-    IRequestHandler<BaseGetSomeReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
+internal sealed class GetAccountSpecsReqHlr : BaseQueryHandler<BaseGetSomePagedReq<AccountSpecResp>, AccountSpecResp>,
+    IRequestHandler<BaseGetSomePagedReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
 {
     public GetAccountSpecsReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
-    public async Task<PagedResult<AccountSpecResp>> Handle(BaseGetSomeReq<AccountSpecResp> rq, CancellationToken ct)
+    public async Task<PagedResult<AccountSpecResp>> Handle(
+        BaseGetSomePagedReq<AccountSpecResp> rq,
+        CancellationToken                    ct
+    )
     {
         var query = DbContext.AccountSpecs.AsNoTracking();
 
