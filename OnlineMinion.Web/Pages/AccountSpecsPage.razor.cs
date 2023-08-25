@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.Common.Requests;
+using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.Client.AccountSpec.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;

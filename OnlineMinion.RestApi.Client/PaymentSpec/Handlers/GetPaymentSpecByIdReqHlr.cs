@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.RestApi.Client.Infrastructure;
+using OnlineMinion.RestApi.Client.Connectivity;
 
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 

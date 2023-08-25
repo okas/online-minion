@@ -1,5 +1,5 @@
 using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.Common.Requests;
+using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.Contracts.AccountSpec.Requests;
 

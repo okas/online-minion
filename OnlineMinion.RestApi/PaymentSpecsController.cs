@@ -3,14 +3,14 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnlineMinion.Contracts.Common.Requests;
-using OnlineMinion.Contracts.Common.Responses;
-using OnlineMinion.Contracts.HttpHeaders;
+using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.Common.Requests;
 using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Shared.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 

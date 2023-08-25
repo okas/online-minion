@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.Common.Requests;
+using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Requests;
 

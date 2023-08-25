@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
-using OnlineMinion.RestApi.Client.Common.Handlers;
-using OnlineMinion.RestApi.Client.Infrastructure;
+using OnlineMinion.RestApi.Client.Connectivity;
 using OnlineMinion.RestApi.Client.PaymentSpec.Requests;
+using OnlineMinion.RestApi.Client.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 

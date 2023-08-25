@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using OnlineMinion.Common.Common.Validation;
+using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.Common.Handlers;
-using OnlineMinion.RestApi.Common.Requests;
-using OnlineMinion.RestApi.MediatorBehaviors;
+using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
+using OnlineMinion.RestApi.Shared.Handlers;
+using OnlineMinion.RestApi.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Configuration;
 

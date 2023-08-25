@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Data;
-using OnlineMinion.RestApi.Common.Handlers;
+using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 

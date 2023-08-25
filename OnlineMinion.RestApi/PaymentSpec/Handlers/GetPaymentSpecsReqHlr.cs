@@ -2,12 +2,12 @@ using System.Linq.Expressions;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Contracts.Common.Requests;
-using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.BaseEntities;
-using OnlineMinion.RestApi.Common.Handlers;
+using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 

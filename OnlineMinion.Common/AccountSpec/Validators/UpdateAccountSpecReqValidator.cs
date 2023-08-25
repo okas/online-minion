@@ -1,6 +1,6 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Common.Common.Validation;
+using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 
 namespace OnlineMinion.Common.AccountSpec.Validators;

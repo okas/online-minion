@@ -2,7 +2,7 @@ using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.Contracts.Common.Responses;
+using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;

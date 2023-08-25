@@ -1,8 +1,8 @@
 using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
-using OnlineMinion.Contracts.Common.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;

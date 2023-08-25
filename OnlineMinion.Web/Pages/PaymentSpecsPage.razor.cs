@@ -1,9 +1,9 @@
 using ErrorOr;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Common.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.Client.PaymentSpec.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;

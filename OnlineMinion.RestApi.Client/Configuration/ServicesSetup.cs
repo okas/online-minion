@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using FluentValidation;
 using IL.FluentValidation.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using OnlineMinion.RestApi.Client.Infrastructure;
+using OnlineMinion.RestApi.Client.Connectivity;
 using OnlineMinion.RestApi.Client.Settings;
 
 namespace OnlineMinion.RestApi.Client.Configuration;

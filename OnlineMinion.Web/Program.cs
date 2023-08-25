@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using OnlineMinion.Common.Common.Validation;
+using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.RestApi.Client.Configuration;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Configuration;
