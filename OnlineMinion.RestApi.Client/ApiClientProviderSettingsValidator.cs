@@ -1,8 +1,10 @@
 using FluentValidation;
+using JetBrains.Annotations;
 using OnlineMinion.RestApi.Client.Settings;
 
 namespace OnlineMinion.RestApi.Client;
 
+[UsedImplicitly]
 public class ApiClientProviderSettingsValidator : AbstractValidator<ApiClientProviderSettings>
 {
     public ApiClientProviderSettingsValidator()
