@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineMinion.Data;
 
@@ -11,9 +12,11 @@ using OnlineMinion.Data;
 namespace OnlineMinion.Data.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    partial class OnlineMinionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230826165545_CHANGE_BaseTransaction_validation_and_CreatedAt_value_generation")]
+    partial class CHANGE_BaseTransaction_validation_and_CreatedAt_value_generation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineMinion.Data.Entities.Shared;
 
@@ -16,6 +17,13 @@ public class BaseTransactionEntityConfig : IEntityTypeConfiguration<BaseTransact
 
         builder.Property(e => e.Amount)
             .HasPrecision(18, 2);
+
+        builder.Property(e => e.Tags)
+            .HasMaxLength(150);
+
+        builder.Property(e => e.CreatedAt)
+            .ValueGeneratedOnAdd()
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Save);
 
         builder.HasOne(e => e.PaymentInstrument)
             .WithOne()
