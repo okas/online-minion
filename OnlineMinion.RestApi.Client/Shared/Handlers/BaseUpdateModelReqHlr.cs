@@ -1,34 +1,35 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using ErrorOr;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
-internal abstract class BaseUpdateModelReqHlr<TRequest> : IRequestHandler<TRequest, ErrorOr<Updated>>
+internal abstract class BaseUpdateModelReqHlr<TRequest>(HttpClient apiClient, Uri resource, ILogger logger)
+    : IApiClientRequestHandler<TRequest, Updated>
     where TRequest : IUpdateCommand
 {
-    private readonly HttpClient _apiClient;
-    private readonly ILogger<BaseUpdateModelReqHlr<TRequest>> _logger;
-
-    protected BaseUpdateModelReqHlr(HttpClient apiClient, ILogger<BaseUpdateModelReqHlr<TRequest>> logger)
-        => (_apiClient, _logger) = (apiClient, logger);
-
     protected abstract string ModelName { get; }
 
     public async Task<ErrorOr<Updated>> Handle(TRequest rq, CancellationToken ct)
     {
         var uri = BuildUri(rq);
 
-        using var message = await _apiClient.PutAsJsonAsync(uri, rq, ct)
+        using var message = await apiClient.PutAsJsonAsync(uri, rq, ct)
             .ConfigureAwait(false);
 
-        return message.IsSuccessStatusCode
-            ? default
-            : await HandleFailResponse(message, rq, ct).ConfigureAwait(false);
+        return await HandleFailResponse(message, rq, ct).ConfigureAwait(false);
     }
+
+    public virtual Uri BuildUri(TRequest rq) => new(
+        string.Create(
+            CultureInfo.InvariantCulture,
+            $"{resource}/{rq.Id}"
+        ),
+        UriKind.RelativeOrAbsolute
+    );
 
     private async Task<ErrorOr<Updated>> HandleFailResponse(
         HttpResponseMessage message,
@@ -38,19 +39,23 @@ internal abstract class BaseUpdateModelReqHlr<TRequest> : IRequestHandler<TReque
     {
         switch (message.StatusCode)
         {
+            case HttpStatusCode.NoContent:
+            {
+                return default;
+            }
             case HttpStatusCode.NotFound:
             {
-                _logger.LogWarning("{ModelName} with `Id={ModelId}` not found", ModelName, rq.Id);
+                logger.LogWarning("{ModelName} with `Id={ModelId}` not found", ModelName, rq.Id);
                 return Error.NotFound();
             }
             case HttpStatusCode.Conflict:
             {
-                _logger.LogWarning("Conflict error while updating {ModelName}", ModelName);
+                logger.LogWarning("Conflict error while updating {ModelName}", ModelName);
                 return await message.TransformConflictHttpResponse(ct).ConfigureAwait(false);
             }
             case HttpStatusCode.BadRequest:
             {
-                _logger.LogWarning("Validation error while updating {ModelName}", ModelName);
+                logger.LogWarning("Validation error while updating {ModelName}", ModelName);
                 return await message.TransformBadRequestHttpResponse(ct).ConfigureAwait(false);
             }
             default:
@@ -58,7 +63,7 @@ internal abstract class BaseUpdateModelReqHlr<TRequest> : IRequestHandler<TReque
                 var reasonPhrase = message.ReasonPhrase ?? string.Empty;
                 var description = message.Content.ToString() ?? string.Empty;
 
-                _logger.LogError(
+                logger.LogError(
                     "{ModelName} cannot be updated. Reason: {ReasonPhrase}. Description: {Description}",
                     ModelName,
                     reasonPhrase,
@@ -69,6 +74,4 @@ internal abstract class BaseUpdateModelReqHlr<TRequest> : IRequestHandler<TReque
             }
         }
     }
-
-    protected abstract Uri BuildUri(TRequest rq);
 }

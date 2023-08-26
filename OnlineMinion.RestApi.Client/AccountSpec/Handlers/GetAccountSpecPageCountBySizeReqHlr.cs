@@ -6,13 +6,5 @@ using OnlineMinion.RestApi.Client.Shared.Handlers;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetAccountSpecPageCountBySizeReqHlr
-    : BaseGetModelPageCountReqHlr<GetAccountSpecPageCountBySizeReq>
-{
-    private readonly Uri _resource;
-
-    public GetAccountSpecPageCountBySizeReqHlr(ApiClientProvider api) : base(api.Client) =>
-        _resource = api.ApiV1AccountSpecsUri;
-
-    protected override Uri BuildUrl(GetAccountSpecPageCountBySizeReq rq) => AddQueryString(_resource, rq);
-}
+internal sealed class GetAccountSpecPageCountBySizeReqHlr(ApiClientProvider api)
+    : BaseGetModelPageCountReqHlr<GetAccountSpecPageCountBySizeReq>(api.Client, api.ApiV1AccountSpecsUri);

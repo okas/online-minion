@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
-using MediatR;
+using ErrorOr;
 using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
@@ -8,56 +8,27 @@ using OnlineMinion.Contracts.Shared.Responses;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
-internal abstract class BaseGetSomeModelsPagedReqHlr<TResponse>
-    : IRequestHandler<BaseGetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
+internal abstract class BasePagedGetSomeModelsReqHlr<TResponse>(HttpClient apiClient, Uri resource)
+    : IApiClientRequestHandler<BaseGetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
 {
-    private readonly HttpClient _apiClient;
-    protected BaseGetSomeModelsPagedReqHlr(HttpClient apiClient) => _apiClient = apiClient;
+    public virtual Uri BuildUri(BaseGetSomeModelsPagedReq<TResponse> rq) => AddQueryString(resource, rq);
 
-    public async Task<PagedResult<TResponse>> Handle(BaseGetSomeModelsPagedReq<TResponse> rq, CancellationToken ct)
+    public async Task<ErrorOr<PagedResult<TResponse>>> Handle(
+        BaseGetSomeModelsPagedReq<TResponse> rq,
+        CancellationToken                    ct
+    )
     {
-        var uri = BuildUrl(rq);
+        var uri = BuildUri(rq);
 
         var message = new HttpRequestMessage(HttpMethod.Get, uri);
 
         var responseMessage = await GetRequestResponse(message, ct).ConfigureAwait(false);
 
-        responseMessage.EnsureSuccessStatusCode();
-
-        var pagingMetaInfo = GetPagingInfo(rq, responseMessage.Headers);
-
-        var modelsAsyncStream = await GetResultAsStreamAsync(responseMessage, ct).ConfigureAwait(false);
-
-        return new(modelsAsyncStream, pagingMetaInfo);
-    }
-
-    protected abstract Uri BuildUrl(IQueryParams rq);
-
-    /// <summary>
-    ///     Intended to be called by implementer only to attach query string to the uri.
-    /// </summary>
-    protected static Uri AddQueryString(Uri uri, IQueryParams request)
-    {
-        var queryStringParams = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
-
-        if (!string.IsNullOrWhiteSpace(request.Filter))
-        {
-            queryStringParams[nameof(request.Filter)] = request.Filter;
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.Sort))
-        {
-            queryStringParams[nameof(request.Sort)] = request.Sort;
-        }
-
-        queryStringParams[nameof(request.Page)] = request.Page;
-        queryStringParams[nameof(request.Size)] = request.Size;
-
-        return new(uri.AddQueryString(queryStringParams), UriKind.RelativeOrAbsolute);
+        return await HandleResponse(responseMessage, rq, ct).ConfigureAwait(false);
     }
 
     private Task<HttpResponseMessage> GetRequestResponse(HttpRequestMessage message, CancellationToken ct) =>
-        _apiClient.SendAsync(
+        apiClient.SendAsync(
             /* Important: *browser streaming* and *http completion* are requirements to get streaming behavior working.
              * NB! It is expected to be configured as DelegatingHandler for HttpClientFactory!
              * This way current assembly do not hold references to WebAssembly specific dependencies. */
@@ -66,6 +37,24 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TResponse>
             HttpCompletionOption.ResponseHeadersRead,
             ct
         );
+
+    private static async ValueTask<ErrorOr<PagedResult<TResponse>>> HandleResponse(
+        HttpResponseMessage responseMessage,
+        IPagingInfo         rq,
+        CancellationToken   ct
+    )
+    {
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            return Error.Unexpected();
+        }
+
+        var pagingMetaInfo = GetPagingInfo(rq, responseMessage.Headers);
+
+        var modelsAsyncStream = await GetResultAsStreamAsync(responseMessage, ct).ConfigureAwait(false);
+
+        return new PagedResult<TResponse>(modelsAsyncStream, pagingMetaInfo);
+    }
 
     private static PagingMetaInfo GetPagingInfo(IPagingInfo request, HttpResponseHeaders headers)
     {
@@ -91,5 +80,25 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TResponse>
 
         // TODO: Compiler error about nullabiliti mismatch means ErrorOR should be implemented.
         return JsonSerializer.DeserializeAsyncEnumerable<TResponse>(stream, options, ct);
+    }
+
+    protected virtual Uri AddQueryString(Uri uri, IQueryParams rq)
+    {
+        var queryStringParams = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
+
+        if (!string.IsNullOrWhiteSpace(rq.Filter))
+        {
+            queryStringParams[nameof(rq.Filter)] = rq.Filter;
+        }
+
+        if (!string.IsNullOrWhiteSpace(rq.Sort))
+        {
+            queryStringParams[nameof(rq.Sort)] = rq.Sort;
+        }
+
+        queryStringParams[nameof(rq.Page)] = rq.Page;
+        queryStringParams[nameof(rq.Size)] = rq.Size;
+
+        return new(uri.AddQueryString(queryStringParams), UriKind.RelativeOrAbsolute);
     }
 }

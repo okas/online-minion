@@ -1,29 +1,35 @@
+using System.Globalization;
 using System.Net;
 using ErrorOr;
-using MediatR;
 using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
-internal abstract class BaseDeleteModelReqHlr<TRequest> : IRequestHandler<TRequest, ErrorOr<Deleted>>
+internal abstract class BaseDeleteModelReqHlr<TRequest>(HttpClient apiClient, Uri resource)
+    : IApiClientRequestHandler<TRequest, Deleted>
     where TRequest : IDeleteByIdRequest
 {
-    private readonly HttpClient _apiClient;
-    protected BaseDeleteModelReqHlr(HttpClient apiClient) => _apiClient = apiClient;
-
     public async Task<ErrorOr<Deleted>> Handle(TRequest rq, CancellationToken ct)
     {
-        var uri = BuildUrl(rq);
+        var uri = BuildUri(rq);
 
-        var responseMessage = await _apiClient.DeleteAsync(uri, ct).ConfigureAwait(false);
+        var responseMessage = await apiClient.DeleteAsync(uri, ct).ConfigureAwait(false);
 
-        return responseMessage.StatusCode switch
-        {
-            HttpStatusCode.NoContent => Result.Deleted,
-            HttpStatusCode.NotFound => Error.NotFound(),
-            _ => Error.Unexpected(),
-        };
+        return HandleResponse(responseMessage);
     }
 
-    protected abstract Uri BuildUrl(TRequest request);
+    public virtual Uri BuildUri(TRequest request) => new(
+        string.Create(
+            CultureInfo.InvariantCulture,
+            $"{resource}/{request.Id}"
+        ),
+        UriKind.RelativeOrAbsolute
+    );
+
+    private static ErrorOr<Deleted> HandleResponse(HttpResponseMessage response) => response.StatusCode switch
+    {
+        HttpStatusCode.NoContent => Result.Deleted,
+        HttpStatusCode.NotFound => Error.NotFound(),
+        _ => Error.Unexpected(),
+    };
 }

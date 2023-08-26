@@ -1,32 +1,30 @@
 using System.Net;
 using ErrorOr;
 using MediatR;
-using OnlineMinion.RestApi.Client.Connectivity;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
-internal abstract class BaseCheckUniqueReqHlr<TRequest> : IRequestHandler<TRequest, ErrorOr<Success>>
-    where TRequest : IRequest<ErrorOr<Success>>
+internal abstract class BaseCheckUniqueReqHlr<TRequest>(HttpClient apiClient)
+    : IApiClientRequestHandler<TRequest, Success> where TRequest : IRequest<ErrorOr<Success>>
 {
-    protected readonly ApiClientProvider Api;
-    protected BaseCheckUniqueReqHlr(ApiClientProvider api) => Api = api;
-
     public async Task<ErrorOr<Success>> Handle(TRequest rq, CancellationToken ct)
     {
-        var uri = BuildUrl(rq);
+        var uri = BuildUri(rq);
 
         var message = new HttpRequestMessage(HttpMethod.Head, uri);
 
-        var result = await Api.Client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
+        var result = await apiClient.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, ct)
             .ConfigureAwait(false);
 
-        return result.StatusCode switch
-        {
-            HttpStatusCode.NoContent => Result.Success,
-            HttpStatusCode.Conflict => Error.Conflict(),
-            _ => Error.Unexpected(),
-        };
+        return HandleResponse(result);
     }
 
-    protected abstract Uri BuildUrl(TRequest rq);
+    public abstract Uri BuildUri(TRequest rq);
+
+    private static ErrorOr<Success> HandleResponse(HttpResponseMessage response) => response.StatusCode switch
+    {
+        HttpStatusCode.NoContent => Result.Success,
+        HttpStatusCode.Conflict => Error.Conflict(),
+        _ => Error.Unexpected(),
+    };
 }

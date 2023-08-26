@@ -17,10 +17,10 @@ namespace OnlineMinion.RestApi.MediatorInfra.Behaviors;
 ///     "Normal" validators are executed first, ones marked with <see cref="IAsyncUniqueValidator{TModel}" /> are executed
 ///     second. In case of validation failures in either steps, the pipeline will be short-circuited immediately.
 /// </remarks>
-/// <typeparam name="TRequest">Request or model, constrained to <see cref="IUpsertCommand" />.</typeparam>
+/// <typeparam name="TRequest">Request or model, constrained to <see cref="IUpsertCommand{TResponse}" />.</typeparam>
 /// <typeparam name="TResponse">Response model, constrained to <see cref="IErrorOr" />.</typeparam>
 public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IUpsertCommand
+    where TRequest : IUpsertCommand<TResponse>
     where TResponse : IErrorOr
 {
     private readonly IValidator<TRequest>[] _normalValidators;

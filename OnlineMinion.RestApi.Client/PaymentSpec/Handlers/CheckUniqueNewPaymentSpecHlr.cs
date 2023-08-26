@@ -7,14 +7,13 @@ using OnlineMinion.RestApi.Client.Shared.Handlers;
 namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckUniqueNewPaymentSpecHlr : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueNewReq>
+internal sealed class CheckUniqueNewPaymentSpecHlr(ApiClientProvider api)
+    : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueNewReq>(api.Client)
 {
-    public CheckUniqueNewPaymentSpecHlr(ApiClientProvider api) : base(api) { }
-
-    protected override Uri BuildUrl(CheckPaymentSpecUniqueNewReq rq) => new(
+    public override Uri BuildUri(CheckPaymentSpecUniqueNewReq rq) => new(
         string.Create(
             CultureInfo.InvariantCulture,
-            $"{Api.ApiV1PaymentSpecsUri}/validate-available-name/{rq.Name}"
+            $"{api.ApiV1PaymentSpecsUri}/validate-available-name/{rq.Name}"
         ),
         UriKind.RelativeOrAbsolute
     );

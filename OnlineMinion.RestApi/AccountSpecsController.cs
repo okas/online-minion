@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
@@ -17,10 +18,8 @@ using Swashbuckle.AspNetCore.Filters;
 namespace OnlineMinion.RestApi;
 
 [ApiVersion("1")]
-public class AccountSpecsController : ApiControllerBase
+public class AccountSpecsController(ISender sender, ILogger<AccountSpecsController> logger) : ApiControllerBase(sender)
 {
-    public AccountSpecsController(ISender sender) : base(sender) { }
-
     /// <summary>
     ///     Unique name validation for new create workflow.
     /// </summary>
@@ -110,9 +109,18 @@ public class AccountSpecsController : ApiControllerBase
 
         var result = await Sender.Send(rq, ct);
 
-        SetPagingHeaders(result.Paging);
-
-        return Ok(result.Result);
+        return result.MatchFirst(
+            envelope =>
+            {
+                SetPagingHeaders(envelope.Paging);
+                return Ok(envelope.Result);
+            },
+            firstError =>
+            {
+                logger.LogError("Error while getting paged models: {Error}", firstError);
+                return CreateApiProblemResult(firstError);
+            }
+        );
     }
 
     [HttpPost]

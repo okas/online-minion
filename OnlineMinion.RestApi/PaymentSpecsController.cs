@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
@@ -18,9 +19,9 @@ using Swashbuckle.AspNetCore.Filters;
 namespace OnlineMinion.RestApi;
 
 [ApiVersion("1")]
-public class PaymentSpecsController : ApiControllerBase
+public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsController> logger) : ApiControllerBase(sender)
 {
-    public PaymentSpecsController(ISender sender) : base(sender) { }
+    private readonly ILogger<PaymentSpecsController> _logger = logger;
 
     /// <summary>
     ///     Unique name validation for new create workflow.
@@ -111,9 +112,18 @@ public class PaymentSpecsController : ApiControllerBase
 
         var result = await Sender.Send(rq, ct);
 
-        SetPagingHeaders(result.Paging);
-
-        return Ok(result.Result);
+        return result.MatchFirst(
+            envelope =>
+            {
+                SetPagingHeaders(envelope.Paging);
+                return Ok(envelope.Result);
+            },
+            firstError =>
+            {
+                logger.LogError("Error while getting paged models: {Error}", firstError);
+                return CreateApiProblemResult(firstError);
+            }
+        );
     }
 
     [HttpPost]

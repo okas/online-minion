@@ -1,7 +1,8 @@
 using System.Linq.Expressions;
+using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Common;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
@@ -14,11 +15,11 @@ namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 [UsedImplicitly]
 internal sealed class GetPaymentSpecsReqHlr :
     BaseGetSomeModelQueryHandler<BaseGetSomeModelsPagedReq<PaymentSpecResp>, PaymentSpecResp>,
-    IRequestHandler<BaseGetSomeModelsPagedReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
+    IApiRequestHandler<BaseGetSomeModelsPagedReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
 {
     public GetPaymentSpecsReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
-    public async Task<PagedResult<PaymentSpecResp>> Handle(
+    public async Task<ErrorOr<PagedResult<PaymentSpecResp>>> Handle(
         BaseGetSomeModelsPagedReq<PaymentSpecResp> rq,
         CancellationToken                          ct
     )

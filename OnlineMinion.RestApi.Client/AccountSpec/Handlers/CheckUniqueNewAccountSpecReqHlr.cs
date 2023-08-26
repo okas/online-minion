@@ -7,14 +7,13 @@ using OnlineMinion.RestApi.Client.Shared.Handlers;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckUniqueNewAccountSpecReqHlr : BaseCheckUniqueReqHlr<CheckAccountSpecUniqueNewReq>
+internal sealed class CheckUniqueNewAccountSpecReqHlr(ApiClientProvider api)
+    : BaseCheckUniqueReqHlr<CheckAccountSpecUniqueNewReq>(api.Client)
 {
-    public CheckUniqueNewAccountSpecReqHlr(ApiClientProvider api) : base(api) { }
-
-    protected override Uri BuildUrl(CheckAccountSpecUniqueNewReq rq) => new(
+    public override Uri BuildUri(CheckAccountSpecUniqueNewReq rq) => new(
         string.Create(
             CultureInfo.InvariantCulture,
-            $"{Api.ApiV1AccountSpecsUri}/validate-available-name/{rq.Name}"
+            $"{api.ApiV1AccountSpecsUri}/validate-available-name/{rq.Name}"
         ),
         UriKind.RelativeOrAbsolute
     );

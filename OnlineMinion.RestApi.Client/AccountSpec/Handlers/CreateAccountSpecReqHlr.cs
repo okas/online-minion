@@ -7,15 +7,8 @@ using OnlineMinion.RestApi.Client.Shared.Handlers;
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CreateAccountSpecReqHlr : BaseCreateModelReqHlr<CreateAccountSpecReq>
+internal sealed class CreateAccountSpecReqHlr(ApiClientProvider api, ILogger<CreateAccountSpecReqHlr> logger)
+    : BaseCreateModelReqHlr<CreateAccountSpecReq>(api.Client, api.ApiV1AccountSpecsUri, logger)
 {
-    private readonly Uri _resource;
-
-    public CreateAccountSpecReqHlr(ApiClientProvider api, ILogger<CreateAccountSpecReqHlr> logger)
-        : base(api.Client, logger) =>
-        _resource = api.ApiV1AccountSpecsUri;
-
     protected override string ModelName => "Account Specification";
-
-    protected override Uri BuildUri() => _resource;
 }

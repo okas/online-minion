@@ -1,7 +1,8 @@
 using System.Linq.Expressions;
+using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Common;
 using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
@@ -14,11 +15,11 @@ namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 [UsedImplicitly]
 internal sealed class GetAccountSpecsReqHlr :
     BaseGetSomeModelQueryHandler<BaseGetSomeModelsPagedReq<AccountSpecResp>, AccountSpecResp>,
-    IRequestHandler<BaseGetSomeModelsPagedReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
+    IApiRequestHandler<BaseGetSomeModelsPagedReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
 {
     public GetAccountSpecsReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
-    public async Task<PagedResult<AccountSpecResp>> Handle(
+    public async Task<ErrorOr<PagedResult<AccountSpecResp>>> Handle(
         BaseGetSomeModelsPagedReq<AccountSpecResp> rq,
         CancellationToken                          ct
     )

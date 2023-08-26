@@ -69,9 +69,24 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
             CT
         );
 
-        TotalItemsCount = result.Paging.Rows;
-        ViewModels.Clear();
-        await result.Result.PullItemsFromStream(ViewModels, CT, StateHasChanged);
+        await result.SwitchFirstAsync(
+            async pagedResult =>
+            {
+                TotalItemsCount = pagedResult.Paging.Rows;
+                ViewModels.Clear();
+                await pagedResult.Result.PullItemsFromStream(ViewModels, CT, StateHasChanged);
+            },
+            firstError =>
+            {
+                Logger.LogError(
+                    "Unexpected error while getting {ModelName} list: {ErrorDescription}",
+                    typeof(TModel).Name,
+                    firstError.Description
+                );
+
+                return Task.CompletedTask;
+            }
+        );
 
         SC.IsBusy = false;
     }

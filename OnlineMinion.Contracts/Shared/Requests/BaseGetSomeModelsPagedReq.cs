@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ErrorOr;
 using MediatR;
 using OnlineMinion.Contracts.Shared.Responses;
 
@@ -10,9 +11,9 @@ namespace OnlineMinion.Contracts.Shared.Requests;
 /// <param name="Sort">
 ///     Sort/OrderBy string <a href="https://dynamic-linq.net/basic-simple-query#ordering-results">see docs</a>.
 /// </param>
-public record BaseGetSomeModelsPagedReq<TResp>(
+public record BaseGetSomeModelsPagedReq<TResponse>(
     string?             Filter = default,
     string?             Sort   = default,
     [Range(1, 50)]  int Page   = 1,
     [Range(1, 100)] int Size   = 10
-) : IRequest<PagedResult<TResp>>, IQueryParams;
+) : IRequest<ErrorOr<PagedResult<TResponse>>>, IQueryParams;

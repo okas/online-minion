@@ -1,6 +1,7 @@
+using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Common;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Data;
@@ -8,12 +9,12 @@ using OnlineMinion.Data;
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal class GetPaymentSpecByIdReqHlr : IRequestHandler<GetPaymentSpecByIdReq, PaymentSpecResp?>
+internal class GetPaymentSpecByIdReqHlr : IApiRequestHandler<GetPaymentSpecByIdReq, PaymentSpecResp?>
 {
     private readonly OnlineMinionDbContext _dbContext;
     public GetPaymentSpecByIdReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<PaymentSpecResp?> Handle(GetPaymentSpecByIdReq rq, CancellationToken ct)
+    public async Task<ErrorOr<PaymentSpecResp?>> Handle(GetPaymentSpecByIdReq rq, CancellationToken ct)
     {
         var entity = await _dbContext.PaymentSpecs.AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == rq.Id, ct)
@@ -21,10 +22,10 @@ internal class GetPaymentSpecByIdReqHlr : IRequestHandler<GetPaymentSpecByIdReq,
 
         if (entity is null)
         {
-            return null;
+            return default;
         }
 
-        return new()
+        return new PaymentSpecResp
         {
             Id = entity.Id,
             Name = entity.Name,
