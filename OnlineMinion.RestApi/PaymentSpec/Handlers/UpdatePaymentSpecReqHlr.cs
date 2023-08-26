@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Data;
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data.Entities.Shared;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 

@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using OnlineMinion.Data.BaseEntities;
 
 namespace OnlineMinion.Data.Entities;
 

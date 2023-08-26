@@ -1,6 +1,6 @@
 using MediatR;
 using OnlineMinion.Contracts;
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.Shared.Requests;
 

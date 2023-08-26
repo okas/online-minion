@@ -1,4 +1,4 @@
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data.Entities.Shared;
 
 namespace OnlineMinion.Data.Entities;
 

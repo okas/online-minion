@@ -8,7 +8,7 @@ using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.Shared.Requests;
 using Swashbuckle.AspNetCore.Annotations;

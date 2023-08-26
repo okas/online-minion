@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
 using OnlineMinion.Data;
-using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;

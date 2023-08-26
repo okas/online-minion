@@ -1,6 +1,6 @@
 using OnlineMinion.Contracts;
 
-namespace OnlineMinion.Data.BaseEntities;
+namespace OnlineMinion.Data;
 
 public abstract class BaseEntity : IHasIntId
 {

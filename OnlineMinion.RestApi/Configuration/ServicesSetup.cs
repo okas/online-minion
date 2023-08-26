@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.Contracts;
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
 using OnlineMinion.RestApi.Shared.Handlers;

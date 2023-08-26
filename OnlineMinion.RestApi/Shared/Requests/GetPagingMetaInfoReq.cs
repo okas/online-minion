@@ -1,4 +1,4 @@
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.Shared.Requests;
 

@@ -6,7 +6,7 @@ using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data;
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;

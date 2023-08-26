@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data;
-using OnlineMinion.Data.BaseEntities;
 using OnlineMinion.RestApi.Helpers;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;

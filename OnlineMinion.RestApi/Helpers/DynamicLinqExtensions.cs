@@ -1,6 +1,6 @@
 using System.Linq.Dynamic.Core;
 using OnlineMinion.Contracts;
-using OnlineMinion.Data.BaseEntities;
+using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.Helpers;
 

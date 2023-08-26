@@ -3,7 +3,6 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Data;
-using OnlineMinion.Data.BaseEntities;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
