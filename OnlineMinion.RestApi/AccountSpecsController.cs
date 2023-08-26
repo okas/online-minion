@@ -99,8 +99,8 @@ public class AccountSpecsController : ApiControllerBase
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomePagedReq<AccountSpecResp> rq,
-        CancellationToken                                ct
+        [FromQuery] BaseGetSomeModelsPagedReq<AccountSpecResp> rq,
+        CancellationToken                                      ct
     )
     {
         if (!ModelState.IsValid)

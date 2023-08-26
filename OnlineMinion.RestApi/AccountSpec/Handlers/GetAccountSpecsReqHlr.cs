@@ -12,14 +12,15 @@ using OnlineMinion.RestApi.Shared.Handlers;
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetAccountSpecsReqHlr : BaseQueryHandler<BaseGetSomePagedReq<AccountSpecResp>, AccountSpecResp>,
-    IRequestHandler<BaseGetSomePagedReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
+internal sealed class GetAccountSpecsReqHlr :
+    BaseGetSomeModelQueryHandler<BaseGetSomeModelsPagedReq<AccountSpecResp>, AccountSpecResp>,
+    IRequestHandler<BaseGetSomeModelsPagedReq<AccountSpecResp>, PagedResult<AccountSpecResp>>
 {
     public GetAccountSpecsReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
     public async Task<PagedResult<AccountSpecResp>> Handle(
-        BaseGetSomePagedReq<AccountSpecResp> rq,
-        CancellationToken                    ct
+        BaseGetSomeModelsPagedReq<AccountSpecResp> rq,
+        CancellationToken                          ct
     )
     {
         var query = DbContext.AccountSpecs.AsNoTracking();

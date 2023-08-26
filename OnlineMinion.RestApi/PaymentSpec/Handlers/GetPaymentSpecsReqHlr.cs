@@ -12,14 +12,15 @@ using OnlineMinion.RestApi.Shared.Handlers;
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetPaymentSpecsReqHlr : BaseQueryHandler<BaseGetSomePagedReq<PaymentSpecResp>, PaymentSpecResp>,
-    IRequestHandler<BaseGetSomePagedReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
+internal sealed class GetPaymentSpecsReqHlr :
+    BaseGetSomeModelQueryHandler<BaseGetSomeModelsPagedReq<PaymentSpecResp>, PaymentSpecResp>,
+    IRequestHandler<BaseGetSomeModelsPagedReq<PaymentSpecResp>, PagedResult<PaymentSpecResp>>
 {
     public GetPaymentSpecsReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
 
     public async Task<PagedResult<PaymentSpecResp>> Handle(
-        BaseGetSomePagedReq<PaymentSpecResp> rq,
-        CancellationToken                    ct
+        BaseGetSomeModelsPagedReq<PaymentSpecResp> rq,
+        CancellationToken                          ct
     )
     {
         var query = DbContext.PaymentSpecs.AsNoTracking();

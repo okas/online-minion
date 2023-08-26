@@ -65,7 +65,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         SC.IsBusy = true;
 
         var result = await Sender.Send(
-            new BaseGetSomePagedReq<TModel>(filterExpression, sortExpression, page, size),
+            new BaseGetSomeModelsPagedReq<TModel>(filterExpression, sortExpression, page, size),
             CT
         );
 

@@ -100,8 +100,8 @@ public class PaymentSpecsController : ApiControllerBase
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomePagedReq<PaymentSpecResp> rq,
-        CancellationToken                                ct
+        [FromQuery] BaseGetSomeModelsPagedReq<PaymentSpecResp> rq,
+        CancellationToken                                      ct
     )
     {
         if (!ModelState.IsValid)

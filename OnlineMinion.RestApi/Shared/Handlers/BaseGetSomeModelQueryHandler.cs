@@ -7,11 +7,11 @@ using OnlineMinion.RestApi.Helpers;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseQueryHandler<TRequest, TResponse>
+internal abstract class BaseGetSomeModelQueryHandler<TRequest, TResponse>
     where TRequest : IQueryParams
 {
     protected readonly OnlineMinionDbContext DbContext;
-    protected BaseQueryHandler(OnlineMinionDbContext dbContext) => DbContext = dbContext;
+    protected BaseGetSomeModelQueryHandler(OnlineMinionDbContext dbContext) => DbContext = dbContext;
 
     protected static async ValueTask<PagedResult<TResponse>> GetDataFromStoreAsync<TEntity>(
         IQueryable<TEntity>                  query,

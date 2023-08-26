@@ -9,12 +9,12 @@ using OnlineMinion.Contracts.Shared.Responses;
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
 internal abstract class BaseGetSomeModelsPagedReqHlr<TResponse>
-    : IRequestHandler<BaseGetSomePagedReq<TResponse>, PagedResult<TResponse>>
+    : IRequestHandler<BaseGetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
 {
     private readonly HttpClient _apiClient;
     protected BaseGetSomeModelsPagedReqHlr(HttpClient apiClient) => _apiClient = apiClient;
 
-    public async Task<PagedResult<TResponse>> Handle(BaseGetSomePagedReq<TResponse> rq, CancellationToken ct)
+    public async Task<PagedResult<TResponse>> Handle(BaseGetSomeModelsPagedReq<TResponse> rq, CancellationToken ct)
     {
         var uri = BuildUrl(rq);
 
