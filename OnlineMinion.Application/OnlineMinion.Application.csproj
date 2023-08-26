@@ -12,6 +12,7 @@
         <Product>OnlineMinion.Application</Product>
         <RootNamespace>OnlineMinion.Application</RootNamespace>
         <Copyright>Lauri Saar</Copyright>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup>

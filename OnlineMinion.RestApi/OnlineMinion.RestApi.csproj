@@ -7,6 +7,7 @@
         <Title>OnlineMinion.API</Title>
         <Authors>Lauri Saar</Authors>
         <Company>LS Pro</Company>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup>
