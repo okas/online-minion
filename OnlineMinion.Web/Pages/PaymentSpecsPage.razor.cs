@@ -4,7 +4,6 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.RestApi.Client.PaymentSpec.Requests;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 
@@ -79,8 +78,8 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp>
         };
     }
 
-    protected override IGetPagingInfoReq PageCountRequestFactory(int pageSize) =>
-        new GetPaymentSpecPageCountBySizeReq(pageSize);
+    protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
+        new GetPaymentSpecPagingMetaInfoReq(pageSize);
 
     private async Task OnDeleteHandler(PaymentSpecResp model)
     {

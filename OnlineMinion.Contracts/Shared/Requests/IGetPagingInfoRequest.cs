@@ -3,7 +3,7 @@ using MediatR;
 
 namespace OnlineMinion.Contracts.Shared.Requests;
 
-public interface IGetPagingInfoReq : IRequest<ErrorOr<int>>
+public interface IGetPagingInfoRequest : IRequest<ErrorOr<PagingMetaInfo>>
 {
     int PageSize { get; }
 }

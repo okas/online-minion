@@ -10,6 +10,8 @@ namespace OnlineMinion.Contracts;
 [StructLayout(LayoutKind.Auto)]
 public sealed record PagingMetaInfo(int Rows) : BasePagingParams
 {
+    public PagingMetaInfo(int rows, int size) : this(rows) => Size = size;
+
     public PagingMetaInfo(int rows, int size, int page) : this(rows) => (Size, Page) = (size, page);
 
     [JsonIgnore]

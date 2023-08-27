@@ -7,7 +7,7 @@ namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
 internal abstract class BaseDeleteModelReqHlr<TRequest>(HttpClient apiClient, Uri resource)
     : IApiClientRequestHandler<TRequest, Deleted>
-    where TRequest : IDeleteByIdRequest
+    where TRequest : IDeleteByIdCommand
 {
     public async Task<ErrorOr<Deleted>> Handle(TRequest rq, CancellationToken ct)
     {

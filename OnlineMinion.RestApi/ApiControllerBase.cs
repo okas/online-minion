@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
-using OnlineMinion.Data;
+using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.Configuration;
-using OnlineMinion.RestApi.Shared.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -57,14 +56,19 @@ public abstract class ApiControllerBase : ControllerBase
     {
         var req = PagingMetaInfoRequestFactory(pageSize);
 
-        var pagingMetaInfo = await Sender.Send(req, ct);
+        var result = await Sender.Send(req, ct);
 
-        SetPagingHeaders(pagingMetaInfo);
-
-        return NoContent();
+        return result.MatchFirst(
+            pagingMetaInfo =>
+            {
+                SetPagingHeaders(pagingMetaInfo);
+                return NoContent();
+            },
+            error => CreateApiProblemResult(error)
+        );
     }
 
-    protected abstract IPagedResourceRequest<BaseEntity> PagingMetaInfoRequestFactory(int pageSize);
+    protected abstract IGetPagingInfoRequest PagingMetaInfoRequestFactory(int pageSize);
 
     /// <summary>
     ///     Sets response headers of paging related data.

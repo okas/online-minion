@@ -1,4 +1,5 @@
 using CorsPolicySettings;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -8,11 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.Contracts;
+using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Data.Entities;
 using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
 using OnlineMinion.RestApi.Shared.Handlers;
-using OnlineMinion.RestApi.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Configuration;
 
@@ -58,13 +62,14 @@ public static class ServicesSetup
                     cfg.AddOpenBehavior(typeof(CommandUnitOfWorkBehavior<,>));
                 }
             )
-            .AddTransient<
-                IRequestHandler<GetPagingMetaInfoReq<Data.Entities.AccountSpec>, PagingMetaInfo>,
-                GetPagingInfoReqHlr<Data.Entities.AccountSpec>
+            .AddTransient<IRequestHandler<GetAccountPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
+                GetModelPagingInfoReqHlr<GetAccountPagingMetaInfoReq, Data.Entities.AccountSpec>
             >()
-            .AddTransient<
-                IRequestHandler<GetPagingMetaInfoReq<BasePaymentSpec>, PagingMetaInfo>,
-                GetPagingInfoReqHlr<BasePaymentSpec>
+            .AddTransient<IRequestHandler<GetPaymentSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
+                GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, BasePaymentSpec>
+            >()
+            .AddTransient<IRequestHandler<GetTransactionCreditPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
+                GetModelPagingInfoReqHlr<GetTransactionCreditPagingMetaInfoReq, TransactionCredit>
             >();
 
         return services;

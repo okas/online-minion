@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text.Json;
 using ErrorOr;
 using OnlineMinion.Common.Utilities;
@@ -49,20 +48,12 @@ internal abstract class BasePagedGetSomeModelsReqHlr<TResponse>(HttpClient apiCl
             return Error.Unexpected();
         }
 
-        var pagingMetaInfo = GetPagingInfo(rq, responseMessage.Headers);
+        var pagingMetaInfo = responseMessage.GetPagingMetaInfo(rq.Page);
 
         var modelsAsyncStream = await GetResultAsStreamAsync(responseMessage, ct).ConfigureAwait(false);
 
-        return new PagedResult<TResponse>(modelsAsyncStream, pagingMetaInfo);
-    }
-
-    private static PagingMetaInfo GetPagingInfo(IPagingInfo request, HttpResponseHeaders headers)
-    {
-        var size = headers.GetHeaderFirstValue<int>(CustomHeaderNames.PagingSize);
-
-        var totalItems = headers.GetHeaderFirstValue<int>(CustomHeaderNames.PagingRows);
-
-        return new(totalItems, size, request.Page);
+        //TODO: If paging metainfo cannot be read, then return Error before reading models, cancel request somewhere...
+        return new PagedResult<TResponse>(modelsAsyncStream, pagingMetaInfo.Value);
     }
 
     private static async ValueTask<IAsyncEnumerable<TResponse>> GetResultAsStreamAsync(

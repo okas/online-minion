@@ -8,11 +8,9 @@ using OnlineMinion.RestApi.Shared.Handlers;
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckUniqueNewPaymentSpecReqHlr
-    : BaseCheckUniqueModelReqHlr<CheckPaymentSpecUniqueNewReq, BasePaymentSpec>
+internal sealed class CheckUniqueNewPaymentSpecReqHlr(OnlineMinionDbContext dbContext)
+    : BaseCheckUniqueModelReqHlr<CheckPaymentSpecUniqueNewReq, BasePaymentSpec>(dbContext)
 {
-    public CheckUniqueNewPaymentSpecReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
-
     protected override Expression<Func<BasePaymentSpec, bool>> GetConflictPredicate(CheckPaymentSpecUniqueNewReq rq) =>
         entity => entity.Name == rq.Name;
 }

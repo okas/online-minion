@@ -6,18 +6,16 @@ using OnlineMinion.Data;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseCheckUniqueModelReqHlr<TRequest, TEntity> : IRequestHandler<TRequest, ErrorOr<Success>>
+internal abstract class BaseCheckUniqueModelReqHlr<TRequest, TEntity>(OnlineMinionDbContext dbContext)
+    : IRequestHandler<TRequest, ErrorOr<Success>>
     where TRequest : IRequest<ErrorOr<Success>>
     where TEntity : BaseEntity
 {
-    private readonly OnlineMinionDbContext _dbContext;
-    protected BaseCheckUniqueModelReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
-
     public async Task<ErrorOr<Success>> Handle(TRequest rq, CancellationToken ct)
     {
         var predicate = GetConflictPredicate(rq);
 
-        var result = await _dbContext.Set<TEntity>()
+        var result = await dbContext.Set<TEntity>()
             .AnyAsync(predicate, ct)
             .ConfigureAwait(false);
 

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace OnlineMinion.Contracts.Shared.Requests;
 
-public interface IDeleteByIdRequest : IHasIntId, IRequest<ErrorOr<Deleted>>;
+public interface IDeleteByIdCommand : IHasIntId, IRequest<ErrorOr<Deleted>>;

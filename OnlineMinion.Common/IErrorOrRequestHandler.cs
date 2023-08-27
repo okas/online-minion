@@ -3,6 +3,6 @@ using MediatR;
 
 namespace OnlineMinion.Common;
 
-public interface IApiRequestHandler<in TRequest, TResult>
+public interface IErrorOrRequestHandler<in TRequest, TResult>
     : IRequestHandler<TRequest, ErrorOr<TResult>>
     where TRequest : IRequest<ErrorOr<TResult>>;

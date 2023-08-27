@@ -9,10 +9,7 @@ using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.Data;
-using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.Configuration;
-using OnlineMinion.RestApi.Shared.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -21,8 +18,6 @@ namespace OnlineMinion.RestApi;
 [ApiVersion("1")]
 public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsController> logger) : ApiControllerBase(sender)
 {
-    private readonly ILogger<PaymentSpecsController> _logger = logger;
-
     /// <summary>
     ///     Unique name validation for new create workflow.
     /// </summary>
@@ -181,6 +176,6 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
         );
     }
 
-    protected override IPagedResourceRequest<BaseEntity> PagingMetaInfoRequestFactory(int pageSize) =>
-        new GetPagingMetaInfoReq<BasePaymentSpec>(pageSize);
+    protected override IGetPagingInfoRequest PagingMetaInfoRequestFactory(int pageSize) =>
+        new GetPaymentSpecPagingMetaInfoReq(pageSize);
 }

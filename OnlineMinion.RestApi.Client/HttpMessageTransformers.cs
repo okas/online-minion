@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using ErrorOr;
 using Microsoft.AspNetCore.Http;
+using OnlineMinion.Common.Utilities;
+using OnlineMinion.Contracts;
 
 namespace OnlineMinion.RestApi.Client;
 
@@ -44,6 +46,24 @@ public static class HttpMessageTransformers
             validationProblemDetails.Detail,
             validationProblemDetails.Errors.CastToObjectValues()
         );
+    }
+
+    /// <summary>
+    ///     Reads Paging info from response headers.
+    /// </summary>
+    public static ErrorOr<PagingMetaInfo> GetPagingMetaInfo(this HttpResponseMessage response, int? page = default)
+    {
+        var size = response.Headers.GetHeaderFirstValue<int?>(CustomHeaderNames.PagingSize);
+        var totalItems = response.Headers.GetHeaderFirstValue<int?>(CustomHeaderNames.PagingRows);
+
+        if (size is null || totalItems is null)
+        {
+            return Error.Failure(description: "Paging info not found in header.");
+        }
+
+        return page.HasValue
+            ? new(totalItems.Value, size.Value, page.Value)
+            : new PagingMetaInfo(totalItems.Value, size.Value);
     }
 
     private static async Task<HttpValidationProblemDetails> ReadHttpValidationProblemDetails(

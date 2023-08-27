@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace OnlineMinion.RestApi.MediatorInfra;
+namespace OnlineMinion.RestApi.Configuration;
 
-public static class PipelineSetup
+public static class HttpRequestPipelineSetup
 {
     public static WebApplication UseRestApi(this WebApplication app)
     {

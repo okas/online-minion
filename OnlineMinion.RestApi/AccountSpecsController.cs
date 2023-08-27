@@ -4,14 +4,13 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.Data;
 using OnlineMinion.RestApi.Configuration;
-using OnlineMinion.RestApi.Shared.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -113,7 +112,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result);
+                return Ok(envelope.Result.ToDelayedAsyncEnumerable(20, ct));
             },
             firstError =>
             {
@@ -178,6 +177,6 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
         );
     }
 
-    protected override IPagedResourceRequest<BaseEntity> PagingMetaInfoRequestFactory(int pageSize) =>
-        new GetPagingMetaInfoReq<Data.Entities.AccountSpec>(pageSize);
+    protected override IGetPagingInfoRequest PagingMetaInfoRequestFactory(int pageSize) =>
+        new GetAccountPagingMetaInfoReq(pageSize);
 }

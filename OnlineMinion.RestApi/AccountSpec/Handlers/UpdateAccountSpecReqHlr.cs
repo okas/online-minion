@@ -1,39 +1,19 @@
-using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Data;
+using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class UpdateAccountSpecReqHlr : IRequestHandler<UpdateAccountSpecReq, ErrorOr<Updated>>
+internal sealed class UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext, ILogger<UpdateAccountSpecReqHlr> logger)
+    : BaseUpdateModelReqHlr<UpdateAccountSpecReq, Data.Entities.AccountSpec>(dbContext, logger)
 {
-    private readonly OnlineMinionDbContext _dbContext;
-    private readonly ILogger<UpdateAccountSpecReqHlr> _logger;
-
-    public UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext, ILogger<UpdateAccountSpecReqHlr> logger) =>
-        (_dbContext, _logger) = (dbContext, logger);
-
-    public async Task<ErrorOr<Updated>> Handle(UpdateAccountSpecReq rq, CancellationToken ct)
+    protected override void UpdateEntityAsync(Data.Entities.AccountSpec entity, UpdateAccountSpecReq rq)
     {
-        var entity = await _dbContext.AccountSpecs.FindAsync(new object?[] { rq.Id, }, ct)
-            .ConfigureAwait(false);
-
-        if (entity is not null)
-        {
-            entity.Name = rq.Name;
-            entity.Group = rq.Group;
-            entity.Description = rq.Description;
-        }
-        else
-        {
-            _logger.LogWarning("{ModelName} with Id {Id} not found", nameof(Data.Entities.AccountSpec), rq.Id);
-
-            return Error.NotFound();
-        }
-
-        return Result.Updated;
+        entity.Name = rq.Name;
+        entity.Group = rq.Group;
+        entity.Description = rq.Description;
     }
 }

@@ -1,26 +1,14 @@
-using ErrorOr;
 using JetBrains.Annotations;
-using MediatR;
 using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Data;
+using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CreateAccountSpecReqHlr : IRequestHandler<CreateAccountSpecReq, ErrorOr<ModelIdResp>>
+internal sealed class CreateAccountSpecReqHlr(OnlineMinionDbContext dbContext)
+    : BaseCreateModelReqHlr<CreateAccountSpecReq, Data.Entities.AccountSpec>(dbContext)
 {
-    private readonly OnlineMinionDbContext _dbContext;
-    public CreateAccountSpecReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
-
-    public async Task<ErrorOr<ModelIdResp>> Handle(CreateAccountSpecReq rq, CancellationToken ct)
-    {
-        var entry = await _dbContext.AccountSpecs.AddAsync(
-                new(rq.Name, rq.Group, rq.Description),
-                ct
-            )
-            .ConfigureAwait(false);
-
-        return new ModelIdResp(entry.Entity.Id);
-    }
+    protected override Data.Entities.AccountSpec ToEntity(CreateAccountSpecReq rq) =>
+        new(rq.Name, rq.Group, rq.Description);
 }

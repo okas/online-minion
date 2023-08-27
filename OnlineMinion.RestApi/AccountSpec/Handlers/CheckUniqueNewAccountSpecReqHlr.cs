@@ -7,11 +7,9 @@ using OnlineMinion.RestApi.Shared.Handlers;
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CheckUniqueNewAccountSpecReqHlr
-    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueNewReq, Data.Entities.AccountSpec>
+internal sealed class CheckUniqueNewAccountSpecReqHlr(OnlineMinionDbContext dbContext)
+    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueNewReq, Data.Entities.AccountSpec>(dbContext)
 {
-    public CheckUniqueNewAccountSpecReqHlr(OnlineMinionDbContext dbContext) : base(dbContext) { }
-
     protected override Expression<Func<Data.Entities.AccountSpec, bool>> GetConflictPredicate(
         CheckAccountSpecUniqueNewReq rq
     ) =>

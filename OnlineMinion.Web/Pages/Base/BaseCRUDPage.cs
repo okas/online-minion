@@ -183,14 +183,14 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         );
     }
 
-    protected abstract IGetPagingInfoReq PageCountRequestFactory(int pageSize);
+    protected abstract IGetPagingInfoRequest PageCountRequestFactory(int pageSize);
 
-    private async ValueTask HandlePageStateAfterCreate(IGetPagingInfoReq metaInfoRequest)
+    private async ValueTask HandlePageStateAfterCreate(IGetPagingInfoRequest metaInfoRequest)
     {
         var result = await Sender.Send(metaInfoRequest, CT);
 
         await result.SwitchFirstAsync(
-            AfterSuccessfulChange,
+            info => AfterSuccessfulChange(info.Pages),
             firstError =>
             {
                 HandlePagingMetadataQueryErrors(firstError);
@@ -221,7 +221,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
 
     protected virtual void CloseEditorDialog() => DialogService.Close();
 
-    protected async ValueTask<bool> DeleteModelFromApi(IDeleteByIdRequest rq, string modelType)
+    protected async ValueTask<bool> DeleteModelFromApi(IDeleteByIdCommand rq, string modelType)
     {
         var result = await Sender.Send(rq, CT);
 

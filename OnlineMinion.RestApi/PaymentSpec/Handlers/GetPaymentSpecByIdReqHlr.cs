@@ -1,36 +1,21 @@
-using ErrorOr;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Common;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Data;
+using OnlineMinion.Data.Entities.Shared;
+using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal class GetPaymentSpecByIdReqHlr : IApiRequestHandler<GetPaymentSpecByIdReq, PaymentSpecResp?>
+internal class GetPaymentSpecByIdReqHlr(OnlineMinionDbContext dbContext)
+    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, BasePaymentSpec, PaymentSpecResp?>(dbContext)
 {
-    private readonly OnlineMinionDbContext _dbContext;
-    public GetPaymentSpecByIdReqHlr(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
-
-    public async Task<ErrorOr<PaymentSpecResp?>> Handle(GetPaymentSpecByIdReq rq, CancellationToken ct)
+    protected override PaymentSpecResp? ToResponse(BasePaymentSpec entity) => new()
     {
-        var entity = await _dbContext.PaymentSpecs.AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == rq.Id, ct)
-            .ConfigureAwait(false);
-
-        if (entity is null)
-        {
-            return default;
-        }
-
-        return new PaymentSpecResp
-        {
-            Id = entity.Id,
-            Name = entity.Name,
-            CurrencyCode = entity.CurrencyCode,
-            Tags = entity.Tags,
-        };
-    }
+        Id = entity.Id,
+        Name = entity.Name,
+        CurrencyCode = entity.CurrencyCode,
+        Tags = entity.Tags,
+    };
 }
