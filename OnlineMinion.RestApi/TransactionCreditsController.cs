@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace OnlineMinion.RestApi;
 
+[Route("api/v{version:apiVersion}/Transactions/Credits")]
 [ApiVersion("1")]
 public class TransactionCreditsController(ISender sender, ILogger<TransactionCreditsController> logger)
     : ApiControllerBase(sender)
@@ -26,7 +27,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
     public async Task<IActionResult> GetById(
         [FromRoute] GetTransactionCreditByIdReq rq,
         CancellationToken                       ct
-    ) => await Sender.Send(rq, ct) is { } model ? Ok(model) : NotFound();
+    ) => await Sender.Send(rq, ct) is var model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]

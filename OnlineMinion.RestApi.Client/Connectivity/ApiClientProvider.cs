@@ -13,7 +13,7 @@ public class ApiClientProvider
 
     public readonly Uri ApiV1PaymentSpecsUri = new("api/v1/PaymentSpecs", UriKind.Relative);
 
-    public readonly Uri ApiV1TransactionsCreditUri = new("api/v1/Transactions/Credit", UriKind.Relative);
+    public readonly Uri ApiV1TransactionsCreditUri = new("api/v1/Transactions/Credits", UriKind.Relative);
 
     public ApiClientProvider(HttpClient httpClient, IOptions<ApiClientProviderSettings> options)
     {
