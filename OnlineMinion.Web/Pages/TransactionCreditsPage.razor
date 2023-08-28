@@ -1,0 +1,68 @@
+@page "/transactions/credit"
+@using OnlineMinion.Contracts.Transactions.Responses
+@using System.Globalization
+@inherits BaseCRUDPage<TransactionCreditResp>
+
+@code
+{
+  protected override RenderFragment RenderEditorComponent() =>
+    @<CascadingValue IsFixed="@true" Value="@CT">
+      <UpsertEditorWrapper Model="@_modelUpsert" OnCancel="@CloseEditorDialog" OnSubmit="@OnUpsertSubmitHandler" @ref="@_editorRef">
+        <EditorFormFields>
+          <RadzenFormField Component="@Str.Date" Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
+            <RadzenDatePicker @bind-Value="@context.Date" DateFormat="@CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.Amount" Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
+            <RadzenNumeric @bind-Value="@context!.Amount" Format="c"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.Party" Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context!.Party" Trim="@true"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.Subject" Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.Tags" Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
+          </RadzenFormField>
+        </EditorFormFields>
+      </UpsertEditorWrapper>
+    </CascadingValue>;
+
+  private static class Str
+  {
+    public const string PageTitle = "Credit trans.";
+    public const string MainHeading = "Credit Transactions";
+    public const string MainDescription = $"Manage {MainHeading}";
+    public const string Date = nameof(TransactionCreditResp.Date);
+    public const string Amount = nameof(TransactionCreditResp.Amount);
+    public const string Subject = nameof(TransactionCreditResp.Subject);
+    public const string Party = nameof(TransactionCreditResp.Party);
+    public const string Tags = nameof(TransactionCreditResp.Tags);
+  }
+
+}
+
+<AppPageTitle Text="@Str.PageTitle"/>
+
+<main>
+  <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
+  <RadzenText Text="@Str.MainDescription"/>
+  <RadzenDataGridWrapper AddClick="@OnAddHandler"
+      Data="@ViewModels"
+      DeleteClick="@OnDeleteHandler"
+      EditClick="@OnEditHandler"
+      LoadData="@OnLoadDataHandler"
+      Page="@PagerChangeHandler"
+      PageSizeOptions="@_pageSizeOptions"
+      @ref="@_gridWrapperRef"
+      TItem="TransactionCreditResp"
+      TotalItemsCount="@TotalItemsCount">
+    <Columns>
+      <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionCreditResp" Title="@Str.Date"/>
+      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionCreditResp" Title="@Str.Amount"/>
+      <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionCreditResp" Title="@Str.Subject"/>
+      <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionCreditResp" Title="@Str.Party"/>
+      <RadzenDataGridColumn Property="@Str.Tags" TItem="TransactionCreditResp" Title="@Str.Tags"/>
+    </Columns>
+  </RadzenDataGridWrapper>
+</main>
