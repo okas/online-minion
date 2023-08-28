@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineMinion.Data.Entities.Shared;
+using OnlineMinion.Data.ValueGeneration;
 
 namespace OnlineMinion.Data.EntityConfiguration;
 
@@ -22,6 +23,7 @@ public class BaseTransactionEntityConfig : IEntityTypeConfiguration<BaseTransact
             .HasMaxLength(150);
 
         builder.Property(e => e.CreatedAt)
+            .HasValueGenerator<DefaultDateTimeValueGenerator>()
             .ValueGeneratedOnAdd()
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Save);
 
