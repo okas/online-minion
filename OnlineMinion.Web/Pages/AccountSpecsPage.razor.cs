@@ -66,17 +66,8 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
         _ => throw new InvalidOperationException("Unknown model type."),
     };
 
-    protected override AccountSpecResp ApplyUpdateToModel(AccountSpecResp model, IUpdateCommand updateRequest)
-    {
-        var request = (UpdateAccountSpecReq)updateRequest;
-
-        return model with
-        {
-            Name = request.Name,
-            Group = request.Group,
-            Description = request.Description,
-        };
-    }
+    protected override AccountSpecResp ConvertToModel(IUpdateCommand updateRequest) =>
+        (AccountSpecResp)(UpdateAccountSpecReq)updateRequest;
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetAccountPagingMetaInfoReq(pageSize);

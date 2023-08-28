@@ -66,17 +66,8 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp>
         _ => throw new InvalidOperationException("Unknown model type."),
     };
 
-    protected override PaymentSpecResp ApplyUpdateToModel(PaymentSpecResp model, IUpdateCommand updateRequest)
-    {
-        var request = (UpdatePaymentSpecReq)updateRequest;
-
-        return model with
-        {
-            Name = request.Name,
-            CurrencyCode = request.CurrencyCode,
-            Tags = request.Tags,
-        };
-    }
+    protected override PaymentSpecResp ConvertToModel(IUpdateCommand updateRequest) =>
+        (PaymentSpecResp)(UpdatePaymentSpecReq)updateRequest;
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetPaymentSpecPagingMetaInfoReq(pageSize);

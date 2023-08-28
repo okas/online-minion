@@ -154,11 +154,11 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
     private void HandlePageStateAfterUpdate(IUpdateCommand rq)
     {
         var model = ViewModels.Single(m => m.Id == rq.Id);
-        var clone = ApplyUpdateToModel(model, rq);
+        var clone = ConvertToModel(rq);
         ViewModels[ViewModels.IndexOf(model)] = clone;
     }
 
-    protected abstract TModel ApplyUpdateToModel(TModel model, IUpdateCommand updateRequest);
+    protected abstract TModel ConvertToModel(IUpdateCommand updateRequest);
 
     protected async Task<bool> HandleCreateSubmit(ICreateCommand rq)
     {

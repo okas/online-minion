@@ -1,3 +1,4 @@
+using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.Contracts.AccountSpec.Requests;
@@ -11,4 +12,10 @@ public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IUpdate
         Id = id;
 
     public int Id { get; set; }
+
+    public static implicit operator UpdateAccountSpecReq(AccountSpecResp resp) =>
+        new(resp.Id, resp.Name, resp.Group, resp.Description);
+
+    public static explicit operator AccountSpecResp(UpdateAccountSpecReq rq) =>
+        new(rq.Id, rq.Name, rq.Group, rq.Description);
 }
