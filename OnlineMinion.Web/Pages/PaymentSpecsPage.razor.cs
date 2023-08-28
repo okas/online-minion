@@ -22,7 +22,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp>
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await LoadViewModelFromApi(CurrentPage, CurrentPageSize);
+        await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
     }
 
     private void OnAddHandler()

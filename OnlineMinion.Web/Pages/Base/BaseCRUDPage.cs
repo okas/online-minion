@@ -55,19 +55,21 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
     /// <param name="size" />
     /// <param name="filterExpression">Filtering expression, multi or single property.</param>
     /// <param name="sortExpression">Sorting expression, multi or single property.</param>
-    protected async ValueTask LoadViewModelFromApi(
-        int     page,
-        int     size,
-        string? filterExpression = default,
-        string? sortExpression   = default
-    )
+    protected async ValueTask LoadViewModelFromApi(int page, int size, string filterExpression, string sortExpression)
     {
+        Logger.LogTrace(
+            "Loading {ModelName} list from API: page={Page}, size={Size}, filter=`{Filter}`, sort=`{Sort}`",
+            typeof(TModel).Name,
+            page,
+            size,
+            filterExpression,
+            sortExpression
+        );
+
         SC.IsBusy = true;
 
-        var result = await Sender.Send(
-            new BaseGetSomeModelsPagedReq<TModel>(filterExpression, sortExpression, page, size),
-            CT
-        );
+        var rq = new BaseGetSomeModelsPagedReq<TModel>(filterExpression, sortExpression, page, size);
+        var result = await Sender.Send(rq, CT);
 
         await result.SwitchFirstAsync(
             async pagedResult =>
