@@ -266,18 +266,34 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         }
     }
 
-    protected async ValueTask<bool> GetUserConfirmation(string name, string modelType) =>
-        await DialogService.Confirm(
-            $"Are you sure to delete {modelType} with name <em>{name}</em>?",
-            "Confirm deletion",
-            new()
-            {
-                OkButtonText = "Confirm",
-                CancelButtonText = "Cancel",
-                Draggable = true,
-                CloseDialogOnOverlayClick = true,
-            }
-        ) ?? false;
+    /// <summary>
+    ///     Display confirmation dialog to user.
+    /// </summary>
+    /// <param name="descriptorData">Some details, like name or similar of model to present in dialog.</param>
+    /// <param name="modelType">Name of object to delete, model name normally.</param>
+    /// <param name="descriptorName">
+    ///     Optional name for descriptor data in the sentence. Can be set tu null if
+    ///     <paramref name="descriptorData" /> already has it.
+    /// </param>
+    protected async ValueTask<bool> GetUserConfirmation(
+        string  descriptorData,
+        string  modelType,
+        string? descriptorName = "name"
+    )
+    {
+        var name = string.IsNullOrWhiteSpace(descriptorName) ? string.Empty : $"{descriptorName.Trim()} ";
+        var messageEng = $"Are you sure to delete {modelType} with {name}<em>{descriptorData}</em>?";
+
+        var options = new ConfirmOptions
+        {
+            OkButtonText = "Confirm",
+            CancelButtonText = "Cancel",
+            Draggable = true,
+            CloseDialogOnOverlayClick = true,
+        };
+
+        return await DialogService.Confirm(messageEng, "Confirm deletion", options) ?? false;
+    }
 
     protected void PagerChangeHandler(PagerEventArgs changeData)
     {
