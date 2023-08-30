@@ -1,11 +1,13 @@
 using ErrorOr;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts;
+using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Transactions.Common;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Responses;
 using OnlineMinion.Web.Components;
+using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
 
 namespace OnlineMinion.Web.Pages;
@@ -20,10 +22,37 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditResp
     private RadzenDataGridWrapper<TransactionCreditResp> _gridWrapperRef = null!;
     private BaseUpsertTransactionReqData? _modelUpsert;
 
+    private IList<PaymentSpecResp> RelatedViewModels { get; } = new List<PaymentSpecResp>();
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
+
+        var taskVm = LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
+        var taskRelatedVm = LoadRelatedViewModelModelFromApi();
+
+        await Task.WhenAll(taskVm, taskRelatedVm);
+    }
+
+    private async Task LoadRelatedViewModelModelFromApi()
+    {
+        var rq = new BaseGetSomeModelsPagedReq<PaymentSpecResp>();
+        var result = await Sender.Send(rq, CT);
+
+        // TODO: need separate request-response objects with needed data only.
+        await result.SwitchFirstAsync(
+            async models => await models.Result.PullItemsFromStream(RelatedViewModels, CT),
+            firstError =>
+            {
+                Logger.LogError(
+                    "Unexpected error while getting {ModelName} list: {ErrorDescription}",
+                    nameof(PaymentSpecResp),
+                    firstError.Description
+                );
+
+                return Task.CompletedTask;
+            }
+        );
     }
 
     private void OnAddHandler()

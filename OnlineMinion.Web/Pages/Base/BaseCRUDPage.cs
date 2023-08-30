@@ -55,7 +55,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
     /// <param name="size" />
     /// <param name="filterExpression">Filtering expression, multi or single property.</param>
     /// <param name="sortExpression">Sorting expression, multi or single property.</param>
-    protected async ValueTask LoadViewModelFromApi(int page, int size, string filterExpression, string sortExpression)
+    protected async Task LoadViewModelFromApi(int page, int size, string filterExpression, string sortExpression)
     {
         Logger.LogTrace(
             "Loading {ModelName} list from API: page={Page}, size={Size}, filter=`{Filter}`, sort=`{Sort}`",
