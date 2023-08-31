@@ -28,7 +28,7 @@ public class BaseTransactionEntityConfig : IEntityTypeConfiguration<BaseTransact
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Save);
 
         builder.HasOne(e => e.PaymentInstrument)
-            .WithOne()
+            .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.UseTpcMappingStrategy();

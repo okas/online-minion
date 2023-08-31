@@ -12,7 +12,7 @@ public class TransactionDebitEntityConfig : IEntityTypeConfiguration<Transaction
             .HasPrecision(18, 2);
 
         builder.HasOne(e => e.AccountSpec)
-            .WithOne()
+            .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

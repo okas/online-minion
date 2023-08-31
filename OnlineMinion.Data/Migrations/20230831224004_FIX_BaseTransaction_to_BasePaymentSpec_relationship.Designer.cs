@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineMinion.Data;
 
@@ -11,9 +12,11 @@ using OnlineMinion.Data;
 namespace OnlineMinion.Data.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    partial class OnlineMinionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230831224004_FIX_BaseTransaction_to_BasePaymentSpec_relationship")]
+    partial class FIX_BaseTransaction_to_BasePaymentSpec_relationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +199,9 @@ namespace OnlineMinion.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasIndex("AccountSpecId");
+                    b.HasIndex("AccountSpecId")
+                        .IsUnique()
+                        .HasFilter("[AccountSpecId] IS NOT NULL");
 
                     b.ToTable("TransactionDebits");
                 });
@@ -215,8 +220,8 @@ namespace OnlineMinion.Data.Migrations
             modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionDebit", b =>
                 {
                     b.HasOne("OnlineMinion.Data.Entities.AccountSpec", "AccountSpec")
-                        .WithMany()
-                        .HasForeignKey("AccountSpecId")
+                        .WithOne()
+                        .HasForeignKey("OnlineMinion.Data.Entities.TransactionDebit", "AccountSpecId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
