@@ -71,7 +71,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
 
         SC.IsBusy = true;
 
-        var rq = new BaseGetSomeModelsPagedReq<TResponse>(filterExpression, sortExpression, page, size);
+        var rq = new GetSomeModelsPagedReq<TResponse>(filterExpression, sortExpression, page, size);
         var result = await Sender.Send(rq, CT);
 
         await result.SwitchFirstAsync(

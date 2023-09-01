@@ -10,14 +10,14 @@ using OnlineMinion.RestApi.Helpers;
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
 internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(OnlineMinionDbContext dbContext)
-    : IErrorOrRequestHandler<BaseGetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
+    : IErrorOrRequestHandler<GetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
     where TEntity : BaseEntity
 {
     protected abstract Expression<Func<TEntity, TResponse>> Projection { get; }
 
     public async Task<ErrorOr<PagedResult<TResponse>>> Handle(
-        BaseGetSomeModelsPagedReq<TResponse> rq,
-        CancellationToken                    ct
+        GetSomeModelsPagedReq<TResponse> rq,
+        CancellationToken                ct
     )
     {
         var query = dbContext.Set<TEntity>().AsNoTracking();

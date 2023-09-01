@@ -55,8 +55,8 @@ public class TransactionDebitsController(ISender sender, ILogger<TransactionDebi
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomeModelsPagedReq<TransactionDebitResp> rq,
-        CancellationToken                                           ct
+        [FromQuery] GetSomeModelsPagedReq<TransactionDebitResp> rq,
+        CancellationToken                                       ct
     )
     {
         if (!ModelState.IsValid)

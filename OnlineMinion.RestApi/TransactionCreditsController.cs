@@ -55,8 +55,8 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomeModelsPagedReq<TransactionCreditResp> rq,
-        CancellationToken                                            ct
+        [FromQuery] GetSomeModelsPagedReq<TransactionCreditResp> rq,
+        CancellationToken                                        ct
     )
     {
         if (!ModelState.IsValid)

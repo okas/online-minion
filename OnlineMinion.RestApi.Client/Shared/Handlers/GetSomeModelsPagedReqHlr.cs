@@ -7,14 +7,14 @@ using OnlineMinion.Contracts.Shared.Responses;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
-internal abstract class BasePagedGetSomeModelsReqHlr<TResponse>(HttpClient apiClient, Uri resource)
-    : IApiClientRequestHandler<BaseGetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
+internal abstract class GetSomeModelsPagedReqHlr<TResponse>(HttpClient apiClient, Uri resource)
+    : IApiClientRequestHandler<GetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
 {
-    public virtual Uri BuildUri(BaseGetSomeModelsPagedReq<TResponse> rq) => AddQueryString(resource, rq);
+    public virtual Uri BuildUri(GetSomeModelsPagedReq<TResponse> rq) => AddQueryString(resource, rq);
 
     public async Task<ErrorOr<PagedResult<TResponse>>> Handle(
-        BaseGetSomeModelsPagedReq<TResponse> rq,
-        CancellationToken                    ct
+        GetSomeModelsPagedReq<TResponse> rq,
+        CancellationToken                ct
     )
     {
         var uri = BuildUri(rq);

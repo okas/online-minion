@@ -71,7 +71,9 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
     public async Task<IActionResult> GetById(
         [FromRoute] GetAccountSpecByIdReq rq,
         CancellationToken                 ct
-    ) => await Sender.Send(rq, ct) is { } model ? Ok(model) : NotFound();
+    ) => await Sender.Send(rq, ct) is var model
+        ? Ok(model)
+        : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -97,8 +99,8 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomeModelsPagedReq<AccountSpecResp> rq,
-        CancellationToken                                      ct
+        [FromQuery] GetSomeModelsPagedReq<AccountSpecResp> rq,
+        CancellationToken                                  ct
     )
     {
         if (!ModelState.IsValid)

@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPagedTransactionCreditsReqHlr(ApiClientProvider api)
-    : BasePagedGetSomeModelsReqHlr<TransactionCreditResp>(api.Client, api.ApiV1TransactionsCreditUri);
+    : GetSomeModelsPagedReqHlr<TransactionCreditResp>(api.Client, api.ApiV1TransactionsCreditUri);

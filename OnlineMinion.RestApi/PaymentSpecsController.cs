@@ -96,8 +96,8 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomeModelsPagedReq<PaymentSpecResp> rq,
-        CancellationToken                                      ct
+        [FromQuery] GetSomeModelsPagedReq<PaymentSpecResp> rq,
+        CancellationToken                                  ct
     )
     {
         if (!ModelState.IsValid)
