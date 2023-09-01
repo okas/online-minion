@@ -1,4 +1,4 @@
-namespace OnlineMinion.Contracts.Transactions.Common;
+namespace OnlineMinion.Contracts.Transactions;
 
 public abstract record BaseTransactionResp(
         int      Id,

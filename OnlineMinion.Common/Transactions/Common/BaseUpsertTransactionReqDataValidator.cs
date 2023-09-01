@@ -1,6 +1,6 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Contracts.Transactions.Common;
+using OnlineMinion.Contracts.Transactions;
 
 namespace OnlineMinion.Common.Transactions.Common;
 

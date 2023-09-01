@@ -1,4 +1,4 @@
-namespace OnlineMinion.Contracts.Transactions.Common;
+namespace OnlineMinion.Contracts.Transactions;
 
 public abstract class BaseUpsertTransactionReqData(
     int      paymentInstrumentId,

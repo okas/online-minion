@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Common;
+using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Web.Components;

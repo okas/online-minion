@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Common;
 
 namespace OnlineMinion.Contracts.Transactions.Credit.Requests;
 

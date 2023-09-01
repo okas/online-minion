@@ -1,5 +1,3 @@
-using OnlineMinion.Contracts.Transactions.Common;
-
 namespace OnlineMinion.Contracts.Transactions.Credit.Responses;
 
 public sealed record TransactionCreditResp(
