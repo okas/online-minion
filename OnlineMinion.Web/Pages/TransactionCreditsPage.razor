@@ -1,8 +1,9 @@
 @page "/transactions/credit"
-@using OnlineMinion.Contracts.Transactions.Responses
+@using static Common.Utilities.TypeMemberHelpers;
+@using OnlineMinion.Web.Transaction.Credit
 @using System.Globalization
 @using OnlineMinion.Contracts.PaymentSpec.Responses
-@inherits BaseCRUDPage<TransactionCreditResp>
+@inherits BaseCRUDPage<TransactionCreditListItem, OnlineMinion.Contracts.Transactions.Responses.TransactionCreditResp>
 
 @code
 {
@@ -52,12 +53,15 @@
     public const string PageTitle = "Credit trans";
     public const string MainHeading = "Credit Transactions";
     public const string MainDescription = $"Manage {MainHeading}";
-    public const string Date = nameof(TransactionCreditResp.Date);
-    public const string Amount = nameof(TransactionCreditResp.Amount);
-    public const string Subject = nameof(TransactionCreditResp.Subject);
-    public const string Party = nameof(TransactionCreditResp.Party);
-    public const string PaymentInstrument = "paymnt. opt.";
-    public const string Tags = nameof(TransactionCreditResp.Tags);
+    public const string Date = nameof(TransactionCreditListItem.Date);
+    public const string Amount = nameof(TransactionCreditListItem.Amount);
+    public const string Subject = nameof(TransactionCreditListItem.Subject);
+    public const string Party = nameof(TransactionCreditListItem.Party);
+    public const string PaymentInstrumentColumn = "paymnt. opt.";
+    public const string Tags = nameof(TransactionCreditListItem.Tags);
+
+    public static readonly string PaymentInstrumentName = NestedNameOf<TransactionCreditListItem>(
+      x => x.PaymentInstrument.Name);
   }
 
 }
@@ -67,7 +71,8 @@
 <main>
   <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
   <RadzenText Text="@Str.MainDescription"/>
-  <RadzenDataGridWrapper AddClick="@OnAddHandler"
+  <RadzenDataGridWrapper
+      AddClick="@OnAddHandler"
       Data="@ViewModels"
       DeleteClick="@OnDeleteHandler"
       EditClick="@OnEditHandler"
@@ -75,22 +80,18 @@
       Page="@PagerChangeHandler"
       PageSizeOptions="@_pageSizeOptions"
       @ref="@_gridWrapperRef"
-      TItem="TransactionCreditResp"
+      TItem="TransactionCreditListItem"
       TotalItemsCount="@TotalItemsCount">
     <Columns>
-      <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionCreditResp" Title="@Str.Date"/>
-      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionCreditResp" Title="@Str.Amount"/>
-      <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionCreditResp" Title="@Str.Subject"/>
-      <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionCreditResp" Title="@Str.Party"/>
+      <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionCreditListItem" Title="@Str.Date"/>
+      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionCreditListItem" Title="@Str.Amount"/>
+      <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionCreditListItem" Title="@Str.Subject"/>
+      <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionCreditListItem" Title="@Str.Party"/>
       <RadzenDataGridColumn
-          Property="@nameof(TransactionCreditResp.PaymentInstrumentId)"
-          TItem="TransactionCreditResp"
-          Title="@Str.PaymentInstrument">
-        <Template>
-          @(RelatedViewModels.FirstOrDefault(vm => vm.Id == context.PaymentInstrumentId).Name)
-        </Template>
-      </RadzenDataGridColumn>
-      <RadzenDataGridColumn Property="@Str.Tags" TItem="TransactionCreditResp" Title="@Str.Tags"/>
+          Property="@Str.PaymentInstrumentName"
+          TItem="TransactionCreditListItem"
+          Title="@Str.PaymentInstrumentColumn"/>
+      <RadzenDataGridColumn Property="@Str.Tags" TItem="TransactionCreditListItem" Title="@Str.Tags"/>
     </Columns>
   </RadzenDataGridWrapper>
 </main>

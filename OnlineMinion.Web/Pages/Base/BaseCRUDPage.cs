@@ -8,14 +8,15 @@ using Radzen;
 
 namespace OnlineMinion.Web.Pages.Base;
 
-public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
-    where TModel : IHasIntId
+public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellationToken
+    where TVModel : IHasIntId
+    where TResponse : IHasIntId
 {
     protected BaseCRUDPage()
     {
         CurrentPage = BasePagingParams.FirstPage;
         CurrentPageSize = BasePagingParams.DefaultSize;
-        ViewModels = new List<TModel>(CurrentPageSize);
+        ViewModels = new List<TVModel>(CurrentPageSize);
     }
 
     protected int CurrentPage { get; private set; }
@@ -24,7 +25,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
 
     protected int TotalItemsCount { get; private set; }
 
-    protected IList<TModel> ViewModels { get; }
+    protected IList<TVModel> ViewModels { get; }
 
     [Inject]
     public ISender Sender { get; set; } = default!;
@@ -36,7 +37,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
     public DialogService DialogService { get; set; } = default!;
 
     [Inject]
-    public ILogger<BaseCRUDPage<TModel>> Logger { get; set; } = default!;
+    public ILogger<BaseCRUDPage<TVModel, TResponse>> Logger { get; set; } = default!;
 
     protected async Task OnLoadDataHandler(LoadDataArgs args)
     {
@@ -57,9 +58,11 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
     /// <param name="sortExpression">Sorting expression, multi or single property.</param>
     protected async Task LoadViewModelFromApi(int page, int size, string filterExpression, string sortExpression)
     {
+        var modelName = nameof(TResponse);
+
         Logger.LogTrace(
             "Loading {ModelName} list from API: page={Page}, size={Size}, filter=`{Filter}`, sort=`{Sort}`",
-            typeof(TModel).Name,
+            modelName,
             page,
             size,
             filterExpression,
@@ -68,7 +71,7 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
 
         SC.IsBusy = true;
 
-        var rq = new BaseGetSomeModelsPagedReq<TModel>(filterExpression, sortExpression, page, size);
+        var rq = new BaseGetSomeModelsPagedReq<TResponse>(filterExpression, sortExpression, page, size);
         var result = await Sender.Send(rq, CT);
 
         await result.SwitchFirstAsync(
@@ -76,13 +79,18 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
             {
                 TotalItemsCount = pagedResult.Paging.Rows;
                 ViewModels.Clear();
-                await pagedResult.Result.PullItemsFromStream(ViewModels, CT, StateHasChanged);
+                await pagedResult.Result.PullItemsFromStream(
+                    ViewModels,
+                    ConvertRequestResponseToVM,
+                    CT,
+                    StateHasChanged
+                );
             },
             firstError =>
             {
                 Logger.LogError(
                     "Unexpected error while getting {ModelName} list: {ErrorDescription}",
-                    typeof(TModel).Name,
+                    modelName,
                     firstError.Description
                 );
 
@@ -93,12 +101,11 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
         SC.IsBusy = false;
     }
 
-    protected void OpenEditorDialog(string title) =>
-        DialogService.Open(
-            title,
-            _ => RenderEditorComponent(),
-            new() { Draggable = true, }
-        );
+    protected void OpenEditorDialog(string title) => DialogService.Open(
+        title,
+        _ => RenderEditorComponent(),
+        new() { Draggable = true, }
+    );
 
     protected abstract RenderFragment RenderEditorComponent();
 
@@ -156,11 +163,13 @@ public abstract class BaseCRUDPage<TModel> : ComponentWithCancellationToken
     private void HandlePageStateAfterUpdate(IUpdateCommand rq)
     {
         var model = ViewModels.Single(m => m.Id == rq.Id);
-        var clone = ConvertToModel(rq);
+        var clone = ConvertUpdateRequestToVM(rq);
         ViewModels[ViewModels.IndexOf(model)] = clone;
     }
 
-    protected abstract TModel ConvertToModel(IUpdateCommand updateRequest);
+    protected abstract TVModel ConvertRequestResponseToVM(TResponse dto);
+
+    protected abstract TVModel ConvertUpdateRequestToVM(IUpdateCommand dto);
 
     protected async Task<bool> HandleCreateSubmit(ICreateCommand rq)
     {

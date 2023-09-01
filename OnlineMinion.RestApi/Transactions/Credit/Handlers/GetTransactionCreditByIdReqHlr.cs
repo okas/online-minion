@@ -18,7 +18,6 @@ internal sealed class GetTransactionCreditByIdReqHlr(OnlineMinionDbContext dbCon
         entity.Subject,
         entity.Party,
         entity.PaymentInstrumentId,
-        entity.Tags,
-        default
+        entity.Tags
     );
 }

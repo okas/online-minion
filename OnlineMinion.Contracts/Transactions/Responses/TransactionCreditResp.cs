@@ -9,6 +9,5 @@ public sealed record TransactionCreditResp(
     string   Subject,
     string   Party,
     int      PaymentInstrumentId,
-    string?  Tags,
-    DateTime CreatedAt
-) : BaseTransactionResp(Id, Date, Amount, Subject, Party, PaymentInstrumentId, Tags, CreatedAt);
+    string?  Tags
+) : BaseTransactionResp(Id, Date, Amount, Subject, Party, PaymentInstrumentId, Tags);

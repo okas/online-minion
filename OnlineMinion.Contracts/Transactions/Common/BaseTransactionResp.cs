@@ -7,7 +7,6 @@ public abstract record BaseTransactionResp(
         string   Subject,
         string   Party,
         int      PaymentInstrumentId,
-        string?  Tags,
-        DateTime CreatedAt
+        string?  Tags
     )
     : IHasIntId;

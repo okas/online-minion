@@ -1,3 +1,4 @@
+using System.Globalization;
 using ErrorOr;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts;
@@ -9,17 +10,18 @@ using OnlineMinion.Contracts.Transactions.Responses;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
+using OnlineMinion.Web.Transaction.Credit;
 
 namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
-public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditResp>
+public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditListItem, TransactionCreditResp>
 {
     private const string ModelTypeName = "Credit Transaction";
 
     private readonly IEnumerable<int> _pageSizeOptions = BasePagingParams.AllowedSizes;
     private UpsertEditorWrapper<BaseUpsertTransactionReqData> _editorRef = null!;
-    private RadzenDataGridWrapper<TransactionCreditResp> _gridWrapperRef = null!;
+    private RadzenDataGridWrapper<TransactionCreditListItem> _gridWrapperRef = null!;
     private BaseUpsertTransactionReqData? _modelUpsert;
 
     private IList<PaymentSpecResp> RelatedViewModels { get; } = new List<PaymentSpecResp>();
@@ -28,10 +30,9 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditResp
     {
         await base.OnInitializedAsync();
 
-        var taskVm = LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
-        var taskRelatedVm = LoadRelatedViewModelModelFromApi();
-
-        await Task.WhenAll(taskVm, taskRelatedVm);
+        // Order! Related models data is used to create create list, during main models pulling from stream.
+        await LoadRelatedViewModelModelFromApi();
+        await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
     }
 
     private async Task LoadRelatedViewModelModelFromApi()
@@ -65,12 +66,12 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditResp
         OpenEditorDialog($"Add new {ModelTypeName}");
     }
 
-    private void OnEditHandler(TransactionCreditResp model)
+    private void OnEditHandler(TransactionCreditListItem model)
     {
         // If the editing of same item is already in progress, then continue editing it.
         if (_modelUpsert is not UpdateTransactionCreditReq cmd || cmd.Id != model.Id)
         {
-            _modelUpsert = (UpdateTransactionCreditReq)model;
+            _modelUpsert = TransactionCreditListItem.ToUpdateRequest(model);
         }
 
         OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id}");
@@ -96,16 +97,28 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditResp
         _ => throw new InvalidOperationException("Unknown model type."),
     };
 
-    protected override TransactionCreditResp ConvertToModel(IUpdateCommand updateRequest) =>
-        (TransactionCreditResp)(UpdateTransactionCreditReq)updateRequest;
+    protected override TransactionCreditListItem ConvertRequestResponseToVM(TransactionCreditResp dto)
+    {
+        var paymentSpec = RelatedViewModels.Single(vm => vm.Id == dto.PaymentInstrumentId);
+
+        return TransactionCreditListItem.FromResponseDto(dto, paymentSpec.Name);
+    }
+
+    protected override TransactionCreditListItem ConvertUpdateRequestToVM(IUpdateCommand dto)
+    {
+        var rq = (UpdateTransactionCreditReq)dto;
+        var paymentSpec = RelatedViewModels.Single(vm => vm.Id == rq.PaymentInstrumentId);
+
+        return TransactionCreditListItem.FromUpdateRequest((UpdateTransactionCreditReq)dto, paymentSpec.Name);
+    }
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetTransactionCreditPagingMetaInfoReq(pageSize);
 
-    private async Task OnDeleteHandler(TransactionCreditResp model)
+    private async Task OnDeleteHandler(TransactionCreditListItem model)
     {
         var (id, date, _, subject, _, _, _, _) = model;
-        var descriptorData = $"subject `{subject}`, at {date}";
+        var descriptorData = $"subject `{subject}`, at {date.ToString(CultureInfo.CurrentCulture)}";
 
         if (!await GetUserConfirmation(descriptorData, ModelTypeName, null))
         {

@@ -10,7 +10,7 @@ using OnlineMinion.Web.Pages.Base;
 namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
-public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
+public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpecResp>
 {
     private const string ModelTypeName = "Account Specification";
 
@@ -66,8 +66,10 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp>
         _ => throw new InvalidOperationException("Unknown model type."),
     };
 
-    protected override AccountSpecResp ConvertToModel(IUpdateCommand updateRequest) =>
-        (AccountSpecResp)(UpdateAccountSpecReq)updateRequest;
+    protected override AccountSpecResp ConvertRequestResponseToVM(AccountSpecResp dto) => dto;
+
+    protected override AccountSpecResp ConvertUpdateRequestToVM(IUpdateCommand dto) =>
+        (AccountSpecResp)(UpdateAccountSpecReq)dto;
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetAccountPagingMetaInfoReq(pageSize);
