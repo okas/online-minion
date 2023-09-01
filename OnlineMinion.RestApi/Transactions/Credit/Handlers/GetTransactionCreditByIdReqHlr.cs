@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Responses;
+using OnlineMinion.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Data;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.RestApi.Shared.Handlers;

@@ -1,7 +1,7 @@
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Transactions.Common;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Responses;
+using OnlineMinion.Contracts.Transactions.Credit.Responses;
 
 namespace OnlineMinion.Web.Transaction.Credit;
 
