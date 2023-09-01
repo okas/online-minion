@@ -22,12 +22,17 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(OnlineM
     {
         var query = dbContext.Set<TEntity>().AsNoTracking();
 
+        query = SetIncludes(query);
+
         var pagingMeta = await query.GetPagingMetaInfoAsync(rq, ct).ConfigureAwait(false);
 
-        var resultStream = query.ConfigureStoreQuery(rq)
+        var resultStream = query
+            .ConfigureStoreQuery(rq)
             .Select(Projection)
             .AsAsyncEnumerable();
 
         return new PagedResult<TResponse>(resultStream, pagingMeta);
     }
+
+    protected virtual IQueryable<TEntity> SetIncludes(IQueryable<TEntity> query) => query;
 }
