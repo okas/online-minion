@@ -11,6 +11,9 @@ public sealed class BaseUpsertTransactionReqDataValidator : AbstractValidator<Ba
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
+        RuleFor(x => x.PaymentInstrumentId)
+            .NotEmpty();
+
         RuleFor(x => x.Date)
             .NotEmpty()
             .WithMessage("Date is required");
@@ -27,9 +30,6 @@ public sealed class BaseUpsertTransactionReqDataValidator : AbstractValidator<Ba
             .NotEmpty()
             .MinimumLength(2)
             .MaximumLength(75);
-
-        RuleFor(x => x.PaymentInstrumentId)
-            .NotEmpty();
 
         RuleFor(x => x.Tags)
             .MaximumLength(150);

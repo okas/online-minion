@@ -1,31 +1,42 @@
-using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 
 namespace OnlineMinion.Web.Transaction.Credit;
 
-public record TransactionCreditListItem(
+public sealed record TransactionCreditListItem(
     int                    Id,
+    int                    PaymentInstrumentId,
     DateOnly               Date,
     decimal                Amount,
     string                 Subject,
     string                 Party,
-    int                    PaymentInstrumentId,
-    TransactionPaymentData PaymentInstrument,
-    string?                Tags
-) : IHasIntId
+    string?                Tags,
+    TransactionPaymentData PaymentInstrument
+) : BaseTransactionListItem(
+    Id,
+    PaymentInstrumentId,
+    Date,
+    Amount,
+    Subject,
+    Party,
+    Tags,
+    PaymentInstrument
+)
 {
-    public static TransactionCreditListItem FromResponseDto(TransactionCreditResp resp, string paymentInstrumentName) =>
+    public static TransactionCreditListItem FromResponseDto(
+        TransactionCreditResp resp,
+        string                paymentInstrumentName
+    ) =>
         new(
             resp.Id,
+            resp.PaymentInstrumentId,
             resp.Date,
             resp.Amount,
             resp.Subject,
             resp.Party,
-            resp.PaymentInstrumentId,
-            new(paymentInstrumentName),
-            resp.Tags
+            resp.Tags,
+            new(paymentInstrumentName)
         );
 
     public static TransactionCreditListItem FromUpdateRequest(
@@ -34,15 +45,14 @@ public record TransactionCreditListItem(
     ) =>
         new(
             rq.Id,
+            rq.PaymentInstrumentId,
             rq.Date,
             rq.Amount,
             rq.Subject,
             rq.Party,
-            rq.PaymentInstrumentId,
-            new(paymentInstrumentName),
-            rq.Tags
+            rq.Tags,
+            new(paymentInstrumentName)
         );
-
 
     public static UpdateTransactionCreditReq ToUpdateRequest(TransactionCreditListItem vm) =>
         new(

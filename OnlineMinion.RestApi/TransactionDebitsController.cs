@@ -7,33 +7,33 @@ using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Contracts.Transactions.Debit.Requests;
+using OnlineMinion.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace OnlineMinion.RestApi;
 
-[Route("api/v{version:apiVersion}/Transactions/Credits")]
+[Route("api/v{version:apiVersion}/Transactions/Debits")]
 [ApiVersion("1")]
-public class TransactionCreditsController(ISender sender, ILogger<TransactionCreditsController> logger)
+public class TransactionDebitsController(ISender sender, ILogger<TransactionDebitsController> logger)
     : ApiControllerBase(sender)
 {
     [HttpGet("{id}")]
-    [ProducesResponseType<TransactionCreditResp>(StatusCodes.Status200OK)]
+    [ProducesResponseType<TransactionDebitResp>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
-        [FromRoute] GetTransactionCreditByIdReq rq,
-        CancellationToken                       ct
+        [FromRoute] GetTransactionDebitByIdReq rq,
+        CancellationToken                      ct
     ) => await Sender.Send(rq, ct) is var model
         ? Ok(model)
         : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
-    [ProducesResponseType(typeof(IAsyncEnumerable<TransactionCreditResp>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IAsyncEnumerable<TransactionDebitResp>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponseHeader(
@@ -55,8 +55,8 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
         "Pages, based on provided page size."
     )]
     public async Task<IActionResult> GetSomePaged(
-        [FromQuery] BaseGetSomeModelsPagedReq<TransactionCreditResp> rq,
-        CancellationToken                                            ct
+        [FromQuery] BaseGetSomeModelsPagedReq<TransactionDebitResp> rq,
+        CancellationToken                                           ct
     )
     {
         if (!ModelState.IsValid)
@@ -84,7 +84,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
     [ProducesResponseType<ModelIdResp>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create(CreateTransactionCreditReq rq, CancellationToken ct)
+    public async Task<IActionResult> Create(CreateTransactionDebitReq rq, CancellationToken ct)
     {
         var result = await Sender.Send(rq, ct);
 
@@ -99,7 +99,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Update(int id, UpdateTransactionCreditReq rq, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, UpdateTransactionDebitReq rq, CancellationToken ct)
     {
         if (CheckId(id, rq) is { } actionResult)
         {
@@ -119,8 +119,8 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        [FromRoute] DeleteTransactionCreditReq rq,
-        CancellationToken                      ct
+        [FromRoute] DeleteTransactionDebitReq rq,
+        CancellationToken                     ct
     )
     {
         var result = await Sender.Send(rq, ct);
@@ -136,5 +136,5 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
     }
 
     protected override IGetPagingInfoRequest PagingMetaInfoRequestFactory(int pageSize) =>
-        new GetTransactionCreditPagingMetaInfoReq(pageSize);
+        new GetTransactionDebitPagingMetaInfoReq(pageSize);
 }

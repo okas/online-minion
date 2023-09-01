@@ -74,7 +74,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
             _modelUpsert = TransactionCreditListItem.ToUpdateRequest(model);
         }
 
-        OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id}");
+        OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id.ToString(CultureInfo.InvariantCulture)}");
     }
 
     protected override ValueTask<bool> Validate() => _editorRef.ValidateEditorAsync();
@@ -117,8 +117,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
 
     private async Task OnDeleteHandler(TransactionCreditListItem model)
     {
-        var (id, date, _, subject, _, _, _, _) = model;
-        var descriptorData = $"subject `{subject}`, at {date.ToString(CultureInfo.CurrentCulture)}";
+        var descriptorData = $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
 
         if (!await GetUserConfirmation(descriptorData, ModelTypeName, null))
         {
@@ -126,7 +125,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
         }
 
         SC.IsBusy = true;
-        await DeleteModelFromApi(new DeleteTransactionCreditReq(id), ModelTypeName);
+        await DeleteModelFromApi(new DeleteTransactionCreditReq(model.Id), ModelTypeName);
         SC.IsBusy = false;
     }
 

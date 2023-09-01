@@ -1,9 +1,10 @@
-@page "/transactions/credit"
+@page "/transactions/debit"
 @using static Common.Utilities.TypeMemberHelpers;
-@using OnlineMinion.Web.Transaction.Credit
+@using OnlineMinion.Web.Transaction.Debit
 @using System.Globalization
 @using OnlineMinion.Contracts.PaymentSpec.Responses
-@inherits BaseCRUDPage<TransactionCreditListItem, OnlineMinion.Contracts.Transactions.Credit.Responses.TransactionCreditResp>
+@using OnlineMinion.Contracts.AccountSpec.Responses
+@inherits BaseCRUDPage<TransactionDebitListItem, OnlineMinion.Contracts.Transactions.Debit.Responses.TransactionDebitResp>
 
 @code
 {
@@ -31,15 +32,26 @@
           <RadzenFormField Component="@Str.Subject" Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
           </RadzenFormField>
-          <RadzenFormField>
+          <RadzenFormField Style="width: 43%">
             <RadzenDropDown
                 AllowClear="@true"
                 AllowFiltering="@true"
                 @bind-Value="@context.PaymentInstrumentId"
-                Data="@RelatedViewModels"
-                Style="width: 98%"
+                Data="@PaymentViewModels"
                 TextProperty="@nameof(PaymentSpecResp.Name)"
                 ValueProperty="@nameof(PaymentSpecResp.Id)"/>
+          </RadzenFormField>
+          <RadzenFormField Style="width: 43%">
+            <RadzenDropDown
+                AllowClear="@true"
+                AllowFiltering="@true"
+                @bind-Value="@context.AccountSpecId"
+                Data="@AccountViewModels"
+                TextProperty="@nameof(AccountSpecResp.Name)"
+                ValueProperty="@nameof(AccountSpecResp.Id)"/>
+          </RadzenFormField>
+          <RadzenFormField Component="@Str.Fee" Style="width: 98%" Text="@Str.Fee" Variant="@Variant.Text">
+            <RadzenNumeric @bind-Value="@context!.Fee" Format="c"/>
           </RadzenFormField>
           <RadzenFormField Component="@Str.Tags" Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
@@ -50,18 +62,24 @@
 
   private static class Str
   {
-    public const string PageTitle = "Credit trans";
-    public const string MainHeading = "Credit Transactions";
+    public const string PageTitle = "Debit trans";
+    public const string MainHeading = "Debit Transactions";
     public const string MainDescription = $"Manage {MainHeading}";
-    public const string Date = nameof(TransactionCreditListItem.Date);
-    public const string Amount = nameof(TransactionCreditListItem.Amount);
-    public const string Subject = nameof(TransactionCreditListItem.Subject);
-    public const string Party = nameof(TransactionCreditListItem.Party);
+    public const string Date = nameof(TransactionDebitListItem.Date);
+    public const string Amount = nameof(TransactionDebitListItem.Amount);
+    public const string Subject = nameof(TransactionDebitListItem.Subject);
+    public const string Party = nameof(TransactionDebitListItem.Party);
     public const string PaymentInstrumentColumn = "paymnt. opt.";
-    public const string Tags = nameof(TransactionCreditListItem.Tags);
+    public const string Tags = nameof(TransactionDebitListItem.Tags);
+    public const string Fee = nameof(TransactionDebitListItem.Fee);
+    public const string AccountSpecColumn = "acc. spec.";
 
-    public static readonly string PaymentInstrumentName = NestedNameOf<TransactionCreditListItem>(
+    public static readonly string PaymentInstrumentName = NestedNameOf<TransactionDebitListItem>(
       x => x.PaymentInstrument.Name
+      );
+
+    public static readonly string AccountSpecName = NestedNameOf<TransactionDebitListItem>(
+      x => x.AccountSpec.Name
       );
   }
 
@@ -81,18 +99,23 @@
       Page="@PagerChangeHandler"
       PageSizeOptions="@_pageSizeOptions"
       @ref="@_gridWrapperRef"
-      TItem="TransactionCreditListItem"
+      TItem="TransactionDebitListItem"
       TotalItemsCount="@TotalItemsCount">
     <Columns>
-      <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionCreditListItem" Title="@Str.Date"/>
-      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionCreditListItem" Title="@Str.Amount"/>
-      <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionCreditListItem" Title="@Str.Subject"/>
-      <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionCreditListItem" Title="@Str.Party"/>
+      <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionDebitListItem" Title="@Str.Date"/>
+      <RadzenDataGridColumn FormatString="{0:C}" Property="@Str.Amount" TItem="TransactionDebitListItem" Title="@Str.Amount"/>
+      <RadzenDataGridColumn FormatString="{0:C}" Property="@Str.Fee" TItem="TransactionDebitListItem" Title="@Str.Fee"/>
+      <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionDebitListItem" Title="@Str.Subject"/>
+      <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionDebitListItem" Title="@Str.Party"/>
       <RadzenDataGridColumn
           Property="@Str.PaymentInstrumentName"
-          TItem="TransactionCreditListItem"
+          TItem="TransactionDebitListItem"
           Title="@Str.PaymentInstrumentColumn"/>
-      <RadzenDataGridColumn Property="@Str.Tags" TItem="TransactionCreditListItem" Title="@Str.Tags"/>
+      <RadzenDataGridColumn
+          Property="@Str.AccountSpecName"
+          TItem="TransactionDebitListItem"
+          Title="@Str.AccountSpecColumn"/>
+      <RadzenDataGridColumn Property="@Str.Tags" TItem="TransactionDebitListItem" Title="@Str.Tags"/>
     </Columns>
   </RadzenDataGridWrapper>
 </main>

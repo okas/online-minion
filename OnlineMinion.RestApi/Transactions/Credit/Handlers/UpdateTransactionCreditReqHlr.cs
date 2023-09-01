@@ -16,11 +16,11 @@ internal sealed class UpdateTransactionCreditReqHlr(
 {
     protected override void UpdateEntityAsync(TransactionCredit entity, UpdateTransactionCreditReq rq)
     {
+        entity.PaymentInstrumentId = rq.PaymentInstrumentId;
         entity.Date = rq.Date;
         entity.Amount = rq.Amount;
         entity.Subject = rq.Subject;
         entity.Party = rq.Party;
-        entity.PaymentInstrumentId = rq.PaymentInstrumentId;
         entity.Tags = rq.Tags;
     }
 }
