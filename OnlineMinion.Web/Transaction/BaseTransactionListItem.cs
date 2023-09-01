@@ -1,15 +1,15 @@
 using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Transactions;
+using OnlineMinion.Contracts.PaymentSpec.Responses;
 
 namespace OnlineMinion.Web.Transaction;
 
+/// <param name="PaymentInstrument">NB! It is important too keep member name, so that API communication queries work.</param>
 public abstract record BaseTransactionListItem(
-    int                    Id,
-    int                    PaymentInstrumentId,
-    DateOnly               Date,
-    decimal                Amount,
-    string                 Subject,
-    string                 Party,
-    string?                Tags,
-    TransactionPaymentData PaymentInstrument
+    int                       Id,
+    DateOnly                  Date,
+    decimal                   Amount,
+    string                    Subject,
+    string                    Party,
+    string?                   Tags,
+    PaymentSpecDescriptorResp PaymentInstrument
 ) : IHasIntId;

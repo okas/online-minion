@@ -1,24 +1,24 @@
-using OnlineMinion.Contracts.Transactions;
+using OnlineMinion.Contracts.AccountSpec.Responses;
+using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 
 namespace OnlineMinion.Web.Transaction.Debit;
 
+/// <inheritdoc />
+/// <param name="AccountSpec">NB! It is important too keep member name, so that API communication queries work.</param>
 public sealed record TransactionDebitListItem(
-    int                    Id,
-    int                    PaymentInstrumentId,
-    int                    AccountSpecId,
-    decimal                Fee,
-    DateOnly               Date,
-    decimal                Amount,
-    string                 Subject,
-    string                 Party,
-    string?                Tags,
-    TransactionPaymentData PaymentInstrument,
-    TransactionAccountData AccountSpec
+    int                       Id,
+    decimal                   Fee,
+    DateOnly                  Date,
+    decimal                   Amount,
+    string                    Subject,
+    string                    Party,
+    string?                   Tags,
+    PaymentSpecDescriptorResp PaymentInstrument,
+    AccountSpecDescriptorResp AccountSpec
 ) : BaseTransactionListItem(
     Id,
-    PaymentInstrumentId,
     Date,
     Amount,
     Subject,
@@ -34,16 +34,14 @@ public sealed record TransactionDebitListItem(
     ) =>
         new(
             resp.Id,
-            resp.PaymentInstrumentId,
-            resp.AccountSpecId,
             resp.Fee,
             resp.Date,
             resp.Amount,
             resp.Subject,
             resp.Party,
             resp.Tags,
-            new(paymentInstrumentName),
-            new(accountSpecName)
+            new(resp.PaymentInstrumentId, paymentInstrumentName),
+            new(resp.AccountSpecId, accountSpecName)
         );
 
     public static TransactionDebitListItem FromUpdateRequest(
@@ -53,23 +51,21 @@ public sealed record TransactionDebitListItem(
     ) =>
         new(
             rq.Id,
-            rq.PaymentInstrumentId,
-            rq.AccountSpecId,
             rq.Fee,
             rq.Date,
             rq.Amount,
             rq.Subject,
             rq.Party,
             rq.Tags,
-            new(paymentInstrumentName),
-            new(accountSpecName)
+            new(rq.PaymentInstrumentId, paymentInstrumentName),
+            new(rq.AccountSpecId, accountSpecName)
         );
 
     public static UpdateTransactionDebitReq ToUpdateRequest(TransactionDebitListItem vm) =>
         new(
             vm.Id,
-            vm.PaymentInstrumentId,
-            vm.AccountSpecId,
+            vm.PaymentInstrument.Id,
+            vm.AccountSpec.Id,
             vm.Fee,
             vm.Date,
             vm.Amount,

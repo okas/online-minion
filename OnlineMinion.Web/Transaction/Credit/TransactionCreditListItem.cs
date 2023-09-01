@@ -1,21 +1,20 @@
-using OnlineMinion.Contracts.Transactions;
+using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 
 namespace OnlineMinion.Web.Transaction.Credit;
 
+/// <inheritdoc />
 public sealed record TransactionCreditListItem(
-    int                    Id,
-    int                    PaymentInstrumentId,
-    DateOnly               Date,
-    decimal                Amount,
-    string                 Subject,
-    string                 Party,
-    string?                Tags,
-    TransactionPaymentData PaymentInstrument
+    int                       Id,
+    DateOnly                  Date,
+    decimal                   Amount,
+    string                    Subject,
+    string                    Party,
+    string?                   Tags,
+    PaymentSpecDescriptorResp PaymentInstrument
 ) : BaseTransactionListItem(
     Id,
-    PaymentInstrumentId,
     Date,
     Amount,
     Subject,
@@ -30,13 +29,12 @@ public sealed record TransactionCreditListItem(
     ) =>
         new(
             resp.Id,
-            resp.PaymentInstrumentId,
             resp.Date,
             resp.Amount,
             resp.Subject,
             resp.Party,
             resp.Tags,
-            new(paymentInstrumentName)
+            new(resp.PaymentInstrumentId, paymentInstrumentName)
         );
 
     public static TransactionCreditListItem FromUpdateRequest(
@@ -45,13 +43,12 @@ public sealed record TransactionCreditListItem(
     ) =>
         new(
             rq.Id,
-            rq.PaymentInstrumentId,
             rq.Date,
             rq.Amount,
             rq.Subject,
             rq.Party,
             rq.Tags,
-            new(paymentInstrumentName)
+            new(rq.PaymentInstrumentId, paymentInstrumentName)
         );
 
     public static UpdateTransactionCreditReq ToUpdateRequest(TransactionCreditListItem vm) =>
@@ -61,7 +58,7 @@ public sealed record TransactionCreditListItem(
             vm.Amount,
             vm.Subject,
             vm.Party,
-            vm.PaymentInstrumentId,
+            vm.PaymentInstrument.Id,
             vm.Tags
         );
 }
