@@ -14,7 +14,7 @@ public sealed class UpdateTransactionCreditReq(
         int      paymentInstrumentId,
         string?  tags
     )
-    : BaseUpsertTransactionReqData(date, amount, subject, party, paymentInstrumentId, tags), IUpdateCommand
+    : BaseUpsertTransactionReqData(paymentInstrumentId, date, amount, subject, party, tags), IUpdateCommand
 {
     public int Id => id;
 }

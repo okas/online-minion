@@ -12,13 +12,13 @@ internal sealed class GetTransactionCreditsReqHlr(OnlineMinionDbContext dbContex
     : BaseGetSomeModelsPagedReqHlr<TransactionCredit, TransactionCreditResp>(dbContext)
 {
     protected override Expression<Func<TransactionCredit, TransactionCreditResp>> Projection =>
-        e => new(
-            e.Id,
-            e.Date,
-            e.Amount,
-            e.Subject,
-            e.Party,
-            e.PaymentInstrumentId,
-            e.Tags
+        entity => new(
+            entity.Id,
+            entity.PaymentInstrumentId,
+            entity.Date,
+            entity.Amount,
+            entity.Subject,
+            entity.Party,
+            entity.Tags
         );
 }

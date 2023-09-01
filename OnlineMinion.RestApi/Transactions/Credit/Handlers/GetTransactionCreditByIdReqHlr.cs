@@ -13,11 +13,11 @@ internal sealed class GetTransactionCreditByIdReqHlr(OnlineMinionDbContext dbCon
 {
     protected override TransactionCreditResp ToResponse(TransactionCredit entity) => new(
         entity.Id,
+        entity.PaymentInstrumentId,
         entity.Date,
         entity.Amount,
         entity.Subject,
         entity.Party,
-        entity.PaymentInstrumentId,
         entity.Tags
     );
 }

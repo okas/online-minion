@@ -6,10 +6,10 @@ namespace OnlineMinion.Contracts.Transactions.Credit.Requests;
 
 [method: SetsRequiredMembers]
 public sealed class CreateTransactionCreditReq() : BaseUpsertTransactionReqData(
+    default,
     DateOnly.FromDateTime(DateTime.Now),
-    0m,
+    default,
     string.Empty,
     string.Empty,
-    0,
     default
 ), ICreateCommand;
