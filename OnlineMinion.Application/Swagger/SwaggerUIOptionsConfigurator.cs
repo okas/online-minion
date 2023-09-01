@@ -6,18 +6,12 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace OnlineMinion.Application.Swagger;
 
-public class SwaggerUIOptionsConfigurator : IConfigureOptions<SwaggerUIOptions>
+public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
+    : IConfigureOptions<SwaggerUIOptions>
 {
-    private readonly string _apiAssemblyName;
-    private readonly IApiVersionDescriptionProvider _apiVersionDescriptionProvider;
-
-    public SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
-    {
-        _apiAssemblyName = typeof(AccountSpecsController).Assembly.GetName().Name ??
-                           throw new InvalidOperationException();
-
-        _apiVersionDescriptionProvider = apiVersionDescriptionProvider;
-    }
+    private readonly string _apiAssemblyName =
+        typeof(AccountSpecsController).Assembly.GetName().Name
+        ?? throw new InvalidOperationException();
 
     public void Configure(SwaggerUIOptions options)
     {
@@ -28,7 +22,7 @@ public class SwaggerUIOptionsConfigurator : IConfigureOptions<SwaggerUIOptions>
 
         // Allows multiple versions of our routes.
         // .Reverse(), first shown most recent version.
-        foreach (var versionDescription in _apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
+        foreach (var versionDescription in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
         {
             options.SwaggerEndpoint(
                 $"/swagger/{versionDescription.GroupName}/swagger.json",

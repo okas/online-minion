@@ -7,10 +7,8 @@ using OnlineMinion.Data.Exceptions;
 
 namespace OnlineMinion.Data;
 
-public class OnlineMinionDbContext : DbContext
+public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> options) : DbContext(options)
 {
-    public OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> options) : base(options) { }
-
     public DbSet<AccountSpec> AccountSpecs { get; set; } = null!;
 
     public DbSet<TransactionDebit> TransactionDebits { get; set; } = null!;

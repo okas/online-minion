@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace OnlineMinion.Data.Exceptions;
 
-public class ConflictException : Exception
+public class ConflictException(string message, UniqueConstraintException ex) : Exception(message)
 {
-    public ConflictException(string message, UniqueConstraintException ex) : base(message) =>
-        Errors = GetErrorData(ex.Entries, ex.Message, ex.InnerException!.Message);
-
-    public IList<ErrorDescriptor> Errors { get; init; }
+    public IList<ErrorDescriptor> Errors { get; } = GetErrorData(
+        ex.Entries,
+        ex.Message,
+        ex.InnerException!.Message
+    );
 
     private static List<ErrorDescriptor> GetErrorData(
         IReadOnlyList<EntityEntry> uniqueConstraintExceptionEntries,

@@ -9,29 +9,20 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OnlineMinion.Application.Swagger;
 
-public class SwaggerGenOptionsConfigurator : IConfigureOptions<SwaggerGenOptions>
+public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider, IServer server)
+    : IConfigureOptions<SwaggerGenOptions>
 {
-    private readonly IServerAddressesFeature _addressFeature;
-    private readonly string _apiAssemblyName;
-    private readonly IApiVersionDescriptionProvider _apiVersionDescriptionProvider;
+    private readonly IServerAddressesFeature _addressFeature =
+        server.Features.Get<IServerAddressesFeature>()
+        ?? throw new InvalidOperationException(
+            "Cannot obtain assembly name for SwaggerGenOptions configuration."
+        );
 
-    public SwaggerGenOptionsConfigurator(
-        IApiVersionDescriptionProvider apiVersionDescriptionProvider,
-        IServer                        server
-    )
-    {
-        _apiAssemblyName = typeof(AccountSpecsController).Assembly.GetName().Name
-                           ?? throw new InvalidOperationException(
-                               "Cannot obtain server address feature for SwaggerGenOptions configuration."
-                           );
-
-        _addressFeature = server.Features.Get<IServerAddressesFeature>()
-                          ?? throw new InvalidOperationException(
-                              "Cannot obtain assembly name for SwaggerGenOptions configuration."
-                          );
-
-        _apiVersionDescriptionProvider = apiVersionDescriptionProvider;
-    }
+    private readonly string _apiAssemblyName =
+        typeof(AccountSpecsController).Assembly.GetName().Name
+        ?? throw new InvalidOperationException(
+            "Cannot obtain server address feature for SwaggerGenOptions configuration."
+        );
 
     public void Configure(SwaggerGenOptions options)
     {
@@ -48,7 +39,7 @@ public class SwaggerGenOptionsConfigurator : IConfigureOptions<SwaggerGenOptions
         //options.AddSecurityDefinition(...);
         //options.AddSecurityRequirement(...);
 
-        foreach (var description in _apiVersionDescriptionProvider.ApiVersionDescriptions)
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
         {
             if (options.SwaggerGeneratorOptions.SwaggerDocs.TryGetValue(description.GroupName, out var doc))
             {

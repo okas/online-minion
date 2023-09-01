@@ -8,19 +8,15 @@ using Microsoft.Extensions.Options;
 namespace OnlineMinion.RestApi.ProblemHandling;
 
 /// <inheritdoc />
-public class RestApiProblemDetailsFactory : ProblemDetailsFactory
-{
-    private readonly Action<ProblemDetailsContext>? _configure;
-    private readonly ApiBehaviorOptions _options;
-
-    public RestApiProblemDetailsFactory(
+public class RestApiProblemDetailsFactory(
         IOptions<ApiBehaviorOptions>     options,
         IOptions<ProblemDetailsOptions>? problemDetailsOptions = null
     )
-    {
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _configure = problemDetailsOptions?.Value?.CustomizeProblemDetails;
-    }
+    : ProblemDetailsFactory
+{
+    private readonly Action<ProblemDetailsContext>? _configure = problemDetailsOptions?.Value.CustomizeProblemDetails;
+
+    private readonly ApiBehaviorOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
 
     public override ProblemDetails CreateProblemDetails(
         HttpContext httpContext,

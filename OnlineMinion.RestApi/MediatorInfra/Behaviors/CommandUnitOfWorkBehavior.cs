@@ -18,13 +18,11 @@ namespace OnlineMinion.RestApi.MediatorInfra.Behaviors;
 /// </remarks>
 /// <typeparam name="TRequest">Request or model, constrained to <see cref="IUpsertCommand{TResponse}" />.</typeparam>
 /// <typeparam name="TResponse">Response model, constrained to <see cref="IErrorOr" />.</typeparam>
-public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse>(OnlineMinionDbContext dbContext)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IUpsertCommand<TResponse>
     where TResponse : IErrorOr
 {
-    private readonly OnlineMinionDbContext _dbContext;
-    public CommandUnitOfWorkBehavior(OnlineMinionDbContext dbContext) => _dbContext = dbContext;
-
     /// <inheritdoc />
     public async Task<TResponse> Handle(TRequest req, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
@@ -32,7 +30,7 @@ public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse> : IPipelineBe
 
         var result = await next().ConfigureAwait(false);
 
-        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
         transactionScope.Complete();
 

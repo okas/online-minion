@@ -1,17 +1,10 @@
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 
-public abstract class BaseUpsertPaymentSpecReqData
+public abstract class BaseUpsertPaymentSpecReqData(string name, string currencyCode, string? tags)
 {
-    protected BaseUpsertPaymentSpecReqData(string name, string currencyCode, string? tags)
-    {
-        Name = name;
-        CurrencyCode = currencyCode;
-        Tags = tags;
-    }
+    public string Name { get; set; } = name;
 
-    public string Name { get; set; }
+    public string CurrencyCode { get; set; } = currencyCode;
 
-    public string CurrencyCode { get; set; }
-
-    public string? Tags { get; set; }
+    public string? Tags { get; set; } = tags;
 }

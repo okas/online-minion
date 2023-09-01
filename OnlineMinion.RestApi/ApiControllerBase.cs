@@ -15,10 +15,9 @@ namespace OnlineMinion.RestApi;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
-public abstract class ApiControllerBase : ControllerBase
+public abstract class ApiControllerBase(ISender sender) : ControllerBase
 {
-    protected readonly ISender Sender;
-    protected ApiControllerBase(ISender sender) => Sender = sender;
+    protected readonly ISender Sender = sender;
 
     /// <summary>
     ///     To probe some paging related data about this resource.

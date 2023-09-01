@@ -3,15 +3,12 @@ using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.Contracts.AccountSpec.Requests;
 
-public sealed class UpdateAccountSpecReq : BaseUpsertAccountSpecReqData, IUpdateCommand
+public sealed class UpdateAccountSpecReq(int id, string name, string group, string? description)
+    : BaseUpsertAccountSpecReqData(name, group, description), IUpdateCommand
 {
-    public UpdateAccountSpecReq() : base(string.Empty, string.Empty, null) { }
+    public UpdateAccountSpecReq() : this(0, string.Empty, string.Empty, null) { }
 
-    public UpdateAccountSpecReq(int id, string name, string group, string? description) :
-        base(name, group, description) =>
-        Id = id;
-
-    public int Id { get; set; }
+    public int Id { get; set; } = id;
 
     public static implicit operator UpdateAccountSpecReq(AccountSpecResp resp) =>
         new(resp.Id, resp.Name, resp.Group, resp.Description);
