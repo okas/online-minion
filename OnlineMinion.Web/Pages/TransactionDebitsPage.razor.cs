@@ -9,7 +9,6 @@ using OnlineMinion.Contracts.Transactions.Debit;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.Web.Components;
-using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.Transaction.Debit;
 
@@ -25,8 +24,8 @@ public partial class TransactionDebitsPage : BaseCRUDPage<TransactionDebitListIt
     private RadzenDataGridWrapper<TransactionDebitListItem> _gridWrapperRef = null!;
     private BaseUpsertTransactionDebitReqData? _modelUpsert;
 
-    private IList<PaymentSpecResp> PaymentViewModels { get; } = new List<PaymentSpecResp>();
-    public IList<AccountSpecResp> AccountViewModels { get; } = new List<AccountSpecResp>();
+    private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
+    private List<AccountSpecDescriptorResp> AccountDescriptorViewModels { get; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -34,31 +33,10 @@ public partial class TransactionDebitsPage : BaseCRUDPage<TransactionDebitListIt
 
         // Order! Related models data is used to create create grid data, during main models pulling from stream.
         await Task.WhenAll(
-            LoadRelatedViewModelModelFromApi(PaymentViewModels),
-            LoadRelatedViewModelModelFromApi(AccountViewModels)
+            LoadDescriptorViewModelsFromApi(PaymentDescriptorViewModels),
+            LoadDescriptorViewModelsFromApi(AccountDescriptorViewModels)
         );
         await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
-    }
-
-    private async Task LoadRelatedViewModelModelFromApi<TResponse>(IList<TResponse> targetList)
-    {
-        var rq = new BaseGetSomeModelsPagedReq<TResponse>();
-        var result = await Sender.Send(rq, CT);
-
-        // TODO: need separate request-response objects with needed data only.
-        await result.SwitchFirstAsync(
-            async models => await models.Result.PullItemsFromStream(targetList, CT),
-            firstError =>
-            {
-                Logger.LogError(
-                    "Unexpected error while getting {ModelName} list: {ErrorDescription}",
-                    nameof(TResponse),
-                    firstError.Description
-                );
-
-                return Task.CompletedTask;
-            }
-        );
     }
 
     private void OnAddHandler()
@@ -104,17 +82,18 @@ public partial class TransactionDebitsPage : BaseCRUDPage<TransactionDebitListIt
 
     protected override TransactionDebitListItem ConvertRequestResponseToVM(TransactionDebitResp dto)
     {
-        var paymentSpec = PaymentViewModels.Single(vm => vm.Id == dto.PaymentInstrumentId);
-        var accountSpec = AccountViewModels.Single(vm => vm.Id == dto.AccountSpecId);
+        var paymentSpec = GetById(PaymentDescriptorViewModels, dto.PaymentInstrumentId);
+        var accountSpec = GetById(AccountDescriptorViewModels, dto.AccountSpecId);
 
         return TransactionDebitListItem.FromResponseDto(dto, paymentSpec.Name, accountSpec.Name);
     }
 
+
     protected override TransactionDebitListItem ConvertUpdateRequestToVM(IUpdateCommand dto)
     {
         var rq = (UpdateTransactionDebitReq)dto;
-        var paymentSpec = PaymentViewModels.Single(vm => vm.Id == rq.PaymentInstrumentId);
-        var accountSpec = AccountViewModels.Single(vm => vm.Id == rq.AccountSpecId);
+        var paymentSpec = GetById(PaymentDescriptorViewModels, rq.PaymentInstrumentId);
+        var accountSpec = GetById(AccountDescriptorViewModels, rq.AccountSpecId);
 
         return TransactionDebitListItem.FromUpdateRequest(
             (UpdateTransactionDebitReq)dto,

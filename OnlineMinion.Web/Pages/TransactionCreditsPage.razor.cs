@@ -8,7 +8,6 @@ using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Web.Components;
-using OnlineMinion.Web.Helpers;
 using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.Transaction.Credit;
 
@@ -24,36 +23,15 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
     private RadzenDataGridWrapper<TransactionCreditListItem> _gridWrapperRef = null!;
     private BaseUpsertTransactionReqData? _modelUpsert;
 
-    private IList<PaymentSpecResp> RelatedViewModels { get; } = new List<PaymentSpecResp>();
+    private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         // Order! Related models data is used to create create list, during main models pulling from stream.
-        await LoadRelatedViewModelModelFromApi();
+        await LoadDescriptorViewModelsFromApi(PaymentDescriptorViewModels);
         await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
-    }
-
-    private async Task LoadRelatedViewModelModelFromApi()
-    {
-        var rq = new BaseGetSomeModelsPagedReq<PaymentSpecResp>();
-        var result = await Sender.Send(rq, CT);
-
-        // TODO: need separate request-response objects with needed data only.
-        await result.SwitchFirstAsync(
-            async models => await models.Result.PullItemsFromStream(RelatedViewModels, CT),
-            firstError =>
-            {
-                Logger.LogError(
-                    "Unexpected error while getting {ModelName} list: {ErrorDescription}",
-                    nameof(PaymentSpecResp),
-                    firstError.Description
-                );
-
-                return Task.CompletedTask;
-            }
-        );
     }
 
     private void OnAddHandler()
@@ -99,7 +77,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
 
     protected override TransactionCreditListItem ConvertRequestResponseToVM(TransactionCreditResp dto)
     {
-        var paymentSpec = RelatedViewModels.Single(vm => vm.Id == dto.PaymentInstrumentId);
+        var paymentSpec = GetById(PaymentDescriptorViewModels, dto.PaymentInstrumentId);
 
         return TransactionCreditListItem.FromResponseDto(dto, paymentSpec.Name);
     }
@@ -107,7 +85,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
     protected override TransactionCreditListItem ConvertUpdateRequestToVM(IUpdateCommand dto)
     {
         var rq = (UpdateTransactionCreditReq)dto;
-        var paymentSpec = RelatedViewModels.Single(vm => vm.Id == rq.PaymentInstrumentId);
+        var paymentSpec = GetById(PaymentDescriptorViewModels, rq.PaymentInstrumentId);
 
         return TransactionCreditListItem.FromUpdateRequest((UpdateTransactionCreditReq)dto, paymentSpec.Name);
     }

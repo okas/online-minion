@@ -101,6 +101,27 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
         SC.IsBusy = false;
     }
 
+    protected async Task LoadDescriptorViewModelsFromApi<TDescriptorResponse>(IList<TDescriptorResponse> targetList)
+    {
+        var rq = new GetSomeModelDescriptorsReq<TDescriptorResponse>();
+        var result = await Sender.Send(rq, CT);
+
+        // TODO: need separate request-response objects with needed data only.
+        await result.SwitchFirstAsync(
+            async models => await models.PullItemsFromStream(targetList, CT),
+            firstError =>
+            {
+                Logger.LogError(
+                    "Unexpected error while querying descriptor view models data as `{ModelName}`: {ErrorDescription}",
+                    nameof(TDescriptorResponse),
+                    firstError.Description
+                );
+
+                return Task.CompletedTask;
+            }
+        );
+    }
+
     protected void OpenEditorDialog(string title) => DialogService.Open(
         title,
         _ => RenderEditorComponent(),
@@ -317,4 +338,9 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
 
     /// <inheritdoc cref="ToGridPage" />
     protected static int ToApiPage(int gridPage) => gridPage + 1;
+
+    protected static TDescriptor GetById<TDescriptor>(IEnumerable<TDescriptor> enumerable, int id)
+        where TDescriptor
+        : IHasIntId =>
+        enumerable.Single(vm => vm.Id == id);
 }

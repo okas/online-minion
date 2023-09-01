@@ -124,6 +124,19 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
         );
     }
 
+    [HttpGet("descriptors")]
+    [ProducesResponseType<AccountSpecDescriptorResp>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAsDescriptors(CancellationToken ct)
+    {
+        var rq = new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>();
+        var result = await Sender.Send(rq, ct);
+
+        return result.MatchFirst(
+            Ok,
+            firstError => CreateApiProblemResult(firstError)
+        );
+    }
+
     [HttpPost]
     [ProducesResponseType<ModelIdResp>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -121,6 +121,19 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
         );
     }
 
+    [HttpGet("descriptors")]
+    [ProducesResponseType<PaymentSpecDescriptorResp>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAsDescriptors(CancellationToken ct)
+    {
+        var rq = new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>();
+        var result = await Sender.Send(rq, ct);
+
+        return result.MatchFirst(
+            Ok,
+            firstError => CreateApiProblemResult(firstError)
+        );
+    }
+
     [HttpPost]
     [ProducesResponseType<ModelIdResp>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

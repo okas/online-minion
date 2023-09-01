@@ -37,7 +37,7 @@
                 AllowClear="@true"
                 AllowFiltering="@true"
                 @bind-Value="@context.PaymentInstrumentId"
-                Data="@PaymentViewModels"
+                Data="@PaymentDescriptorViewModels"
                 TextProperty="@nameof(PaymentSpecResp.Name)"
                 ValueProperty="@nameof(PaymentSpecResp.Id)"/>
           </RadzenFormField>
@@ -46,7 +46,7 @@
                 AllowClear="@true"
                 AllowFiltering="@true"
                 @bind-Value="@context.AccountSpecId"
-                Data="@AccountViewModels"
+                Data="@AccountDescriptorViewModels"
                 TextProperty="@nameof(AccountSpecResp.Name)"
                 ValueProperty="@nameof(AccountSpecResp.Id)"/>
           </RadzenFormField>
