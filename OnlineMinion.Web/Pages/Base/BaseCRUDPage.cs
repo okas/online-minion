@@ -1,23 +1,44 @@
+using System.Globalization;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Helpers;
 using Radzen;
 
 namespace OnlineMinion.Web.Pages.Base;
 
-public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellationToken
+/// <summary>Generic CRUD page for Radzen DataGrid and Editor components.</summary>
+/// <remarks>
+///     Has few abstract and virtual methods that are needed to provide page-specific object conversions and
+///     behaviors.
+/// </remarks>
+/// <typeparam name="TVModel"></typeparam>
+/// <typeparam name="TResponse"></typeparam>
+/// <typeparam name="TBaseUpsert"><b>class</b> constrained, because it is used in form, cannot be immutable.</typeparam>
+public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentWithCancellationToken
     where TVModel : IHasIntId
     where TResponse : IHasIntId
+    where TBaseUpsert : class
 {
+    private const string RespModelName = nameof(TResponse);
+
+    protected UpsertEditorWrapper<TBaseUpsert> EditorWrapperRef = null!;
+    protected RadzenDataGridWrapper<TVModel> GridWrapperRef = null!;
+    protected TBaseUpsert? UpsertVM;
+
     protected BaseCRUDPage()
     {
+        PageSizeOptions = BasePagingParams.AllowedSizes;
         CurrentPage = BasePagingParams.FirstPage;
         CurrentPageSize = BasePagingParams.DefaultSize;
         ViewModels = new List<TVModel>(CurrentPageSize);
     }
+
+    protected IEnumerable<int> PageSizeOptions { get; private set; }
 
     protected int CurrentPage { get; private set; }
 
@@ -37,15 +58,28 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
     public DialogService DialogService { get; set; } = default!;
 
     [Inject]
-    public ILogger<BaseCRUDPage<TVModel, TResponse>> Logger { get; set; } = default!;
+    public ILogger<BaseCRUDPage<TVModel, TResponse, TBaseUpsert>> Logger { get; set; } = default!;
 
-    protected async Task OnLoadDataHandler(LoadDataArgs args)
+    protected abstract string ModelTypeName { get; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Order! Dependent models data is used to create create grid data, during main models pulling from stream.
+        await LoadDependenciesAsync();
+        await LoadItemVMsFromApiAsync(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
+    }
+
+    protected virtual Task LoadDependenciesAsync() => Task.CompletedTask;
+
+    protected async Task OnLoadDataHandlerAsync(LoadDataArgs args)
     {
         var size = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
         var offset = args.Skip.GetValueOrDefault();
         var page = (int)Math.Floor((decimal)offset / size) + 1;
 
-        await LoadViewModelFromApi(page, size, args.Filter, args.OrderBy);
+        await LoadItemVMsFromApiAsync(page, size, args.Filter, args.OrderBy);
     }
 
     /// <summary>
@@ -56,18 +90,9 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
     /// <param name="size" />
     /// <param name="filterExpression">Filtering expression, multi or single property.</param>
     /// <param name="sortExpression">Sorting expression, multi or single property.</param>
-    protected async Task LoadViewModelFromApi(int page, int size, string filterExpression, string sortExpression)
+    private async Task LoadItemVMsFromApiAsync(int page, int size, string filterExpression, string sortExpression)
     {
-        var modelName = nameof(TResponse);
-
-        Logger.LogTrace(
-            "Loading {ModelName} list from API: page={Page}, size={Size}, filter=`{Filter}`, sort=`{Sort}`",
-            modelName,
-            page,
-            size,
-            filterExpression,
-            sortExpression
-        );
+        LogOnViewModelDataLoad(page, size, filterExpression, sortExpression);
 
         SC.IsBusy = true;
 
@@ -75,24 +100,10 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
         var result = await Sender.Send(rq, CT);
 
         await result.SwitchFirstAsync(
-            async pagedResult =>
-            {
-                TotalItemsCount = pagedResult.Paging.Rows;
-                ViewModels.Clear();
-                await pagedResult.Result.PullItemsFromStream(
-                    ViewModels,
-                    ConvertRequestResponseToVM,
-                    CT,
-                    StateHasChanged
-                );
-            },
+            OnApiLoadItemsVMsSuccessAsync,
             firstError =>
             {
-                Logger.LogError(
-                    "Unexpected error while getting {ModelName} list: {ErrorDescription}",
-                    modelName,
-                    firstError.Description
-                );
+                LogErrorOnViewModelDataApiLoad(firstError);
 
                 return Task.CompletedTask;
             }
@@ -101,28 +112,59 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
         SC.IsBusy = false;
     }
 
-    protected async Task LoadDescriptorViewModelsFromApi<TDescriptorResponse>(IList<TDescriptorResponse> targetList)
+    private async Task OnApiLoadItemsVMsSuccessAsync(PagedResult<TResponse> pagedResult)
     {
-        var rq = new GetSomeModelDescriptorsReq<TDescriptorResponse>();
+        TotalItemsCount = pagedResult.Paging.Rows;
+        ViewModels.Clear();
+        await pagedResult.Result.PullItemsFromStream(ViewModels, ConvertReqResponseToVM, CT, StateHasChanged);
+    }
+
+    protected abstract TVModel ConvertReqResponseToVM(TResponse dto);
+
+    protected async Task LoadDependentVMsFromApiAsync<TDependentVmResponse>(IList<TDependentVmResponse> targetList)
+    {
+        var rq = new GetSomeModelDescriptorsReq<TDependentVmResponse>();
         var result = await Sender.Send(rq, CT);
 
-        // TODO: need separate request-response objects with needed data only.
+        // TODO: need separate rq-response objects with needed data only.
         await result.SwitchFirstAsync(
             async models => await models.PullItemsFromStream(targetList, CT),
             firstError =>
             {
-                Logger.LogError(
-                    "Unexpected error while querying descriptor view models data as `{ModelName}`: {ErrorDescription}",
-                    nameof(TDescriptorResponse),
-                    firstError.Description
-                );
+                LogErrorOnDescriptorViewModelDataApiLoad(firstError, nameof(TDependentVmResponse));
 
                 return Task.CompletedTask;
             }
         );
     }
 
-    protected void OpenEditorDialog(string title) => DialogService.Open(
+    protected void OnAddHandler()
+    {
+        if (UpsertVM is not ICreateCommand)
+        {
+            UpsertVM = (TBaseUpsert)CreateCommandFactory();
+        }
+
+        OpenEditorDialog($"Add new {ModelTypeName}");
+    }
+
+    protected abstract ICreateCommand CreateCommandFactory();
+
+    protected void OnEditHandler(TVModel vm)
+    {
+        // If the editing of same item is already in progress, then continue editing it.
+        if (UpsertVM is not IUpdateCommand cmd || cmd.Id != vm.Id)
+        {
+            UpsertVM = (TBaseUpsert)UpdateCommandFactory(vm);
+        }
+
+        var title = $"Edit {ModelTypeName}: id #{vm.Id.ToString(CultureInfo.InvariantCulture)}";
+        OpenEditorDialog(title);
+    }
+
+    protected abstract IUpdateCommand UpdateCommandFactory(TVModel vm);
+
+    private void OpenEditorDialog(string title) => DialogService.Open(
         title,
         _ => RenderEditorComponent(),
         new() { Draggable = true, }
@@ -130,11 +172,11 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
 
     protected abstract RenderFragment RenderEditorComponent();
 
-    protected async Task OnUpsertSubmitHandler()
+    protected async Task OnUpsertSubmitHandlerAsync()
     {
         SC.IsBusy = true;
 
-        if (!await Validate())
+        if (!await EditorWrapperRef.ValidateEditorAsync())
         {
             SC.IsBusy = false;
 
@@ -151,148 +193,183 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
         }
     }
 
-    protected abstract ValueTask<bool> Validate();
-
-    protected abstract ValueTask<bool> HandleUpsertSubmit();
-
-    protected async Task<bool> HandleUpdateSubmit(IUpdateCommand request)
+    private ValueTask<bool> HandleUpsertSubmit() => UpsertVM switch
     {
-        var result = await Sender.Send(request, CT);
+        IUpdateCommand rq => HandleUpdateSubmitAsync(rq),
+        ICreateCommand rq => HandleCreateSubmitAsync(rq),
+        null => throw new InvalidOperationException("Upsert model is null."),
+        _ => throw new InvalidOperationException("Unknown model type."),
+    };
+
+    private async ValueTask<bool> HandleUpdateSubmitAsync(IUpdateCommand rq)
+    {
+        var result = await Sender.Send(rq, CT);
 
         return await result.MatchAsync(
             _ =>
             {
-                HandlePageStateAfterUpdate(request);
+                OnApiUpdateSuccess(rq);
 
                 return Task.FromResult(true);
             },
             async errors =>
             {
-                SetServerValidationErrors(errors);
-                // It can happen, it is not unexpected error per se.
-                if (errors.Exists(err => err.Type is ErrorType.NotFound))
-                {
-                    await AfterSuccessfulChange(CurrentPage);
-                }
+                await OnApiUpdateErrorAsync(errors);
 
-                //TODO handel all other errors
                 return false;
             }
         );
     }
 
-    private void HandlePageStateAfterUpdate(IUpdateCommand rq)
+    private void OnApiUpdateSuccess(IUpdateCommand rq)
     {
         var model = ViewModels.Single(m => m.Id == rq.Id);
-        var clone = ConvertUpdateRequestToVM(rq);
+        var clone = ConvertUpdateReqToVM(rq);
         ViewModels[ViewModels.IndexOf(model)] = clone;
     }
 
-    protected abstract TVModel ConvertRequestResponseToVM(TResponse dto);
+    private async Task OnApiUpdateErrorAsync(List<Error> errors)
+    {
+        SetServerValidationErrors(errors);
 
-    protected abstract TVModel ConvertUpdateRequestToVM(IUpdateCommand dto);
+        // It can happen, it is not unexpected error per se.
+        if (errors.Exists(err => err.Type is ErrorType.NotFound))
+        {
+            await ChangeGridPageAsync(CurrentPage);
+        }
 
-    protected async Task<bool> HandleCreateSubmit(ICreateCommand rq)
+        //TODO handel all other errors
+    }
+
+    protected abstract TVModel ConvertUpdateReqToVM(IUpdateCommand dto);
+
+    private async ValueTask<bool> HandleCreateSubmitAsync(ICreateCommand rq)
     {
         var result = await Sender.Send(rq, CT);
 
         return await result.MatchAsync(
             async _ =>
             {
-                var metaInfoRequest = PageCountRequestFactory(CurrentPageSize);
-                await HandlePageStateAfterCreate(metaInfoRequest);
+                await OnApiCreateSuccessAsync();
 
                 return true;
             },
             errors =>
             {
-                SetServerValidationErrors(errors);
-
-                //TODO handel all other errors
+                OnApiCreateError(errors);
 
                 return Task.FromResult(false);
             }
         );
     }
 
-    protected abstract IGetPagingInfoRequest PageCountRequestFactory(int pageSize);
-
-    private async ValueTask HandlePageStateAfterCreate(IGetPagingInfoRequest metaInfoRequest)
+    private void OnApiCreateError(IList<Error> errors)
     {
-        var result = await Sender.Send(metaInfoRequest, CT);
+        SetServerValidationErrors(errors);
+
+        //TODO handel all other errors
+    }
+
+    private async ValueTask OnApiCreateSuccessAsync()
+    {
+        var rq = PageCountRequestFactory(CurrentPageSize);
+        var result = await Sender.Send(rq, CT);
 
         await result.SwitchFirstAsync(
-            info => AfterSuccessfulChange(info.Pages),
+            info => ChangeGridPageAsync(info.Pages),
             firstError =>
             {
-                HandlePagingMetadataQueryErrors(firstError);
+                OnApiGetPagingInfoError(firstError);
 
                 return Task.CompletedTask;
             }
         );
     }
 
-    private void HandlePagingMetadataQueryErrors(Error error)
+    protected abstract IGetPagingInfoRequest PageCountRequestFactory(int pageSize);
+
+    private void OnApiGetPagingInfoError(Error error)
     {
         if (error.Type is ErrorType.Failure)
         {
-            Logger.LogWarning(
-                "Table pagination to new element's page skipped: {ErrorDescription}",
-                error.Description
-            );
+            LogWarningOnApiGetPagingInfo(error);
+
             // TODO: show error to user
             // TODO: "Table pagination to new element's page skipped"
         }
         else
         {
-            Logger.LogError("Unexpected error while getting paging metadata to re-paginate table");
+            LogErrorOnApiGetPagingInfo();
         }
     }
 
-    protected abstract void SetServerValidationErrors(IList<Error> errors);
 
-    protected virtual void CloseEditorDialog() => DialogService.Close();
+    private void SetServerValidationErrors(IList<Error> errors) => EditorWrapperRef.SetServerValidationErrors(errors);
 
-    protected async ValueTask<bool> DeleteModelFromApi(IDeleteByIdCommand rq, string modelType)
+    protected void CloseEditorDialog()
     {
+        EditorWrapperRef.ResetEditor();
+        DialogService.Close();
+        UpsertVM = null;
+    }
+
+    protected async Task OnDeleteHandlerAsync(TVModel vm)
+    {
+        var descriptorData = GetDeleteMessageDescriptorData(vm);
+
+        if (!await GetUserConfirmationAsync(descriptorData, null))
+        {
+            return;
+        }
+
+        SC.IsBusy = true;
+        await DeleteModelFromApiAsync(vm);
+        SC.IsBusy = false;
+    }
+
+    protected abstract string GetDeleteMessageDescriptorData(TVModel model);
+
+    private async ValueTask<bool> DeleteModelFromApiAsync(TVModel vm)
+    {
+        var rq = DeleteCommandFactory(vm);
         var result = await Sender.Send(rq, CT);
 
         return await result.MatchFirstAsync(
             async _ =>
             {
-                await HandlePageStateAfterDelete();
+                await OnApiDeleteSuccessAsync();
 
                 return true;
             },
             error =>
             {
-                HandleApiDeleteErrors(rq.Id, error, modelType);
+                OnApiDeleteError(vm.Id, error);
 
                 return Task.FromResult(false);
             }
         );
     }
 
-    private async ValueTask HandlePageStateAfterDelete()
+    protected abstract IDeleteByIdCommand DeleteCommandFactory(TVModel vm);
+
+    private async ValueTask OnApiDeleteSuccessAsync()
     {
         var visiblePageAfterDelete = ViewModels.Count == 1
             ? CurrentPage - 1
             : CurrentPage;
 
-        await AfterSuccessfulChange(visiblePageAfterDelete);
+        await ChangeGridPageAsync(visiblePageAfterDelete);
     }
 
-    protected abstract Task AfterSuccessfulChange(int apiPage);
-
-    private void HandleApiDeleteErrors(int id, Error error, string modelType)
+    private void OnApiDeleteError(int id, Error error)
     {
         if (error.Type is ErrorType.NotFound)
         {
-            Logger.LogWarning("{ModelType} '{Id}' do not exist anymore in database", modelType, id);
+            LogWarningOnApiDelete(id);
         }
         else
         {
-            Logger.LogError("Unexpected failure while trying to delete {ModelType} '{Id}'", modelType, id);
+            LogErrorOnApiDelete(id);
         }
     }
 
@@ -300,19 +377,16 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
     ///     Display confirmation dialog to user.
     /// </summary>
     /// <param name="descriptorData">Some details, like name or similar of model to present in dialog.</param>
-    /// <param name="modelType">Name of object to delete, model name normally.</param>
     /// <param name="descriptorName">
     ///     Optional name for descriptor data in the sentence. Can be set tu null if
     ///     <paramref name="descriptorData" /> already has it.
     /// </param>
-    protected async ValueTask<bool> GetUserConfirmation(
-        string  descriptorData,
-        string  modelType,
-        string? descriptorName = "name"
-    )
+    private async ValueTask<bool> GetUserConfirmationAsync(string descriptorData, string? descriptorName = "name")
     {
         var name = string.IsNullOrWhiteSpace(descriptorName) ? string.Empty : $"{descriptorName.Trim()} ";
-        var messageEng = $"Are you sure to delete {modelType} with {name}<em>{descriptorData}</em>?";
+        var messageEng = $"Are you sure to delete {ModelTypeName} with {name}<em>{descriptorData}</em>?";
+
+        const string title = "Confirm deletion";
 
         var options = new ConfirmOptions
         {
@@ -322,7 +396,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
             CloseDialogOnOverlayClick = true,
         };
 
-        return await DialogService.Confirm(messageEng, "Confirm deletion", options) ?? false;
+        return await DialogService.Confirm(messageEng, title, options) ?? false;
     }
 
     protected void PagerChangeHandler(PagerEventArgs changeData)
@@ -331,16 +405,61 @@ public abstract class BaseCRUDPage<TVModel, TResponse> : ComponentWithCancellati
         CurrentPageSize = changeData.Top;
     }
 
+    private async Task ChangeGridPageAsync(int apiPage) =>
+        await GridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
+
     /// <summary>
     ///     Radzen DataGrid uses 0-based page index, but API uses 1-based page index.
     /// </summary>
-    protected static int ToGridPage(int apiPage) => apiPage - 1;
+    private static int ToGridPage(int apiPage) => apiPage - 1;
 
     /// <inheritdoc cref="ToGridPage" />
-    protected static int ToApiPage(int gridPage) => gridPage + 1;
+    private static int ToApiPage(int gridPage) => gridPage + 1;
 
-    protected static TDescriptor GetById<TDescriptor>(IEnumerable<TDescriptor> enumerable, int id)
-        where TDescriptor
-        : IHasIntId =>
-        enumerable.Single(vm => vm.Id == id);
+    private void LogOnViewModelDataLoad(int page, int size, string filter, string sort) =>
+        Logger.LogTrace(
+            "Loading {ModelName} list from API: page={Page}, size={Size}, filter=`{Filter}`, sort=`{Sort}`",
+            RespModelName,
+            page,
+            size,
+            filter,
+            sort
+        );
+
+    private void LogErrorOnViewModelDataApiLoad(Error error) =>
+        Logger.LogError(
+            "Unexpected error while getting {ModelName} list: {ErrorDescription}",
+            RespModelName,
+            error.Description
+        );
+
+    private void LogErrorOnDescriptorViewModelDataApiLoad(Error error, string modelName) =>
+        Logger.LogError(
+            "Unexpected error while querying descriptor view models data as `{ModelName}`: {ErrorDescription}",
+            modelName,
+            error.Description
+        );
+
+    private void LogWarningOnApiGetPagingInfo(Error error) =>
+        Logger.LogWarning(
+            "Table pagination to new element's page skipped: {ErrorDescription}",
+            error.Description
+        );
+
+    private void LogErrorOnApiGetPagingInfo() =>
+        Logger.LogError("Unexpected error while getting paging metadata to re-paginate table");
+
+    private void LogWarningOnApiDelete(int id) =>
+        Logger.LogWarning(
+            "{ModelType} Id='{Id}' do not exist anymore in database",
+            ModelTypeName,
+            id
+        );
+
+    private void LogErrorOnApiDelete(int id) =>
+        Logger.LogError(
+            "Unexpected failure while trying to delete {ModelType} Id='{Id}'",
+            ModelTypeName,
+            id
+        );
 }

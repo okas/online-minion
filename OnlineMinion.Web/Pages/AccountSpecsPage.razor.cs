@@ -1,93 +1,30 @@
-using ErrorOr;
 using JetBrains.Annotations;
-using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 
 namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
-public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpecResp>
+public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpecResp, BaseUpsertAccountSpecReqData>
 {
-    private const string ModelTypeName = "Account Specification";
+    protected override string ModelTypeName => "Account Specification";
 
-    private readonly IEnumerable<int> _pageSizeOptions = BasePagingParams.AllowedSizes;
-    private AccountSpecsEditor _editorRef = null!;
-    private RadzenDataGridWrapper<AccountSpecResp> _gridWrapperRef = null!;
-    private BaseUpsertAccountSpecReqData? _modelUpsert;
+    protected override ICreateCommand CreateCommandFactory() => new CreateAccountSpecReq();
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
-    }
+    protected override IUpdateCommand UpdateCommandFactory(AccountSpecResp vm) =>
+        new UpdateAccountSpecReq(vm.Id, vm.Name, vm.Group, vm.Description);
 
-    private void OnAddHandler()
-    {
-        if (_modelUpsert is not CreateAccountSpecReq)
-        {
-            _modelUpsert = new CreateAccountSpecReq();
-        }
+    protected override AccountSpecResp ConvertReqResponseToVM(AccountSpecResp dto) => dto;
 
-        OpenEditorDialog($"Add new {ModelTypeName}");
-    }
-
-    private void OnEditHandler(AccountSpecResp model)
-    {
-        // If the editing of same item is already in progress, then continue editing it.
-        if (_modelUpsert is not UpdateAccountSpecReq cmd || cmd.Id != model.Id)
-        {
-            _modelUpsert = new UpdateAccountSpecReq(model.Id, model.Name, model.Group, model.Description);
-        }
-
-        OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id}");
-    }
-
-    protected override ValueTask<bool> Validate() => _editorRef.WrapperRef.ValidateEditorAsync();
-
-    protected override void SetServerValidationErrors(IList<Error> errors) =>
-        _editorRef.WrapperRef.SetServerValidationErrors(errors);
-
-    protected override void CloseEditorDialog()
-    {
-        _modelUpsert = null;
-        _editorRef.WrapperRef.ResetEditor();
-        base.CloseEditorDialog();
-    }
-
-    protected override async ValueTask<bool> HandleUpsertSubmit() => _modelUpsert switch
-    {
-        UpdateAccountSpecReq req => await HandleUpdateSubmit(req),
-        CreateAccountSpecReq req => await HandleCreateSubmit(req),
-        null => throw new InvalidOperationException("Upsert model is null."),
-        _ => throw new InvalidOperationException("Unknown model type."),
-    };
-
-    protected override AccountSpecResp ConvertRequestResponseToVM(AccountSpecResp dto) => dto;
-
-    protected override AccountSpecResp ConvertUpdateRequestToVM(IUpdateCommand dto) =>
+    protected override AccountSpecResp ConvertUpdateReqToVM(IUpdateCommand dto) =>
         (AccountSpecResp)(UpdateAccountSpecReq)dto;
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetAccountPagingMetaInfoReq(pageSize);
 
-    private async Task OnDeleteHandler(AccountSpecResp model)
-    {
-        var (id, name, _, _) = model;
+    protected override string GetDeleteMessageDescriptorData(AccountSpecResp model) => model.Name;
 
-        if (!await GetUserConfirmation(name, ModelTypeName))
-        {
-            return;
-        }
-
-        SC.IsBusy = true;
-        await DeleteModelFromApi(new DeleteAccountSpecReq(id), ModelTypeName);
-        SC.IsBusy = false;
-    }
-
-    protected override async Task AfterSuccessfulChange(int apiPage) =>
-        await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
+    protected override IDeleteByIdCommand DeleteCommandFactory(AccountSpecResp vm) => new DeleteAccountSpecReq(vm.Id);
 }

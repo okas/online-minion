@@ -1,16 +1,20 @@
 ﻿@page "/account-specs"
 @using OnlineMinion.Contracts.AccountSpec.Responses
-@inherits BaseCRUDPage<AccountSpecResp, AccountSpecResp>
+@inherits BaseCRUDPage<
+            AccountSpecResp,
+            AccountSpecResp,
+            OnlineMinion.Contracts.AccountSpec.Requests.BaseUpsertAccountSpecReqData
+            >
 
 @code
 {
   protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
       <AccountSpecsEditor
-          Model="@_modelUpsert"
+          Model="@UpsertVM"
           OnCancel="@CloseEditorDialog"
-          OnSubmit="@OnUpsertSubmitHandler"
-          @ref="@_editorRef"/>
+          OnSubmit="@OnUpsertSubmitHandlerAsync"
+          WrapperRef="@EditorWrapperRef"/>
     </CascadingValue>;
 
   private static class Str
@@ -32,12 +36,12 @@
   <RadzenText Text="@Str.MainDescription"/>
   <RadzenDataGridWrapper AddClick="@OnAddHandler"
       Data="@ViewModels"
-      DeleteClick="@OnDeleteHandler"
+      DeleteClick="@OnDeleteHandlerAsync"
       EditClick="@OnEditHandler"
-      LoadData="@OnLoadDataHandler"
+      LoadData="@OnLoadDataHandlerAsync"
       Page="@PagerChangeHandler"
-      PageSizeOptions="@_pageSizeOptions"
-      @ref="@_gridWrapperRef"
+      PageSizeOptions="@PageSizeOptions"
+      @ref="@GridWrapperRef"
       TItem="AccountSpecResp"
       TotalItemsCount="@TotalItemsCount">
     <Columns>

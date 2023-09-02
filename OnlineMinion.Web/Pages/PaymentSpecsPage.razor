@@ -1,12 +1,20 @@
 @page "/payment-specs"
 @using OnlineMinion.Contracts.PaymentSpec.Responses
-@inherits BaseCRUDPage<PaymentSpecResp, PaymentSpecResp>
+@inherits BaseCRUDPage<
+            PaymentSpecResp,
+            PaymentSpecResp,
+            OnlineMinion.Contracts.PaymentSpec.Requests.BaseUpsertPaymentSpecReqData
+            >
 
 @code
 {
   protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
-      <UpsertEditorWrapper Model="@_modelUpsert" OnCancel="@CloseEditorDialog" OnSubmit="@OnUpsertSubmitHandler" @ref="@_editorRef">
+      <UpsertEditorWrapper
+          Model="@UpsertVM"
+          OnCancel="@CloseEditorDialog"
+          OnSubmit="@OnUpsertSubmitHandlerAsync"
+          @ref="@EditorWrapperRef">
         <EditorFormFields>
           <RadzenFormField Component="@Str.Name" Style="width:71%" Text="@Str.Name" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
@@ -40,12 +48,12 @@
   <RadzenText Text="@Str.MainDescription"/>
   <RadzenDataGridWrapper AddClick="@OnAddHandler"
       Data="@ViewModels"
-      DeleteClick="@OnDeleteHandler"
+      DeleteClick="@OnDeleteHandlerAsync"
       EditClick="@OnEditHandler"
-      LoadData="@OnLoadDataHandler"
+      LoadData="@OnLoadDataHandlerAsync"
       Page="@PagerChangeHandler"
-      PageSizeOptions="@_pageSizeOptions"
-      @ref="@_gridWrapperRef"
+      PageSizeOptions="@PageSizeOptions"
+      @ref="@GridWrapperRef"
       TItem="PaymentSpecResp"
       TotalItemsCount="@TotalItemsCount">
     <Columns>

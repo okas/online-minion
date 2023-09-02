@@ -4,17 +4,21 @@
 @using System.Globalization
 @using OnlineMinion.Contracts.PaymentSpec.Responses
 @using OnlineMinion.Contracts.AccountSpec.Responses
-@inherits BaseCRUDPage<TransactionDebitListItem, OnlineMinion.Contracts.Transactions.Debit.Responses.TransactionDebitResp>
+@inherits BaseCRUDPage<
+            TransactionDebitListItem,
+            OnlineMinion.Contracts.Transactions.Debit.Responses.TransactionDebitResp,
+            OnlineMinion.Contracts.Transactions.Debit.BaseUpsertTransactionDebitReqData
+            >
 
 @code
 {
   protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
       <UpsertEditorWrapper
-          Model="@_modelUpsert"
+          Model="@UpsertVM"
           OnCancel="@CloseEditorDialog"
-          OnSubmit="@OnUpsertSubmitHandler"
-          @ref="@_editorRef">
+          OnSubmit="@OnUpsertSubmitHandlerAsync"
+          @ref="@EditorWrapperRef">
         <EditorFormFields>
           <RadzenFormField Component="@Str.Date" Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
             <RadzenDatePicker
@@ -93,12 +97,12 @@
   <RadzenDataGridWrapper
       AddClick="@OnAddHandler"
       Data="@ViewModels"
-      DeleteClick="@OnDeleteHandler"
+      DeleteClick="@OnDeleteHandlerAsync"
       EditClick="@OnEditHandler"
-      LoadData="@OnLoadDataHandler"
+      LoadData="@OnLoadDataHandlerAsync"
       Page="@PagerChangeHandler"
-      PageSizeOptions="@_pageSizeOptions"
-      @ref="@_gridWrapperRef"
+      PageSizeOptions="@PageSizeOptions"
+      @ref="@GridWrapperRef"
       TItem="TransactionDebitListItem"
       TotalItemsCount="@TotalItemsCount">
     <Columns>

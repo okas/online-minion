@@ -28,7 +28,7 @@ public static class AsyncStreamRenderingHelpers
         ArgumentNullException.ThrowIfNull(sourceStream);
         ArgumentNullException.ThrowIfNull(targetList);
 
-        return PullItemsInternal<TItem, TItem>(
+        return PullItemsInternalAsync<TItem, TItem>(
             sourceStream,
             targetList,
             item => item,
@@ -69,10 +69,10 @@ public static class AsyncStreamRenderingHelpers
         ArgumentNullException.ThrowIfNull(targetList);
         ArgumentNullException.ThrowIfNull(converter);
 
-        return PullItemsInternal(sourceStream, targetList, converter, afterEachPull, timeoutMilliseconds, ct);
+        return PullItemsInternalAsync(sourceStream, targetList, converter, afterEachPull, timeoutMilliseconds, ct);
     }
 
-    private static async ValueTask PullItemsInternal<TSource, TTarget>(
+    private static async ValueTask PullItemsInternalAsync<TSource, TTarget>(
         IAsyncEnumerable<TSource> sourceStream,
         ICollection<TTarget>      targetList,
         Func<TSource, TTarget>    converter,

@@ -1,120 +1,64 @@
 using System.Globalization;
-using ErrorOr;
 using JetBrains.Annotations;
-using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Transactions.Debit;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
-using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.Transaction.Debit;
 
 namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
-public partial class TransactionDebitsPage : BaseCRUDPage<TransactionDebitListItem, TransactionDebitResp>
+public partial class TransactionDebitsPage
+    : BaseCRUDPage<TransactionDebitListItem, TransactionDebitResp, BaseUpsertTransactionDebitReqData>
 {
-    private const string ModelTypeName = "Debit Transaction";
-
-    private readonly IEnumerable<int> _pageSizeOptions = BasePagingParams.AllowedSizes;
-    private UpsertEditorWrapper<BaseUpsertTransactionDebitReqData> _editorRef = null!;
-    private RadzenDataGridWrapper<TransactionDebitListItem> _gridWrapperRef = null!;
-    private BaseUpsertTransactionDebitReqData? _modelUpsert;
+    protected override string ModelTypeName => "Debit Transaction";
 
     private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
     private List<AccountSpecDescriptorResp> AccountDescriptorViewModels { get; } = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task LoadDependenciesAsync() => Task.WhenAll(
+        LoadDependentVMsFromApiAsync(PaymentDescriptorViewModels),
+        LoadDependentVMsFromApiAsync(AccountDescriptorViewModels)
+    );
+
+    protected override ICreateCommand CreateCommandFactory() => new CreateTransactionDebitReq();
+
+    protected override IUpdateCommand UpdateCommandFactory(TransactionDebitListItem vm) =>
+        TransactionDebitListItem.ToUpdateRequest(vm);
+
+    protected override TransactionDebitListItem ConvertReqResponseToVM(TransactionDebitResp dto)
     {
-        await base.OnInitializedAsync();
-
-        // Order! Related models data is used to create create grid data, during main models pulling from stream.
-        await Task.WhenAll(
-            LoadDescriptorViewModelsFromApi(PaymentDescriptorViewModels),
-            LoadDescriptorViewModelsFromApi(AccountDescriptorViewModels)
-        );
-        await LoadViewModelFromApi(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
-    }
-
-    private void OnAddHandler()
-    {
-        if (_modelUpsert is not CreateTransactionDebitReq)
-        {
-            _modelUpsert = new CreateTransactionDebitReq();
-        }
-
-        OpenEditorDialog($"Add new {ModelTypeName}");
-    }
-
-    private void OnEditHandler(TransactionDebitListItem model)
-    {
-        // If the editing of same item is already in progress, then continue editing it.
-        if (_modelUpsert is not UpdateTransactionDebitReq cmd || cmd.Id != model.Id)
-        {
-            _modelUpsert = TransactionDebitListItem.ToUpdateRequest(model);
-        }
-
-        OpenEditorDialog($"Edit {ModelTypeName}: id #{model.Id.ToString(CultureInfo.InvariantCulture)}");
-    }
-
-    protected override ValueTask<bool> Validate() => _editorRef.ValidateEditorAsync();
-
-    protected override void SetServerValidationErrors(IList<Error> errors) =>
-        _editorRef.SetServerValidationErrors(errors);
-
-    protected override void CloseEditorDialog()
-    {
-        base.CloseEditorDialog();
-        _editorRef.ResetEditor();
-        _modelUpsert = null;
-    }
-
-    protected override async ValueTask<bool> HandleUpsertSubmit() => _modelUpsert switch
-    {
-        UpdateTransactionDebitReq req => await HandleUpdateSubmit(req),
-        CreateTransactionDebitReq req => await HandleCreateSubmit(req),
-        null => throw new InvalidOperationException("Upsert model is null."),
-        _ => throw new InvalidOperationException("Unknown model type."),
-    };
-
-    protected override TransactionDebitListItem ConvertRequestResponseToVM(TransactionDebitResp dto)
-    {
-        var paymentSpec = GetById(PaymentDescriptorViewModels, dto.PaymentInstrumentId);
-        var accountSpec = GetById(AccountDescriptorViewModels, dto.AccountSpecId);
+        var (paymentSpec, accountSpec) = GetVMDependencies(dto.PaymentInstrumentId, dto.AccountSpecId);
 
         return TransactionDebitListItem.FromResponseDto(dto, paymentSpec, accountSpec);
     }
 
-
-    protected override TransactionDebitListItem ConvertUpdateRequestToVM(IUpdateCommand dto)
+    protected override TransactionDebitListItem ConvertUpdateReqToVM(IUpdateCommand dto)
     {
         var rq = (UpdateTransactionDebitReq)dto;
-        var paymentSpec = GetById(PaymentDescriptorViewModels, rq.PaymentInstrumentId);
-        var accountSpec = GetById(AccountDescriptorViewModels, rq.AccountSpecId);
+        var (paymentSpec, accountSpec) = GetVMDependencies(rq.PaymentInstrumentId, rq.AccountSpecId);
 
-        return TransactionDebitListItem.FromUpdateRequest((UpdateTransactionDebitReq)dto, paymentSpec, accountSpec);
+        return TransactionDebitListItem.FromUpdateRequest(rq, paymentSpec, accountSpec);
     }
+
+    private (PaymentSpecDescriptorResp paymentSpec, AccountSpecDescriptorResp accountSpec) GetVMDependencies(
+        int paymentSpecId,
+        int accountSpecId
+    ) => (
+        PaymentDescriptorViewModels.Single(vm => vm.Id == paymentSpecId),
+        AccountDescriptorViewModels.Single(vm => vm.Id == accountSpecId)
+    );
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetTransactionDebitPagingMetaInfoReq(pageSize);
 
-    private async Task OnDeleteHandler(TransactionDebitListItem model)
-    {
-        var descriptorData = $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
+    protected override string GetDeleteMessageDescriptorData(TransactionDebitListItem model) =>
+        $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
 
-        if (!await GetUserConfirmation(descriptorData, ModelTypeName, null))
-        {
-            return;
-        }
-
-        SC.IsBusy = true;
-        await DeleteModelFromApi(new DeleteTransactionDebitReq(model.Id), ModelTypeName);
-        SC.IsBusy = false;
-    }
-
-    protected override async Task AfterSuccessfulChange(int apiPage) =>
-        await _gridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
+    protected override IDeleteByIdCommand DeleteCommandFactory(TransactionDebitListItem vm) =>
+        new DeleteTransactionDebitReq(vm.Id);
 }
