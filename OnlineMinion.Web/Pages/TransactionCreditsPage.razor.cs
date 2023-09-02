@@ -79,7 +79,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
     {
         var paymentSpec = GetById(PaymentDescriptorViewModels, dto.PaymentInstrumentId);
 
-        return TransactionCreditListItem.FromResponseDto(dto, paymentSpec.Name);
+        return TransactionCreditListItem.FromResponseDto(dto, paymentSpec);
     }
 
     protected override TransactionCreditListItem ConvertUpdateRequestToVM(IUpdateCommand dto)
@@ -87,7 +87,7 @@ public partial class TransactionCreditsPage : BaseCRUDPage<TransactionCreditList
         var rq = (UpdateTransactionCreditReq)dto;
         var paymentSpec = GetById(PaymentDescriptorViewModels, rq.PaymentInstrumentId);
 
-        return TransactionCreditListItem.FromUpdateRequest((UpdateTransactionCreditReq)dto, paymentSpec.Name);
+        return TransactionCreditListItem.FromUpdateRequest((UpdateTransactionCreditReq)dto, paymentSpec);
     }
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>

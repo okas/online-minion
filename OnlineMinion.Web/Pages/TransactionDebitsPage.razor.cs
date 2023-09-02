@@ -85,7 +85,7 @@ public partial class TransactionDebitsPage : BaseCRUDPage<TransactionDebitListIt
         var paymentSpec = GetById(PaymentDescriptorViewModels, dto.PaymentInstrumentId);
         var accountSpec = GetById(AccountDescriptorViewModels, dto.AccountSpecId);
 
-        return TransactionDebitListItem.FromResponseDto(dto, paymentSpec.Name, accountSpec.Name);
+        return TransactionDebitListItem.FromResponseDto(dto, paymentSpec, accountSpec);
     }
 
 
@@ -95,11 +95,7 @@ public partial class TransactionDebitsPage : BaseCRUDPage<TransactionDebitListIt
         var paymentSpec = GetById(PaymentDescriptorViewModels, rq.PaymentInstrumentId);
         var accountSpec = GetById(AccountDescriptorViewModels, rq.AccountSpecId);
 
-        return TransactionDebitListItem.FromUpdateRequest(
-            (UpdateTransactionDebitReq)dto,
-            paymentSpec.Name,
-            accountSpec.Name
-        );
+        return TransactionDebitListItem.FromUpdateRequest((UpdateTransactionDebitReq)dto, paymentSpec, accountSpec);
     }
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>

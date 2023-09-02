@@ -28,9 +28,9 @@ public sealed record TransactionDebitListItem(
 )
 {
     public static TransactionDebitListItem FromResponseDto(
-        TransactionDebitResp resp,
-        string               paymentInstrumentName,
-        string               accountSpecName
+        TransactionDebitResp      resp,
+        PaymentSpecDescriptorResp paymentDescriptor,
+        AccountSpecDescriptorResp accountDescriptor
     ) =>
         new(
             resp.Id,
@@ -40,14 +40,14 @@ public sealed record TransactionDebitListItem(
             resp.Subject,
             resp.Party,
             resp.Tags,
-            new(resp.PaymentInstrumentId, paymentInstrumentName),
-            new(resp.AccountSpecId, accountSpecName)
+            paymentDescriptor,
+            accountDescriptor
         );
 
     public static TransactionDebitListItem FromUpdateRequest(
         UpdateTransactionDebitReq rq,
-        string                    paymentInstrumentName,
-        string                    accountSpecName
+        PaymentSpecDescriptorResp paymentDescriptor,
+        AccountSpecDescriptorResp accountDescriptor
     ) =>
         new(
             rq.Id,
@@ -57,8 +57,8 @@ public sealed record TransactionDebitListItem(
             rq.Subject,
             rq.Party,
             rq.Tags,
-            new(rq.PaymentInstrumentId, paymentInstrumentName),
-            new(rq.AccountSpecId, accountSpecName)
+            paymentDescriptor,
+            accountDescriptor
         );
 
     public static UpdateTransactionDebitReq ToUpdateRequest(TransactionDebitListItem vm) =>

@@ -24,8 +24,8 @@ public sealed record TransactionCreditListItem(
 )
 {
     public static TransactionCreditListItem FromResponseDto(
-        TransactionCreditResp resp,
-        string                paymentInstrumentName
+        TransactionCreditResp     resp,
+        PaymentSpecDescriptorResp paymentDescriptor
     ) =>
         new(
             resp.Id,
@@ -34,12 +34,12 @@ public sealed record TransactionCreditListItem(
             resp.Subject,
             resp.Party,
             resp.Tags,
-            new(resp.PaymentInstrumentId, paymentInstrumentName)
+            paymentDescriptor
         );
 
     public static TransactionCreditListItem FromUpdateRequest(
         UpdateTransactionCreditReq rq,
-        string                     paymentInstrumentName
+        PaymentSpecDescriptorResp  paymentDescriptor
     ) =>
         new(
             rq.Id,
@@ -48,7 +48,7 @@ public sealed record TransactionCreditListItem(
             rq.Subject,
             rq.Party,
             rq.Tags,
-            new(rq.PaymentInstrumentId, paymentInstrumentName)
+            paymentDescriptor
         );
 
     public static UpdateTransactionCreditReq ToUpdateRequest(TransactionCreditListItem vm) =>
