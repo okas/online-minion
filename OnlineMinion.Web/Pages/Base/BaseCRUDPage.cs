@@ -69,20 +69,28 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         await base.OnInitializedAsync();
 
+        SC.IsBusy = true;
+
         // Order! Dependent models data is used to create create grid data, during main models pulling from stream.
         await LoadDependenciesAsync();
         await LoadItemVMsFromApiAsync(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
+
+        SC.IsBusy = false;
     }
 
     protected virtual Task LoadDependenciesAsync() => Task.CompletedTask;
 
     protected async Task OnLoadDataHandlerAsync(LoadDataArgs args)
     {
+        SC.IsBusy = true;
+
         var size = args.Top.GetValueOrDefault(BasePagingParams.DefaultSize);
         var offset = args.Skip.GetValueOrDefault();
         var page = (int)Math.Floor((decimal)offset / size) + 1;
 
         await LoadItemVMsFromApiAsync(page, size, args.Filter, args.OrderBy);
+
+        SC.IsBusy = false;
     }
 
     /// <summary>
@@ -97,8 +105,6 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         LogOnViewModelDataLoad(page, size, filterExpression, sortExpression);
 
-        SC.IsBusy = true;
-
         var rq = new GetSomeModelsPagedReq<TResponse>(filterExpression, sortExpression, page, size);
         var result = await Sender.Send(rq, CT);
 
@@ -111,8 +117,6 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
                 return Task.CompletedTask;
             }
         );
-
-        SC.IsBusy = false;
     }
 
     private async Task OnApiLoadItemsVMsSuccessAsync(PagedResult<TResponse> pagedResult)
