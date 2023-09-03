@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 
 namespace OnlineMinion.Web.Pages;
@@ -9,7 +10,22 @@ namespace OnlineMinion.Web.Pages;
 [UsedImplicitly]
 public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpecResp, BaseUpsertAccountSpecReqData>
 {
+    private AccountSpecsEditor? _editorRef;
+
     protected override string ModelTypeName => "Account Specification";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        // In this page's case, the editor is separate component that encapsulates own content inside EditorWrapper.
+        // Therefor, exposed parameter WrapperRef is only accessible if editor itself is rendered
+        // and it can be pulled out now.
+        if (_editorRef is not null)
+        {
+            EditorWrapperRef = _editorRef.WrapperRef;
+        }
+    }
 
     protected override ICreateCommand CreateCommandFactory() => new CreateAccountSpecReq();
 

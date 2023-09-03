@@ -14,7 +14,7 @@
           Model="@UpsertVM"
           OnCancel="@CloseEditorDialog"
           OnSubmit="@OnUpsertSubmitHandlerAsync"
-          WrapperRef="@EditorWrapperRef"/>
+          @ref="@_editorRef"/>
     </CascadingValue>;
 
   private static class Str

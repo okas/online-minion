@@ -27,7 +27,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     where TResponse : IHasIntId
     where TBaseUpsert : class
 {
-    private const string RespModelName = nameof(TResponse);
+    private readonly string _respModelName;
 
     protected UpsertEditorWrapper<TBaseUpsert> EditorWrapperRef = null!;
     protected RadzenDataGridWrapper<TVModel> GridWrapperRef = null!;
@@ -35,6 +35,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     protected BaseCRUDPage()
     {
+        _respModelName = typeof(TResponse).Name;
         PageSizeOptions = BasePagingParams.AllowedSizes;
         CurrentPage = BasePagingParams.FirstPage;
         CurrentPageSize = BasePagingParams.DefaultSize;
@@ -140,7 +141,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             async models => await models.PullItemsFromStream(targetList, CT),
             firstError =>
             {
-                LogErrorOnDescriptorViewModelDataApiLoad(firstError, nameof(TDependentVmResponse));
+                LogErrorOnDescriptorViewModelDataApiLoad(firstError, typeof(TDependentVmResponse).Name);
 
                 return Task.CompletedTask;
             }
@@ -428,7 +429,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     private void LogOnViewModelDataLoad(int page, int size, string filter, string sort) =>
         Logger.LogTrace(
             "Loading {ModelName} list from API: page={Page}, size={Size}, filter=`{Filter}`, sort=`{Sort}`",
-            RespModelName,
+            _respModelName,
             page,
             size,
             filter,
@@ -438,7 +439,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     private void LogErrorOnViewModelDataApiLoad(Error error) =>
         Logger.LogError(
             "Unexpected error while getting {ModelName} list: {ErrorDescription}",
-            RespModelName,
+            _respModelName,
             error.Description
         );
 
