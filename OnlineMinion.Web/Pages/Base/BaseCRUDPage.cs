@@ -116,8 +116,10 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         TotalItemsCount = pagedResult.Paging.Rows;
         ViewModels.Clear();
-        await pagedResult.Result.PullItemsFromStream(ViewModels, ConvertReqResponseToVM, CT, StateHasChanged);
+        await pagedResult.Result.PullItemsFromStream(ItemVMPullAction, CT, StateHasChanged);
     }
+
+    private void ItemVMPullAction(TResponse vm) => ViewModels.Add(ConvertReqResponseToVM(vm));
 
     protected abstract TVModel ConvertReqResponseToVM(TResponse dto);
 

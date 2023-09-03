@@ -8,15 +8,17 @@ public static class AsyncStreamRenderingHelpers
     ///     Optionally invokes the <paramref name="afterEachPull" /> action after each pull after specified
     ///     <paramref name="timeoutMilliseconds" />.
     /// </summary>
-    /// <param name="sourceStream">Async Enumerable stream to pull data.</param>
+    /// <param name="sourceStream">Async Enumerable stream to pull data from.</param>
     /// <param name="targetList">List to add pulled items.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <param name="afterEachPull">Optional action to call after specified timeout.</param>
     /// <param name="timeoutMilliseconds">
-    ///     Optional timeout to decide whether after each action <paramref name="afterEachPull" /> needs to be called. For UX
-    ///     purposes, e.g. to notify that new item has been pulled into <paramref name="targetList" />.
+    ///     Optional timeout to decide, whether after each pull the action <paramref name="afterEachPull" /> needs to be
+    ///     called. For UX purposes, e.g. for notification.
     /// </param>
-    /// <exception cref="ArgumentNullException">When sourceStream and/or <paramref name="targetList" /> is null.</exception>
+    /// <exception cref="ArgumentNullException">
+    ///     When <paramref name="sourceStream" /> and/or <paramref name="targetList" /> is null.
+    /// </exception>
     public static ValueTask PullItemsFromStream<TItem>(
         this IAsyncEnumerable<TItem> sourceStream,
         IList<TItem>                 targetList,
@@ -28,55 +30,44 @@ public static class AsyncStreamRenderingHelpers
         ArgumentNullException.ThrowIfNull(sourceStream);
         ArgumentNullException.ThrowIfNull(targetList);
 
-        return PullItemsInternalAsync<TItem, TItem>(
-            sourceStream,
-            targetList,
-            item => item,
-            afterEachPull,
-            timeoutMilliseconds,
-            ct
-        );
+        return PullItemsInternalAsync(sourceStream, targetList.Add, afterEachPull, timeoutMilliseconds, ct);
     }
 
     /// <summary>
-    ///     Using <paramref name="converter" />, pulls items from the given <paramref name="sourceStream" /> and adds them to
-    ///     the
-    ///     <paramref name="targetList" />.
+    ///     Pulls each item from the given <paramref name="sourceStream" /> using the <paramref name="pullAction" />.
     ///     <br />
     ///     Optionally invokes the <paramref name="afterEachPull" /> action after each pull after specified
     ///     <paramref name="timeoutMilliseconds" />.
     /// </summary>
-    /// <param name="sourceStream">Async Enumerable stream to pull data.</param>
-    /// <param name="targetList">List to add pulled items.</param>
-    /// <param name="converter">It will be invoked for all the items read from stream, before adding to target list.</param>
+    /// <param name="sourceStream">Async Enumerable stream to pull data from.</param>
+    /// <param name="pullAction">Action to run when item is read from stream, takes item as argument.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <param name="afterEachPull">Optional action to call after specified timeout.</param>
     /// <param name="timeoutMilliseconds">
-    ///     Optional timeout to decide whether after each action <paramref name="afterEachPull" /> needs to be called. For UX
-    ///     purposes, e.g. to notify that new item has been pulled into <paramref name="targetList" />.
+    ///     Optional timeout to decide, whether after each pull the action <paramref name="afterEachPull" /> needs to be
+    ///     called. For UX purposes, e.g. for notification.
     /// </param>
-    /// <exception cref="ArgumentNullException">When sourceStream and/or <paramref name="targetList" /> is null.</exception>
-    public static ValueTask PullItemsFromStream<TSource, TTarget>(
+    /// <exception cref="ArgumentNullException">
+    ///     When <paramref name="sourceStream" /> and/or <paramref name="pullAction" /> is null.
+    /// </exception>
+    public static ValueTask PullItemsFromStream<TSource>(
         this IAsyncEnumerable<TSource> sourceStream,
-        IList<TTarget>                 targetList,
-        Func<TSource, TTarget>         converter,
+        Action<TSource>                pullAction,
         CancellationToken              ct,
         Action?                        afterEachPull       = null,
         double                         timeoutMilliseconds = 20D
     )
     {
         ArgumentNullException.ThrowIfNull(sourceStream);
-        ArgumentNullException.ThrowIfNull(targetList);
-        ArgumentNullException.ThrowIfNull(converter);
+        ArgumentNullException.ThrowIfNull(pullAction);
 
-        return PullItemsInternalAsync(sourceStream, targetList, converter, afterEachPull, timeoutMilliseconds, ct);
+        return PullItemsInternalAsync(sourceStream, pullAction, afterEachPull, timeoutMilliseconds, ct);
     }
 
-    private static async ValueTask PullItemsInternalAsync<TSource, TTarget>(
+    private static async ValueTask PullItemsInternalAsync<TSource>(
         IAsyncEnumerable<TSource> sourceStream,
-        ICollection<TTarget>      targetList,
-        Func<TSource, TTarget>    converter,
-        Action?                   afterEachPull,
+        Action<TSource>           pullAction,
+        Action?                   afterEachPullAction,
         double                    timeoutMilliseconds,
         CancellationToken         ct
     )
@@ -85,22 +76,25 @@ public static class AsyncStreamRenderingHelpers
 
         await foreach (var item in sourceStream.WithCancellation(ct).ConfigureAwait(false))
         {
-            targetList.Add(converter.Invoke(item));
+            pullAction.Invoke(item);
 
-            if (afterEachPull is null)
+            if (afterEachPullAction is not null)
             {
-                continue;
+                lastRender = RunAfterPullAction(afterEachPullAction, timeoutMilliseconds, lastRender);
             }
-
-            var pointInTime = DateTime.UtcNow;
-
-            var diffInMs = (pointInTime - lastRender).TotalMilliseconds;
-            if (diffInMs >= timeoutMilliseconds)
-            {
-                afterEachPull.Invoke();
-            }
-
-            lastRender = pointInTime;
         }
+    }
+
+    private static DateTime RunAfterPullAction(Action action, double timeoutMilliseconds, DateTime lastRender)
+    {
+        var utcNow = DateTime.UtcNow;
+
+        var diffInMs = (utcNow - lastRender).TotalMilliseconds;
+        if (diffInMs >= timeoutMilliseconds)
+        {
+            action.Invoke();
+        }
+
+        return utcNow;
     }
 }
