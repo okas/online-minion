@@ -16,9 +16,12 @@ namespace OnlineMinion.Web.Pages.Base;
 ///     Has few abstract and virtual methods that are needed to provide page-specific object conversions and
 ///     behaviors.
 /// </remarks>
-/// <typeparam name="TVModel"></typeparam>
-/// <typeparam name="TResponse"></typeparam>
-/// <typeparam name="TBaseUpsert"><b>class</b> constrained, because it is used in form, cannot be immutable.</typeparam>
+/// <typeparam name="TVModel">It is the main type that is listed on data grid.</typeparam>
+/// <typeparam name="TResponse">
+///     API returned type. It can be different than <typeparamref name="TVModel" />, but it must be
+///     specified.
+/// </typeparam>
+/// <typeparam name="TBaseUpsert"><b>class</b> constrained, because it is used in form, must be mutable.</typeparam>
 public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentWithCancellationToken
     where TVModel : IHasIntId
     where TResponse : IHasIntId
