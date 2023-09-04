@@ -34,7 +34,8 @@
 <main>
   <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
   <RadzenText Text="@Str.MainDescription"/>
-  <RadzenDataGridWrapper AddClick="@OnAddHandler"
+  <RadzenDataGridWrapper
+      AddClick="@OnAddHandler"
       Data="@ViewModels"
       DeleteClick="@OnDeleteHandlerAsync"
       EditClick="@OnEditHandler"

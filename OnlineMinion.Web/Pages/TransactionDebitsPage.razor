@@ -20,20 +20,20 @@
           OnSubmit="@OnUpsertSubmitHandlerAsync"
           @ref="@EditorWrapperRef">
         <EditorFormFields>
-          <RadzenFormField Component="@Str.Date" Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
+          <RadzenFormField Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
             <RadzenDatePicker
                 Change="@(dateTime => context.Date = DateOnly.FromDateTime(dateTime.GetValueOrDefault()))"
                 DateFormat="@CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern"
                 TValue="DateTime"
                 Value="@(context.Date.ToDateTime(TimeOnly.MinValue))"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.Amount" Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
+          <RadzenFormField Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
             <RadzenNumeric @bind-Value="@context!.Amount" Format="c"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.Party" Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
+          <RadzenFormField Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context!.Party" Trim="@true"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.Subject" Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
+          <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
           </RadzenFormField>
           <RadzenFormField Style="width: 43%">
@@ -54,10 +54,10 @@
                 TextProperty="@nameof(AccountSpecResp.Name)"
                 ValueProperty="@nameof(AccountSpecResp.Id)"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.Fee" Style="width: 98%" Text="@Str.Fee" Variant="@Variant.Text">
+          <RadzenFormField Style="width: 98%" Text="@Str.Fee" Variant="@Variant.Text">
             <RadzenNumeric @bind-Value="@context!.Fee" Format="c"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.Tags" Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
+          <RadzenFormField Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
           </RadzenFormField>
         </EditorFormFields>

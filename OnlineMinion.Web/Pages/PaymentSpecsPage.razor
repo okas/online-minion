@@ -16,14 +16,14 @@
           OnSubmit="@OnUpsertSubmitHandlerAsync"
           @ref="@EditorWrapperRef">
         <EditorFormFields>
-          <RadzenFormField Component="@Str.Name" Style="width:71%" Text="@Str.Name" Variant="@Variant.Text">
+          <RadzenFormField Style="width:71%" Text="@Str.Name" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.CurrencyCode" Style="width: 25%" Text="@Str.CurrencyCode" Variant="@Variant.Text">
+          <RadzenFormField Style="width: 25%" Text="@Str.CurrencyCode" Variant="@Variant.Text">
             <RadzenTextBox @bind-Value="@context!.CurrencyCode" Trim="@true"/>
           </RadzenFormField>
-          <RadzenFormField Component="@Str.Tags" Style="width: 100%" Text="@Str.Tags" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
+          <RadzenFormField Style="width: 100%" Text="@Str.Tags" Variant="@Variant.Text">
+            <RadzenTextBox @bind-Value="@context.Tags" Trim="@true"/>
           </RadzenFormField>
         </EditorFormFields>
       </UpsertEditorWrapper>
@@ -46,7 +46,8 @@
 <main>
   <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
   <RadzenText Text="@Str.MainDescription"/>
-  <RadzenDataGridWrapper AddClick="@OnAddHandler"
+  <RadzenDataGridWrapper
+      AddClick="@OnAddHandler"
       Data="@ViewModels"
       DeleteClick="@OnDeleteHandlerAsync"
       EditClick="@OnEditHandler"
@@ -58,7 +59,7 @@
       TotalItemsCount="@TotalItemsCount">
     <Columns>
       <RadzenDataGridColumn Property="@Str.Name" TItem="PaymentSpecResp" Title="@Str.Name"/>
-      <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCode"/>
+      <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCodeField"/>
       <RadzenDataGridColumn Property="@Str.Tags" TItem="PaymentSpecResp" Title="@Str.Tags"/>
     </Columns>
   </RadzenDataGridWrapper>
