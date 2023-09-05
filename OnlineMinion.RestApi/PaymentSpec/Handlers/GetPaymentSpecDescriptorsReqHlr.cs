@@ -14,6 +14,7 @@ internal sealed class GetPaymentSpecDescriptorsReqHlr(OnlineMinionDbContext dbCo
     protected override Expression<Func<BasePaymentSpec, PaymentSpecDescriptorResp>> Projection =>
         e => new(
             e.Id,
-            e.Name
+            e.Name,
+            e.CurrencyCode
         );
 }
