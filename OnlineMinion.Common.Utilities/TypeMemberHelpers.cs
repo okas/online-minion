@@ -11,15 +11,16 @@ public static class TypeMemberHelpers
     ///     Expression: <code>x => x.Property1.Property2.Property3</code>
     ///     Result: <code>Property1.Property2.Property3</code>
     /// </example>
+    /// <param name="expression">Member access expression, 1 to n- levels deep.</param>
     /// <exception cref="ArgumentException">If it is not a <see cref="MemberExpression" />.</exception>
-    public static string NestedNameOf<T>(Expression<Func<T, object>> memberExpression)
+    public static string NestedNameOf<T>(Expression<Func<T, object>> expression)
     {
-        if (memberExpression.Body is not MemberExpression expression)
+        if (expression.Body is not MemberExpression memberExpression)
         {
-            throw new ArgumentException("Expression body must be a member expression", nameof(memberExpression));
+            throw new ArgumentException("Expression body must be a member expression", nameof(expression));
         }
 
-        var body = expression.ToString();
+        var body = memberExpression.ToString();
         var startIdx = body.IndexOf('.', StringComparison.Ordinal) + 1;
 
         return body[startIdx..];
