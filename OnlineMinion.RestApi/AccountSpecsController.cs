@@ -116,7 +116,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result.ToDelayedAsyncEnumerable(20, ct));
+                return Ok(envelope.StreamResult.ToDelayedAsyncEnumerable(20, ct));
             },
             firstError =>
             {

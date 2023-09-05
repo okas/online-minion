@@ -10,12 +10,12 @@ using OnlineMinion.RestApi.Helpers;
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
 internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(OnlineMinionDbContext dbContext)
-    : IErrorOrRequestHandler<GetSomeModelsPagedReq<TResponse>, PagedResult<TResponse>>
+    : IErrorOrRequestHandler<GetSomeModelsPagedReq<TResponse>, PagedStreamResult<TResponse>>
     where TEntity : BaseEntity
 {
     protected abstract Expression<Func<TEntity, TResponse>> Projection { get; }
 
-    public async Task<ErrorOr<PagedResult<TResponse>>> Handle(
+    public async Task<ErrorOr<PagedStreamResult<TResponse>>> Handle(
         GetSomeModelsPagedReq<TResponse> rq,
         CancellationToken                ct
     )
@@ -31,7 +31,7 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(OnlineM
             .Select(Projection)
             .AsAsyncEnumerable();
 
-        return new PagedResult<TResponse>(resultStream, pagingMeta);
+        return new PagedStreamResult<TResponse>(resultStream, pagingMeta);
     }
 
     protected virtual IQueryable<TEntity> SetIncludes(IQueryable<TEntity> query) => query;

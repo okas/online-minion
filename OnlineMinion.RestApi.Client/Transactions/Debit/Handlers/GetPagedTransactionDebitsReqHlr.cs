@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.Transactions.Debit.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPagedTransactionDebitsReqHlr(ApiClientProvider api)
-    : GetSomeModelsPagedReqHlr<TransactionDebitResp>(api.Client, api.ApiV1TransactionsDebitUri);
+    : BaseGetSomeModelsPagedReqHlr<TransactionDebitResp>(api.Client, api.ApiV1TransactionsDebitUri);

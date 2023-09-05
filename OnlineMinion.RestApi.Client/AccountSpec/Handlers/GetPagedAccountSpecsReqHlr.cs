@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPagedAccountSpecsReqHlr(ApiClientProvider api)
-    : GetSomeModelsPagedReqHlr<AccountSpecResp>(api.Client, api.ApiV1AccountSpecsUri);
+    : BaseGetSomeModelsPagedReqHlr<AccountSpecResp>(api.Client, api.ApiV1AccountSpecsUri);

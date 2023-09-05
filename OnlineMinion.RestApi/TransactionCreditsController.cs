@@ -71,7 +71,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result);
+                return Ok(envelope.StreamResult);
             },
             firstError =>
             {

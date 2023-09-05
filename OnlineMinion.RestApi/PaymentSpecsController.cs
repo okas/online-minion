@@ -113,7 +113,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result);
+                return Ok(envelope.StreamResult);
             },
             firstError =>
             {

@@ -120,11 +120,11 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         );
     }
 
-    private async Task OnApiLoadItemsVMsSuccessAsync(PagedResult<TResponse> pagedResult)
+    private async Task OnApiLoadItemsVMsSuccessAsync(PagedStreamResult<TResponse> pagedStreamResult)
     {
-        TotalItemsCount = pagedResult.Paging.Rows;
+        TotalItemsCount = pagedStreamResult.Paging.Rows;
         ViewModels.Clear();
-        await pagedResult.Result.PullItemsFromStream(ItemVMPullAction, CT, StateHasChanged);
+        await pagedStreamResult.StreamResult.PullItemsFromStream(ItemVMPullAction, CT, StateHasChanged);
     }
 
     private void ItemVMPullAction(TResponse vm) => ViewModels.Add(ConvertReqResponseToVM(vm));

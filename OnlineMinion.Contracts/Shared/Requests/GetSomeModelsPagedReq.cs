@@ -16,4 +16,4 @@ public record GetSomeModelsPagedReq<TResponse>(
     string?             Sort   = default,
     [Range(1, 50)]  int Page   = 1,
     [Range(1, 100)] int Size   = 10
-) : IRequest<ErrorOr<PagedResult<TResponse>>>, IQueryParams;
+) : IRequest<ErrorOr<PagedStreamResult<TResponse>>>, IQueryParams;
