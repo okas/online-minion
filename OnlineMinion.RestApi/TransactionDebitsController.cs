@@ -9,6 +9,7 @@ using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
+using OnlineMinion.RestApi.BaseControllers;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -18,7 +19,7 @@ namespace OnlineMinion.RestApi;
 [Route("api/v{version:apiVersion}/Transactions/Debits")]
 [ApiVersion("1")]
 public class TransactionDebitsController(ISender sender, ILogger<TransactionDebitsController> logger)
-    : ApiControllerBase(sender)
+    : BaseCRUDApiController(sender)
 {
     [HttpGet("{id}")]
     [ProducesResponseType<TransactionDebitResp>(StatusCodes.Status200OK)]

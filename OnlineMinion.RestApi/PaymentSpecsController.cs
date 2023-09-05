@@ -9,6 +9,7 @@ using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.RestApi.BaseControllers;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -16,7 +17,8 @@ using Swashbuckle.AspNetCore.Filters;
 namespace OnlineMinion.RestApi;
 
 [ApiVersion("1")]
-public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsController> logger) : ApiControllerBase(sender)
+public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsController> logger)
+    : BaseCRUDApiController(sender)
 {
     /// <summary>
     ///     Unique name validation for new create workflow.

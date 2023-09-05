@@ -10,6 +10,7 @@ using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.RestApi.BaseControllers;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -17,7 +18,8 @@ using Swashbuckle.AspNetCore.Filters;
 namespace OnlineMinion.RestApi;
 
 [ApiVersion("1")]
-public class AccountSpecsController(ISender sender, ILogger<AccountSpecsController> logger) : ApiControllerBase(sender)
+public class AccountSpecsController(ISender sender, ILogger<AccountSpecsController> logger)
+    : BaseCRUDApiController(sender)
 {
     /// <summary>
     ///     Unique name validation for new create workflow.
