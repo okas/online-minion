@@ -9,7 +9,14 @@ namespace OnlineMinion.Web.Pages;
 [UsedImplicitly]
 public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpecResp, BaseUpsertPaymentSpecReqData>
 {
+    private readonly List<CurrencyInfoResp> _currencyCodes = new();
+
     protected override string ModelTypeName => "Payment Specification";
+
+    protected override Task LoadDependenciesAsync() => LoadDependentVMsFromApiAsync(
+        new GetCurrenciesReq(),
+        _currencyCodes
+    );
 
     protected override ICreateCommand CreateCommandFactory() => new CreatePaymentSpecReq();
 
