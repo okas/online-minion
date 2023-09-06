@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using OnlineMinion.Contracts.CurrencyInfo.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;

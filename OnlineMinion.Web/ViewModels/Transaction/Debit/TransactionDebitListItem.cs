@@ -3,7 +3,7 @@ using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 
-namespace OnlineMinion.Web.Transaction.Debit;
+namespace OnlineMinion.Web.ViewModels.Transaction.Debit;
 
 /// <inheritdoc />
 /// <param name="AccountSpec">NB! It is important too keep member name, so that API communication queries work.</param>

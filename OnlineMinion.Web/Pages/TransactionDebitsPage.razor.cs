@@ -7,7 +7,7 @@ using OnlineMinion.Contracts.Transactions.Debit;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.Web.Pages.Base;
-using OnlineMinion.Web.Transaction.Debit;
+using OnlineMinion.Web.ViewModels.Transaction.Debit;
 
 namespace OnlineMinion.Web.Pages;
 

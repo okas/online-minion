@@ -2,7 +2,7 @@ using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 
-namespace OnlineMinion.Web.Transaction.Credit;
+namespace OnlineMinion.Web.ViewModels.Transaction.Credit;
 
 /// <inheritdoc />
 public sealed record TransactionCreditListItem(

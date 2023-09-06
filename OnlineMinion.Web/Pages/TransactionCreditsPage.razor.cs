@@ -6,7 +6,7 @@ using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Web.Pages.Base;
-using OnlineMinion.Web.Transaction.Credit;
+using OnlineMinion.Web.ViewModels.Transaction.Credit;
 
 namespace OnlineMinion.Web.Pages;
 
