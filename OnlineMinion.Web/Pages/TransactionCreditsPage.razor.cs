@@ -20,7 +20,7 @@ public partial class TransactionCreditsPage
 
     protected override Task LoadDependenciesAsync() => LoadDependentVMsFromApiAsync(
         new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
-        PaymentDescriptorViewModels
+        resp => PaymentDescriptorViewModels.Add(resp)
     );
 
     protected override ICreateCommand CreateCommandFactory() => new CreateTransactionCreditReq();

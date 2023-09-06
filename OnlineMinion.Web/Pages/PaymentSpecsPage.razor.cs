@@ -15,7 +15,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
 
     protected override Task LoadDependenciesAsync() => LoadDependentVMsFromApiAsync(
         new GetCurrenciesReq(),
-        _currencyCodes
+        resp => _currencyCodes.Add(new(resp))
     );
 
     protected override ICreateCommand CreateCommandFactory() => new CreatePaymentSpecReq();

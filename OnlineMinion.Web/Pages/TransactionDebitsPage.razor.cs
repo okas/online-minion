@@ -23,11 +23,11 @@ public partial class TransactionDebitsPage
     protected override Task LoadDependenciesAsync() => Task.WhenAll(
         LoadDependentVMsFromApiAsync(
             new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
-            PaymentDescriptorViewModels
+            resp => PaymentDescriptorViewModels.Add(resp)
         ),
         LoadDependentVMsFromApiAsync(
             new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>(),
-            AccountDescriptorViewModels
+            resp => AccountDescriptorViewModels.Add(resp)
         )
     );
 

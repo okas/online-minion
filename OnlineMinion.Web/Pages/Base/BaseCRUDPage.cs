@@ -102,6 +102,12 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     /// <param name="size" />
     /// <param name="filterExpression">Filtering expression, multi or single property.</param>
     /// <param name="sortExpression">Sorting expression, multi or single property.</param>
+    /// <remarks>
+    ///     Pulling data from stream uses "afterEachPull" action to run <see cref="ComponentBase.StateHasChanged" /> to update
+    ///     view as items
+    ///     are stored into list.<br />
+    ///     Pulling is done in <see cref="OnApiLoadItemsVMsSuccessAsync" />.
+    /// </remarks>
     private async Task LoadItemVMsFromApiAsync(int page, int size, string filterExpression, string sortExpression)
     {
         LogOnViewModelDataLoad(page, size, filterExpression, sortExpression);
@@ -131,16 +137,34 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     protected abstract TVModel ConvertReqResponseToVM(TResponse dto);
 
+    /// <summary>
+    ///     Takes in request performs query and pulls data from stream using provided "pull action".<br />
+    ///     Taking in action instead of list or returning data allows different types for response and view model.
+    ///     <remarks>
+    ///         Unlike pulling data in <see cref="LoadItemVMsFromApiAsync" /> workflow, this method does not use
+    ///         "afterEachPull" action.
+    ///     </remarks>
+    /// </summary>
+    /// <param name="rq">
+    ///     Request used to query data from API.<br />
+    ///     Its type ensures, that request comes in as async enumerable stream.
+    ///     Otherwise it is up to this request and it's handler what and how is  retrieved.
+    /// </param>
+    /// <param name="pullAction">
+    ///     Action that takes in instance of response and does something with it in its implementation.
+    ///     Normally storing it to list, optionally converting it to other type. It can be as simple as `listInst.Add`.
+    /// </param>
+    /// <typeparam name="TDependentVmResponse">Type of API returned model data.</typeparam>
     protected async Task LoadDependentVMsFromApiAsync<TDependentVmResponse>(
         IGetStreamedRequest<TDependentVmResponse> rq,
-        IList<TDependentVmResponse>               targetList
+        Action<TDependentVmResponse>              pullAction
     )
     {
         var result = await Sender.Send(rq, CT);
 
         // TODO: need separate rq-response objects with needed data only.
         await result.SwitchFirstAsync(
-            async models => await models.PullItemsFromStream(targetList, CT),
+            async models => await models.PullItemsFromStream(pullAction, CT),
             firstError =>
             {
                 LogErrorOnDescriptorViewModelDataApiLoad(firstError, typeof(TDependentVmResponse).Name);
