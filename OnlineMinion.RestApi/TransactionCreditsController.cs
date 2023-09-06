@@ -91,7 +91,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

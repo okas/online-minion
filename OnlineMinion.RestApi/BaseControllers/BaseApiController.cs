@@ -12,8 +12,12 @@ public abstract class BaseApiController : ControllerBase
     ///     Sets ModelState and "converts" <see cref="Error" /> to <see cref="IActionResult" />.
     /// </summary>
     /// <param name="error">Error to convert to action result.</param>
-    /// <param name="instanceUrl">Optional URL similar to <code>GET /api/[controller]/{id}</code>.</param>
-    protected ActionResult CreateApiProblemResult(Error error, string? instanceUrl = null)
+    protected ActionResult CreateApiProblemResult(Error error) => CreateApiProblemResult(error, null);
+
+
+    /// <inheritdoc cref="CreateApiProblemResult(Error)" />
+    /// <param name="instanceUrl">Optional URL similar to: <code>GET /api/[controller]/{id}</code></param>
+    protected ActionResult CreateApiProblemResult(Error error, string? instanceUrl)
     {
         if (error.Dictionary is not null)
         {

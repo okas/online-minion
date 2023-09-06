@@ -72,7 +72,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
     public async Task<IActionResult> GetById(
         [FromRoute] GetPaymentSpecByIdReq rq,
         CancellationToken                 ct
-    ) => await Sender.Send(rq, ct) is { } model ? Ok(model) : NotFound();
+    ) => await Sender.Send(rq, ct) is var model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -130,10 +130,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
         var rq = new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>();
         var result = await Sender.Send(rq, ct);
 
-        return result.MatchFirst(
-            Ok,
-            firstError => CreateApiProblemResult(firstError)
-        );
+        return result.MatchFirst(Ok, CreateApiProblemResult);
     }
 
     [HttpPost]
@@ -146,7 +143,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

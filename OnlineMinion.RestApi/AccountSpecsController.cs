@@ -133,10 +133,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
         var rq = new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>();
         var result = await Sender.Send(rq, ct);
 
-        return result.MatchFirst(
-            Ok,
-            firstError => CreateApiProblemResult(firstError)
-        );
+        return result.MatchFirst(Ok, CreateApiProblemResult);
     }
 
     [HttpPost]
@@ -149,7 +146,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

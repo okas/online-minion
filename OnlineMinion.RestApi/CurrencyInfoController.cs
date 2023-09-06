@@ -14,9 +14,6 @@ public class CurrencyInfoController(ISender sender) : BaseApiController
         var rq = new GetCurrenciesReq();
         var result = await sender.Send(rq, ct);
 
-        return result.MatchFirst(
-            Ok,
-            firstError => CreateApiProblemResult(firstError)
-        );
+        return result.MatchFirst(Ok, CreateApiProblemResult);
     }
 }
