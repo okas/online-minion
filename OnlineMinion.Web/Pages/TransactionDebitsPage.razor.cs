@@ -21,8 +21,14 @@ public partial class TransactionDebitsPage
     private List<AccountSpecDescriptorResp> AccountDescriptorViewModels { get; } = new();
 
     protected override Task LoadDependenciesAsync() => Task.WhenAll(
-        LoadDependentVMsFromApiAsync(PaymentDescriptorViewModels),
-        LoadDependentVMsFromApiAsync(AccountDescriptorViewModels)
+        LoadDependentVMsFromApiAsync(
+            new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
+            PaymentDescriptorViewModels
+        ),
+        LoadDependentVMsFromApiAsync(
+            new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>(),
+            AccountDescriptorViewModels
+        )
     );
 
     protected override ICreateCommand CreateCommandFactory() => new CreateTransactionDebitReq();

@@ -131,9 +131,11 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     protected abstract TVModel ConvertReqResponseToVM(TResponse dto);
 
-    protected async Task LoadDependentVMsFromApiAsync<TDependentVmResponse>(IList<TDependentVmResponse> targetList)
+    protected async Task LoadDependentVMsFromApiAsync<TDependentVmResponse>(
+        IGetStreamedRequest<TDependentVmResponse> rq,
+        IList<TDependentVmResponse>               targetList
+    )
     {
-        var rq = new GetSomeModelDescriptorsReq<TDependentVmResponse>();
         var result = await Sender.Send(rq, CT);
 
         // TODO: need separate rq-response objects with needed data only.
