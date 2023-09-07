@@ -10,23 +10,12 @@
 {
   protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
-      <UpsertEditorWrapper
+      <PaymentSpecsEditor
+          CurrencyInfoVMs="_currencyCodes"
           Model="@UpsertVM"
           OnCancel="@CloseEditorDialog"
           OnSubmit="@OnUpsertSubmitHandlerAsync"
-          @ref="@EditorWrapperRef">
-        <EditorFormFields>
-          <RadzenFormField Style="width:71%" Text="@Str.Name" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 25%" Text="@Str.CurrencyCode" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.CurrencyCode" Trim="@true"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 100%" Text="@Str.Tags" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context.Tags" Trim="@true"/>
-          </RadzenFormField>
-        </EditorFormFields>
-      </UpsertEditorWrapper>
+          @ref="@_editorRef"/>
     </CascadingValue>;
 
   private static class Str
@@ -60,7 +49,11 @@
       TotalItemsCount="@TotalItemsCount">
     <Columns>
       <RadzenDataGridColumn Property="@Str.Name" TItem="PaymentSpecResp" Title="@Str.Name"/>
-      <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCodeField"/>
+      <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCodeField">
+        <Template>
+          @SymbolizeCurrency(context.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
       <RadzenDataGridColumn Property="@Str.Tags" TItem="PaymentSpecResp" Title="@Str.Tags"/>
     </Columns>
   </RadzenDataGridWrapper>
