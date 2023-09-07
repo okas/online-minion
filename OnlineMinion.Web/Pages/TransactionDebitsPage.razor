@@ -1,5 +1,6 @@
 @page "/transactions/debit"
 @using static Common.Utilities.TypeMemberHelpers;
+@using static ViewModels.CurrencyInfo.CurrencyInfoExtensions;
 @using OnlineMinion.Web.ViewModels.Transaction.Debit
 @using System.Globalization
 @using OnlineMinion.Contracts.PaymentSpec.Responses
@@ -107,8 +108,16 @@
       TotalItemsCount="@TotalItemsCount">
     <Columns>
       <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionDebitListItem" Title="@Str.Date"/>
-      <RadzenDataGridColumn FormatString="{0:C}" Property="@Str.Amount" TItem="TransactionDebitListItem" Title="@Str.Amount"/>
-      <RadzenDataGridColumn FormatString="{0:C}" Property="@Str.Fee" TItem="TransactionDebitListItem" Title="@Str.Fee"/>
+      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionDebitListItem" Title="@Str.Amount">
+        <Template>
+          @FormatCurrencyAmount(context.Amount, context.PaymentInstrument.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
+      <RadzenDataGridColumn Property="@Str.Fee" TItem="TransactionDebitListItem" Title="@Str.Fee">
+        <Template>
+          @FormatCurrencyAmount(context.Fee, context.PaymentInstrument.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
       <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionDebitListItem" Title="@Str.Subject"/>
       <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionDebitListItem" Title="@Str.Party"/>
       <RadzenDataGridColumn
