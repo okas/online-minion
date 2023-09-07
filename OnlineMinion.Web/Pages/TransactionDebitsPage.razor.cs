@@ -15,21 +15,22 @@ namespace OnlineMinion.Web.Pages;
 public partial class TransactionDebitsPage
     : BaseCRUDPage<TransactionDebitListItem, TransactionDebitResp, BaseUpsertTransactionDebitReqData>
 {
+    private readonly List<AccountSpecDescriptorResp> _accountDescriptorViewModels = new();
+    private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
+
     protected override string ModelTypeName => "Debit Transaction";
 
-    private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
-    private List<AccountSpecDescriptorResp> AccountDescriptorViewModels { get; } = new();
-
-    protected override async Task RunDependencyLoadingAsync() => await Task.WhenAll(
-        LoadDependencyFromApiAsync(
-            new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
-            resp => PaymentDescriptorViewModels.Add(resp)
-        ),
-        LoadDependencyFromApiAsync(
-            new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>(),
-            resp => AccountDescriptorViewModels.Add(resp)
-        )
-    );
+    protected override async Task RunDependencyLoadingAsync() =>
+        await Task.WhenAll(
+            LoadDependencyFromApiAsync(
+                new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
+                resp => _paymentDescriptorViewModels.Add(resp)
+            ),
+            LoadDependencyFromApiAsync(
+                new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>(),
+                resp => _accountDescriptorViewModels.Add(resp)
+            )
+        );
 
     protected override ICreateCommand CreateCommandFactory() => new CreateTransactionDebitReq();
 

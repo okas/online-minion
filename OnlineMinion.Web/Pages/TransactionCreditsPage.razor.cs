@@ -14,11 +14,13 @@ namespace OnlineMinion.Web.Pages;
 public partial class TransactionCreditsPage
     : BaseCRUDPage<TransactionCreditListItem, TransactionCreditResp, BaseUpsertTransactionReqData>
 {
+    private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
+
     protected override string ModelTypeName => "Credit Transaction";
 
     protected override async Task RunDependencyLoadingAsync() => await LoadDependencyFromApiAsync(
         new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
-        resp => PaymentDescriptorViewModels.Add(resp)
+        resp => _paymentDescriptorViewModels.Add(resp)
     );
 
     protected override ICreateCommand CreateCommandFactory() => new CreateTransactionCreditReq();
@@ -42,7 +44,7 @@ public partial class TransactionCreditsPage
     }
 
     private PaymentSpecDescriptorResp GetVMDependencies(int id) =>
-        PaymentDescriptorViewModels.Single(vm => vm.Id == id);
+        _paymentDescriptorViewModels.Single(vm => vm.Id == id);
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetTransactionCreditPagingMetaInfoReq(pageSize);

@@ -52,14 +52,4 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
     protected override string GetDeleteMessageDescriptorData(PaymentSpecResp model) => model.Name;
 
     protected override IDeleteByIdCommand DeleteCommandFactory(PaymentSpecResp vm) => new DeletePaymentSpecReq(vm.Id);
-
-
-    private string SymbolizeCurrency(string isoCode)
-    {
-        var currency = _currencyCodes.Find(
-            x => string.Equals(x.IsoCode, isoCode, StringComparison.OrdinalIgnoreCase)
-        );
-
-        return currency != default ? currency.Display : isoCode;
-    }
 }

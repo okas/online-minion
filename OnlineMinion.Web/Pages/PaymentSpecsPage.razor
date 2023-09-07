@@ -1,4 +1,5 @@
 @page "/payment-specs"
+@using OnlineMinion.Web.ViewModels.CurrencyInfo
 @using OnlineMinion.Contracts.PaymentSpec.Responses
 @inherits BaseCRUDPage<
             PaymentSpecResp,
@@ -51,7 +52,7 @@
       <RadzenDataGridColumn Property="@Str.Name" TItem="PaymentSpecResp" Title="@Str.Name"/>
       <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCodeField">
         <Template>
-          @SymbolizeCurrency(context.CurrencyCode)
+          @_currencyCodes.SymbolizeCurrency(context.CurrencyCode)
         </Template>
       </RadzenDataGridColumn>
       <RadzenDataGridColumn Property="@Str.Tags" TItem="PaymentSpecResp" Title="@Str.Tags"/>
