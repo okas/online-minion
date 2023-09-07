@@ -6,6 +6,7 @@ using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Transactions.Debit;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
+using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.ViewModels.Transaction.Debit;
 
@@ -18,7 +19,22 @@ public partial class TransactionDebitsPage
     private readonly List<AccountSpecDescriptorResp> _accountDescriptorViewModels = new();
     private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
 
+    private TransactionDebitsEditor? _editorRef;
+
     protected override string ModelTypeName => "Debit Transaction";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        // In this page's case, the editor is separate component that encapsulates own content inside EditorWrapper.
+        // Therefor, exposed parameter WrapperRef is only accessible if editor itself is rendered
+        // and it can be pulled out now.
+        if (_editorRef is not null)
+        {
+            EditorWrapperRef = _editorRef.WrapperRef;
+        }
+    }
 
     protected override async Task RunDependencyLoadingAsync() =>
         await Task.WhenAll(
