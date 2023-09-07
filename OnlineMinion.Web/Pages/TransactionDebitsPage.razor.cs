@@ -20,12 +20,12 @@ public partial class TransactionDebitsPage
     private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
     private List<AccountSpecDescriptorResp> AccountDescriptorViewModels { get; } = new();
 
-    protected override Task LoadDependenciesAsync() => Task.WhenAll(
-        LoadDependentVMsFromApiAsync(
+    protected override async Task RunDependencyLoadingAsync() => await Task.WhenAll(
+        LoadDependencyFromApiAsync(
             new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
             resp => PaymentDescriptorViewModels.Add(resp)
         ),
-        LoadDependentVMsFromApiAsync(
+        LoadDependencyFromApiAsync(
             new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>(),
             resp => AccountDescriptorViewModels.Add(resp)
         )
@@ -55,8 +55,8 @@ public partial class TransactionDebitsPage
         int paymentSpecId,
         int accountSpecId
     ) => (
-        PaymentDescriptorViewModels.Single(vm => vm.Id == paymentSpecId),
-        AccountDescriptorViewModels.Single(vm => vm.Id == accountSpecId)
+        _paymentDescriptorViewModels.Single(vm => vm.Id == paymentSpecId),
+        _accountDescriptorViewModels.Single(vm => vm.Id == accountSpecId)
     );
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>

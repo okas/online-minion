@@ -16,9 +16,7 @@ public partial class TransactionCreditsPage
 {
     protected override string ModelTypeName => "Credit Transaction";
 
-    private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
-
-    protected override Task LoadDependenciesAsync() => LoadDependentVMsFromApiAsync(
+    protected override async Task RunDependencyLoadingAsync() => await LoadDependencyFromApiAsync(
         new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
         resp => PaymentDescriptorViewModels.Add(resp)
     );

@@ -73,13 +73,13 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         SC.IsBusy = true;
 
         // Order! Dependent models data is used to create create grid data, during main models pulling from stream.
-        await LoadDependenciesAsync();
-        await LoadItemVMsFromApiAsync(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
+        await RunDependencyLoadingAsync();
+        await LoadModelsFromApiAsync(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
 
         SC.IsBusy = false;
     }
 
-    protected virtual Task LoadDependenciesAsync() => Task.CompletedTask;
+    protected virtual Task RunDependencyLoadingAsync() => Task.CompletedTask;
 
     protected async Task OnLoadDataHandlerAsync(LoadDataArgs args)
     {
@@ -89,7 +89,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         var offset = args.Skip.GetValueOrDefault();
         var page = (int)Math.Floor((decimal)offset / size) + 1;
 
-        await LoadItemVMsFromApiAsync(page, size, args.Filter, args.OrderBy);
+        await LoadModelsFromApiAsync(page, size, args.Filter, args.OrderBy);
 
         SC.IsBusy = false;
     }
@@ -108,7 +108,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     ///     are stored into list.<br />
     ///     Pulling is done in <see cref="OnApiLoadItemsVMsSuccessAsync" />.
     /// </remarks>
-    private async Task LoadItemVMsFromApiAsync(int page, int size, string filterExpression, string sortExpression)
+    private async Task LoadModelsFromApiAsync(int page, int size, string filterExpression, string sortExpression)
     {
         LogOnViewModelDataLoad(page, size, filterExpression, sortExpression);
 
@@ -141,7 +141,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     ///     Takes in request performs query and pulls data from stream using provided "pull action".<br />
     ///     Taking in action instead of list or returning data allows different types for response and view model.
     ///     <remarks>
-    ///         Unlike pulling data in <see cref="LoadItemVMsFromApiAsync" /> workflow, this method does not use
+    ///         Unlike pulling data in <see cref="LoadModelsFromApiAsync" /> workflow, this method does not use
     ///         "afterEachPull" action.
     ///     </remarks>
     /// </summary>
@@ -155,7 +155,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     ///     Normally storing it to list, optionally converting it to other type. It can be as simple as `listInst.Add`.
     /// </param>
     /// <typeparam name="TDependentVmResponse">Type of API returned model data.</typeparam>
-    protected async Task LoadDependentVMsFromApiAsync<TDependentVmResponse>(
+    protected async Task LoadDependencyFromApiAsync<TDependentVmResponse>(
         IGetStreamedRequest<TDependentVmResponse> rq,
         Action<TDependentVmResponse>              pullAction
     )

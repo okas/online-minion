@@ -31,7 +31,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
         }
     }
 
-    protected override Task LoadDependenciesAsync() => LoadDependentVMsFromApiAsync(
+    protected override async Task RunDependencyLoadingAsync() => await LoadDependencyFromApiAsync(
         new GetCurrenciesReq(),
         resp => _currencyCodes.Add(new(resp))
     );
