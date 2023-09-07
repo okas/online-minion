@@ -72,7 +72,7 @@
     <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
       <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
     </RadzenFormField>
-    <RadzenFormField Style="width: 43%">
+    <RadzenFormField Style="width: 43%" Text="@Str.PaymentInstrumentColumn" Variant="@Variant.Text">
       <RadzenDropDown
           AllowClear="@true"
           AllowFiltering="@true"
@@ -81,7 +81,7 @@
           TextProperty="@nameof(PaymentSpecResp.Name)"
           ValueProperty="@nameof(PaymentSpecResp.Id)"/>
     </RadzenFormField>
-    <RadzenFormField Style="width: 43%">
+    <RadzenFormField Style="width: 43%" Text="@Str.AccountSpecColumn" Variant="@Variant.Text">
       <RadzenDropDown
           AllowClear="@true"
           AllowFiltering="@true"

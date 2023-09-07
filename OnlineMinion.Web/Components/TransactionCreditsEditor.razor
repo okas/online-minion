@@ -32,7 +32,7 @@
     public const string Amount = nameof(TransactionCreditListItem.Amount);
     public const string Subject = nameof(TransactionCreditListItem.Subject);
     public const string Party = nameof(TransactionCreditListItem.Party);
-    public const string PaymentInstrumentField = "paymnt. opt.";
+    public const string PaymentInstrumentColumn = "paymnt. opt.";
     public const string Tags = nameof(TransactionCreditListItem.Tags);
     public const string PaymentInstrumentName = nameof(TransactionCreditListItem.PaymentInstrument.Name);
     public const string PaymentInstrumentId = nameof(TransactionCreditListItem.PaymentInstrument.Id);
@@ -58,10 +58,7 @@
     <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
       <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
     </RadzenFormField>
-    <RadzenFormField
-        Style="width: 98%"
-        Text="@Str.PaymentInstrumentField"
-        Variant="@Variant.Text">
+    <RadzenFormField Style="width: 98%" Text="@Str.PaymentInstrumentColumn" Variant="@Variant.Text">
       <RadzenDropDown
           AllowClear="@true"
           AllowFiltering="@true"
