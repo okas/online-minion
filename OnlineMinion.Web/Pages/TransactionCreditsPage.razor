@@ -2,7 +2,6 @@
 @using static Common.Utilities.TypeMemberHelpers;
 @using static ViewModels.CurrencyInfo.CurrencyInfoExtensions;
 @using OnlineMinion.Web.ViewModels.Transaction.Credit
-@using System.Globalization
 @inherits BaseCRUDPage<
             TransactionCreditListItem,
             OnlineMinion.Contracts.Transactions.Credit.Responses.TransactionCreditResp,
@@ -13,45 +12,12 @@
 {
   protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
-      <UpsertEditorWrapper
+      <TransactionCreditsEditor
           Model="@UpsertVM"
           OnCancel="@CloseEditorDialog"
           OnSubmit="@OnUpsertSubmitHandlerAsync"
-          @ref="@EditorWrapperRef">
-        <EditorFormFields>
-          <RadzenFormField Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
-            <RadzenDatePicker
-                Change="@(dateTime => context.Date = DateOnly.FromDateTime(dateTime.GetValueOrDefault()))"
-                DateFormat="@CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern"
-                TValue="DateTime"
-                Value="@(context.Date.ToDateTime(TimeOnly.MinValue))"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
-            <RadzenNumeric @bind-Value="@context!.Amount"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Party" Trim="@true"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
-          </RadzenFormField>
-          <RadzenFormField
-              Style="width: 98%"
-              Text="@Str.PaymentInstrumentField"
-              Variant="@Variant.Text">
-            <RadzenDropDown
-                AllowClear="@true"
-                AllowFiltering="@true"
-                @bind-Value="@context.PaymentInstrumentId"
-                Data="@_paymentDescriptorViewModels"
-                TextProperty="@nameof(TransactionCreditListItem.PaymentInstrument.Name)"
-                ValueProperty="@nameof(TransactionCreditListItem.PaymentInstrument.Id)"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
-          </RadzenFormField>
-        </EditorFormFields>
-      </UpsertEditorWrapper>
+          PaymentSpecDescriptors="@_paymentDescriptorViewModels"
+          @ref="@_editorRef"/>
     </CascadingValue>;
 
   private static class Str

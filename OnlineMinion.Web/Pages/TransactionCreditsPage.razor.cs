@@ -5,6 +5,7 @@ using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
 using OnlineMinion.Web.ViewModels.Transaction.Credit;
 
@@ -16,7 +17,22 @@ public partial class TransactionCreditsPage
 {
     private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
 
+    private TransactionCreditsEditor? _editorRef;
+
     protected override string ModelTypeName => "Credit Transaction";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        // In this page's case, the editor is separate component that encapsulates own content inside EditorWrapper.
+        // Therefor, exposed parameter WrapperRef is only accessible if editor itself is rendered
+        // and it can be pulled out now.
+        if (_editorRef is not null)
+        {
+            EditorWrapperRef = _editorRef.WrapperRef;
+        }
+    }
 
     protected override async Task RunDependencyLoadingAsync() => await LoadDependencyFromApiAsync(
         new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),

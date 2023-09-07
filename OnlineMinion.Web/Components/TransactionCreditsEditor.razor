@@ -1,0 +1,77 @@
+@using OnlineMinion.Contracts.Transactions
+@using OnlineMinion.Contracts.PaymentSpec.Responses
+@using OnlineMinion.Web.ViewModels.Transaction.Credit
+@using System.Globalization
+
+@code {
+
+  [Parameter]
+  public UpsertEditorWrapper<BaseUpsertTransactionReqData> WrapperRef { get; set; } = default!;
+
+  // TODO: To Cascading Parameter
+  [Parameter]
+  [EditorRequired]
+  public BaseUpsertTransactionReqData? Model { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public EventCallback<EditContext> OnSubmit { get; set; }
+
+  [Parameter]
+  public EventCallback OnCancel { get; set; }
+
+  [Parameter]
+  [EditorRequired]
+  public IEnumerable<PaymentSpecDescriptorResp> PaymentSpecDescriptors { get; set; }
+    = Enumerable.Empty<PaymentSpecDescriptorResp>();
+
+  // If L18n is needed, this should be put to code-behind part and obtain translations from there.
+  private static class Str
+  {
+    public const string Date = nameof(TransactionCreditListItem.Date);
+    public const string Amount = nameof(TransactionCreditListItem.Amount);
+    public const string Subject = nameof(TransactionCreditListItem.Subject);
+    public const string Party = nameof(TransactionCreditListItem.Party);
+    public const string PaymentInstrumentField = "paymnt. opt.";
+    public const string Tags = nameof(TransactionCreditListItem.Tags);
+    public const string PaymentInstrumentName = nameof(TransactionCreditListItem.PaymentInstrument.Name);
+    public const string PaymentInstrumentId = nameof(TransactionCreditListItem.PaymentInstrument.Id);
+  }
+
+}
+
+<UpsertEditorWrapper Model="@Model" OnCancel="@OnCancel" OnSubmit="@OnSubmit" @ref="@WrapperRef">
+  <EditorFormFields>
+    <RadzenFormField Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
+      <RadzenDatePicker
+          Change="@(dateTime => context.Date = DateOnly.FromDateTime(dateTime.GetValueOrDefault()))"
+          DateFormat="@CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern"
+          TValue="DateTime"
+          Value="@(context.Date.ToDateTime(TimeOnly.MinValue))"/>
+    </RadzenFormField>
+    <RadzenFormField Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
+      <RadzenNumeric @bind-Value="@context!.Amount"/>
+    </RadzenFormField>
+    <RadzenFormField Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
+      <RadzenTextBox @bind-Value="@context!.Party" Trim="@true"/>
+    </RadzenFormField>
+    <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
+      <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
+    </RadzenFormField>
+    <RadzenFormField
+        Style="width: 98%"
+        Text="@Str.PaymentInstrumentField"
+        Variant="@Variant.Text">
+      <RadzenDropDown
+          AllowClear="@true"
+          AllowFiltering="@true"
+          @bind-Value="@context.PaymentInstrumentId"
+          Data="@PaymentSpecDescriptors"
+          TextProperty="@Str.PaymentInstrumentName"
+          ValueProperty="@Str.PaymentInstrumentId"/>
+    </RadzenFormField>
+    <RadzenFormField Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
+      <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
+    </RadzenFormField>
+  </EditorFormFields>
+</UpsertEditorWrapper>
