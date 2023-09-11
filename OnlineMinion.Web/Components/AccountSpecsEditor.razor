@@ -1,21 +1,6 @@
-@using OnlineMinion.Contracts.AccountSpec.Requests
-
 @code{
 
-  [Parameter]
-  public UpsertEditorWrapper<BaseUpsertAccountSpecReqData> WrapperRef { get; set; } = default!;
 
-  // TODO: To Cascading Parameter
-  [Parameter]
-  [EditorRequired]
-  public BaseUpsertAccountSpecReqData? Model { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public EventCallback<EditContext> OnSubmit { get; set; }
-
-  [Parameter]
-  public EventCallback OnCancel { get; set; }
 
   // If L18n is needed, this should be put to code-behind part and obtain translations from there.
   private static class Str

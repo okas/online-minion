@@ -1,0 +1,23 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using OnlineMinion.Contracts.AccountSpec.Requests;
+
+namespace OnlineMinion.Web.Components;
+
+public partial class AccountSpecsEditor
+{
+    [Parameter]
+    public UpsertEditorWrapper<BaseUpsertAccountSpecReqData> WrapperRef { get; set; } = default!;
+
+    // TODO: To Cascading Parameter
+    [Parameter]
+    [EditorRequired]
+    public BaseUpsertAccountSpecReqData? Model { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback<EditContext> OnSubmit { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+}
