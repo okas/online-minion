@@ -8,9 +8,11 @@ namespace OnlineMinion.Web.Components;
 
 [UsedImplicitly]
 public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
+    where TVModel : class
 {
     private EditContext? _editContext;
     private FluentValidator _fluentValidatorRef = null!;
+    private bool _isDisposed;
     private bool _isEditorActionDisabledForced;
     private ServerSideValidator _serverSideValidator = null!;
     private bool _shouldBeDisabledByFormState = true;
@@ -23,7 +25,7 @@ public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
     // TODO: To Cascading Parameter
     [Parameter]
     [EditorRequired]
-    public TVModel? Model { get; set; }
+    public TVModel Model { get; set; } = default!;
 
     [Parameter]
     [EditorRequired]
@@ -38,17 +40,23 @@ public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
 
     void IDisposable.Dispose()
     {
+        if (_isDisposed)
+        {
+            return;
+        }
+
         SC.OnChange -= StateHasChanged;
         DetachValidationStateChangedListener();
+        GC.SuppressFinalize(this);
+
+        _isDisposed = true;
     }
 
     protected override void OnParametersSet()
     {
         if (Model is null)
         {
-            throw new InvalidOperationException(
-                $"Parameter {nameof(Model)} is required for {nameof(UpsertEditorWrapper<TVModel>)} component."
-            );
+            throw new InvalidOperationException(GetMsgMissingModel());
         }
 
         if (_editContext?.Model.Equals(Model) ?? false)
@@ -139,4 +147,7 @@ public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
 
     private static IEnumerable<object> ToObjectEnumerable(KeyValuePair<string, object> kvp) =>
         kvp.Value as IEnumerable<object> ?? new[] { kvp.Value, };
+
+    private string GetMsgMissingModel() =>
+        $"Parameter {nameof(Model)} is required for {nameof(UpsertEditorWrapper<TVModel>)} component.";
 }
