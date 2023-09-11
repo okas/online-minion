@@ -10,8 +10,7 @@ namespace OnlineMinion.Web.Shared.Forms;
 
 /// <summary>
 ///     Validates model instance using FluentValidation's <see cref="FluentValidation.IValidator" /> validator instances
-///     obtained
-///     from DI container or explicitly provided from parameter <see cref="Validators" />.
+///     obtained  from DI container or explicitly provided from parameter <see cref="Validators" />.
 /// </summary>
 /// <remarks>
 ///     If the <see cref="EditForm" /> is known to validate model using validators of
@@ -53,10 +52,7 @@ public class FluentValidator : ComponentBase
     {
         if (CurrentEditContext is null)
         {
-            throw new InvalidOperationException(
-                $"{_fluentValidatorName} requires a cascading parameter of type {nameof(EditContext)}."
-                + $" For example, you can use {_fluentValidatorName} inside an {nameof(EditForm)}."
-            );
+            throw new InvalidOperationException(GetMsgMissingEditContext());
         }
 
         _modelType = CurrentEditContext.Model.GetType();
@@ -104,15 +100,6 @@ public class FluentValidator : ComponentBase
         );
     }
 
-    private void LogValidators(List<IValidator> sourceValidators, bool isFromDI) =>
-        Logger.LogDebug(
-            "Got {Count} validators from `{Source}` for model `{ModelType}`: {Validators}",
-            sourceValidators.Count,
-            isFromDI ? "DI container" : "parameter",
-            _modelType.FullName,
-            sourceValidators.Select(v => $"\n- {v.GetType().FullName}")
-        );
-
     /// <exception cref="InvalidOperationException">
     ///     In case no validators exist in DI container for <see cref="EditForm" />
     ///     model's type.
@@ -123,10 +110,7 @@ public class FluentValidator : ComponentBase
 
         return ServiceProvider.GetServices(validatorType).Cast<IValidator>().ToList() is { Count: > 0, } validators
             ? validators
-            : throw new InvalidOperationException(
-                $"{_fluentValidatorName} expects that validators are registered in DI container before usage. "
-                + $"No validators for type of model '{_modelType.FullName}' where found."
-            );
+            : throw new InvalidOperationException(GetMsgNoExpectedValidatorsInDIContainer());
     }
 
     private void SetupEventHandlers()
@@ -225,4 +209,21 @@ public class FluentValidator : ComponentBase
 
     private ValidationContext<TModel> ValidationContextFactory<TModel>(Action<ValidationStrategy<TModel>> strategy) =>
         ValidationContext<TModel>.CreateWithOptions((TModel)CurrentEditContext.Model, strategy);
+
+    private string GetMsgMissingEditContext() =>
+        $"{_fluentValidatorName} requires a cascading parameter of type {nameof(EditContext)}."
+        + $" For example, you can use {_fluentValidatorName} inside an {nameof(EditForm)}.";
+
+    private string GetMsgNoExpectedValidatorsInDIContainer() =>
+        $"{_fluentValidatorName} expects that validators are registered in DI container before usage. "
+        + $"No validators for type of model '{_modelType.FullName}' where found.";
+
+    private void LogValidators(List<IValidator> sourceValidators, bool isFromDI) =>
+        Logger.LogDebug(
+            "Got {Count} validators from `{Source}` for model `{ModelType}`: {Validators}",
+            sourceValidators.Count,
+            isFromDI ? "DI container" : "parameter",
+            _modelType.FullName,
+            sourceValidators.Select(v => $"\n- {v.GetType().FullName}")
+        );
 }
