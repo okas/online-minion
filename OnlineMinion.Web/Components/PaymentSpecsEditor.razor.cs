@@ -13,7 +13,7 @@ public partial class PaymentSpecsEditor
     // TODO: To Cascading Parameter
     [Parameter]
     [EditorRequired]
-    public BaseUpsertPaymentSpecReqData? Model { get; set; }
+    public BaseUpsertPaymentSpecReqData Model { get; set; } = default!;
 
     [Parameter]
     [EditorRequired]

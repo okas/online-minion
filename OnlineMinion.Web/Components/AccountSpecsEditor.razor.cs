@@ -12,7 +12,7 @@ public partial class AccountSpecsEditor
     // TODO: To Cascading Parameter
     [Parameter]
     [EditorRequired]
-    public BaseUpsertAccountSpecReqData? Model { get; set; }
+    public BaseUpsertAccountSpecReqData Model { get; set; } = default!;
 
     [Parameter]
     [EditorRequired]

@@ -64,13 +64,13 @@
           Value="@(context.Date.ToDateTime(TimeOnly.MinValue))"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
-      <RadzenNumeric @bind-Value="@context!.Amount" Format="c"/>
+      <RadzenNumeric @bind-Value="@context.Amount" Format="c"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
-      <RadzenTextBox @bind-Value="@context!.Party" Trim="@true"/>
+      <RadzenTextBox @bind-Value="@context.Party" Trim="@true"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
-      <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
+      <RadzenTextBox @bind-Value="@context.Subject" Trim="@true"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 43%" Text="@Str.PaymentInstrumentColumn" Variant="@Variant.Text">
       <RadzenDropDown
@@ -91,10 +91,10 @@
           ValueProperty="@nameof(AccountSpecResp.Id)"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 98%" Text="@Str.Fee" Variant="@Variant.Text">
-      <RadzenNumeric @bind-Value="@context!.Fee" Format="c"/>
+      <RadzenNumeric @bind-Value="@context.Fee" Format="c"/>
     </RadzenFormField>
     <RadzenFormField Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
-      <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
+      <RadzenTextBox @bind-Value="@context.Tags" Trim="@true"/>
     </RadzenFormField>
   </EditorFormFields>
 </UpsertEditorWrapper>
