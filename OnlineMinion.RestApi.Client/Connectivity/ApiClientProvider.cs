@@ -22,12 +22,14 @@ public class ApiClientProvider
     public ApiClientProvider(HttpClient httpClient, IOptions<ApiClientProviderSettings> options)
     {
         httpClient.BaseAddress = new(
-            options.Value.Url ??
-            throw new InvalidOperationException($"Missing {nameof(ApiClientProviderSettings)} from configuration.")
+            options.Value.Url
+            ?? throw new InvalidOperationException(GetMsgMissingConfig())
         );
 
         Client = httpClient;
     }
 
     public HttpClient Client { get; }
+
+    private static string GetMsgMissingConfig() => $"Missing {nameof(ApiClientProviderSettings)} from configuration.";
 }
