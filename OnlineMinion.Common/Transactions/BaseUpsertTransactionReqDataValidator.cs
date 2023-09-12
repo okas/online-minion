@@ -15,8 +15,7 @@ public sealed class BaseUpsertTransactionReqDataValidator : AbstractValidator<Ba
             .NotEmpty();
 
         RuleFor(x => x.Date)
-            .NotEmpty()
-            .WithMessage("Date is required");
+            .NotEmpty();
 
         RuleFor(x => x.Amount)
             .GreaterThan(0.00M);

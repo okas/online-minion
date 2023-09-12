@@ -13,7 +13,8 @@ public sealed class UpdateTransactionCreditReq(
         int      paymentInstrumentId,
         string?  tags
     )
-    : BaseUpsertTransactionReqData(paymentInstrumentId, date, amount, subject, party, tags), IUpdateCommand
+    : BaseUpsertTransactionReqData(paymentInstrumentId, date, amount, subject, party, tags),
+        IUpdateCommand
 {
     public int Id { get; } = id;
 }

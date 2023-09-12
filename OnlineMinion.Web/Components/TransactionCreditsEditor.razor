@@ -1,40 +1,19 @@
-@using OnlineMinion.Contracts.Transactions
 @using OnlineMinion.Web.Transaction.Credit.ViewModels
+@using OnlineMinion.Contracts.PaymentSpec.Responses
 @using System.Globalization
 
 @code {
-
-  [Parameter]
-  public UpsertEditorWrapper<BaseUpsertTransactionReqData> WrapperRef { get; set; } = default!;
-
-  // TODO: To Cascading Parameter
-  [Parameter]
-  [EditorRequired]
-  public BaseUpsertTransactionReqData? Model { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public EventCallback<EditContext> OnSubmit { get; set; }
-
-  [Parameter]
-  public EventCallback OnCancel { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public IEnumerable<PaymentSpecDescriptorResp> PaymentSpecDescriptors { get; set; }
-    = Enumerable.Empty<PaymentSpecDescriptorResp>();
-
   // If L18n is needed, this should be put to code-behind part and obtain translations from there.
   private static class Str
   {
-    public const string Date = nameof(TransactionCreditListItem.Date);
-    public const string Amount = nameof(TransactionCreditListItem.Amount);
-    public const string Subject = nameof(TransactionCreditListItem.Subject);
-    public const string Party = nameof(TransactionCreditListItem.Party);
+    public const string Date = nameof(BaseTransactionCreditUpsertVM.Date);
+    public const string Amount = nameof(BaseTransactionCreditUpsertVM.Amount);
+    public const string Subject = nameof(BaseTransactionCreditUpsertVM.Subject);
+    public const string Party = nameof(BaseTransactionCreditUpsertVM.Party);
     public const string PaymentInstrumentColumn = "paymnt. opt.";
-    public const string Tags = nameof(TransactionCreditListItem.Tags);
-    public const string PaymentInstrumentName = nameof(TransactionCreditListItem.PaymentInstrument.Name);
-    public const string PaymentInstrumentId = nameof(TransactionCreditListItem.PaymentInstrument.Id);
+    public const string Tags = nameof(BaseTransactionCreditUpsertVM.Tags);
+    public const string PaymentInstrumentName = nameof(PaymentSpecDescriptorResp.Name);
+    public const string PaymentInstrumentId = nameof(PaymentSpecDescriptorResp.Id);
   }
 
 }

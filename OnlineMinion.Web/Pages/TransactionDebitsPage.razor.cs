@@ -13,7 +13,7 @@ namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
 public partial class TransactionDebitsPage
-    : BaseCRUDPage<TransactionDebitListItem, TransactionDebitResp, BaseUpsertTransactionDebitReqData>
+    : BaseCRUDPage<TransactionDebitListItem, TransactionDebitResp, BaseTransactionDebitUpsertVM>
 {
     private readonly List<AccountSpecDescriptorResp> _accountDescriptorViewModels = new();
     private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
@@ -47,10 +47,9 @@ public partial class TransactionDebitsPage
             )
         );
 
-    protected override ICreateCommand CreateCommandFactory() => new CreateTransactionDebitReq();
+    protected override CreateTransactionDebitVM CreateVMFactory() => new();
 
-    protected override IUpdateCommand UpdateCommandFactory(TransactionDebitListItem vm) =>
-        TransactionDebitListItem.ToUpdateRequest(vm);
+    protected override UpdateTransactionDebitVM UpdateVMFactory(TransactionDebitListItem vm) => vm.ToUpdateVM();
 
     protected override TransactionDebitListItem ConvertReqResponseToVM(TransactionDebitResp dto)
     {
@@ -59,6 +58,9 @@ public partial class TransactionDebitsPage
         return TransactionDebitListItem.FromResponseDto(dto, paymentSpec, accountSpec);
     }
 
+    protected override UpdateTransactionDebitReq ConvertUpdateVMToReq(IUpdateCommand reqOrVM) =>
+        ((UpdateTransactionDebitVM)reqOrVM).ToCommand();
+
     protected override TransactionDebitListItem ConvertUpdateReqToVM(IUpdateCommand dto)
     {
         var rq = (UpdateTransactionDebitReq)dto;
@@ -66,6 +68,9 @@ public partial class TransactionDebitsPage
 
         return TransactionDebitListItem.FromUpdateRequest(rq, paymentSpec, accountSpec);
     }
+
+    protected override CreateTransactionDebitReq ConvertCreateVMToReq(ICreateCommand reqOrVM) =>
+        ((CreateTransactionDebitVM)reqOrVM).ToCommand();
 
     private (PaymentSpecDescriptorResp paymentSpec, AccountSpecDescriptorResp accountSpec) GetVMDependencies(
         int paymentSpecId,

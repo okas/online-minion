@@ -1,55 +1,24 @@
-@using static Common.Utilities.TypeMemberHelpers;
-@using OnlineMinion.Contracts.Transactions.Debit
+@using OnlineMinion.Web.Transaction.Debit.ViewModels
 @using OnlineMinion.Contracts.PaymentSpec.Responses
 @using OnlineMinion.Contracts.AccountSpec.Responses
-@using OnlineMinion.Web.ViewModels.Transaction.Debit
 @using System.Globalization
 
 @code {
 
-  [Parameter]
-  public UpsertEditorWrapper<BaseUpsertTransactionDebitReqData> WrapperRef { get; set; } = default!;
-
-  // TODO: To Cascading Parameter
-  [Parameter]
-  [EditorRequired]
-  public BaseUpsertTransactionDebitReqData? Model { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public EventCallback<EditContext> OnSubmit { get; set; }
-
-  [Parameter]
-  public EventCallback OnCancel { get; set; }
-
-  [Parameter]
-  [EditorRequired]
-  public IEnumerable<PaymentSpecDescriptorResp> PaymentSpecDescriptors { get; set; }
-    = Enumerable.Empty<PaymentSpecDescriptorResp>();
-
-  [Parameter]
-  [EditorRequired]
-  public IEnumerable<AccountSpecDescriptorResp> AccountSpecDescriptors { get; set; }
-    = Enumerable.Empty<AccountSpecDescriptorResp>();
-
   private static class Str
   {
-    public const string Date = nameof(TransactionDebitListItem.Date);
-    public const string Amount = nameof(TransactionDebitListItem.Amount);
-    public const string Subject = nameof(TransactionDebitListItem.Subject);
-    public const string Party = nameof(TransactionDebitListItem.Party);
+    public const string Date = nameof(BaseTransactionDebitUpsertVM.Date);
+    public const string Amount = nameof(BaseTransactionDebitUpsertVM.Amount);
+    public const string Subject = nameof(BaseTransactionDebitUpsertVM.Subject);
+    public const string Party = nameof(BaseTransactionDebitUpsertVM.Party);
     public const string PaymentInstrumentColumn = "paymnt. opt.";
-    public const string Tags = nameof(TransactionDebitListItem.Tags);
-    public const string Fee = nameof(TransactionDebitListItem.Fee);
+    public const string Tags = nameof(BaseTransactionDebitUpsertVM.Tags);
+    public const string Fee = nameof(BaseTransactionDebitUpsertVM.Fee);
     public const string AccountSpecColumn = "acc. spec.";
-
-    public static readonly string PaymentInstrumentName = NestedNameOf<TransactionDebitListItem>(
-      x => x.PaymentInstrument.Name
-      );
-
-    public static readonly string AccountSpecName = NestedNameOf<TransactionDebitListItem>(
-      x => x.AccountSpec.Name
-      );
+    public const string PaymentInstrumentName = nameof(PaymentSpecDescriptorResp.Name);
+    public const string PaymentInstrumentId = nameof(PaymentSpecDescriptorResp.Id);
+    public const string AccountSpecName = nameof(AccountSpecResp.Name);
+    public const string AccountSpecId = nameof(AccountSpecResp.Id);
   }
 
 }
@@ -58,10 +27,9 @@
   <EditorFormFields>
     <RadzenFormField Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
       <RadzenDatePicker
-          Change="@(dateTime => context.Date = DateOnly.FromDateTime(dateTime.GetValueOrDefault()))"
+          @bind-Value="@context.Date"
           DateFormat="@CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern"
-          TValue="DateTime"
-          Value="@(context.Date.ToDateTime(TimeOnly.MinValue))"/>
+          TValue="DateTime"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
       <RadzenNumeric @bind-Value="@context.Amount" Format="c"/>
@@ -78,8 +46,8 @@
           AllowFiltering="@true"
           @bind-Value="@context.PaymentInstrumentId"
           Data="@PaymentSpecDescriptors"
-          TextProperty="@nameof(PaymentSpecResp.Name)"
-          ValueProperty="@nameof(PaymentSpecResp.Id)"/>
+          TextProperty="@Str.PaymentInstrumentName"
+          ValueProperty="@Str.PaymentInstrumentId"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 43%" Text="@Str.AccountSpecColumn" Variant="@Variant.Text">
       <RadzenDropDown
@@ -87,8 +55,8 @@
           AllowFiltering="@true"
           @bind-Value="@context.AccountSpecId"
           Data="@AccountSpecDescriptors"
-          TextProperty="@nameof(AccountSpecResp.Name)"
-          ValueProperty="@nameof(AccountSpecResp.Id)"/>
+          TextProperty="@Str.AccountSpecName"
+          ValueProperty="@Str.AccountSpecId"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 98%" Text="@Str.Fee" Variant="@Variant.Text">
       <RadzenNumeric @bind-Value="@context.Fee" Format="c"/>

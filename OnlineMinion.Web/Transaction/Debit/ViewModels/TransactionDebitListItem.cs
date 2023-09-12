@@ -2,7 +2,7 @@ using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
-using OnlineMinion.Web.Transaction.Common.ViewModels;
+using OnlineMinion.Web.Transaction.Shared.ViewModels;
 
 namespace OnlineMinion.Web.Transaction.Debit.ViewModels;
 

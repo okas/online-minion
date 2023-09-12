@@ -1,12 +1,12 @@
 @page "/transactions/debit"
 @using static Common.Utilities.TypeMemberHelpers;
-@using static ViewModels.CurrencyInfo.CurrencyInfoExtensions;
+@using static CurrencyInfo.ViewModels.CurrencyInfoExtensions;
 @using OnlineMinion.Web.Transaction.Debit.ViewModels
 @inherits BaseCRUDPage<
             TransactionDebitListItem,
             OnlineMinion.Contracts.Transactions.Debit.Responses.TransactionDebitResp,
-            OnlineMinion.Contracts.Transactions.Debit.BaseUpsertTransactionDebitReqData
-            >
+            BaseTransactionDebitUpsertVM
+            >;
 
 @code
 {

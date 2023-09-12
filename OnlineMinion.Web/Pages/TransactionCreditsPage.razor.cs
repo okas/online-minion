@@ -2,7 +2,6 @@ using System.Globalization;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Web.Components;
@@ -13,7 +12,7 @@ namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
 public partial class TransactionCreditsPage
-    : BaseCRUDPage<TransactionCreditListItem, TransactionCreditResp, BaseUpsertTransactionReqData>
+    : BaseCRUDPage<TransactionCreditListItem, TransactionCreditResp, BaseTransactionCreditUpsertVM>
 {
     private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
 
@@ -39,10 +38,9 @@ public partial class TransactionCreditsPage
         resp => _paymentDescriptorViewModels.Add(resp)
     );
 
-    protected override ICreateCommand CreateCommandFactory() => new CreateTransactionCreditReq();
+    protected override CreateTransactionCreditVM CreateVMFactory() => new();
 
-    protected override IUpdateCommand UpdateCommandFactory(TransactionCreditListItem vm) =>
-        TransactionCreditListItem.ToUpdateRequest(vm);
+    protected override UpdateTransactionCreditVM UpdateVMFactory(TransactionCreditListItem vm) => vm.ToUpdateVM();
 
     protected override TransactionCreditListItem ConvertReqResponseToVM(TransactionCreditResp dto)
     {
@@ -51,6 +49,9 @@ public partial class TransactionCreditsPage
         return TransactionCreditListItem.FromResponseDto(dto, paymentSpec);
     }
 
+    protected override UpdateTransactionCreditReq ConvertUpdateVMToReq(IUpdateCommand reqOrVM) =>
+        ((UpdateTransactionCreditVM)reqOrVM).ToCommand();
+
     protected override TransactionCreditListItem ConvertUpdateReqToVM(IUpdateCommand dto)
     {
         var rq = (UpdateTransactionCreditReq)dto;
@@ -58,6 +59,9 @@ public partial class TransactionCreditsPage
 
         return TransactionCreditListItem.FromUpdateRequest(rq, paymentSpec);
     }
+
+    protected override CreateTransactionCreditReq ConvertCreateVMToReq(ICreateCommand reqOrVM) =>
+        ((CreateTransactionCreditVM)reqOrVM).ToCommand();
 
     private PaymentSpecDescriptorResp GetVMDependencies(int id) =>
         _paymentDescriptorViewModels.Single(vm => vm.Id == id);
@@ -68,6 +72,5 @@ public partial class TransactionCreditsPage
     protected override string GetDeleteMessageDescriptorData(TransactionCreditListItem model) =>
         $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
 
-    protected override IDeleteByIdCommand DeleteCommandFactory(TransactionCreditListItem vm) =>
-        new DeleteTransactionCreditReq(vm.Id);
+    protected override DeleteTransactionCreditReq DeleteCommandFactory(TransactionCreditListItem vm) => new(vm.Id);
 }
