@@ -4,8 +4,8 @@ using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Web.Components;
+using OnlineMinion.Web.CurrencyInfo.ViewModels;
 using OnlineMinion.Web.Pages.Base;
-using OnlineMinion.Web.ViewModels.CurrencyInfo;
 
 namespace OnlineMinion.Web.Pages;
 

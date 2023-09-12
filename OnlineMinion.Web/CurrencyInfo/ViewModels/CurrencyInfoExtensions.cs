@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace OnlineMinion.Web.ViewModels.CurrencyInfo;
+namespace OnlineMinion.Web.CurrencyInfo.ViewModels;
 
 public static class CurrencyInfoExtensions
 {

@@ -1,6 +1,6 @@
 using OnlineMinion.Contracts.CurrencyInfo.Responses;
 
-namespace OnlineMinion.Web.ViewModels.CurrencyInfo;
+namespace OnlineMinion.Web.CurrencyInfo.ViewModels;
 
 public readonly record struct CurrencyInfoVm
 {

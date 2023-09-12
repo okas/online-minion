@@ -3,12 +3,11 @@ using JetBrains.Annotations;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Debit;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
-using OnlineMinion.Web.ViewModels.Transaction.Debit;
+using OnlineMinion.Web.Transaction.Debit.ViewModels;
 
 namespace OnlineMinion.Web.Pages;
 

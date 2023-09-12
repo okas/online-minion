@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Web.ViewModels.CurrencyInfo;
+using OnlineMinion.Web.CurrencyInfo.ViewModels;
 
 namespace OnlineMinion.Web.Components;
 

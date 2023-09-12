@@ -1,8 +1,9 @@
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Web.Transaction.Shared.ViewModels;
 
-namespace OnlineMinion.Web.ViewModels.Transaction.Credit;
+namespace OnlineMinion.Web.Transaction.Credit.ViewModels;
 
 /// <inheritdoc />
 public sealed record TransactionCreditListItem(
@@ -51,14 +52,14 @@ public sealed record TransactionCreditListItem(
             paymentDescriptor
         );
 
-    public static UpdateTransactionCreditReq ToUpdateRequest(TransactionCreditListItem vm) =>
+    public UpdateTransactionCreditVM ToUpdateVM() =>
         new(
-            vm.Id,
-            vm.Date,
-            vm.Amount,
-            vm.Subject,
-            vm.Party,
-            vm.PaymentInstrument.Id,
-            vm.Tags
+            Id,
+            PaymentInstrument.Id,
+            Date.ToDateTime(TimeOnly.MinValue),
+            Amount,
+            Subject,
+            Party,
+            Tags
         );
 }
