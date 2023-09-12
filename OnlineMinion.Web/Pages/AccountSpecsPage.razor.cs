@@ -27,20 +27,24 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpe
         }
     }
 
-    protected override ICreateCommand CreateCommandFactory() => new CreateAccountSpecReq();
+    protected override CreateAccountSpecReq CreateVMFactory() => new();
 
-    protected override IUpdateCommand UpdateCommandFactory(AccountSpecResp vm) =>
-        new UpdateAccountSpecReq(vm.Id, vm.Name, vm.Group, vm.Description);
+    protected override UpdateAccountSpecReq UpdateVMFactory(AccountSpecResp vm) =>
+        new(vm.Id, vm.Name, vm.Group, vm.Description);
 
     protected override AccountSpecResp ConvertReqResponseToVM(AccountSpecResp dto) => dto;
 
+    protected override IUpdateCommand ConvertUpdateVMToReq(IUpdateCommand reqOrVM) => reqOrVM;
+
     protected override AccountSpecResp ConvertUpdateReqToVM(IUpdateCommand dto) =>
         (AccountSpecResp)(UpdateAccountSpecReq)dto;
+
+    protected override ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM) => reqOrVM;
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetAccountPagingMetaInfoReq(pageSize);
 
     protected override string GetDeleteMessageDescriptorData(AccountSpecResp model) => model.Name;
 
-    protected override IDeleteByIdCommand DeleteCommandFactory(AccountSpecResp vm) => new DeleteAccountSpecReq(vm.Id);
+    protected override DeleteAccountSpecReq DeleteCommandFactory(AccountSpecResp vm) => new(vm.Id);
 }

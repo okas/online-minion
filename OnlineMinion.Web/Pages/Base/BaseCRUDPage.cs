@@ -178,27 +178,27 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         if (UpsertVM is not ICreateCommand)
         {
-            UpsertVM = (TBaseUpsert)CreateCommandFactory();
+            UpsertVM = (TBaseUpsert)CreateVMFactory();
         }
 
         OpenEditorDialog($"Add new {ModelTypeName}");
     }
 
-    protected abstract ICreateCommand CreateCommandFactory();
+    protected abstract ICreateCommand CreateVMFactory();
 
     protected void OnEditHandler(TVModel vm)
     {
         // If the editing of same item is already in progress, then continue editing it.
         if (UpsertVM is not IUpdateCommand cmd || cmd.Id != vm.Id)
         {
-            UpsertVM = (TBaseUpsert)UpdateCommandFactory(vm);
+            UpsertVM = (TBaseUpsert)UpdateVMFactory(vm);
         }
 
         var title = $"Edit {ModelTypeName}: id #{vm.Id.ToString(CultureInfo.InvariantCulture)}";
         OpenEditorDialog(title);
     }
 
-    protected abstract IUpdateCommand UpdateCommandFactory(TVModel vm);
+    protected abstract IUpdateCommand UpdateVMFactory(TVModel vm);
 
     private void OpenEditorDialog(string title) => DialogService.Open(
         title,
@@ -231,14 +231,15 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     private ValueTask<bool> HandleUpsertSubmit() => UpsertVM switch
     {
-        IUpdateCommand rq => HandleUpdateSubmitAsync(rq),
-        ICreateCommand rq => HandleCreateSubmitAsync(rq),
-        null => throw new InvalidOperationException("Upsert model is null."),
-        _ => throw new InvalidOperationException("Unknown model type."),
+        IUpdateCommand reqOrVM => SubmitUpdateCommandAsync(reqOrVM),
+        ICreateCommand reqOrVM => SubmitCreateCommandAsync(reqOrVM),
+        null => throw new InvalidOperationException("Upsert view model is null."),
+        _ => throw new InvalidOperationException("Unknown view model type."),
     };
 
-    private async ValueTask<bool> HandleUpdateSubmitAsync(IUpdateCommand rq)
+    private async ValueTask<bool> SubmitUpdateCommandAsync(IUpdateCommand reqOrVM)
     {
+        var rq = ConvertUpdateVMToReq(reqOrVM);
         var result = await Sender.Send(rq, CT);
 
         return await result.MatchAsync(
@@ -256,6 +257,8 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             }
         );
     }
+
+    protected abstract IUpdateCommand ConvertUpdateVMToReq(IUpdateCommand reqOrVM);
 
     private void OnApiUpdateSuccess(IUpdateCommand rq)
     {
@@ -279,8 +282,9 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     protected abstract TVModel ConvertUpdateReqToVM(IUpdateCommand dto);
 
-    private async ValueTask<bool> HandleCreateSubmitAsync(ICreateCommand rq)
+    private async ValueTask<bool> SubmitCreateCommandAsync(ICreateCommand reqOrVM)
     {
+        var rq = ConvertCreateVMToReq(reqOrVM);
         var result = await Sender.Send(rq, CT);
 
         return await result.MatchAsync(
@@ -298,6 +302,8 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             }
         );
     }
+
+    protected abstract ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM);
 
     private void OnApiCreateError(IList<Error> errors)
     {
