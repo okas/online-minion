@@ -1,67 +1,24 @@
 @page "/transactions/debit"
 @using static Common.Utilities.TypeMemberHelpers;
-@using OnlineMinion.Web.Transaction.Debit
-@using System.Globalization
-@using OnlineMinion.Contracts.PaymentSpec.Responses
-@using OnlineMinion.Contracts.AccountSpec.Responses
+@using static CurrencyInfo.ViewModels.CurrencyInfoExtensions;
+@using OnlineMinion.Web.Transaction.Debit.ViewModels
 @inherits BaseCRUDPage<
             TransactionDebitListItem,
             OnlineMinion.Contracts.Transactions.Debit.Responses.TransactionDebitResp,
-            OnlineMinion.Contracts.Transactions.Debit.BaseUpsertTransactionDebitReqData
-            >
+            BaseTransactionDebitUpsertVM
+            >;
 
 @code
 {
   protected override RenderFragment RenderEditorComponent() =>
     @<CascadingValue IsFixed="@true" Value="@CT">
-      <UpsertEditorWrapper
+      <TransactionDebitsEditor
+          AccountSpecDescriptors="@_accountDescriptorViewModels"
           Model="@UpsertVM"
           OnCancel="@CloseEditorDialog"
           OnSubmit="@OnUpsertSubmitHandlerAsync"
-          @ref="@EditorWrapperRef">
-        <EditorFormFields>
-          <RadzenFormField Style="width:30%" Text="@Str.Date" Variant="@Variant.Text">
-            <RadzenDatePicker
-                Change="@(dateTime => context.Date = DateOnly.FromDateTime(dateTime.GetValueOrDefault()))"
-                DateFormat="@CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern"
-                TValue="DateTime"
-                Value="@(context.Date.ToDateTime(TimeOnly.MinValue))"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 30%" Text="@Str.Amount" Variant="@Variant.Text">
-            <RadzenNumeric @bind-Value="@context!.Amount" Format="c"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 36%" Text="@Str.Party" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Party" Trim="@true"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 98%" Text="@Str.Subject" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Subject" Trim="@true"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 43%">
-            <RadzenDropDown
-                AllowClear="@true"
-                AllowFiltering="@true"
-                @bind-Value="@context.PaymentInstrumentId"
-                Data="@PaymentDescriptorViewModels"
-                TextProperty="@nameof(PaymentSpecResp.Name)"
-                ValueProperty="@nameof(PaymentSpecResp.Id)"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 43%">
-            <RadzenDropDown
-                AllowClear="@true"
-                AllowFiltering="@true"
-                @bind-Value="@context.AccountSpecId"
-                Data="@AccountDescriptorViewModels"
-                TextProperty="@nameof(AccountSpecResp.Name)"
-                ValueProperty="@nameof(AccountSpecResp.Id)"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width: 98%" Text="@Str.Fee" Variant="@Variant.Text">
-            <RadzenNumeric @bind-Value="@context!.Fee" Format="c"/>
-          </RadzenFormField>
-          <RadzenFormField Style="width:98%" Text="@Str.Tags" Variant="@Variant.Text">
-            <RadzenTextBox @bind-Value="@context!.Tags" Trim="@true"/>
-          </RadzenFormField>
-        </EditorFormFields>
-      </UpsertEditorWrapper>
+          PaymentSpecDescriptors="@_paymentDescriptorViewModels"
+          @ref="@_editorRef"/>
     </CascadingValue>;
 
   private static class Str
@@ -107,8 +64,16 @@
       TotalItemsCount="@TotalItemsCount">
     <Columns>
       <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionDebitListItem" Title="@Str.Date"/>
-      <RadzenDataGridColumn FormatString="{0:C}" Property="@Str.Amount" TItem="TransactionDebitListItem" Title="@Str.Amount"/>
-      <RadzenDataGridColumn FormatString="{0:C}" Property="@Str.Fee" TItem="TransactionDebitListItem" Title="@Str.Fee"/>
+      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionDebitListItem" Title="@Str.Amount">
+        <Template>
+          @FormatCurrencyAmount(context.Amount, context.PaymentInstrument.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
+      <RadzenDataGridColumn Property="@Str.Fee" TItem="TransactionDebitListItem" Title="@Str.Fee">
+        <Template>
+          @FormatCurrencyAmount(context.Fee, context.PaymentInstrument.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
       <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionDebitListItem" Title="@Str.Subject"/>
       <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionDebitListItem" Title="@Str.Party"/>
       <RadzenDataGridColumn

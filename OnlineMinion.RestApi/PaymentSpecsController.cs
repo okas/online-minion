@@ -9,6 +9,7 @@ using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.RestApi.BaseControllers;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -16,7 +17,8 @@ using Swashbuckle.AspNetCore.Filters;
 namespace OnlineMinion.RestApi;
 
 [ApiVersion("1")]
-public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsController> logger) : ApiControllerBase(sender)
+public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsController> logger)
+    : BaseCRUDApiController(sender)
 {
     /// <summary>
     ///     Unique name validation for new create workflow.
@@ -70,7 +72,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
     public async Task<IActionResult> GetById(
         [FromRoute] GetPaymentSpecByIdReq rq,
         CancellationToken                 ct
-    ) => await Sender.Send(rq, ct) is { } model ? Ok(model) : NotFound();
+    ) => await Sender.Send(rq, ct) is var model ? Ok(model) : NotFound();
 
     [HttpGet]
     [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
@@ -111,7 +113,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result);
+                return Ok(envelope.StreamResult);
             },
             firstError =>
             {
@@ -128,10 +130,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
         var rq = new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>();
         var result = await Sender.Send(rq, ct);
 
-        return result.MatchFirst(
-            Ok,
-            firstError => CreateApiProblemResult(firstError)
-        );
+        return result.MatchFirst(Ok, CreateApiProblemResult);
     }
 
     [HttpPost]
@@ -144,7 +143,7 @@ public class PaymentSpecsController(ISender sender, ILogger<PaymentSpecsControll
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

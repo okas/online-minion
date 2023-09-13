@@ -10,6 +10,7 @@ using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.RestApi.BaseControllers;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -17,7 +18,8 @@ using Swashbuckle.AspNetCore.Filters;
 namespace OnlineMinion.RestApi;
 
 [ApiVersion("1")]
-public class AccountSpecsController(ISender sender, ILogger<AccountSpecsController> logger) : ApiControllerBase(sender)
+public class AccountSpecsController(ISender sender, ILogger<AccountSpecsController> logger)
+    : BaseCRUDApiController(sender)
 {
     /// <summary>
     ///     Unique name validation for new create workflow.
@@ -114,7 +116,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result.ToDelayedAsyncEnumerable(20, ct));
+                return Ok(envelope.StreamResult.ToDelayedAsyncEnumerable(20, ct));
             },
             firstError =>
             {
@@ -131,10 +133,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
         var rq = new GetSomeModelDescriptorsReq<AccountSpecDescriptorResp>();
         var result = await Sender.Send(rq, ct);
 
-        return result.MatchFirst(
-            Ok,
-            firstError => CreateApiProblemResult(firstError)
-        );
+        return result.MatchFirst(Ok, CreateApiProblemResult);
     }
 
     [HttpPost]
@@ -147,7 +146,7 @@ public class AccountSpecsController(ISender sender, ILogger<AccountSpecsControll
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

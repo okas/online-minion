@@ -32,6 +32,7 @@ services.AddRestApiClient(
 services.AddSingleton<StateContainer>();
 
 services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
+services.AddValidatorsFromAssemblyContaining<Program>();
 
 services.AddScoped<DialogService>();
 

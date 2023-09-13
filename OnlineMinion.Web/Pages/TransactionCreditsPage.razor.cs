@@ -2,28 +2,45 @@ using System.Globalization;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Web.Components;
 using OnlineMinion.Web.Pages.Base;
-using OnlineMinion.Web.Transaction.Credit;
+using OnlineMinion.Web.Transaction.Credit.ViewModels;
 
 namespace OnlineMinion.Web.Pages;
 
 [UsedImplicitly]
 public partial class TransactionCreditsPage
-    : BaseCRUDPage<TransactionCreditListItem, TransactionCreditResp, BaseUpsertTransactionReqData>
+    : BaseCRUDPage<TransactionCreditListItem, TransactionCreditResp, BaseTransactionCreditUpsertVM>
 {
+    private readonly List<PaymentSpecDescriptorResp> _paymentDescriptorViewModels = new();
+
+    private TransactionCreditsEditor? _editorRef;
+
     protected override string ModelTypeName => "Credit Transaction";
 
-    private List<PaymentSpecDescriptorResp> PaymentDescriptorViewModels { get; } = new();
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
 
-    protected override Task LoadDependenciesAsync() => LoadDependentVMsFromApiAsync(PaymentDescriptorViewModels);
+        // In this page's case, the editor is separate component that encapsulates own content inside EditorWrapper.
+        // Therefor, exposed parameter WrapperRef is only accessible if editor itself is rendered
+        // and it can be pulled out now.
+        if (_editorRef is not null)
+        {
+            EditorWrapperRef = _editorRef.WrapperRef;
+        }
+    }
 
-    protected override ICreateCommand CreateCommandFactory() => new CreateTransactionCreditReq();
+    protected override async Task RunDependencyLoadingAsync() => await LoadDependencyFromApiAsync(
+        new GetSomeModelDescriptorsReq<PaymentSpecDescriptorResp>(),
+        resp => _paymentDescriptorViewModels.Add(resp)
+    );
 
-    protected override IUpdateCommand UpdateCommandFactory(TransactionCreditListItem vm) =>
-        TransactionCreditListItem.ToUpdateRequest(vm);
+    protected override CreateTransactionCreditVM CreateVMFactory() => new();
+
+    protected override UpdateTransactionCreditVM UpdateVMFactory(TransactionCreditListItem vm) => vm.ToUpdateVM();
 
     protected override TransactionCreditListItem ConvertReqResponseToVM(TransactionCreditResp dto)
     {
@@ -31,6 +48,9 @@ public partial class TransactionCreditsPage
 
         return TransactionCreditListItem.FromResponseDto(dto, paymentSpec);
     }
+
+    protected override UpdateTransactionCreditReq ConvertUpdateVMToReq(IUpdateCommand reqOrVM) =>
+        ((UpdateTransactionCreditVM)reqOrVM).ToCommand();
 
     protected override TransactionCreditListItem ConvertUpdateReqToVM(IUpdateCommand dto)
     {
@@ -40,8 +60,11 @@ public partial class TransactionCreditsPage
         return TransactionCreditListItem.FromUpdateRequest(rq, paymentSpec);
     }
 
+    protected override CreateTransactionCreditReq ConvertCreateVMToReq(ICreateCommand reqOrVM) =>
+        ((CreateTransactionCreditVM)reqOrVM).ToCommand();
+
     private PaymentSpecDescriptorResp GetVMDependencies(int id) =>
-        PaymentDescriptorViewModels.Single(vm => vm.Id == id);
+        _paymentDescriptorViewModels.Single(vm => vm.Id == id);
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetTransactionCreditPagingMetaInfoReq(pageSize);
@@ -49,6 +72,5 @@ public partial class TransactionCreditsPage
     protected override string GetDeleteMessageDescriptorData(TransactionCreditListItem model) =>
         $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
 
-    protected override IDeleteByIdCommand DeleteCommandFactory(TransactionCreditListItem vm) =>
-        new DeleteTransactionCreditReq(vm.Id);
+    protected override DeleteTransactionCreditReq DeleteCommandFactory(TransactionCreditListItem vm) => new(vm.Id);
 }

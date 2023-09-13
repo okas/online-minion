@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPagedPaymentSpecsReqHlr(ApiClientProvider api)
-    : GetSomeModelsPagedReqHlr<PaymentSpecResp>(api.Client, api.ApiV1PaymentSpecsUri);
+    : BaseGetSomeModelsPagedReqHlr<PaymentSpecResp>(api.Client, api.ApiV1PaymentSpecsUri);

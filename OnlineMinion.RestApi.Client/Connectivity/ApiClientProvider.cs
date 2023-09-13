@@ -11,6 +11,8 @@ public class ApiClientProvider
 {
     public readonly Uri ApiV1AccountSpecsUri = new("api/v1/AccountSpecs", UriKind.Relative);
 
+    public readonly Uri ApiV1CurrencyInfo = new("api/v1/CurrencyInfo", UriKind.Relative);
+
     public readonly Uri ApiV1PaymentSpecsUri = new("api/v1/PaymentSpecs", UriKind.Relative);
 
     public readonly Uri ApiV1TransactionsCreditUri = new("api/v1/Transactions/Credits", UriKind.Relative);
@@ -20,12 +22,14 @@ public class ApiClientProvider
     public ApiClientProvider(HttpClient httpClient, IOptions<ApiClientProviderSettings> options)
     {
         httpClient.BaseAddress = new(
-            options.Value.Url ??
-            throw new InvalidOperationException($"Missing {nameof(ApiClientProviderSettings)} from configuration.")
+            options.Value.Url
+            ?? throw new InvalidOperationException(GetMsgMissingConfig())
         );
 
         Client = httpClient;
     }
 
     public HttpClient Client { get; }
+
+    private static string GetMsgMissingConfig() => $"Missing {nameof(ApiClientProviderSettings)} from configuration.";
 }

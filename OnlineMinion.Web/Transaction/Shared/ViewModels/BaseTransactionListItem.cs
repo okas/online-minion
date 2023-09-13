@@ -1,7 +1,7 @@
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 
-namespace OnlineMinion.Web.Transaction;
+namespace OnlineMinion.Web.Transaction.Shared.ViewModels;
 
 /// <param name="PaymentInstrument">NB! It is important too keep member name, so that API communication queries work.</param>
 public abstract record BaseTransactionListItem(

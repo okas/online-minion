@@ -73,13 +73,13 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         SC.IsBusy = true;
 
         // Order! Dependent models data is used to create create grid data, during main models pulling from stream.
-        await LoadDependenciesAsync();
-        await LoadItemVMsFromApiAsync(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
+        await RunDependencyLoadingAsync();
+        await LoadModelsFromApiAsync(CurrentPage, CurrentPageSize, string.Empty, string.Empty);
 
         SC.IsBusy = false;
     }
 
-    protected virtual Task LoadDependenciesAsync() => Task.CompletedTask;
+    protected virtual Task RunDependencyLoadingAsync() => Task.CompletedTask;
 
     protected async Task OnLoadDataHandlerAsync(LoadDataArgs args)
     {
@@ -89,7 +89,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         var offset = args.Skip.GetValueOrDefault();
         var page = (int)Math.Floor((decimal)offset / size) + 1;
 
-        await LoadItemVMsFromApiAsync(page, size, args.Filter, args.OrderBy);
+        await LoadModelsFromApiAsync(page, size, args.Filter, args.OrderBy);
 
         SC.IsBusy = false;
     }
@@ -102,7 +102,13 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     /// <param name="size" />
     /// <param name="filterExpression">Filtering expression, multi or single property.</param>
     /// <param name="sortExpression">Sorting expression, multi or single property.</param>
-    private async Task LoadItemVMsFromApiAsync(int page, int size, string filterExpression, string sortExpression)
+    /// <remarks>
+    ///     Pulling data from stream uses "afterEachPull" action to run <see cref="ComponentBase.StateHasChanged" /> to update
+    ///     view as items
+    ///     are stored into list.<br />
+    ///     Pulling is done in <see cref="OnApiLoadItemsVMsSuccessAsync" />.
+    /// </remarks>
+    private async Task LoadModelsFromApiAsync(int page, int size, string filterExpression, string sortExpression)
     {
         LogOnViewModelDataLoad(page, size, filterExpression, sortExpression);
 
@@ -120,25 +126,45 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         );
     }
 
-    private async Task OnApiLoadItemsVMsSuccessAsync(PagedResult<TResponse> pagedResult)
+    private async Task OnApiLoadItemsVMsSuccessAsync(PagedStreamResult<TResponse> pagedStreamResult)
     {
-        TotalItemsCount = pagedResult.Paging.Rows;
+        TotalItemsCount = pagedStreamResult.Paging.Rows;
         ViewModels.Clear();
-        await pagedResult.Result.PullItemsFromStream(ItemVMPullAction, CT, StateHasChanged);
+        await pagedStreamResult.StreamResult.PullItemsFromStream(ItemVMPullAction, CT, StateHasChanged);
     }
 
     private void ItemVMPullAction(TResponse vm) => ViewModels.Add(ConvertReqResponseToVM(vm));
 
     protected abstract TVModel ConvertReqResponseToVM(TResponse dto);
 
-    protected async Task LoadDependentVMsFromApiAsync<TDependentVmResponse>(IList<TDependentVmResponse> targetList)
+    /// <summary>
+    ///     Takes in request performs query and pulls data from stream using provided "pull action".<br />
+    ///     Taking in action instead of list or returning data allows different types for response and view model.
+    ///     <remarks>
+    ///         Unlike pulling data in <see cref="LoadModelsFromApiAsync" /> workflow, this method does not use
+    ///         "afterEachPull" action.
+    ///     </remarks>
+    /// </summary>
+    /// <param name="rq">
+    ///     Request used to query data from API.<br />
+    ///     Its type ensures, that request comes in as async enumerable stream.
+    ///     Otherwise it is up to this request and it's handler what and how is  retrieved.
+    /// </param>
+    /// <param name="pullAction">
+    ///     Action that takes in instance of response and does something with it in its implementation.
+    ///     Normally storing it to list, optionally converting it to other type. It can be as simple as `listInst.Add`.
+    /// </param>
+    /// <typeparam name="TDependentVmResponse">Type of API returned model data.</typeparam>
+    protected async Task LoadDependencyFromApiAsync<TDependentVmResponse>(
+        IGetStreamedRequest<TDependentVmResponse> rq,
+        Action<TDependentVmResponse>              pullAction
+    )
     {
-        var rq = new GetSomeModelDescriptorsReq<TDependentVmResponse>();
         var result = await Sender.Send(rq, CT);
 
         // TODO: need separate rq-response objects with needed data only.
         await result.SwitchFirstAsync(
-            async models => await models.PullItemsFromStream(targetList, CT),
+            async models => await models.PullItemsFromStream(pullAction, CT),
             firstError =>
             {
                 LogErrorOnDescriptorViewModelDataApiLoad(firstError, typeof(TDependentVmResponse).Name);
@@ -152,27 +178,27 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         if (UpsertVM is not ICreateCommand)
         {
-            UpsertVM = (TBaseUpsert)CreateCommandFactory();
+            UpsertVM = (TBaseUpsert)CreateVMFactory();
         }
 
         OpenEditorDialog($"Add new {ModelTypeName}");
     }
 
-    protected abstract ICreateCommand CreateCommandFactory();
+    protected abstract ICreateCommand CreateVMFactory();
 
     protected void OnEditHandler(TVModel vm)
     {
         // If the editing of same item is already in progress, then continue editing it.
         if (UpsertVM is not IUpdateCommand cmd || cmd.Id != vm.Id)
         {
-            UpsertVM = (TBaseUpsert)UpdateCommandFactory(vm);
+            UpsertVM = (TBaseUpsert)UpdateVMFactory(vm);
         }
 
         var title = $"Edit {ModelTypeName}: id #{vm.Id.ToString(CultureInfo.InvariantCulture)}";
         OpenEditorDialog(title);
     }
 
-    protected abstract IUpdateCommand UpdateCommandFactory(TVModel vm);
+    protected abstract IUpdateCommand UpdateVMFactory(TVModel vm);
 
     private void OpenEditorDialog(string title) => DialogService.Open(
         title,
@@ -205,14 +231,15 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     private ValueTask<bool> HandleUpsertSubmit() => UpsertVM switch
     {
-        IUpdateCommand rq => HandleUpdateSubmitAsync(rq),
-        ICreateCommand rq => HandleCreateSubmitAsync(rq),
-        null => throw new InvalidOperationException("Upsert model is null."),
-        _ => throw new InvalidOperationException("Unknown model type."),
+        IUpdateCommand reqOrVM => SubmitUpdateCommandAsync(reqOrVM),
+        ICreateCommand reqOrVM => SubmitCreateCommandAsync(reqOrVM),
+        null => throw new InvalidOperationException("Upsert view model is null."),
+        _ => throw new InvalidOperationException("Unknown view model type."),
     };
 
-    private async ValueTask<bool> HandleUpdateSubmitAsync(IUpdateCommand rq)
+    private async ValueTask<bool> SubmitUpdateCommandAsync(IUpdateCommand reqOrVM)
     {
+        var rq = ConvertUpdateVMToReq(reqOrVM);
         var result = await Sender.Send(rq, CT);
 
         return await result.MatchAsync(
@@ -230,6 +257,8 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             }
         );
     }
+
+    protected abstract IUpdateCommand ConvertUpdateVMToReq(IUpdateCommand reqOrVM);
 
     private void OnApiUpdateSuccess(IUpdateCommand rq)
     {
@@ -253,8 +282,9 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     protected abstract TVModel ConvertUpdateReqToVM(IUpdateCommand dto);
 
-    private async ValueTask<bool> HandleCreateSubmitAsync(ICreateCommand rq)
+    private async ValueTask<bool> SubmitCreateCommandAsync(ICreateCommand reqOrVM)
     {
+        var rq = ConvertCreateVMToReq(reqOrVM);
         var result = await Sender.Send(rq, CT);
 
         return await result.MatchAsync(
@@ -272,6 +302,8 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             }
         );
     }
+
+    protected abstract ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM);
 
     private void OnApiCreateError(IList<Error> errors)
     {

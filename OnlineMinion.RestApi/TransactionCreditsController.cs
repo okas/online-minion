@@ -9,6 +9,7 @@ using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.RestApi.BaseControllers;
 using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -18,7 +19,7 @@ namespace OnlineMinion.RestApi;
 [Route("api/v{version:apiVersion}/Transactions/Credits")]
 [ApiVersion("1")]
 public class TransactionCreditsController(ISender sender, ILogger<TransactionCreditsController> logger)
-    : ApiControllerBase(sender)
+    : BaseCRUDApiController(sender)
 {
     [HttpGet("{id}")]
     [ProducesResponseType<TransactionCreditResp>(StatusCodes.Status200OK)]
@@ -70,7 +71,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
             envelope =>
             {
                 SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.Result);
+                return Ok(envelope.StreamResult);
             },
             firstError =>
             {
@@ -90,7 +91,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
 
         return result.MatchFirst(
             idResp => CreatedAtAction(nameof(GetById), new { idResp.Id, }, idResp),
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

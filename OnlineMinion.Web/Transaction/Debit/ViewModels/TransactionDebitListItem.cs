@@ -2,8 +2,9 @@ using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
+using OnlineMinion.Web.Transaction.Shared.ViewModels;
 
-namespace OnlineMinion.Web.Transaction.Debit;
+namespace OnlineMinion.Web.Transaction.Debit.ViewModels;
 
 /// <inheritdoc />
 /// <param name="AccountSpec">NB! It is important too keep member name, so that API communication queries work.</param>
@@ -61,16 +62,16 @@ public sealed record TransactionDebitListItem(
             accountDescriptor
         );
 
-    public static UpdateTransactionDebitReq ToUpdateRequest(TransactionDebitListItem vm) =>
+    public UpdateTransactionDebitVM ToUpdateVM() =>
         new(
-            vm.Id,
-            vm.PaymentInstrument.Id,
-            vm.AccountSpec.Id,
-            vm.Fee,
-            vm.Date,
-            vm.Amount,
-            vm.Subject,
-            vm.Party,
-            vm.Tags
+            Id,
+            PaymentInstrument.Id,
+            AccountSpec.Id,
+            Fee,
+            Date.ToDateTime(TimeOnly.MinValue),
+            Amount,
+            Subject,
+            Party,
+            Tags
         );
 }

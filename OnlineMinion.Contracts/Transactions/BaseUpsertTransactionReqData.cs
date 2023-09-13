@@ -11,7 +11,7 @@ public abstract class BaseUpsertTransactionReqData(
 {
     public required int PaymentInstrumentId { get; set; } = paymentInstrumentId;
 
-    public required DateOnly Date { get; set; } = date;
+    public DateOnly Date { get; set; } = date;
 
     public required decimal Amount { get; set; } = amount;
 
