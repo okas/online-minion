@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using OnlineMinion.RestApi;
+using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,7 +19,7 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
         );
 
     private readonly string _apiAssemblyName =
-        typeof(AccountSpecsController).Assembly.GetName().Name
+        typeof(ServicesSetup).Assembly.GetName().Name
         ?? throw new InvalidOperationException(
             "Cannot obtain server address feature for SwaggerGenOptions configuration."
         );

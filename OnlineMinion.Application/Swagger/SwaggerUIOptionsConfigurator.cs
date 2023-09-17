@@ -1,7 +1,7 @@
 using System.Globalization;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
-using OnlineMinion.RestApi;
+using OnlineMinion.RestApi.Configuration;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace OnlineMinion.Application.Swagger;
@@ -10,7 +10,7 @@ public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVers
     : IConfigureOptions<SwaggerUIOptions>
 {
     private readonly string _apiAssemblyName =
-        typeof(AccountSpecsController).Assembly.GetName().Name
+        typeof(ServicesSetup).Assembly.GetName().Name
         ?? throw new InvalidOperationException();
 
     public void Configure(SwaggerUIOptions options)
