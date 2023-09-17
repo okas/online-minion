@@ -38,16 +38,17 @@ public static class ServicesSetup
 
         // Override default one.
         services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
+        # region API versioning setup
 
         services
             .ConfigureOptions<ApiVersioningOptionsConfigurator>()
-            .AddApiVersioning();
-
-        services
             .ConfigureOptions<ApiExplorerOptionsConfigurator>()
-            .AddVersionedApiExplorer();
+            .AddEndpointsApiExplorer()
+            .AddApiVersioning()
+            .AddApiExplorer();
 
         services.AddEndpointsApiExplorer();
+        #endregion
 
         services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
         services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);

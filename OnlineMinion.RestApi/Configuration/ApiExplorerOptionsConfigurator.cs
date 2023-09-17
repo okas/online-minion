@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 
 namespace OnlineMinion.RestApi.Configuration;

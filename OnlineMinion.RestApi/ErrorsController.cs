@@ -6,9 +6,11 @@ using OnlineMinion.Data.Exceptions;
 
 namespace OnlineMinion.RestApi;
 
+[ApiExplorerSettings(IgnoreApi = true)]
+[Route("/error")]
 public class ErrorsController : ControllerBase
 {
-    [Route("/error")]
+    [HttpGet]
     public IActionResult Error()
     {
         var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;

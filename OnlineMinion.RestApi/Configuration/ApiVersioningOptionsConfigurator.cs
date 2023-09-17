@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
 using Microsoft.Extensions.Options;
 
 namespace OnlineMinion.RestApi.Configuration;

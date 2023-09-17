@@ -1,5 +1,5 @@
 using System.Globalization;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 using OnlineMinion.RestApi;
 using Swashbuckle.AspNetCore.SwaggerUI;
