@@ -25,19 +25,32 @@ public static class ServicesSetup
 {
     public static IServiceCollection AddRestApi(this IServiceCollection services, IConfigurationRoot config)
     {
+        #region CORS
+
         // Order is important (CORS): first read base policies, then produce CORS configuration.
         services.AddCorsPolicies(config);
         services
             .AddSingleton<IConfigureOptions<CorsOptions>, ApiCorsOptionsConfigurator>()
             .AddCors();
 
+        #endregion
+
+        #region API general setup
+
         services
             //.ConfigureOptions<MvcOptionsConfigurator>()
             .ConfigureOptions<ApiBehaviorOptionsConfigurator>()
             .AddControllers();
 
+        #endregion
+
+        #region API Problem handling setup
+
         // Override default one.
         services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
+
+        #endregion
+
         # region API versioning setup
 
         services
@@ -50,8 +63,14 @@ public static class ServicesSetup
         services.AddEndpointsApiExplorer();
         #endregion
 
+        #region API Validation setup
+
         services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
         services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
+
+        #endregion
+
+        # region API MediatR setup
 
         services
             .AddMediatR(
@@ -77,6 +96,8 @@ public static class ServicesSetup
             .AddTransient<IRequestHandler<GetTransactionDebitPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
                 GetModelPagingInfoReqHlr<GetTransactionDebitPagingMetaInfoReq, TransactionDebit>
             >();
+
+        #endregion
 
         return services;
     }
