@@ -162,7 +162,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         var result = await Sender.Send(rq, CT);
 
-        // TODO: need separate rq-response objects with needed data only.
+        // TODO: need separate request-response objects with needed data only.
         await result.SwitchFirstAsync(
             async models => await models.PullItemsFromStream(pullAction, CT),
             firstError =>

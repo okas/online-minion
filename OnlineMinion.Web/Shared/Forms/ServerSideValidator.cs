@@ -24,9 +24,9 @@ public class ServerSideValidator : ComponentBase
 
         _messageStore = new(CurrentEditContext);
 
-        CurrentEditContext.OnValidationRequested += (s, e) => _messageStore.Clear();
+        CurrentEditContext.OnValidationRequested += (_, _) => _messageStore.Clear();
 
-        CurrentEditContext.OnFieldChanged += (s, e) => _messageStore.Clear(e.FieldIdentifier);
+        CurrentEditContext.OnFieldChanged += (_, e) => _messageStore.Clear(e.FieldIdentifier);
     }
 
     public void DisplayErrors(IDictionary<string, IEnumerable<object?>> errors)

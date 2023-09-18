@@ -119,7 +119,7 @@ public class FluentValidator : ComponentBase
 
         if (_uniqueAsyncValidators.Count == 0)
         {
-            CurrentEditContext.OnValidationRequested += async (_, __) => await ModelValidationHandler();
+            CurrentEditContext.OnValidationRequested += async (_, _) => await ModelValidationHandler();
         }
     }
 
