@@ -29,7 +29,7 @@ public class ServerSideValidator : ComponentBase
         CurrentEditContext.OnFieldChanged += (s, e) => _messageStore.Clear(e.FieldIdentifier);
     }
 
-    public void DisplayErrors(IDictionary<string, IEnumerable<object>> errors)
+    public void DisplayErrors(IDictionary<string, IEnumerable<object?>> errors)
     {
         foreach (var (field, messages) in errors)
         {

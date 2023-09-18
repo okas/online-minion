@@ -32,12 +32,12 @@ public abstract class BaseApiController : ControllerBase
         };
     }
 
-    private void SaveToModelState(IDictionary<string, object> errorMetadata)
+    private void SaveToModelState(Dictionary<string, object?> errorMetadata)
     {
         foreach (var (key, data) in errorMetadata)
         {
             var values = data as IEnumerable<string>
-                         ?? new[] { data.ToString() ?? string.Empty, };
+                         ?? new[] { data?.ToString() ?? string.Empty, };
 
             foreach (var v in values)
             {

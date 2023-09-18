@@ -65,7 +65,7 @@ public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
         }
 
         DetachValidationStateChangedListener();
-        _editContext = new(Model!);
+        _editContext = new(Model);
         _editContext.OnValidationStateChanged += OnValidationStateChangedHandler;
     }
 
@@ -122,7 +122,7 @@ public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
         _isEditorActionDisabledForced = true;
     }
 
-    private static Dictionary<string, IEnumerable<object>> FlattenFieldErrors(IEnumerable<Error> errors)
+    private static Dictionary<string, IEnumerable<object?>> FlattenFieldErrors(IEnumerable<Error> errors)
     {
         var errorsFromMetadataOrMainError = errors.SelectMany(
             error => error.Dictionary ?? GetMainErrorInfo(error)
@@ -142,11 +142,11 @@ public partial class UpsertEditorWrapper<TVModel> : ComponentBase, IDisposable
         return flattenFieldErrors;
     }
 
-    private static Dictionary<string, object> GetMainErrorInfo(Error error) =>
+    private static Dictionary<string, object?> GetMainErrorInfo(Error error) =>
         new(StringComparer.OrdinalIgnoreCase) { { error.Code, error.Description }, };
 
-    private static IEnumerable<object> ToObjectEnumerable(KeyValuePair<string, object> kvp) =>
-        kvp.Value as IEnumerable<object> ?? new[] { kvp.Value, };
+    private static IEnumerable<object?> ToObjectEnumerable(KeyValuePair<string, object?> kvp) =>
+        kvp.Value as IEnumerable<object?> ?? new[] { kvp.Value, };
 
     private string GetMsgMissingModel() =>
         $"Parameter {nameof(Model)} is required for {nameof(UpsertEditorWrapper<TVModel>)} component.";
