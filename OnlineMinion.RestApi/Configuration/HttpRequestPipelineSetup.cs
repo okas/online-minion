@@ -14,6 +14,7 @@ public static class HttpRequestPipelineSetup
 
         app.MapControllers();
 
+        app.MapEndpointsCurrencyInfo();
         return app;
     }
 }
