@@ -1,4 +1,3 @@
-using System.Globalization;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 using OnlineMinion.RestApi.Configuration;
@@ -22,11 +21,11 @@ public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVers
 
         // Allows multiple versions of our routes.
         // .Reverse(), first shown most recent version.
-        foreach (var versionDescription in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
         {
             options.SwaggerEndpoint(
-                $"/swagger/{versionDescription.GroupName}/swagger.json",
-                $"{_apiAssemblyName} - {versionDescription.GroupName.ToUpper(CultureInfo.InvariantCulture)}"
+                $"/{options.RoutePrefix}/{description.GroupName}/swagger.json",
+                $"{_apiAssemblyName} - {description.GroupName}"
             );
         }
 

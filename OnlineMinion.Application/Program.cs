@@ -60,9 +60,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
 
-    // Required to serve custom CSS for SwaggerUI.
-    app.UseStaticFiles();
-
     app.UseSwaggerUI();
 }
 

@@ -56,20 +56,8 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
         }
 
         CheckContacts(options);
+        CheckLicense(options);
         CheckServers(options);
-    }
-
-    private void CheckServers(SwaggerGenOptions options)
-    {
-        var server = options.SwaggerGeneratorOptions.Servers;
-
-        foreach (var x in _addressFeature.Addresses)
-        {
-            if (!server.Exists(apiSrv => string.Equals(apiSrv.Url, x, StringComparison.OrdinalIgnoreCase)))
-            {
-                server.Add(new() { Url = x, });
-            }
-        }
     }
 
     private void CheckApiInfo(OpenApiInfo doc, ApiVersionDescription description)
@@ -126,5 +114,35 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
 
         var contact = apiInfos.Last(i => i.Contact is not null).Contact;
         apiInfos.ForEach(i => i.Contact = contact);
+    }
+
+    private static void CheckLicense(SwaggerGenOptions options)
+    {
+        var apiInfos = options.SwaggerGeneratorOptions.SwaggerDocs.Values.ToList();
+
+        var docsWithoutLicense = apiInfos
+            .Where(i => i.License is null)
+            .ToList();
+
+        if (docsWithoutLicense.Count == apiInfos.Count || docsWithoutLicense.Count <= 0)
+        {
+            return;
+        }
+
+        var license = apiInfos.Last(i => i.License is not null).License;
+        apiInfos.ForEach(i => i.License = license);
+    }
+
+    private void CheckServers(SwaggerGenOptions options)
+    {
+        var server = options.SwaggerGeneratorOptions.Servers;
+
+        foreach (var x in _addressFeature.Addresses)
+        {
+            if (!server.Exists(apiSrv => string.Equals(apiSrv.Url, x, StringComparison.OrdinalIgnoreCase)))
+            {
+                server.Add(new() { Url = x, });
+            }
+        }
     }
 }
