@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
