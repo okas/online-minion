@@ -2,7 +2,7 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Application.Swagger;
 using OnlineMinion.Data;
-using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;

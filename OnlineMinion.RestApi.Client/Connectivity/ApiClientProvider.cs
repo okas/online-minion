@@ -4,20 +4,20 @@ using OnlineMinion.RestApi.Client.Settings;
 namespace OnlineMinion.RestApi.Client.Connectivity;
 
 /// <summary>
-///     Encapsulates configured <see cref="HttpClient" /> to communicate with backend API and resource <see cref="Uri" />
-///     -s.
+///     Encapsulates configured <see cref="HttpClient" /> to communicate with backend API and resource
+///     <see cref="Uri" />     -s.
 /// </summary>
 public class ApiClientProvider
 {
-    public readonly Uri ApiV1AccountSpecsUri = new("api/v1/AccountSpecs", UriKind.Relative);
+    public readonly Uri ApiV1AccountSpecsUri = new("api/account-specs", UriKind.Relative);
 
-    public readonly Uri ApiV1CurrencyInfo = new("api/v1/currency-info", UriKind.Relative);
+    public readonly Uri ApiV1CurrencyInfo = new("api/currency-info", UriKind.Relative);
 
-    public readonly Uri ApiV1PaymentSpecsUri = new("api/v1/PaymentSpecs", UriKind.Relative);
+    public readonly Uri ApiV1PaymentSpecsUri = new("api/PaymentSpecs", UriKind.Relative);
 
-    public readonly Uri ApiV1TransactionsCreditUri = new("api/v1/Transactions/Credits", UriKind.Relative);
+    public readonly Uri ApiV1TransactionsCreditUri = new("api/Transactions/Credits", UriKind.Relative);
 
-    public readonly Uri ApiV1TransactionsDebitUri = new("api/v1/Transactions/Debits", UriKind.Relative);
+    public readonly Uri ApiV1TransactionsDebitUri = new("api/Transactions/Debits", UriKind.Relative);
 
     public ApiClientProvider(HttpClient httpClient, IOptions<ApiClientProviderSettings> options)
     {

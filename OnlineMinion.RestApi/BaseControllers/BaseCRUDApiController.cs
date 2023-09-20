@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 

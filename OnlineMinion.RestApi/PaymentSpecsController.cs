@@ -11,7 +11,7 @@ using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.RestApi.BaseControllers;
-using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 

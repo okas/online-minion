@@ -1,6 +1,6 @@
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
-using OnlineMinion.RestApi.Configuration;
+using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace OnlineMinion.Application.Swagger;

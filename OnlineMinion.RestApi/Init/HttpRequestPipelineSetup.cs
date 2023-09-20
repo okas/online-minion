@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace OnlineMinion.RestApi.Configuration;
+namespace OnlineMinion.RestApi.Init;
 
 public static class HttpRequestPipelineSetup
 {

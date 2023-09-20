@@ -19,7 +19,7 @@ using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
 using OnlineMinion.RestApi.Shared.Handlers;
 
-namespace OnlineMinion.RestApi.Configuration;
+namespace OnlineMinion.RestApi.Init;
 
 public static class ServicesSetup
 {
@@ -41,6 +41,9 @@ public static class ServicesSetup
             //.ConfigureOptions<MvcOptionsConfigurator>()
             .ConfigureOptions<ApiBehaviorOptionsConfigurator>()
             .AddControllers();
+        services.ConfigureOptions<ApiBehaviorOptionsConfigurator>();
+
+        services.AddControllers();
 
         #endregion
 
@@ -60,10 +63,9 @@ public static class ServicesSetup
             .AddApiVersioning()
             .AddApiExplorer();
 
-        services.AddEndpointsApiExplorer();
         #endregion
 
-        #region API Validation setup
+        #region API FluentValidatior setup
 
         services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
         services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);

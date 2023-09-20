@@ -1,14 +1,15 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace OnlineMinion.RestApi.Configuration;
+namespace OnlineMinion.RestApi.Init;
 
 public class ApiVersioningOptionsConfigurator : IConfigureOptions<ApiVersioningOptions>
 {
     public void Configure(ApiVersioningOptions options)
     {
-        options.AssumeDefaultVersionWhenUnspecified = true;
-
+        options.AssumeDefaultVersionWhenUnspecified = false;
+        options.UnsupportedApiVersionStatusCode = StatusCodes.Status400BadRequest;
         options.ReportApiVersions = true;
 
         options.ApiVersionReader = ApiVersionReader.Combine(
