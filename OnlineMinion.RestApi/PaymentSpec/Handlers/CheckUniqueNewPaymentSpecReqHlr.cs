@@ -12,5 +12,5 @@ internal sealed class CheckUniqueNewPaymentSpecReqHlr(OnlineMinionDbContext dbCo
     : BaseCheckUniqueModelReqHlr<CheckPaymentSpecUniqueNewReq, BasePaymentSpec>(dbContext)
 {
     protected override Expression<Func<BasePaymentSpec, bool>> GetConflictPredicate(CheckPaymentSpecUniqueNewReq rq) =>
-        entity => entity.Name == rq.Name;
+        entity => entity.Name == rq.MemberValue;
 }

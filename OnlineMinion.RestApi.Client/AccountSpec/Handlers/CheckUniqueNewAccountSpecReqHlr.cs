@@ -13,7 +13,7 @@ internal sealed class CheckUniqueNewAccountSpecReqHlr(ApiClientProvider api)
     public override Uri BuildUri(CheckAccountSpecUniqueNewReq rq) => new(
         string.Create(
             CultureInfo.InvariantCulture,
-            $"{api.ApiV1AccountSpecsUri}/validate-available-name/{rq.Name}"
+            $"{api.ApiV1AccountSpecsUri}/validate-available-name/{rq.MemberValue}"
         ),
         UriKind.RelativeOrAbsolute
     );
