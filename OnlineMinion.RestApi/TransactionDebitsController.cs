@@ -17,7 +17,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace OnlineMinion.RestApi;
 
-[Route("api/v{version:apiVersion}/Transactions/Debits")]
+[Route("api/Transactions/Debits")]
 [ApiVersion("1")]
 public class TransactionDebitsController(ISender sender, ILogger<TransactionDebitsController> logger)
     : BaseCRUDApiController(sender)

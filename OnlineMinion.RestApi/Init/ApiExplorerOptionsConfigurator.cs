@@ -8,7 +8,6 @@ public class ApiExplorerOptionsConfigurator : IConfigureOptions<ApiExplorerOptio
     public void Configure(ApiExplorerOptions options)
     {
         options.GroupNameFormat = "'v'VVV";
-
-        options.SubstituteApiVersionInUrl = true;
+        options.SubstituteApiVersionInUrl = false;
     }
 }

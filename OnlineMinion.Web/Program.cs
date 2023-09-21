@@ -1,33 +1,44 @@
 using FluentValidation;
+using IL.FluentValidation.Extensions.Options;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OnlineMinion.Common.Shared.Validation;
-using OnlineMinion.RestApi.Client.Configuration;
+using OnlineMinion.RestApi.Client.HttpRequestMessageHandlers;
+using OnlineMinion.RestApi.Client.Init;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Configuration;
+using OnlineMinion.Web.Settings;
 using Radzen;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+var hostBuilder = WebAssemblyHostBuilder.CreateDefault(args);
 
 #region Container setup
 
-var services = builder.Services;
+var services = hostBuilder.Services;
 
-builder.Logging.AddConfiguration(
-    builder.Configuration.GetSection("Logging")
+hostBuilder.Logging.AddConfiguration(
+    hostBuilder.Configuration.GetSection("Logging")
 );
 
 services.AddLogging();
 
 services.AddHttpClient(
     Constants.HostClient,
-    client => client.BaseAddress = new(builder.HostEnvironment.BaseAddress)
+    client => client.BaseAddress = new(hostBuilder.HostEnvironment.BaseAddress)
 );
 
-services.AddRestApiClient(
-    new[] { typeof(SetWebAssemblyStreamingOptionsHttpRequestHandler), },
-    Constants.ApiClient
-);
+services.AddOptions<WebAppSettings>()
+    .BindConfiguration(nameof(WebAppSettings))
+    .ValidateWithFluentValidator()
+    .ValidateOnStart();
+
+services.AddTransient<WasmHttpRequestMessageConfiguration>()
+    .AddRestApiClient()
+    .AddHttpMessageHandler(
+        sp => new DelegatedRequestHandler(
+            sp.GetRequiredService<WasmHttpRequestMessageConfiguration>().EnableBrowserResponseStreamingForGet
+        )
+    );
 
 services.AddSingleton<StateContainer>();
 
@@ -40,11 +51,11 @@ services.AddScoped<DialogService>();
 
 #region Components setup
 
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+hostBuilder.RootComponents.Add<App>("#app");
+hostBuilder.RootComponents.Add<HeadOutlet>("head::after");
 
 #endregion
 
-var webAssemblyHost = builder.Build();
+var webAssemblyHost = hostBuilder.Build();
 
 await webAssemblyHost.RunAsync().ConfigureAwait(false);

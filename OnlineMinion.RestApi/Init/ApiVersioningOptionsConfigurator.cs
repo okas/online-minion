@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using OnlineMinion.Contracts;
 
 namespace OnlineMinion.RestApi.Init;
 
@@ -13,10 +14,7 @@ public class ApiVersioningOptionsConfigurator : IConfigureOptions<ApiVersioningO
         options.ReportApiVersions = true;
 
         options.ApiVersionReader = ApiVersionReader.Combine(
-            new QueryStringApiVersionReader("api-ver"),
-            new HeaderApiVersionReader("X-Version"),
-            new MediaTypeApiVersionReader("ver"),
-            new UrlSegmentApiVersionReader()
+            new HeaderApiVersionReader(CustomHeaderNames.ApiVersion)
         );
     }
 }

@@ -12,11 +12,11 @@ public static class CurrencyInfoEndpoints
 {
     public const string GroupName = "CurrencyInfo";
 
-    public static IEndpointRouteBuilder MapEndpointsCurrencyInfo(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapAll(IEndpointRouteBuilder app)
     {
         var v1 = app.NewVersionedApi("CurrencyInfo")
             .HasApiVersion(1)
-            .MapGroup("api/v{version:apiVersion}/currency-info");
+            .MapGroup("api/currency-info");
 
         v1.MapGet("", GetCurrencies);
 

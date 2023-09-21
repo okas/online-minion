@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace OnlineMinion.RestApi.BaseControllers;
 
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public abstract class BaseApiController : ControllerBase
 {
