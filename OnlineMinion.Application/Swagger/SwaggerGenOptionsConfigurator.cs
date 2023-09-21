@@ -1,3 +1,5 @@
+using System.Text;
+using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -9,20 +11,12 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OnlineMinion.Application.Swagger;
 
+/// <inheritdoc />
 public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider, IServer server)
     : IConfigureOptions<SwaggerGenOptions>
 {
-    private readonly IServerAddressesFeature _addressFeature =
-        server.Features.Get<IServerAddressesFeature>()
-        ?? throw new InvalidOperationException(
-            "Cannot obtain assembly name for SwaggerGenOptions configuration."
-        );
-
-    private readonly string _apiAssemblyName =
-        typeof(ServicesSetup).Assembly.GetName().Name
-        ?? throw new InvalidOperationException(
-            "Cannot obtain server address feature for SwaggerGenOptions configuration."
-        );
+    private readonly IServerAddressesFeature _addressFeature = GetAddressFeature(server);
+    private readonly string _apiAssemblyName = GetApiAssemblyName();
 
     public void Configure(SwaggerGenOptions options)
     {
@@ -31,7 +25,7 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
             true
         );
 
-        options.OperationFilter<SwaggerDefaultValuesFilter>();
+        options.OperationFilter<SwaggerDefaultValuesOperationFilter>();
         options.OperationFilter<AddResponseHeadersFilter>();
         options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
 
@@ -39,28 +33,33 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
         //options.AddSecurityDefinition(...);
         //options.AddSecurityRequirement(...);
 
-        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-        {
-            if (options.SwaggerGeneratorOptions.SwaggerDocs.TryGetValue(description.GroupName, out var doc))
-            {
-                CheckApiInfo(doc, description);
-            }
-            else
-            {
-                options.SwaggerDoc(description.GroupName, CreateOpenApiInfo(description));
-            }
+        CreateOrUpdateOpenApiDocs(apiVersionDescriptionProvider, options);
 
-            options.OrderActionsBy(apiDesc => $"{apiDesc.RelativePath}");
-            options.DescribeAllParametersInCamelCase();
-            options.CustomSchemaIds(DefaultSchemaIdSelector);
-        }
+        options.OrderActionsBy(apiDesc => $"{apiDesc.RelativePath}");
+        options.DescribeAllParametersInCamelCase();
+        options.CustomSchemaIds(DefaultSchemaIdSelector);
 
         CheckContacts(options);
         CheckLicense(options);
         CheckServers(options);
     }
 
-    private void CheckApiInfo(OpenApiInfo doc, ApiVersionDescription description)
+    private void CreateOrUpdateOpenApiDocs(IApiVersionDescriptionProvider provider, SwaggerGenOptions options)
+    {
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            if (options.SwaggerGeneratorOptions.SwaggerDocs.TryGetValue(description.GroupName, out var doc))
+            {
+                SetGeneralApiInfoToExistingDoc(doc, description);
+            }
+            else
+            {
+                options.SwaggerDoc(description.GroupName, CreateOpenApiInfo(description));
+            }
+        }
+    }
+
+    private void SetGeneralApiInfoToExistingDoc(OpenApiInfo doc, ApiVersionDescription versionDescription)
     {
         if (string.IsNullOrWhiteSpace(doc.Title))
         {
@@ -69,21 +68,72 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
 
         if (string.IsNullOrWhiteSpace(doc.Version))
         {
-            doc.Version = description.ApiVersion.ToString();
+            doc.Version = versionDescription.ApiVersion.ToString();
         }
 
-        if (description.IsDeprecated)
+        if (versionDescription.IsDeprecated)
         {
-            doc.Description = $"{doc.Description} (deprecated)".Trim();
+            doc.Description = GenerateDescriptionUsingSunSetPolicyInfo(versionDescription, doc.Description);
         }
     }
 
-    private OpenApiInfo CreateOpenApiInfo(ApiVersionDescription description) => new()
+    private OpenApiInfo CreateOpenApiInfo(ApiVersionDescription versionDescription) => new()
     {
         Title = _apiAssemblyName,
-        Version = description.ApiVersion.ToString(),
-        Description = $"{(description.IsDeprecated ? "(deprecated)" : string.Empty)}",
+        Version = versionDescription.ApiVersion.ToString(),
+        Description = GenerateDescriptionUsingSunSetPolicyInfo(versionDescription),
     };
+
+    private static string GenerateDescriptionUsingSunSetPolicyInfo(
+        ApiVersionDescription versionDescription,
+        string                existingDescription = ""
+    )
+    {
+        var sb = new StringBuilder(existingDescription);
+
+        if (versionDescription.IsDeprecated)
+        {
+            sb.Append(" This API version has been deprecated.");
+        }
+
+        if (versionDescription.SunsetPolicy is not { } policy)
+        {
+            return sb.ToString();
+        }
+
+        if (policy.Date is { } when)
+        {
+            sb.Append(" The API will be sunset on ")
+                .Append(when.Date.ToShortDateString())
+                .Append('.');
+        }
+
+        if (!policy.HasLinks)
+        {
+            return sb.ToString();
+        }
+
+        sb.AppendLine();
+
+        AppendLinksInfo(sb, policy);
+
+        return sb.ToString();
+    }
+
+    private static void AppendLinksInfo(StringBuilder sb, SunsetPolicy policy)
+    {
+        foreach (var link in policy.Links.Where(l => l.Type == "text/html"))
+        {
+            sb.AppendLine();
+
+            if (link.Title.HasValue)
+            {
+                sb.Append(link.Title.Value).Append(": ");
+            }
+
+            sb.Append(link.LinkTarget.OriginalString);
+        }
+    }
 
     private static string DefaultSchemaIdSelector(Type modelType)
     {
@@ -145,4 +195,16 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
             }
         }
     }
+
+    private static IServerAddressesFeature GetAddressFeature(IServer server) =>
+        server.Features.Get<IServerAddressesFeature>()
+        ?? throw new InvalidOperationException(
+            "Cannot obtain assembly name for SwaggerGenOptions configuration."
+        );
+
+    private static string GetApiAssemblyName() =>
+        typeof(ServicesSetup).Assembly.GetName().Name
+        ?? throw new InvalidOperationException(
+            "Cannot obtain server address feature for SwaggerGenOptions configuration."
+        );
 }

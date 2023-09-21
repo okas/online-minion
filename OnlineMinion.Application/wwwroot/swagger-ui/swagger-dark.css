@@ -827,7 +827,7 @@
     }
 
     .swagger-ui .opblock .tab-header .tab-item.active h4 span::after {
-        background: gray;
+        background: grey;
     }
 
     .swagger-ui .opblock.is-open .opblock-summary {
@@ -991,7 +991,7 @@
 
     .swagger-ui .btn {
         background: 0 0;
-        border: 2px solid gray;
+        border: 2px solid grey;
         box-shadow: rgba(0, 0, 0, .1) 0 1px 2px;
         color: #b5bac9;
     }
