@@ -31,7 +31,6 @@ internal abstract class BaseGetModelPagingMetaInfoReqHlr<TRequest>(HttpClient ap
             _ => response.GetPagingMetaInfo(),
         };
 
-
     protected virtual Uri AddQueryString(Uri uri, IGetPagingInfoRequest rq) => new(
         uri.AddQueryString(
             new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase)

@@ -2,7 +2,7 @@ namespace OnlineMinion.Contracts;
 
 public interface IPagingInfo
 {
-    int Page { get; }
+    public int Page { get; }
 
-    int Size { get; }
+    public int Size { get; }
 }
