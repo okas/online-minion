@@ -16,6 +16,7 @@ public static class HttpRequestPipelineSetup
 
         CurrencyInfoEndpoints.MapAll(app);
         AccountSpecsEndpoints.MapAll(app);
+        PaymentSpecsEndpoints.MapAll(app);
 
         return app;
     }
