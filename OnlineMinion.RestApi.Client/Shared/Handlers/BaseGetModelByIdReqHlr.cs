@@ -27,7 +27,10 @@ internal abstract class BaseGetModelByIdReqHlr<TRequest, TResponse>(HttpClient a
     private static async ValueTask<ErrorOr<TResponse>> HandleResponse(HttpResponseMessage response) =>
         response.StatusCode switch
         {
-            HttpStatusCode.OK => await response.Content.ReadFromJsonAsync<TResponse>().ConfigureAwait(false),
-            _ => Error.Unexpected(),
+            HttpStatusCode.OK =>
+                await response.Content.ReadFromJsonAsync<TResponse>().ConfigureAwait(false) is { } result
+                    ? result
+                    : Error.Unexpected($"Server returned {HttpStatusCode.OK} but response is empty"),
+            _ => Error.Failure($"Server returned {response.StatusCode}"),
         };
 }
