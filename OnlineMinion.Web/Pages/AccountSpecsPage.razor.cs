@@ -42,7 +42,7 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpe
     protected override ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM) => reqOrVM;
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
-        new GetAccountPagingMetaInfoReq(pageSize);
+        new GetAccountSpecPagingMetaInfoReq(pageSize);
 
     protected override string GetDeleteMessageDescriptorData(AccountSpecResp model) => model.Name;
 

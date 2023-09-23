@@ -60,7 +60,7 @@ public abstract class BaseCRUDApiController(ISender sender) : BaseApiController
                 SetPagingHeaders(pagingMetaInfo);
                 return NoContent();
             },
-            error => CreateApiProblemResult(error)
+            CreateApiProblemResult
         );
     }
 

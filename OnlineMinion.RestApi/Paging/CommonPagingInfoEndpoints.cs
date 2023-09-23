@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.RestApi.Init;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
 
 namespace OnlineMinion.RestApi.Paging;
@@ -9,12 +10,19 @@ namespace OnlineMinion.RestApi.Paging;
 public static class CommonPagingInfoEndpoints
 {
     /// <summary>Generic endpoint to query paging metainfo for resource, identified by generic request type.</summary>
-    /// <param name="pageSize">It can be provided by mapper explicitly, but default is to look into query string.</param>
-    /// <param name="provider"></param>
+    /// <param name="rq">Using page size, query pagination related info for given resource or model.</param>
     /// <param name="sender"></param>
-    /// <param name="httpResponse"></param>
+    /// <param name="httpResponse">
+    ///     Query result is returned using Pagination headers, see:
+    ///     <see cref="OnlineMinion.Contracts.CustomHeaderNames" />.
+    /// </param>
     /// <param name="ct"></param>
-    public static async Task<Results<NoContent, ProblemHttpResult>> PagingMetaInfo<TRequest>(
+    /// <remarks>
+    ///     Important: as returned headers are custom, CORS policy should be enabled for this endpoint,
+    ///     this can be done using this policy name's constant, see:
+    ///     <see cref="ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy" />.
+    /// </remarks>
+    public static async Task<Results<NoContent, ProblemHttpResult>> GetPagingMetaInfo<TRequest>(
         [AsParameters] TRequest rq,
         ISender                 sender,
         HttpResponse            httpResponse,

@@ -84,8 +84,8 @@ public static class ServicesSetup
                 }
             )
             // TODO: Better implement class based handlers to avoid these registrations.
-            .AddTransient<IRequestHandler<GetAccountPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
-                GetModelPagingInfoReqHlr<GetAccountPagingMetaInfoReq, Data.Entities.AccountSpec>
+            .AddTransient<IRequestHandler<GetAccountSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
+                GetModelPagingInfoReqHlr<GetAccountSpecPagingMetaInfoReq, Data.Entities.AccountSpec>
             >()
             .AddTransient<IRequestHandler<GetPaymentSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
                 GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, BasePaymentSpec>

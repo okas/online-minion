@@ -10,15 +10,16 @@ namespace OnlineMinion.RestApi;
 
 public static class CurrencyInfoEndpoints
 {
-    public const string GroupName = "CurrencyInfo";
+    public const string GroupName = "Currency Info";
 
     public static IEndpointRouteBuilder MapAll(IEndpointRouteBuilder app)
     {
-        var v1 = app.NewVersionedApi("CurrencyInfo")
+        var apiV1 = app.NewVersionedApi("CurrencyInfo")
+            .MapGroup("api/currency-info")
             .HasApiVersion(1)
-            .MapGroup("api/currency-info");
+            .MapToApiVersion(1);
 
-        v1.MapGet("", GetCurrencies);
+        apiV1.MapGet("", GetCurrencies);
 
         return app;
     }
