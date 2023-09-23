@@ -15,6 +15,7 @@ using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Init;
 using OnlineMinion.RestApi.Paging;
 using OnlineMinion.RestApi.Shared;
+using static OnlineMinion.RestApi.Init.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
 
 namespace OnlineMinion.RestApi;
@@ -32,7 +33,7 @@ public class AccountSpecsEndpoints
         apiV1.MapPost("", Create);
 
         apiV1.MapGet("", GetSomePaged)
-            .RequireCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)
+            .RequireCors(ExposedHeadersPagingMetaInfoPolicy)
             // .WithOpenApi(
             //     o =>
             //     {
@@ -52,6 +53,7 @@ public class AccountSpecsEndpoints
 
         apiV1.MapHead("", CommonPagingInfoEndpoints.PagingMetaInfo<GetAccountPagingMetaInfoReq>)
             .RequireCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)
+            .RequireCors(ExposedHeadersPagingMetaInfoPolicy)
             // .WithOpenApi(
             //     o =>
             //     {

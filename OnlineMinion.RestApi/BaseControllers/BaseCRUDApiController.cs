@@ -22,7 +22,7 @@ public abstract class BaseCRUDApiController(ISender sender) : BaseApiController
     /// <param name="ct"></param>
     /// <param name="pageSize"></param>
     [HttpHead]
-    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
+    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy)]
     [SwaggerResponse(
         StatusCodes.Status204NoContent,
         "Using page size, get count of total items and count of pages."

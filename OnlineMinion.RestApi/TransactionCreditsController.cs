@@ -34,7 +34,7 @@ public class TransactionCreditsController(ISender sender, ILogger<TransactionCre
         : NotFound();
 
     [HttpGet]
-    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
+    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy)]
     [ProducesResponseType(typeof(IAsyncEnumerable<TransactionCreditResp>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]

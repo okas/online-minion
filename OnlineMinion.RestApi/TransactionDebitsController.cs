@@ -34,7 +34,7 @@ public class TransactionDebitsController(ISender sender, ILogger<TransactionDebi
         : NotFound();
 
     [HttpGet]
-    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)]
+    [EnableCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy)]
     [ProducesResponseType(typeof(IAsyncEnumerable<TransactionDebitResp>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
