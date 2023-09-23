@@ -76,19 +76,13 @@ public class PaymentSpecsEndpoints
             CancellationToken                                     ct
         )
     {
-        // TODO: param validation & BadRequest return
-        // if (!ModelState.IsValid)
-        // {
-        //     return BadRequest(ModelState);
-        // }
-
         var result = await sender.Send(rq, ct);
 
         return result.MatchFirst<Results<Ok<IAsyncEnumerable<PaymentSpecResp>>, ProblemHttpResult>>(
             envelope =>
             {
                 httpResponse.SetPagingHeaders(envelope.Paging);
-                return Ok(envelope.StreamResult.ToDelayedAsyncEnumerable(20, ct));
+                return Ok(envelope.StreamResult);
             },
             firstError =>
             {
