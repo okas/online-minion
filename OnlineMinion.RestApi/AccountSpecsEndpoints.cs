@@ -12,12 +12,12 @@ using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.RestApi.Helpers;
-using OnlineMinion.RestApi.Init;
 using OnlineMinion.RestApi.Paging;
-using OnlineMinion.RestApi.Shared;
+using static Microsoft.AspNetCore.Http.TypedResults;
 using static OnlineMinion.RestApi.CommonEndpointsValidatorUniqueByMember;
 using static OnlineMinion.RestApi.Init.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
+using static OnlineMinion.RestApi.Shared.NamedRoutes;
 
 namespace OnlineMinion.RestApi;
 
@@ -46,14 +46,13 @@ public class AccountSpecsEndpoints
             ;
 
         apiV1.MapGet("{id:int}", GetById)
-            .WithName(NamedRoutes.V1GetAccountSpecById);
+            .WithName(V1GetAccountSpecById);
 
         apiV1.MapPut("{id:int}", Update);
 
         apiV1.MapDelete("{id:int}", Delete);
 
-        apiV1.MapHead("", CommonPagingInfoEndpoints.PagingMetaInfo<GetAccountPagingMetaInfoReq>)
-            .RequireCors(ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfo)
+        apiV1.MapHead("", CommonPagingInfoEndpoints.GetPagingMetaInfo<GetAccountSpecPagingMetaInfoReq>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy)
             // .WithOpenApi(
             //     o =>
@@ -81,7 +80,7 @@ public class AccountSpecsEndpoints
         var result = await sender.Send(rq, ct);
 
         return result.MatchFirst<Results<CreatedAtRoute<ModelIdResp>, ProblemHttpResult>>(
-            idResp => TypedResults.CreatedAtRoute(idResp, NamedRoutes.V1GetAccountSpecById, new { idResp.Id, }),
+            idResp => CreatedAtRoute(idResp, V1GetAccountSpecById, new { idResp.Id, }),
             firstError => CreateApiProblemResult(firstError)
         );
     }
@@ -107,7 +106,7 @@ public class AccountSpecsEndpoints
             envelope =>
             {
                 httpResponse.SetPagingHeaders(envelope.Paging);
-                return TypedResults.Ok(envelope.StreamResult.ToDelayedAsyncEnumerable(20, ct));
+                return Ok(envelope.StreamResult.ToDelayedAsyncEnumerable(20, ct));
             },
             firstError =>
             {
@@ -128,10 +127,10 @@ public class AccountSpecsEndpoints
         var result = await sender.Send(rq, ct);
 
         return result.MatchFirst<Results<Ok<AccountSpecResp>, NotFound, ProblemHttpResult>>(
-            model => TypedResults.Ok(model),
+            model => Ok(model),
             firstError => firstError.Type switch
             {
-                ErrorType.NotFound => TypedResults.NotFound(),
+                ErrorType.NotFound => NotFound(),
                 _ => CreateApiProblemResult(firstError, GetResourcePath(linkGen, rq.Id)),
             }
         );
@@ -153,7 +152,7 @@ public class AccountSpecsEndpoints
         var result = await sender.Send(rq, ct);
 
         return result.MatchFirst<Results<NoContent, ValidationProblem, ProblemHttpResult>>(
-            _ => TypedResults.NoContent(),
+            _ => NoContent(),
             firstError => CreateApiProblemResult(firstError, GetResourcePath(linkGen, rq.Id))
         );
     }
@@ -168,7 +167,7 @@ public class AccountSpecsEndpoints
         var result = await sender.Send(rq, ct);
 
         return result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
-            _ => TypedResults.NoContent(),
+            _ => NoContent(),
             firstError => CreateApiProblemResult(firstError, GetResourcePath(linkGen, rq.Id))
         );
     }
@@ -180,13 +179,13 @@ public class AccountSpecsEndpoints
         var result = await sender.Send(rq, ct);
 
         return result.MatchFirst<Results<Ok<IAsyncEnumerable<AccountSpecDescriptorResp>>, ProblemHttpResult>>(
-            models => TypedResults.Ok(models),
+            models => Ok(models),
             firstError => CreateApiProblemResult(firstError)
         );
     }
 
     private static string? GetResourcePath(LinkGenerator linkGen, int id) =>
-        linkGen.GetPathByName(NamedRoutes.V1GetAccountSpecById, new { id, });
+        linkGen.GetPathByName(V1GetAccountSpecById, new { id, });
 
     private static class Str
     {
