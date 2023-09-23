@@ -143,11 +143,11 @@ public class AccountSpecsEndpoints
     }
 
     public static async Task<Results<NoContent, ValidationProblem, ProblemHttpResult>> Update(
-        int                                 id,
-        [AsParameters] UpdateAccountSpecReq rq,
-        ISender                             sender,
-        LinkGenerator                       linkGen,
-        CancellationToken                   ct
+        int                  id,
+        UpdateAccountSpecReq rq,
+        ISender              sender,
+        LinkGenerator        linkGen,
+        CancellationToken    ct
     )
     {
         if (rq.CheckId(id) is { } validationProblem)
