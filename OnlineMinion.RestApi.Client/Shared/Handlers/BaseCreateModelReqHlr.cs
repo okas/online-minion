@@ -20,11 +20,12 @@ internal abstract class BaseCreateModelReqHlr<TRequest>(HttpClient apiClient, Ur
         using var responseMessage = await apiClient.PostAsJsonAsync(uri, rq, ct)
             .ConfigureAwait(false);
 
-        return await HandleResponse(responseMessage, ct).ConfigureAwait(false);
+        return await HandleResponse(responseMessage, ct);
     }
 
     public virtual Uri BuildUri(TRequest rq) => resource;
 
+    // TODO: Move logging to MediatR pipeline
     private async ValueTask<ErrorOr<ModelIdResp>> HandleResponse(HttpResponseMessage message, CancellationToken ct)
     {
         switch (message.StatusCode)
