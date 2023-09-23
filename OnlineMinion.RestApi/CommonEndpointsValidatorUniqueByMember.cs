@@ -9,7 +9,12 @@ namespace OnlineMinion.RestApi;
 
 public static class CommonEndpointsValidatorUniqueByMember
 {
-//TODO: copy docs from other endpoints
+    public const string NewNameValidationRoute = "validate-available-name/{memberValue:required:length(2,50)}";
+
+    public const string ExistingNameValidationRoute = $"{NewNameValidationRoute}/except-id/{{ownId:int}}";
+
+    //TODO: copy docs from other endpoints
+
     public static async Task<Results<NoContent, ProblemHttpResult>> CheckUniqueNew<TRequest>(
         [AsParameters] TRequest rq,
         ISender                 sender,

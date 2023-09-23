@@ -15,6 +15,7 @@ using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Init;
 using OnlineMinion.RestApi.Paging;
 using OnlineMinion.RestApi.Shared;
+using static OnlineMinion.RestApi.CommonEndpointsValidatorUniqueByMember;
 using static OnlineMinion.RestApi.Init.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
 
@@ -65,17 +66,9 @@ public class AccountSpecsEndpoints
 
         apiV1.MapGet("descriptors", GetAsDescriptors);
 
-        const string nameValidationRoute = "validate-available-name/{memberValue:required:length(2,50)}";
+        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckAccountSpecUniqueNewReq>);
 
-        apiV1.MapHead(
-            $"{nameValidationRoute}",
-            CommonEndpointsValidatorUniqueByMember.CheckUniqueNew<CheckAccountSpecUniqueNewReq>
-        );
-
-        apiV1.MapHead(
-            $"{nameValidationRoute}/except-id/{{ownId:int}}",
-            CommonEndpointsValidatorUniqueByMember.CheckUniqueExisting<CheckAccountSpecUniqueExistingReq>
-        );
+        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueExisting<CheckAccountSpecUniqueExistingReq>);
     }
 
     public static async Task<Results<CreatedAtRoute<ModelIdResp>, ProblemHttpResult>> Create(
