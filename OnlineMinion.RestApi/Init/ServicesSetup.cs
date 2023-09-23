@@ -37,11 +37,8 @@ public static class ServicesSetup
 
         #region API general setup
 
-        services
-            //.ConfigureOptions<MvcOptionsConfigurator>()
-            .ConfigureOptions<ApiBehaviorOptionsConfigurator>()
-            .AddControllers();
         services.ConfigureOptions<ApiBehaviorOptionsConfigurator>();
+        services.ConfigureOptions<RouteOptionsConfigurator>();
 
         services.AddControllers();
 
