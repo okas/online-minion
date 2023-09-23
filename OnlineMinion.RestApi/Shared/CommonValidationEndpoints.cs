@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.ProblemHandling;
 
-namespace OnlineMinion.RestApi;
+namespace OnlineMinion.RestApi.Shared;
 
-public static class CommonEndpointsValidatorUniqueByMember
+public static class CommonValidationEndpoints
 {
     public const string NewNameValidationRoute = "validate-available-name/{memberValue:required:length(2,50)}";
 
