@@ -48,6 +48,7 @@ public static class ServicesSetup
 
         // Override default one.
         services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
+        services.AddProblemDetails(); // For MinimalAPI
 
         #endregion
 

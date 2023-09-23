@@ -2,9 +2,9 @@ using System.Diagnostics.Contracts;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Contracts;
 
-namespace OnlineMinion.RestApi.Helpers;
+namespace OnlineMinion.RestApi.Paging;
 
-public static class PagingHelpers
+public static class PagingQueryHelpers
 {
     [Pure]
     public static async ValueTask<PagingMetaInfo> GetPagingMetaInfoAsync<TSource>(
