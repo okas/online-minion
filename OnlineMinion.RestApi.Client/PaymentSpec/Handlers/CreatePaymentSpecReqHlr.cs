@@ -8,7 +8,7 @@ namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class CreatePaymentSpecReqHlr(ApiProvider api, ILogger<CreatePaymentSpecReqHlr> logger)
-    : BaseCreateModelReqHlr<CreatePaymentSpecReq>(api.Client, api.ApiPaymentSpecsUri, logger)
+    : BaseCreateModelReqHlr<CreatePaymentSpecReq>(api.Client, ApiProvider.ApiPaymentSpecsUri, logger)
 {
     protected override string ModelName => "Payment Specification";
 }

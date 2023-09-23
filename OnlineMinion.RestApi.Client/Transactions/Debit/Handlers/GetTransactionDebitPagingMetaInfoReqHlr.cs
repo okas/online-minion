@@ -9,5 +9,5 @@ namespace OnlineMinion.RestApi.Client.Transactions.Debit.Handlers;
 internal sealed class GetTransactionDebitPagingMetaInfoReqHlr(ApiProvider api)
     : BaseGetModelPagingMetaInfoReqHlr<GetTransactionDebitPagingMetaInfoReq>(
         api.Client,
-        api.ApiTransactionsDebitUri
+        ApiProvider.ApiTransactionsDebitUri
     );

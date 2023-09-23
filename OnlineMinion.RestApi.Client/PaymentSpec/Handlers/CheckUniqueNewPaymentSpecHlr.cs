@@ -13,7 +13,7 @@ internal sealed class CheckUniqueNewPaymentSpecHlr(ApiProvider api)
     public override Uri BuildUri(CheckPaymentSpecUniqueNewReq rq) => new(
         string.Create(
             CultureInfo.InvariantCulture,
-            $"{api.ApiPaymentSpecsUri}/validate-available-name/{rq.MemberValue}"
+            $"{ApiProvider.ApiPaymentSpecsUri}/validate-available-name/{rq.MemberValue}"
         ),
         UriKind.RelativeOrAbsolute
     );

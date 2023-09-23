@@ -8,4 +8,4 @@ namespace OnlineMinion.RestApi.Client.CurrencyInfo.Handlers;
 
 [UsedImplicitly]
 internal class GetCurrenciesReqHlr(ApiProvider api)
-    : BaseGetSomeModelsReqHlr<GetCurrenciesReq, CurrencyInfoResp>(api.Client, api.ApiCurrencyInfoUri);
+    : BaseGetSomeModelsReqHlr<GetCurrenciesReq, CurrencyInfoResp>(api.Client, ApiProvider.ApiCurrencyInfoUri);

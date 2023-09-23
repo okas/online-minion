@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
 
 [UsedImplicitly]
 internal sealed class DeleteTransactionCreditReqHlr(ApiProvider api)
-    : BaseDeleteModelReqHlr<DeleteTransactionCreditReq>(api.Client, api.ApiTransactionsCreditUri);
+    : BaseDeleteModelReqHlr<DeleteTransactionCreditReq>(api.Client, ApiProvider.ApiTransactionsCreditUri);

@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetAccountSpecDescriptorsReqHlr(ApiProvider api)
-    : GetSomeModelDescriptorsReqHlr<AccountSpecDescriptorResp>(api.Client, api.ApiAccountSpecsUri);
+    : GetSomeModelDescriptorsReqHlr<AccountSpecDescriptorResp>(api.Client, ApiProvider.ApiAccountSpecsUri);

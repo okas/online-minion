@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetAccountSpecPagingMetaInfoReqHlr(ApiProvider api)
-    : BaseGetModelPagingMetaInfoReqHlr<GetAccountPagingMetaInfoReq>(api.Client, api.ApiAccountSpecsUri);
+    : BaseGetModelPagingMetaInfoReqHlr<GetAccountPagingMetaInfoReq>(api.Client, ApiProvider.ApiAccountSpecsUri);

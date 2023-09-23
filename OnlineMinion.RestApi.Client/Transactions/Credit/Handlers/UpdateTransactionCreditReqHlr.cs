@@ -8,7 +8,7 @@ namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdateTransactionCreditReqHlr(ApiProvider api, ILogger<UpdateTransactionCreditReqHlr> logger)
-    : BaseUpdateModelReqHlr<UpdateTransactionCreditReq>(api.Client, api.ApiTransactionsCreditUri, logger)
+    : BaseUpdateModelReqHlr<UpdateTransactionCreditReq>(api.Client, ApiProvider.ApiTransactionsCreditUri, logger)
 {
     protected override string ModelName => "Credit Transaction";
 }

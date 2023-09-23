@@ -10,5 +10,5 @@ namespace OnlineMinion.RestApi.Client.Transactions.Debit.Handlers;
 internal sealed class GetTransactionDebitByIdReqHlr(ApiProvider api)
     : BaseGetModelByIdReqHlr<GetTransactionDebitByIdReq, TransactionDebitResp?>(
         api.Client,
-        api.ApiTransactionsDebitUri
+        ApiProvider.ApiTransactionsDebitUri
     );

@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class DeletePaymentSpecReqHlr(ApiProvider api)
-    : BaseDeleteModelReqHlr<DeletePaymentSpecReq>(api.Client, api.ApiPaymentSpecsUri);
+    : BaseDeleteModelReqHlr<DeletePaymentSpecReq>(api.Client, ApiProvider.ApiPaymentSpecsUri);

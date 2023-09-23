@@ -10,5 +10,5 @@ namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
 internal sealed class GetTransactionCreditByIdReqHlr(ApiProvider api)
     : BaseGetModelByIdReqHlr<GetTransactionCreditByIdReq, TransactionCreditResp?>(
         api.Client,
-        api.ApiTransactionsCreditUri
+        ApiProvider.ApiTransactionsCreditUri
     );

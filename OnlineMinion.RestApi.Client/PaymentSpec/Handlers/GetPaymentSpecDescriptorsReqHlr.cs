@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPaymentSpecDescriptorsReqHlr(ApiProvider api)
-    : GetSomeModelDescriptorsReqHlr<PaymentSpecDescriptorResp>(api.Client, api.ApiPaymentSpecsUri);
+    : GetSomeModelDescriptorsReqHlr<PaymentSpecDescriptorResp>(api.Client, ApiProvider.ApiPaymentSpecsUri);

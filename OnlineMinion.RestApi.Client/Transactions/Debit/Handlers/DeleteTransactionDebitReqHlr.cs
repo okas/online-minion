@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.Client.Transactions.Debit.Handlers;
 
 [UsedImplicitly]
 internal sealed class DeleteTransactionDebitReqHlr(ApiProvider api)
-    : BaseDeleteModelReqHlr<DeleteTransactionDebitReq>(api.Client, api.ApiTransactionsDebitUri);
+    : BaseDeleteModelReqHlr<DeleteTransactionDebitReq>(api.Client, ApiProvider.ApiTransactionsDebitUri);

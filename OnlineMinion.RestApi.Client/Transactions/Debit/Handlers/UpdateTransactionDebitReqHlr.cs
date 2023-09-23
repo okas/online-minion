@@ -8,7 +8,7 @@ namespace OnlineMinion.RestApi.Client.Transactions.Debit.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdateTransactionDebitReqHlr(ApiProvider api, ILogger<UpdateTransactionDebitReqHlr> logger)
-    : BaseUpdateModelReqHlr<UpdateTransactionDebitReq>(api.Client, api.ApiTransactionsDebitUri, logger)
+    : BaseUpdateModelReqHlr<UpdateTransactionDebitReq>(api.Client, ApiProvider.ApiTransactionsDebitUri, logger)
 {
     protected override string ModelName => "Debit Transaction";
 }

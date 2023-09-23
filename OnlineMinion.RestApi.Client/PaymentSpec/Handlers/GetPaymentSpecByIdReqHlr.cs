@@ -8,4 +8,4 @@ namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPaymentSpecByIdReqHlr(ApiProvider api)
-    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, PaymentSpecResp?>(api.Client, api.ApiPaymentSpecsUri);
+    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, PaymentSpecResp?>(api.Client, ApiProvider.ApiPaymentSpecsUri);

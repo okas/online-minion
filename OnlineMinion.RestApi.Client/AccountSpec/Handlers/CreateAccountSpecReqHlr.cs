@@ -8,7 +8,7 @@ namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class CreateAccountSpecReqHlr(ApiProvider api, ILogger<CreateAccountSpecReqHlr> logger)
-    : BaseCreateModelReqHlr<CreateAccountSpecReq>(api.Client, api.ApiAccountSpecsUri, logger)
+    : BaseCreateModelReqHlr<CreateAccountSpecReq>(api.Client, ApiProvider.ApiAccountSpecsUri, logger)
 {
     protected override string ModelName => "Account Specification";
 }

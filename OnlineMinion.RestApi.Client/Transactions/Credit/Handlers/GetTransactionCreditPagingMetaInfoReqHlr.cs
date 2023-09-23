@@ -9,5 +9,5 @@ namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
 internal sealed class GetTransactionCreditPagingMetaInfoReqHlr(ApiProvider api)
     : BaseGetModelPagingMetaInfoReqHlr<GetTransactionCreditPagingMetaInfoReq>(
         api.Client,
-        api.ApiTransactionsCreditUri
+        ApiProvider.ApiTransactionsCreditUri
     );
