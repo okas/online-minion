@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.Contracts;
@@ -18,6 +17,7 @@ using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
+using OnlineMinion.RestApi.Services;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 // ReSharper disable once CheckNamespace
@@ -31,8 +31,7 @@ public static class ServicesSetup
 
         // Order is important (CORS): first read base policies, then produce CORS configuration.
         services.AddCorsPolicies(config);
-        services
-            .AddSingleton<IConfigureOptions<CorsOptions>, ApiCorsOptionsConfigurator>()
+        services.AddSingleton<IConfigureOptions<CorsOptions>, ApiCorsOptionsConfigurator>()
             .AddCors();
 
         #endregion
@@ -42,6 +41,10 @@ public static class ServicesSetup
         services.ConfigureOptions<ApiBehaviorOptionsConfigurator>();
         services.ConfigureOptions<RouteOptionsConfigurator>();
 
+        services.AddHttpContextAccessor()
+            .AddScoped<ResourceLinkGenerator>();
+
+        // TODO: to be removed when migration to MinimalAPI is complete.
         services.AddControllers();
 
         #endregion
