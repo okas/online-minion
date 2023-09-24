@@ -32,6 +32,7 @@ public static class ApiProblemsHandler
             ErrorType.NotFound => new()
             {
                 Status = StatusCodes.Status404NotFound,
+                Instance = instanceUrl,
             },
 
             ErrorType.Conflict => new HttpValidationProblemDetails
