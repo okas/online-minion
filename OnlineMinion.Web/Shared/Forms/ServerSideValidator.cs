@@ -49,7 +49,7 @@ public class ServerSideValidator : ComponentBase
         CurrentEditContext.NotifyValidationStateChanged();
     }
 
-    public static string GetFieldName(string rawKey) => rawKey.Split('.')[^1];
+    public static string GetFieldName(string rawKey) => rawKey.AsSpan(rawKey.LastIndexOf('.') + 1).ToString();
 
     private static string GetErrorMessage(object? rawMessage) => rawMessage?.ToString() ?? "#error";
 }
