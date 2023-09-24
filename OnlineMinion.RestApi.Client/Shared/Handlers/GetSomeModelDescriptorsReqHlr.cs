@@ -1,5 +1,6 @@
 using System.Globalization;
 using ErrorOr;
+using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
@@ -7,6 +8,7 @@ namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 internal abstract class GetSomeModelDescriptorsReqHlr<TResponse>(HttpClient apiClient, Uri resource)
     : IApiClientRequestHandler<GetSomeModelDescriptorsReq<TResponse>, IAsyncEnumerable<TResponse>>,
         ICollectionRequestResponseStreaming
+    where TResponse : IHasIntId
 {
     public async Task<ErrorOr<IAsyncEnumerable<TResponse>>> Handle(
         GetSomeModelDescriptorsReq<TResponse> rq,
