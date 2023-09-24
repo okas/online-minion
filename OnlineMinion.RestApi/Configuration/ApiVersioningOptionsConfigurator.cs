@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts;
 
-namespace OnlineMinion.RestApi.Init;
+namespace OnlineMinion.RestApi.Configuration;
 
 public class ApiVersioningOptionsConfigurator : IConfigureOptions<ApiVersioningOptions>
 {

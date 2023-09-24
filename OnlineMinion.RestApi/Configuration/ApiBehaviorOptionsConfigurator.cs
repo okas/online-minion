@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace OnlineMinion.RestApi.Init;
+namespace OnlineMinion.RestApi.Configuration;
 
 public class ApiBehaviorOptionsConfigurator : IConfigureOptions<ApiBehaviorOptions>
 {

@@ -15,11 +15,13 @@ using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Data.Entities;
 using OnlineMinion.Data.Entities.Shared;
+using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
 using OnlineMinion.RestApi.Shared.Handlers;
 
-namespace OnlineMinion.RestApi.Init;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServicesSetup
 {
@@ -85,7 +87,7 @@ public static class ServicesSetup
             )
             // TODO: Better implement class based handlers to avoid these registrations.
             .AddTransient<IRequestHandler<GetAccountSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
-                GetModelPagingInfoReqHlr<GetAccountSpecPagingMetaInfoReq, Data.Entities.AccountSpec>
+                GetModelPagingInfoReqHlr<GetAccountSpecPagingMetaInfoReq, AccountSpec>
             >()
             .AddTransient<IRequestHandler<GetPaymentSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
                 GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, BasePaymentSpec>

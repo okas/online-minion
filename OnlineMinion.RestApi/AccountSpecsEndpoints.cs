@@ -15,7 +15,7 @@ using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
 using static Microsoft.AspNetCore.Http.TypedResults;
 using static OnlineMinion.RestApi.Shared.CommonValidationEndpoints;
-using static OnlineMinion.RestApi.Init.ApiCorsOptionsConfigurator;
+using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
 using static OnlineMinion.RestApi.Shared.NamedRoutes;
 

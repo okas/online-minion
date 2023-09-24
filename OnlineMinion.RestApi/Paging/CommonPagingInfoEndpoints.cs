@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.RestApi.Init;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
 
 namespace OnlineMinion.RestApi.Paging;
@@ -20,7 +19,7 @@ public static class CommonPagingInfoEndpoints
     /// <remarks>
     ///     Important: as returned headers are custom, CORS policy should be enabled for this endpoint,
     ///     this can be done using this policy name's constant, see:
-    ///     <see cref="ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy" />.
+    ///     <see cref="OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy" />.
     /// </remarks>
     public static async Task<Results<NoContent, ProblemHttpResult>> GetPagingMetaInfo<TRequest>(
         [AsParameters] TRequest rq,

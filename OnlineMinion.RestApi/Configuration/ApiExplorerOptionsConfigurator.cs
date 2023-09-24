@@ -1,7 +1,7 @@
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 
-namespace OnlineMinion.RestApi.Init;
+namespace OnlineMinion.RestApi.Configuration;
 
 public class ApiExplorerOptionsConfigurator : IConfigureOptions<ApiExplorerOptions>
 {
