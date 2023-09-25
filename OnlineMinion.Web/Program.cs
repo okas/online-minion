@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.RestApi.Client.HttpRequestMessageHandlers;
-using OnlineMinion.RestApi.Client.Init;
 using OnlineMinion.Web;
 using OnlineMinion.Web.Configuration;
 using OnlineMinion.Web.Settings;

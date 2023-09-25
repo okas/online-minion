@@ -1,12 +1,14 @@
+using Asp.Versioning;
+using Asp.Versioning.Http;
 using FluentValidation;
 using IL.FluentValidation.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using OnlineMinion.Contracts;
 using OnlineMinion.RestApi.Client.Api;
-using OnlineMinion.RestApi.Client.HttpRequestMessageHandlers;
 using OnlineMinion.RestApi.Client.Settings;
 
-namespace OnlineMinion.RestApi.Client.Init;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServicesSetup
 {
@@ -20,13 +22,16 @@ public static class ServicesSetup
     {
         services.AddValidatorsFromAssemblyContaining(typeof(ServicesSetup));
 
-        services.AddOptions<ApiProviderSettings>()
-            .BindConfiguration(nameof(ApiProviderSettings))
+        services.AddOptions<ApiClientSettings>()
+            .BindConfiguration(nameof(ApiClientSettings))
             .ValidateWithFluentValidator();
 
-        var apiHttpClientBuilder = services.AddTransient<DefaultApiVersionHeaderRequestHandler>()
+        // IApiVersionWriters are singletons, AddApiVersion() is registering QueryStringApiVersionWriter with "Try*".
+        // Intention is to only register and use HeaderApiVersionWriter.
+        var apiHttpClientBuilder = services
+            .AddSingleton<IApiVersionWriter>(new HeaderApiVersionWriter(CustomHeaderNames.ApiVersion))
             .AddHttpClient<ApiProvider>(ConfigureApiHttpClient)
-            .AddHttpMessageHandler<DefaultApiVersionHeaderRequestHandler>();
+            .AddApiVersion(new ApiVersion(1));
 
         services.AddMediatR(
             opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup))
@@ -35,9 +40,9 @@ public static class ServicesSetup
         return apiHttpClientBuilder;
     }
 
-    private static void ConfigureApiHttpClient(IServiceProvider serviceProvider, HttpClient client)
-    {
-        var settings = serviceProvider.GetRequiredService<IOptions<ApiProviderSettings>>().Value;
-        client.BaseAddress = new(settings.Url);
-    }
+    private static void ConfigureApiHttpClient(IServiceProvider sp, HttpClient client) =>
+        client.BaseAddress = new(GetApiClientSettings(sp).Url);
+
+    private static ApiClientSettings GetApiClientSettings(IServiceProvider sp) =>
+        sp.GetRequiredService<IOptions<ApiClientSettings>>().Value;
 }
