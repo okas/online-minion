@@ -5,14 +5,16 @@ using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
 using OnlineMinion.RestApi.Services;
+using OnlineMinion.RestApi.Shared;
 using OnlineMinion.RestApi.Shared.Endpoints;
-using static OnlineMinion.RestApi.Shared.CommonValidationEndpoints;
+using static OnlineMinion.RestApi.Shared.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.Shared.NamedRoutes;
 
 namespace OnlineMinion.RestApi;
 
-public class PaymentSpecsEndpoints : ICRUDEndpoints
+public class PaymentSpecsEndpoints
+    : ICRUDEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
 {
     public static void MapAll(IEndpointRouteBuilder app)
     {
@@ -39,10 +41,10 @@ public class PaymentSpecsEndpoints : ICRUDEndpoints
         apiV1.MapDelete("{id:int}", ICRUDEndpoints.Delete<DeletePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapHead("/", CommonPagingInfoEndpoints.GetPagingMetaInfo<GetPaymentSpecPagingMetaInfoReq>)
+        apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetPaymentSpecPagingMetaInfoReq>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("descriptors", ICRUDEndpoints.GetAsDescriptors<PaymentSpecDescriptorResp>);
+        apiV1.MapGet("descriptors", ICommonDescriptorEndpoints.GetAsDescriptors<PaymentSpecDescriptorResp>);
 
         apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckPaymentSpecUniqueNewReq>);
 

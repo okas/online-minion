@@ -12,7 +12,7 @@ public record ApiProvider(HttpClient Client)
 
     public static readonly Uri ApiPaymentSpecsUri = new("api/payment-specs", UriKind.Relative);
 
-    public static readonly Uri ApiTransactionsCreditUri = new("api/Transactions/Credits", UriKind.Relative);
+    public static readonly Uri ApiTransactionsCreditUri = new("api/transactions/credits", UriKind.Relative);
 
-    public static readonly Uri ApiTransactionsDebitUri = new("api/Transactions/Debits", UriKind.Relative);
+    public static readonly Uri ApiTransactionsDebitUri = new("api/transactions/debits", UriKind.Relative);
 }

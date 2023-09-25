@@ -7,7 +7,7 @@ using OnlineMinion.RestApi.ProblemHandling;
 
 namespace OnlineMinion.RestApi.Shared;
 
-public static class CommonValidationEndpoints
+public interface ICommonValidationEndpoints
 {
     public const string NewNameValidationRoute = "validate-available-name/{memberValue:required:length(2,50)}";
 
@@ -33,10 +33,10 @@ public static class CommonValidationEndpoints
     ) where TRequest : ICheckUniqueExistingModelByMemberRequest
     {
         var result = await sender.Send(rq, ct);
-        return result.ConvertToHttpResult();
+        return ConvertToHttpResult(result);
     }
 
-    private static Results<NoContent, ProblemHttpResult> ConvertToHttpResult(this ErrorOr<Success> result) =>
+    private static Results<NoContent, ProblemHttpResult> ConvertToHttpResult(ErrorOr<Success> result) =>
         result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
             _ => TypedResults.NoContent(),
             firstError => ApiProblemsHandler.CreateApiProblemResult(firstError)

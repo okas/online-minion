@@ -33,6 +33,21 @@ internal interface ICRUDEndpoints
         );
     }
 
+    /// <summary>
+    ///     Gets resources, paged. Response Body will contain only collection of resources, paging headers will be set in
+    ///     response headers.
+    /// </summary>
+    /// <param name="rq"></param>
+    /// <param name="sender"></param>
+    /// <param name="httpResponse"></param>
+    /// <param name="ct"></param>
+    /// <typeparam name="TResponse"></typeparam>
+    /// <returns></returns>
+    /// <remarks>
+    ///     Important: as returned headers are custom, CORS policy should be enabled for this endpoint,
+    ///     this can be done using this policy name's constant, see:
+    ///     <see cref="OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator.ExposedHeadersPagingMetaInfoPolicy" />.
+    /// </remarks>
     public static async ValueTask<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>> GetSomePaged<TResponse>(
         [AsParameters] GetSomeModelsPagedReq<TResponse> rq,
         ISender                                         sender,
@@ -116,28 +131,6 @@ internal interface ICRUDEndpoints
         return result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
             _ => NoContent(),
             firstError => CreateApiProblemResult(firstError, linkGen.GetResourceUri(rq.Id))
-        );
-    }
-
-    /// <summary>
-    ///     NB! This method do not use paging! It is intended to return resources as  options for select lists
-    ///     or other descriptive needs in UI, where full resource data is not needed.<br />
-    ///     It won't set paging headers, contrary to <see cref="GetSomePaged{TResponse}" />.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="ct"></param>
-    /// <typeparam name="TResponse"></typeparam>
-    /// <returns></returns>
-    public static async ValueTask<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>>
-        GetAsDescriptors<TResponse>(ISender sender, CancellationToken ct)
-        where TResponse : IHasIntId
-    {
-        var rq = new GetSomeModelDescriptorsReq<TResponse>();
-        var result = await sender.Send(rq, ct);
-
-        return result.MatchFirst<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>>(
-            models => Ok(models),
-            error => CreateApiProblemResult(error)
         );
     }
 }

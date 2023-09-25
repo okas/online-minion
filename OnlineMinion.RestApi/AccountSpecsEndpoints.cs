@@ -12,14 +12,16 @@ using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
 using OnlineMinion.RestApi.ProblemHandling;
 using OnlineMinion.RestApi.Services;
+using OnlineMinion.RestApi.Shared;
 using OnlineMinion.RestApi.Shared.Endpoints;
-using static OnlineMinion.RestApi.Shared.CommonValidationEndpoints;
+using static OnlineMinion.RestApi.Shared.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.Shared.NamedRoutes;
 
 namespace OnlineMinion.RestApi;
 
-public class AccountSpecsEndpoints : ICRUDEndpoints, ICommonDescriptorEndpoints
+public class AccountSpecsEndpoints
+    : ICRUDEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
 {
     public static void MapAll(IEndpointRouteBuilder app)
     {
@@ -46,7 +48,7 @@ public class AccountSpecsEndpoints : ICRUDEndpoints, ICommonDescriptorEndpoints
         apiV1.MapDelete("{id:int}", ICRUDEndpoints.Delete<DeleteAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapHead("/", CommonPagingInfoEndpoints.GetPagingMetaInfo<GetAccountSpecPagingMetaInfoReq>)
+        apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetAccountSpecPagingMetaInfoReq>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
         apiV1.MapGet("descriptors", ICommonDescriptorEndpoints.GetAsDescriptors<AccountSpecDescriptorResp>);

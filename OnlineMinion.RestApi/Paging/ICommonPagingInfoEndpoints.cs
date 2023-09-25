@@ -6,7 +6,7 @@ using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
 
 namespace OnlineMinion.RestApi.Paging;
 
-public static class CommonPagingInfoEndpoints
+public interface ICommonPagingInfoEndpoints
 {
     /// <summary>Generic endpoint to query paging metainfo for resource, identified by generic request type.</summary>
     /// <param name="rq">Using page size, query pagination related info for given resource or model.</param>
