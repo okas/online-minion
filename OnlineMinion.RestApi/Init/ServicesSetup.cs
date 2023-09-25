@@ -2,10 +2,7 @@ using CorsPolicySettings;
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using OnlineMinion.Common.Shared.Validation;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
@@ -16,7 +13,6 @@ using OnlineMinion.Data.Entities;
 using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
-using OnlineMinion.RestApi.ProblemHandling;
 using OnlineMinion.RestApi.Services;
 using OnlineMinion.RestApi.Shared.Handlers;
 
@@ -31,8 +27,7 @@ public static class ServicesSetup
 
         // Order is important (CORS): first read base policies, then produce CORS configuration.
         services.AddCorsPolicies(config);
-        services.AddSingleton<IConfigureOptions<CorsOptions>, ApiCorsOptionsConfigurator>()
-            .AddCors();
+        services.ConfigureOptions<ApiCorsOptionsConfigurator>().AddCors();
 
         #endregion
 
@@ -41,26 +36,20 @@ public static class ServicesSetup
         services.ConfigureOptions<ApiBehaviorOptionsConfigurator>();
         services.ConfigureOptions<RouteOptionsConfigurator>();
 
-        services.AddHttpContextAccessor()
-            .AddScoped<ResourceLinkGenerator>();
-
-        // TODO: to be removed when migration to MinimalAPI is complete.
-        services.AddControllers();
+        services.AddHttpContextAccessor().AddScoped<ResourceLinkGenerator>();
 
         #endregion
 
         #region API Problem handling setup
 
         // Override default one.
-        services.AddSingleton<ProblemDetailsFactory, RestApiProblemDetailsFactory>();
         services.AddProblemDetails(); // For MinimalAPI
 
         #endregion
 
         # region API versioning setup
 
-        services
-            .ConfigureOptions<ApiVersioningOptionsConfigurator>()
+        services.ConfigureOptions<ApiVersioningOptionsConfigurator>()
             .ConfigureOptions<ApiExplorerOptionsConfigurator>()
             .AddEndpointsApiExplorer()
             .AddApiVersioning()

@@ -8,11 +8,7 @@ public static class HttpRequestPipelineSetup
     {
         app.UseCors();
 
-        app.UseAuthorization();
-
         app.UseExceptionHandler("/error");
-
-        app.MapControllers();
 
         CurrencyInfoEndpoints.MapAll(app);
         AccountSpecsEndpoints.MapAll(app);
