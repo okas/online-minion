@@ -13,7 +13,6 @@ public class ApiCorsOptionsConfigurator : IConfigureOptions<CorsOptions>
     public void Configure(CorsOptions options)
     {
         var basePolicy = GetOrSetupDefaultPolicy(options);
-
         SetupPagingMetaInfoPolicy(options, basePolicy);
     }
 

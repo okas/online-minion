@@ -8,21 +8,22 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.RestApi.CommonEndpoints;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
-using OnlineMinion.RestApi.ProblemHandling;
-using OnlineMinion.RestApi.Services;
-using OnlineMinion.RestApi.Shared;
-using OnlineMinion.RestApi.Shared.Endpoints;
-using static OnlineMinion.RestApi.Shared.ICommonValidationEndpoints;
+using OnlineMinion.RestApi.Services.LinkGeneration;
+using static OnlineMinion.RestApi.CommonEndpoints.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
-using static OnlineMinion.RestApi.Shared.NamedRoutes;
+using static OnlineMinion.RestApi.CommonEndpoints.ICommonDescriptorEndpoints;
+using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
 namespace OnlineMinion.RestApi;
 
 public class AccountSpecsEndpoints
-    : ICRUDEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
+    : ICommonCrudEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
 {
+    public const string V1GetAccountSpecById = nameof(V1GetAccountSpecById);
+
     public static void MapAll(IEndpointRouteBuilder app)
     {
         var apiV1 = app.NewVersionedApi("Account Specs")
@@ -30,28 +31,28 @@ public class AccountSpecsEndpoints
             .HasApiVersion(1)
             .MapToApiVersion(1);
 
-        var linkGeneratorMetaData = new LinkGeneratorMetaData(V1GetAccountSpecById);
+        var linkGeneratorMetaData = new ResourceLinkGeneratorMetaData(V1GetAccountSpecById);
 
-        apiV1.MapPost("/", ICRUDEndpoints.Create<CreateAccountSpecReq>)
+        apiV1.MapPost("/", ICommonCrudEndpoints.Create<CreateAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapGet("/", GetSomePaged<AccountSpecResp>) // TODO: Custom, throttling response streaming
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICRUDEndpoints.GetById<GetAccountSpecByIdReq, AccountSpecResp>)
+        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetAccountSpecByIdReq, AccountSpecResp>)
             .WithName(V1GetAccountSpecById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICRUDEndpoints.Update<UpdateAccountSpecReq>)
+        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdateAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICRUDEndpoints.Delete<DeleteAccountSpecReq>)
+        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeleteAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetAccountSpecPagingMetaInfoReq>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("descriptors", ICommonDescriptorEndpoints.GetAsDescriptors<AccountSpecDescriptorResp>);
+        apiV1.MapGet($"{DescriptorsCommonRoute}", GetAsDescriptors<AccountSpecDescriptorResp>);
 
         apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckAccountSpecUniqueNewReq>);
 
@@ -64,7 +65,7 @@ public class AccountSpecsEndpoints
     ///     Gets resources, paged. Response Body will contain only collection of resources, paging headers will be set
     ///     in response headers.
     /// </summary>
-    /// <inheritdoc cref="ICRUDEndpoints.GetSomePaged{TResponse}" />
+    /// <inheritdoc cref="ICommonCrudEndpoints.GetSomePaged{TResponse}" />
     private static async ValueTask<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>> GetSomePaged<TResponse>(
         [AsParameters] GetSomeModelsPagedReq<TResponse> rq,
         ISender                                         sender,
@@ -85,7 +86,7 @@ public class AccountSpecsEndpoints
             {
                 // TODO: put into logging pipeline (needs creation)
                 // logger.LogError("Error while getting paged models: {Error}", firstError);
-                return ApiProblemsHandler.CreateApiProblemResult(firstError);
+                return CreateApiProblemResult(firstError);
             }
         );
     }

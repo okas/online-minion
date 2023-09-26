@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace OnlineMinion.RestApi.ProblemHandling;
 
-public static class ApiProblemsHandler
+public static class ApiProblemResults
 {
     /// <summary>
     ///     Converts <see cref="Error" /> to <see cref="ProblemDetails" /> and returns is as <see cref="ProblemHttpResult" />.

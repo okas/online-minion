@@ -13,7 +13,8 @@ using OnlineMinion.Data.Entities;
 using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
-using OnlineMinion.RestApi.Services;
+using OnlineMinion.RestApi.ProblemHandling;
+using OnlineMinion.RestApi.Services.LinkGeneration;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 // ReSharper disable once CheckNamespace

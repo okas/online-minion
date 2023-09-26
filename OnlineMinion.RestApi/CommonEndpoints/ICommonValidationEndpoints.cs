@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.ProblemHandling;
 
-namespace OnlineMinion.RestApi.Shared;
+namespace OnlineMinion.RestApi.CommonEndpoints;
 
 public interface ICommonValidationEndpoints
 {
@@ -39,6 +39,6 @@ public interface ICommonValidationEndpoints
     private static Results<NoContent, ProblemHttpResult> ConvertToHttpResult(ErrorOr<Success> result) =>
         result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
             _ => TypedResults.NoContent(),
-            firstError => ApiProblemsHandler.CreateApiProblemResult(firstError)
+            firstError => ApiProblemResults.CreateApiProblemResult(firstError)
         );
 }

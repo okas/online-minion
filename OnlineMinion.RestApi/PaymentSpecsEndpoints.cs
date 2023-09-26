@@ -2,20 +2,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.RestApi.CommonEndpoints;
 using OnlineMinion.RestApi.Helpers;
-using OnlineMinion.RestApi.Paging;
-using OnlineMinion.RestApi.Services;
-using OnlineMinion.RestApi.Shared;
-using OnlineMinion.RestApi.Shared.Endpoints;
-using static OnlineMinion.RestApi.Shared.ICommonValidationEndpoints;
+using OnlineMinion.RestApi.Services.LinkGeneration;
+using static OnlineMinion.RestApi.CommonEndpoints.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
-using static OnlineMinion.RestApi.Shared.NamedRoutes;
+using static OnlineMinion.RestApi.CommonEndpoints.ICommonDescriptorEndpoints;
 
 namespace OnlineMinion.RestApi;
 
 public class PaymentSpecsEndpoints
-    : ICRUDEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
+    : ICommonCrudEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
 {
+    public const string V1GetPaymentSpecById = nameof(V1GetPaymentSpecById);
+
     public static void MapAll(IEndpointRouteBuilder app)
     {
         var apiV1 = app.NewVersionedApi("Payment Specs")
@@ -23,28 +23,28 @@ public class PaymentSpecsEndpoints
             .HasApiVersion(1)
             .MapToApiVersion(1);
 
-        var linkGeneratorMetaData = new LinkGeneratorMetaData(V1GetPaymentSpecById);
+        var linkGeneratorMetaData = new ResourceLinkGeneratorMetaData(V1GetPaymentSpecById);
 
-        apiV1.MapPost("/", ICRUDEndpoints.Create<CreatePaymentSpecReq>)
+        apiV1.MapPost("/", ICommonCrudEndpoints.Create<CreatePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapGet("/", ICRUDEndpoints.GetSomePaged<PaymentSpecResp>)
+        apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<PaymentSpecResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICRUDEndpoints.GetById<GetPaymentSpecByIdReq, PaymentSpecResp>)
+        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetPaymentSpecByIdReq, PaymentSpecResp>)
             .WithName(V1GetPaymentSpecById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICRUDEndpoints.Update<UpdatePaymentSpecReq>)
+        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdatePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICRUDEndpoints.Delete<DeletePaymentSpecReq>)
+        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeletePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetPaymentSpecPagingMetaInfoReq>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("descriptors", ICommonDescriptorEndpoints.GetAsDescriptors<PaymentSpecDescriptorResp>);
+        apiV1.MapGet($"{DescriptorsCommonRoute}", GetAsDescriptors<PaymentSpecDescriptorResp>);
 
         apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckPaymentSpecUniqueNewReq>);
 

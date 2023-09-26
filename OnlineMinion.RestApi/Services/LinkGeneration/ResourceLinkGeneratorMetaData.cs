@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace OnlineMinion.RestApi.Services;
+namespace OnlineMinion.RestApi.Services.LinkGeneration;
 
 /// <summary>Metadata for <see cref="ResourceLinkGenerator" />.</summary>
 /// <remarks>
@@ -13,4 +13,4 @@ namespace OnlineMinion.RestApi.Services;
 ///     defined <see cref="Microsoft.AspNetCore.Builder.IEndpointConventionBuilder" />, using extension method
 ///     <see cref="Microsoft.AspNetCore.Builder.RoutingEndpointConventionBuilderExtensions.WithName{TBuilder}" />.
 /// </param>
-public record LinkGeneratorMetaData(string ResourceRouteName);
+public record ResourceLinkGeneratorMetaData(string ResourceRouteName);

@@ -7,15 +7,15 @@ using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
-using OnlineMinion.RestApi.Services;
+using OnlineMinion.RestApi.Services.LinkGeneration;
 using static Microsoft.AspNetCore.Http.TypedResults;
-using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
+using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
-namespace OnlineMinion.RestApi.Shared.Endpoints;
+namespace OnlineMinion.RestApi.CommonEndpoints;
 
-internal interface ICRUDEndpoints
+internal interface ICommonCrudEndpoints
 {
-    /// <remarks>Needs metadata registration for <see cref="LinkGeneratorMetaData" />!</remarks>
+    /// <remarks>Needs metadata registration for <see cref="ResourceLinkGeneratorMetaData" />!</remarks>
     public static async ValueTask<Results<CreatedAtRoute<ModelIdResp>, ProblemHttpResult>> Create<TRequest>(
         TRequest              rq,
         ISender               sender,
@@ -73,7 +73,7 @@ internal interface ICRUDEndpoints
         );
     }
 
-    /// <remarks>Needs metadata registration for <see cref="LinkGeneratorMetaData" />!</remarks>
+    /// <remarks>Needs metadata registration for <see cref="ResourceLinkGeneratorMetaData" />!</remarks>
     public static async ValueTask<Results<Ok<TResponse>, NotFound, ProblemHttpResult>> GetById<TRequest, TResponse>(
         [AsParameters] TRequest rq,
         ISender                 sender,
@@ -94,7 +94,7 @@ internal interface ICRUDEndpoints
         );
     }
 
-    /// <remarks>Needs metadata registration for <see cref="LinkGeneratorMetaData" />!</remarks>
+    /// <remarks>Needs metadata registration for <see cref="ResourceLinkGeneratorMetaData" />!</remarks>
     public static async ValueTask<Results<NoContent, ValidationProblem, ProblemHttpResult>> Update<TRequest>(
         int                   id,
         TRequest              rq,
@@ -117,7 +117,7 @@ internal interface ICRUDEndpoints
         );
     }
 
-    /// <remarks>Needs metadata registration for <see cref="LinkGeneratorMetaData" />!</remarks>
+    /// <remarks>Needs metadata registration for <see cref="ResourceLinkGeneratorMetaData" />!</remarks>
     public static async ValueTask<Results<NoContent, ProblemHttpResult>> Delete<TRequest>(
         [AsParameters] TRequest rq,
         ISender                 sender,

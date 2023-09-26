@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace OnlineMinion.RestApi.Services;
+namespace OnlineMinion.RestApi.Services.LinkGeneration;
 
 /// <summary>A service that generates a resource path ur Uri for a given resource ID.</summary>
 /// <param name="httpContextAccessor">Provides access to <see cref="Endpoint" /> of the current HTTP request.</param>
@@ -26,11 +26,11 @@ public class ResourceLinkGenerator(IHttpContextAccessor httpContextAccessor, Lin
     private const string MsgEndpointIsNull = "Endpoint is null.";
 
     private const string MsgNoMetadata = $"{nameof(ResourceLinkGenerator)
-    } can only be used in the context of an endpoint with {nameof(LinkGeneratorMetaData)} metadata.";
+    } can only be used in the context of an endpoint with {nameof(ResourceLinkGeneratorMetaData)} metadata.";
 
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    private readonly LinkGeneratorMetaData _metaData = GetMetadata(httpContextAccessor);
+    private readonly ResourceLinkGeneratorMetaData _metaData = GetMetadata(httpContextAccessor);
 
     /// <summary>Route name of the resource, that is provided via Endpoint metadata.</summary>
     public string ResourceRouteName => _metaData.ResourceRouteName;
@@ -70,23 +70,23 @@ public class ResourceLinkGenerator(IHttpContextAccessor httpContextAccessor, Lin
     /// </summary>
     private static string GetCleanName(string raw) => raw.AsSpan(raw.LastIndexOf('.') + 1).ToString();
 
-    /// <summary>Retrieves <see cref="LinkGeneratorMetaData" /> with guards. Ensures that metadata is available or throws.</summary>
-    /// <exception cref="ArgumentNullException">
+    /// <summary>Retrieves <see cref="ArgumentNullException" /> with guards. Ensures that metadata is available or throws.</summary>
+    /// <exception cref="InvalidOperationException">
     ///     On initialization, most probably HttpContextAccessor is not registered in DI container,
     ///     see example how to do it.
     /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///     On initialization, when <see cref="IHttpContextAccessor.HttpContext" /> is null in
-    ///     <see cref="IHttpContextAccessor" /> instance.
+    /// <exception cref="IHttpContextAccessor.HttpContext">
+    ///     On initialization, when <see cref="IHttpContextAccessor" /> is null in
+    ///     <see cref="InvalidOperationException" /> instance.
     /// </exception>
     /// ///
-    /// <exception cref="InvalidOperationException">
-    ///     On initialization, when <see cref="EndpointHttpContextExtensions.GetEndpoint" /> is null.
+    /// <exception cref="EndpointHttpContextExtensions.GetEndpoint">
+    ///     On initialization, when <see cref="EndpointHttpContextExtensions" /> is null.
     /// </exception>
-    /// <exception cref="InvalidOperationException">
-    ///     On initialization, when the endpoint does not have <see cref="LinkGeneratorMetaData" /> metadata.
+    /// <exception cref="ResourceLinkGeneratorMetaData">
+    ///     On initialization, when the endpoint does not have <see cref="ResourceLinkGeneratorMetaData" /> metadata.
     /// </exception>
-    private static LinkGeneratorMetaData GetMetadata(
+    private static ResourceLinkGeneratorMetaData GetMetadata(
         [NotNullIfNotNull(nameof(accessor))] IHttpContextAccessor? accessor,
         [CallerArgumentExpression(nameof(accessor))]
         string argName = null!
@@ -94,7 +94,7 @@ public class ResourceLinkGenerator(IHttpContextAccessor httpContextAccessor, Lin
         accessor is not null
             ? accessor.HttpContext is { } context
                 ? context.GetEndpoint() is { } endpoint
-                    ? endpoint.Metadata.GetMetadata<LinkGeneratorMetaData>()
+                    ? endpoint.Metadata.GetMetadata<ResourceLinkGeneratorMetaData>()
                       ?? throw new InvalidOperationException(MsgNoMetadata)
                     : throw new InvalidOperationException(MsgEndpointIsNull)
                 : throw new InvalidOperationException(MsgHttpContextIsNull)

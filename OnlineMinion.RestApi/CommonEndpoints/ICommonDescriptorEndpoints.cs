@@ -5,14 +5,20 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.ProblemHandling;
 
-namespace OnlineMinion.RestApi.Shared.Endpoints;
+namespace OnlineMinion.RestApi.CommonEndpoints;
 
 public interface ICommonDescriptorEndpoints
 {
+    public const string DescriptorsCommonRoute = "descriptors";
+
     /// <summary>
     ///     NB! This method do not use paging! It is intended to return resources as  options for select lists
     ///     or other descriptive needs in UI, where full resource data is not needed.<br />
-    ///     It won't set paging headers, contrary to <see cref="ICRUDEndpoints.GetSomePaged{TResponse}" />.
+    ///     It won't set paging headers, contrary to
+    ///     <see cref="ICommonCrudEndpoints.GetSomePaged{TResponse}">
+    ///         ICommonCrudEndpoints.GetSomePaged&lt;TResponse&gt;
+    ///     </see>
+    ///     endpoint method.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="ct"></param>
@@ -27,7 +33,7 @@ public interface ICommonDescriptorEndpoints
 
         return result.MatchFirst<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>>(
             models => TypedResults.Ok(models),
-            error => ApiProblemsHandler.CreateApiProblemResult(error)
+            error => ApiProblemResults.CreateApiProblemResult(error)
         );
     }
 }

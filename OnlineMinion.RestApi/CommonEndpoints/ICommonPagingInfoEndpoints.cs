@@ -2,9 +2,10 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineMinion.Contracts.Shared.Requests;
-using static OnlineMinion.RestApi.ProblemHandling.ApiProblemsHandler;
+using OnlineMinion.RestApi.Paging;
+using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
-namespace OnlineMinion.RestApi.Paging;
+namespace OnlineMinion.RestApi.CommonEndpoints;
 
 public interface ICommonPagingInfoEndpoints
 {
