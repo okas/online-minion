@@ -15,6 +15,6 @@ public class ProblemDetailsOptionsConfigurator(IExceptionProblemDetailsMapper ma
     {
         mapper.MapExceptions(context);
 
-        context.ProblemDetails.Extensions["TraceId"] = context.HttpContext.TraceIdentifier;
+        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
     }
 }

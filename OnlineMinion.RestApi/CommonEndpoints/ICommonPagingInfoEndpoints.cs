@@ -32,7 +32,7 @@ public interface ICommonPagingInfoEndpoints
         // var rq = ActivatorUtilities.CreateInstance<TRequest>(provider, pageSize)
         // ?? throw new InvalidOperationException(GetMsgInvalidTypeParameterInit<TRequest>(pageSize));
 
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
             pagingMetaInfo =>
