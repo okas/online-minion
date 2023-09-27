@@ -17,7 +17,7 @@ namespace OnlineMinion.DataStore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-preview.7.23375.4")
+                .HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
@@ -25,7 +25,7 @@ namespace OnlineMinion.DataStore.Migrations
             modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
                 .IncrementsBy(10);
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.AccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.AccountSpec", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace OnlineMinion.DataStore.Migrations
                     b.ToTable("AccountSpecs");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.Shared.BasePaymentSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.Shared.BasePaymentSpec", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,7 +94,7 @@ namespace OnlineMinion.DataStore.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.Shared.BaseTransaction", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.Shared.BaseTransaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,9 +139,9 @@ namespace OnlineMinion.DataStore.Migrations
                     b.UseTpcMappingStrategy();
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.BankAccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.BankAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Domain.Shared.BasePaymentSpec");
 
                     b.Property<string>("BankName")
                         .IsRequired()
@@ -156,16 +156,16 @@ namespace OnlineMinion.DataStore.Migrations
                     b.HasDiscriminator().HasValue("BankAccountSpec");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.CashAccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.CashAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Domain.Shared.BasePaymentSpec");
 
                     b.HasDiscriminator().HasValue("CashAccountSpec");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.CryptoExchangeAccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.CryptoExchangeAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Domain.Shared.BasePaymentSpec");
 
                     b.Property<string>("ExchangeName")
                         .IsRequired()
@@ -178,16 +178,16 @@ namespace OnlineMinion.DataStore.Migrations
                     b.HasDiscriminator().HasValue("CryptoExchangeAccountSpec");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionCredit", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionCredit", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BaseTransaction");
+                    b.HasBaseType("OnlineMinion.Domain.Shared.BaseTransaction");
 
                     b.ToTable("TransactionCredits");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionDebit", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionDebit", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BaseTransaction");
+                    b.HasBaseType("OnlineMinion.Domain.Shared.BaseTransaction");
 
                     b.Property<int>("AccountSpecId")
                         .HasColumnType("int");
@@ -201,9 +201,9 @@ namespace OnlineMinion.DataStore.Migrations
                     b.ToTable("TransactionDebits");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.Shared.BaseTransaction", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.Shared.BaseTransaction", b =>
                 {
-                    b.HasOne("OnlineMinion.Data.Entities.Shared.BasePaymentSpec", "PaymentInstrument")
+                    b.HasOne("OnlineMinion.Domain.Shared.BasePaymentSpec", "PaymentInstrument")
                         .WithMany()
                         .HasForeignKey("PaymentInstrumentId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -212,9 +212,9 @@ namespace OnlineMinion.DataStore.Migrations
                     b.Navigation("PaymentInstrument");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionDebit", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionDebit", b =>
                 {
-                    b.HasOne("OnlineMinion.Data.Entities.AccountSpec", "AccountSpec")
+                    b.HasOne("OnlineMinion.Domain.AccountSpec", "AccountSpec")
                         .WithMany()
                         .HasForeignKey("AccountSpecId")
                         .OnDelete(DeleteBehavior.Restrict)
