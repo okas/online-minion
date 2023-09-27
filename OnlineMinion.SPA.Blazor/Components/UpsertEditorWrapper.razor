@@ -1,0 +1,44 @@
+@using OnlineMinion.SPA.Blazor.Shared.Forms
+@typeparam TVModel
+
+@code{
+  // If L18n is needed, this should be put to code-behind part and obtain translations from there.
+  private static class Str
+  {
+    public const string SaveBtn = "Save";
+    public const string BusyText = "Saving...";
+    public const string CancelBtn = "Cancel";
+  }
+
+}
+
+<EditForm EditContext="@_editContext" OnSubmit="@OnSubmit">
+  <FluentValidator @ref="@_fluentValidatorRef"/>
+  <ServerSideValidator @ref="@_serverSideValidator"/>
+  <ValidationSummary class="rz-mt-0"/>
+  <RadzenStack
+      AlignItems="@AlignItems.Center"
+      class="rz-my-4"
+      JustifyContent="@JustifyContent.SpaceEvenly"
+      Orientation="@Orientation.Horizontal"
+      Wrap="@FlexWrap.Wrap">
+    <RadzenFieldset disabled="@SC.IsBusy">
+      @EditorFormFields(Model)
+    </RadzenFieldset>
+  </RadzenStack>
+  <RadzenStack AlignItems="@AlignItems.Center" JustifyContent="@JustifyContent.Center" Orientation="@Orientation.Horizontal">
+    <RadzenButton
+        BusyText="@Str.BusyText"
+        ButtonType="@ButtonType.Submit"
+        Disabled="@IsActionDisabled"
+        Icon="save"
+        IsBusy="@SC.IsBusy"
+        Text="@Str.SaveBtn"/>
+    <RadzenButton
+        ButtonStyle="ButtonStyle.Light"
+        Click="@(_ => OnCancel.InvokeAsync())"
+        Icon="cancel"
+        Text="@Str.CancelBtn"
+        Variant="Variant.Flat"/>
+  </RadzenStack>
+</EditForm>

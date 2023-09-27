@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SwaggerSettings">
+    <remoteSpecificationUrls>
+      <UrlInfo>
+        <option name="urlString" value="https://localhost:7068/swagger/v1/swagger.json" />
+      </UrlInfo>
+    </remoteSpecificationUrls>
+  </component>
+</project>

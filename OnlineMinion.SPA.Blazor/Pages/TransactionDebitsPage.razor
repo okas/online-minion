@@ -1,0 +1,90 @@
+@page "/transactions/debit"
+@using static Common.Utilities.TypeMemberHelpers;
+@using static CurrencyInfo.ViewModels.CurrencyInfoExtensions;
+@using OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels
+@inherits BaseCRUDPage<
+            TransactionDebitListItem,
+            OnlineMinion.Contracts.Transactions.Debit.Responses.TransactionDebitResp,
+            BaseTransactionDebitUpsertVM
+            >;
+
+@code
+{
+  protected override RenderFragment RenderEditorComponent() =>
+    @<CascadingValue IsFixed="@true" Value="@CT">
+      <TransactionDebitsEditor
+          AccountSpecDescriptors="@_accountDescriptorViewModels"
+          Model="@UpsertVM"
+          OnCancel="@CloseEditorDialog"
+          OnSubmit="@OnUpsertSubmitHandlerAsync"
+          PaymentSpecDescriptors="@_paymentDescriptorViewModels"
+          @ref="@_editorRef"/>
+    </CascadingValue>;
+
+  private static class Str
+  {
+    public const string PageTitle = "Debit trans";
+    public const string MainHeading = "Debit Transactions";
+    public const string MainDescription = $"Manage {MainHeading}";
+    public const string Date = nameof(TransactionDebitListItem.Date);
+    public const string Amount = nameof(TransactionDebitListItem.Amount);
+    public const string Subject = nameof(TransactionDebitListItem.Subject);
+    public const string Party = nameof(TransactionDebitListItem.Party);
+    public const string PaymentInstrumentColumn = "paymnt. opt.";
+    public const string Tags = nameof(TransactionDebitListItem.Tags);
+    public const string Fee = nameof(TransactionDebitListItem.Fee);
+    public const string AccountSpecColumn = "acc. spec.";
+
+    public static readonly string PaymentInstrumentName = NestedNameOf<TransactionDebitListItem>(
+      x => x.PaymentInstrument.Name
+      );
+
+    public static readonly string AccountSpecName = NestedNameOf<TransactionDebitListItem>(
+      x => x.AccountSpec.Name
+      );
+  }
+
+}
+
+<AppPageTitle Text="@Str.PageTitle"/>
+
+<main>
+  <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
+  <RadzenText Text="@Str.MainDescription"/>
+  <RadzenDataGridWrapper
+      AddClick="@OnAddHandler"
+      Data="@ViewModels"
+      DeleteClick="@OnDeleteHandlerAsync"
+      EditClick="@OnEditHandler"
+      LoadData="@OnLoadDataHandlerAsync"
+      Page="@PagerChangeHandler"
+      PageSizeOptions="@PageSizeOptions"
+      @ref="@GridWrapperRef"
+      TItem="TransactionDebitListItem"
+      TotalItemsCount="@TotalItemsCount">
+    <Columns>
+      <RadzenDataGridColumn Property="@Str.Date" TItem="TransactionDebitListItem" Title="@Str.Date"/>
+      <RadzenDataGridColumn Property="@Str.Amount" TItem="TransactionDebitListItem" Title="@Str.Amount">
+        <Template>
+          @FormatCurrencyAmount(context.Amount, context.PaymentInstrument.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
+      <RadzenDataGridColumn Property="@Str.Fee" TItem="TransactionDebitListItem" Title="@Str.Fee">
+        <Template>
+          @FormatCurrencyAmount(context.Fee, context.PaymentInstrument.CurrencyCode)
+        </Template>
+      </RadzenDataGridColumn>
+      <RadzenDataGridColumn Property="@Str.Subject" TItem="TransactionDebitListItem" Title="@Str.Subject"/>
+      <RadzenDataGridColumn Property="@Str.Party" TItem="TransactionDebitListItem" Title="@Str.Party"/>
+      <RadzenDataGridColumn
+          Property="@Str.PaymentInstrumentName"
+          TItem="TransactionDebitListItem"
+          Title="@Str.PaymentInstrumentColumn"/>
+      <RadzenDataGridColumn
+          Property="@Str.AccountSpecName"
+          TItem="TransactionDebitListItem"
+          Title="@Str.AccountSpecColumn"/>
+      <RadzenDataGridColumn Property="@Str.Tags" TItem="TransactionDebitListItem" Title="@Str.Tags"/>
+    </Columns>
+  </RadzenDataGridWrapper>
+</main>

@@ -1,8 +1,8 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Data;
-using OnlineMinion.Data.Entities;
+using OnlineMinion.DataStore;
+using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Transactions.Credit.Handlers;

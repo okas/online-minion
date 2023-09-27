@@ -5,7 +5,8 @@ using Microsoft.Extensions.Logging;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Data;
+using OnlineMinion.DataStore;
+using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
