@@ -34,7 +34,6 @@ public static class ServicesSetup
 
         #region API general setup
 
-        services.ConfigureOptions<ApiBehaviorOptionsConfigurator>();
         services.ConfigureOptions<RouteOptionsConfigurator>();
 
         services.AddHttpContextAccessor().AddScoped<ResourceLinkGenerator>();
@@ -43,8 +42,9 @@ public static class ServicesSetup
 
         #region API Problem handling setup
 
-        // Override default one.
-        services.AddProblemDetails(); // For MinimalAPI
+        services.AddSingleton<IExceptionProblemDetailsMapper, ApiExceptionProblemDetailsMapper>()
+            .ConfigureOptions<ProblemDetailsOptionsConfigurator>()
+            .AddProblemDetails();
 
         #endregion
 

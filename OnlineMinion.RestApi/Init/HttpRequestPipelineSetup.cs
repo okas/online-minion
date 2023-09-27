@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using OnlineMinion.RestApi.ProblemHandling;
 
 namespace OnlineMinion.RestApi.Init;
 
@@ -9,6 +11,7 @@ public static class HttpRequestPipelineSetup
         app.UseCors();
 
         app.UseExceptionHandler("/error");
+        app.UseExceptionHandler();
 
         CurrencyInfoEndpoints.MapAll(app);
         AccountSpecsEndpoints.MapAll(app);
