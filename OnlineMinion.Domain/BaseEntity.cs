@@ -1,8 +1,6 @@
-using OnlineMinion.Contracts;
-
 namespace OnlineMinion.Domain;
 
-public abstract class BaseEntity : IHasIntId
+public abstract class BaseEntity
 {
     public int Id { get; set; }
 }

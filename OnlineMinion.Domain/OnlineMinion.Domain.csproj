@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <None Remove="Directory.Build.props"/>
     </ItemGroup>
 
