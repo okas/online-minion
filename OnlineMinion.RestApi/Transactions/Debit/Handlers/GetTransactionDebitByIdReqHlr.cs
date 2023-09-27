@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.Data;
-using OnlineMinion.Data.Entities;
+using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Transactions.Debit.Handlers;

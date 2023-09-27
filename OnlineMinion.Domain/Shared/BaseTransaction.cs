@@ -1,4 +1,4 @@
-namespace OnlineMinion.Data.Entities.Shared;
+namespace OnlineMinion.Domain.Shared;
 
 public abstract class BaseTransaction : BaseEntity
 {

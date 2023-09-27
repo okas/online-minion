@@ -8,9 +8,9 @@ namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdateAccountSpecReqHlr(OnlineMinionDbContext dbContext, ILogger<UpdateAccountSpecReqHlr> logger)
-    : BaseUpdateModelReqHlr<UpdateAccountSpecReq, Data.Entities.AccountSpec>(dbContext, logger)
+    : BaseUpdateModelReqHlr<UpdateAccountSpecReq, Domain.AccountSpec>(dbContext, logger)
 {
-    protected override void UpdateEntityAsync(Data.Entities.AccountSpec entity, UpdateAccountSpecReq rq)
+    protected override void UpdateEntityAsync(Domain.AccountSpec entity, UpdateAccountSpecReq rq)
     {
         entity.Name = rq.Name;
         entity.Group = rq.Group;

@@ -6,6 +6,7 @@ using OnlineMinion.Common;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Data;
+using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 

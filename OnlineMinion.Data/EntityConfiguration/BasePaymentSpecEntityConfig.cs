@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnlineMinion.Data.Entities.Shared;
+using OnlineMinion.Domain.Shared;
 
 namespace OnlineMinion.Data.EntityConfiguration;
 

@@ -1,6 +1,6 @@
-using OnlineMinion.Data.Entities.Shared;
+using OnlineMinion.Domain.Shared;
 
-namespace OnlineMinion.Data.Entities;
+namespace OnlineMinion.Domain;
 
 public class CryptoExchangeAccountSpec : BasePaymentSpec
 {

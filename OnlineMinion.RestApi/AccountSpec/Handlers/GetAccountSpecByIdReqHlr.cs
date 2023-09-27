@@ -8,9 +8,9 @@ namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetAccountSpecByIdReqHlr(OnlineMinionDbContext dbContext)
-    : BaseGetModelByIdReqHlr<GetAccountSpecByIdReq, Data.Entities.AccountSpec, AccountSpecResp>(dbContext)
+    : BaseGetModelByIdReqHlr<GetAccountSpecByIdReq, Domain.AccountSpec, AccountSpecResp>(dbContext)
 {
-    protected override AccountSpecResp ToResponse(Data.Entities.AccountSpec entity) => new()
+    protected override AccountSpecResp ToResponse(Domain.AccountSpec entity) => new()
     {
         Id = entity.Id,
         Group = entity.Group,

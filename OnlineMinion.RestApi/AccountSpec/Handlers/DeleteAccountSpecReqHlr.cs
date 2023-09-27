@@ -7,4 +7,4 @@ namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class DeleteAccountSpecReqHlr(OnlineMinionDbContext dbContext)
-    : BaseDeleteModelReqHlr<DeleteAccountSpecReq, Data.Entities.AccountSpec>(dbContext);
+    : BaseDeleteModelReqHlr<DeleteAccountSpecReq, Domain.AccountSpec>(dbContext);

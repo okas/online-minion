@@ -1,9 +1,9 @@
 using EntityFramework.Exceptions.Common;
 using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Data.Entities;
-using OnlineMinion.Data.Entities.Shared;
 using OnlineMinion.Data.Exceptions;
+using OnlineMinion.Domain;
+using OnlineMinion.Domain.Shared;
 
 namespace OnlineMinion.Data;
 

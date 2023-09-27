@@ -8,9 +8,9 @@ namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class CheckUniqueExistingAccountSpecReqHlr(OnlineMinionDbContext dbContext)
-    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueExistingReq, Data.Entities.AccountSpec>(dbContext)
+    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueExistingReq, Domain.AccountSpec>(dbContext)
 {
-    protected override Expression<Func<Data.Entities.AccountSpec, bool>> GetConflictPredicate(
+    protected override Expression<Func<Domain.AccountSpec, bool>> GetConflictPredicate(
         CheckAccountSpecUniqueExistingReq rq
     ) =>
         entity => entity.Name == rq.MemberValue && entity.Id != rq.OwnId;
