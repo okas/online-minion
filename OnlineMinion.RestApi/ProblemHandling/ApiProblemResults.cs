@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using ErrorOr;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -55,24 +54,17 @@ public static class ApiProblemResults
                 Title = error.Code,
                 Detail = error.Description,
                 Instance = instanceUrl,
-                Extensions = error.Dictionary is not null
-                    ? error.Dictionary
-                    : ReadOnlyDictionary<string, object?>.Empty,
+                Extensions = error.Dictionary ?? new(StringComparer.OrdinalIgnoreCase),
             },
         };
 
         return TypedResults.Problem(problemDetails);
     }
 
-    private static IDictionary<string, string[]> ConvertErrors(Dictionary<string, object?>? errorMetadata)
-    {
-        if (errorMetadata is null)
-        {
-            return ReadOnlyDictionary<string, string[]>.Empty;
-        }
-
-        return errorMetadata.ToDictionary(pair => pair.Key, ConvertValueToArray);
-    }
+    private static Dictionary<string, string[]> ConvertErrors(Dictionary<string, object?>? errorMetadata) =>
+        errorMetadata is null
+            ? new(StringComparer.OrdinalIgnoreCase)
+            : errorMetadata.ToDictionary(pair => pair.Key, ConvertValueToArray, StringComparer.OrdinalIgnoreCase);
 
     private static string[] ConvertValueToArray(KeyValuePair<string, object?> pair) =>
     (
