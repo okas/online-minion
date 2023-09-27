@@ -1,0 +1,2 @@
+GET {{host}}/api/currency-info
+api-ver: 1
