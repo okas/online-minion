@@ -63,7 +63,7 @@ public partial class TransactionCreditsPage
     protected override CreateTransactionCreditReq ConvertCreateVMToReq(ICreateCommand reqOrVM) =>
         ((CreateTransactionCreditVM)reqOrVM).ToCommand();
 
-    private PaymentSpecDescriptorResp GetVMDependencies(int id) =>
+    private PaymentSpecDescriptorResp GetVMDependencies(Guid id) =>
         _paymentDescriptorViewModels.Single(vm => vm.Id == id);
 
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>

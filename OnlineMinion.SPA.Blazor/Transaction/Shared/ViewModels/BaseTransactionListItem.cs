@@ -5,7 +5,7 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Shared.ViewModels;
 
 /// <param name="PaymentInstrument">NB! It is important too keep member name, so that API communication queries work.</param>
 public abstract record BaseTransactionListItem(
-    int                       Id,
+    Guid                      Id,
     DateOnly                  Date,
     decimal                   Amount,
     string                    Subject,

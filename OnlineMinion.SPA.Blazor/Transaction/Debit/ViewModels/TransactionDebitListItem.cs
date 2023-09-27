@@ -9,7 +9,7 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 /// <inheritdoc />
 /// <param name="AccountSpec">NB! It is important too keep member name, so that API communication queries work.</param>
 public sealed record TransactionDebitListItem(
-    int                       Id,
+    Guid                      Id,
     decimal                   Fee,
     DateOnly                  Date,
     decimal                   Amount,

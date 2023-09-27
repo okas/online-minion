@@ -1,8 +1,8 @@
 namespace OnlineMinion.Contracts.Transactions.Debit;
 
 public abstract class BaseUpsertTransactionDebitReqData(
-        int      paymentInstrumentId,
-        int      accountSpecId,
+        Guid     paymentInstrumentId,
+        Guid     accountSpecId,
         decimal  fee,
         DateOnly date,
         decimal  amount,
@@ -12,7 +12,7 @@ public abstract class BaseUpsertTransactionDebitReqData(
     )
     : BaseUpsertTransactionReqData(paymentInstrumentId, date, amount, subject, party, tags)
 {
-    public int AccountSpecId { get; set; } = accountSpecId;
+    public Guid AccountSpecId { get; set; } = accountSpecId;
 
     public decimal Fee { get; set; } = fee;
 }

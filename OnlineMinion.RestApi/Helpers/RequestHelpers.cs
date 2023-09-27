@@ -14,7 +14,7 @@ public static class RequestHelpers
     /// <param name="req">Request body as <see cref="IHasId" /></param>
     /// <param name="id">Value from route parameter.</param>
     /// <returns></returns>
-    public static ValidationProblem? CheckId(this IHasId req, int id)
+    public static ValidationProblem? CheckId(this IHasId req, Guid id)
     {
         if (id == req.Id)
         {

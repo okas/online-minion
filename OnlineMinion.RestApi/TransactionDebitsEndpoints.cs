@@ -28,14 +28,14 @@ public class TransactionDebitsEndpoints : ICommonCrudEndpoints, ICommonPagingInf
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<TransactionDebitResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetTransactionDebitByIdReq, TransactionDebitResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetTransactionDebitByIdReq, TransactionDebitResp>)
             .WithName(V1GetTransactDebitById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdateTransactionDebitReq>)
+        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdateTransactionDebitReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeleteTransactionDebitReq>)
+        apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeleteTransactionDebitReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetTransactionDebitPagingMetaInfoReq>)

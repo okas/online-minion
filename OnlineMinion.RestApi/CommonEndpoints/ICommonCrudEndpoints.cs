@@ -96,7 +96,7 @@ internal interface ICommonCrudEndpoints
 
     /// <remarks>Needs metadata registration for <see cref="ResourceLinkGeneratorMetaData" />!</remarks>
     public static async ValueTask<Results<NoContent, ValidationProblem, ProblemHttpResult>> Update<TRequest>(
-        int                   id,
+        Guid                  id,
         TRequest              rq,
         ISender               sender,
         ResourceLinkGenerator linkGen,

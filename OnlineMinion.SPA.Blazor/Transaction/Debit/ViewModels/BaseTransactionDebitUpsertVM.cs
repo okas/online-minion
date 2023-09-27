@@ -17,8 +17,8 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 /// <param name="party"></param>
 /// <param name="tags"></param>
 public abstract class BaseTransactionDebitUpsertVM(
-    int      paymentInstrumentId,
-    int      accountSpecId,
+    Guid     paymentInstrumentId,
+    Guid     accountSpecId,
     decimal  fee,
     DateTime date,
     decimal  amount,

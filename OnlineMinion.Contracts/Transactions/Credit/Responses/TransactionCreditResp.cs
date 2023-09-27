@@ -1,8 +1,8 @@
 namespace OnlineMinion.Contracts.Transactions.Credit.Responses;
 
 public sealed record TransactionCreditResp(
-    int      Id,
-    int      PaymentInstrumentId,
+    Guid     Id,
+    Guid     PaymentInstrumentId,
     DateOnly Date,
     decimal  Amount,
     string   Subject,

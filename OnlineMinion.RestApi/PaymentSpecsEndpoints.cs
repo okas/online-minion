@@ -31,14 +31,14 @@ public class PaymentSpecsEndpoints
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<PaymentSpecResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetPaymentSpecByIdReq, PaymentSpecResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetPaymentSpecByIdReq, PaymentSpecResp>)
             .WithName(V1GetPaymentSpecById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdatePaymentSpecReq>)
+        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeletePaymentSpecReq>)
+        apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeletePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetPaymentSpecPagingMetaInfoReq>)

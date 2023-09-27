@@ -39,14 +39,14 @@ public class AccountSpecsEndpoints
         apiV1.MapGet("/", GetSomePaged<AccountSpecResp>) // TODO: Custom, throttling response streaming
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetAccountSpecByIdReq, AccountSpecResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetAccountSpecByIdReq, AccountSpecResp>)
             .WithName(V1GetAccountSpecById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdateAccountSpecReq>)
+        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdateAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeleteAccountSpecReq>)
+        apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeleteAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetAccountSpecPagingMetaInfoReq>)

@@ -12,7 +12,7 @@ public abstract class BaseTransaction : BaseEntity
 
     public string? Tags { get; set; }
 
-    public required int PaymentInstrumentId { get; set; }
+    public required Guid PaymentInstrumentId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

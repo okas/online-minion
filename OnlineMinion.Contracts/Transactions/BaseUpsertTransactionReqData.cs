@@ -1,7 +1,7 @@
 namespace OnlineMinion.Contracts.Transactions;
 
 public abstract class BaseUpsertTransactionReqData(
-    int      paymentInstrumentId,
+    Guid     paymentInstrumentId,
     DateOnly date,
     decimal  amount,
     string   subject,
@@ -9,7 +9,7 @@ public abstract class BaseUpsertTransactionReqData(
     string?  tags
 )
 {
-    public required int PaymentInstrumentId { get; set; } = paymentInstrumentId;
+    public required Guid PaymentInstrumentId { get; set; } = paymentInstrumentId;
 
     public DateOnly Date { get; set; } = date;
 

@@ -10,6 +10,6 @@ public class HasIntIdValidator : AbstractValidator<IHasId>
     public HasIntIdValidator()
     {
         RuleFor(x => x.Id)
-            .GreaterThanOrEqualTo(1);
+            .NotEmpty();
     }
 }

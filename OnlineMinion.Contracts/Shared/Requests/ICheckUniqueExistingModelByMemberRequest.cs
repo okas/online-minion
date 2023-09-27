@@ -7,5 +7,5 @@ public interface ICheckUniqueExistingModelByMemberRequest : IRequest<ErrorOr<Suc
 {
     string MemberValue { get; init; }
 
-    int OwnId { get; init; }
+    Guid OwnId { get; init; }
 }

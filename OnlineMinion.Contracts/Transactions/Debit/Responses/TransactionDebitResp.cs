@@ -1,9 +1,9 @@
 namespace OnlineMinion.Contracts.Transactions.Debit.Responses;
 
 public sealed record TransactionDebitResp(
-    int      Id,
-    int      PaymentInstrumentId,
-    int      AccountSpecId,
+    Guid     Id,
+    Guid     PaymentInstrumentId,
+    Guid     AccountSpecId,
     decimal  Fee,
     DateOnly Date,
     decimal  Amount,

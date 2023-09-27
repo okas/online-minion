@@ -8,5 +8,5 @@ public sealed class CreateAccountSpecReq(string name, string group, string? desc
 {
     public CreateAccountSpecReq() : this(string.Empty, string.Empty, null) { }
 
-    public AccountSpecResp ToResponse(int id) => new(id, Name, Group, Description);
+    public AccountSpecResp ToResponse(Guid id) => new(id, Name, Group, Description);
 }

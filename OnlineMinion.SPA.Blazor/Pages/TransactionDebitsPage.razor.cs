@@ -73,8 +73,8 @@ public partial class TransactionDebitsPage
         ((CreateTransactionDebitVM)reqOrVM).ToCommand();
 
     private (PaymentSpecDescriptorResp paymentSpec, AccountSpecDescriptorResp accountSpec) GetVMDependencies(
-        int paymentSpecId,
-        int accountSpecId
+        Guid paymentSpecId,
+        Guid accountSpecId
     ) => (
         _paymentDescriptorViewModels.Single(vm => vm.Id == paymentSpecId),
         _accountDescriptorViewModels.Single(vm => vm.Id == accountSpecId)

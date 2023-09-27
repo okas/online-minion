@@ -11,7 +11,7 @@ public interface ICommonValidationEndpoints
 {
     public const string NewNameValidationRoute = "validate-available-name/{memberValue:required:length(2,50)}";
 
-    public const string ExistingNameValidationRoute = $"{NewNameValidationRoute}/except-id/{{ownId:int}}";
+    public const string ExistingNameValidationRoute = $"{NewNameValidationRoute}/except-id/{{ownid:guid}}";
 
     //TODO: copy docs from other endpoints
 

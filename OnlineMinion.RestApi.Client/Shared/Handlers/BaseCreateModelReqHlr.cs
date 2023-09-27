@@ -36,7 +36,7 @@ internal abstract class BaseCreateModelReqHlr<TRequest>(HttpClient apiClient, Ur
                     .ReadFromJsonAsync<ModelIdResp>(ct)
                     .ConfigureAwait(false);
 
-                return result is { Id: > 0, }
+                return result is not null && result.Id != Guid.Empty
                     ? result
                     : Error.Validation($"Invalid message response, Id is not set {result?.Id}");
             }

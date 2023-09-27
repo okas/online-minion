@@ -1,3 +1,3 @@
 namespace OnlineMinion.Contracts.AccountSpec.Responses;
 
-public record struct AccountSpecDescriptorResp(int Id, string Name) : IHasId;
+public record struct AccountSpecDescriptorResp(Guid Id, string Name) : IHasId;

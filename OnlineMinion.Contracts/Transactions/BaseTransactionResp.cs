@@ -1,8 +1,8 @@
 namespace OnlineMinion.Contracts.Transactions;
 
 public abstract record BaseTransactionResp(
-        int      Id,
-        int      PaymentInstrumentId,
+        Guid     Id,
+        Guid     PaymentInstrumentId,
         DateOnly Date,
         decimal  Amount,
         string   Subject,

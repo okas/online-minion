@@ -5,9 +5,9 @@ namespace OnlineMinion.Contracts.Transactions.Debit.Requests;
 
 [method: SetsRequiredMembers]
 public sealed class UpdateTransactionDebitReq(
-        int      id,
-        int      paymentInstrumentId,
-        int      accountSpecId,
+        Guid     paymentInstrumentId,
+        Guid     id,
+        Guid     accountSpecId,
         decimal  fee,
         DateOnly date,
         decimal  amount,
@@ -18,5 +18,5 @@ public sealed class UpdateTransactionDebitReq(
     : BaseUpsertTransactionDebitReqData(paymentInstrumentId, accountSpecId, fee, date, amount, subject, party, tags),
         IUpdateCommand
 {
-    public int Id { get; } = id;
+    public Guid Id { get; } = id;
 }

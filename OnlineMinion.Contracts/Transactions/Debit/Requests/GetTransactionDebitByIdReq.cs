@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using JetBrains.Annotations;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
 
 namespace OnlineMinion.Contracts.Transactions.Debit.Requests;
 
-public sealed record GetTransactionDebitByIdReq([Required] int Id) : IGetByIdRequest<TransactionDebitResp>;
+[UsedImplicitly]
+public sealed record GetTransactionDebitByIdReq([Required] Guid Id) : IGetByIdRequest<TransactionDebitResp>;

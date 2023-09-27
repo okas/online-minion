@@ -7,7 +7,7 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 
 /// <inheritdoc />
 public sealed record TransactionCreditListItem(
-    int                       Id,
+    Guid                      Id,
     DateOnly                  Date,
     decimal                   Amount,
     string                    Subject,

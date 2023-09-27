@@ -6,4 +6,4 @@ using OnlineMinion.Contracts.Shared.Requests;
 namespace OnlineMinion.Contracts.AccountSpec.Requests;
 
 [UsedImplicitly]
-public record GetAccountSpecByIdReq([Required] int Id) : IGetByIdRequest<AccountSpecResp>;
+public record GetAccountSpecByIdReq([Required] Guid Id) : IGetByIdRequest<AccountSpecResp>;
