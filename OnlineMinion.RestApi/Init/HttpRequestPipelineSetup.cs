@@ -10,8 +10,12 @@ public static class HttpRequestPipelineSetup
     {
         app.UseCors();
 
-        app.UseExceptionHandler("/error");
         app.UseExceptionHandler();
+
+        if (app.Environment.IsDevelopment())
+        {
+            ErrorEndpoints.MapDevEndpoints(app);
+        }
 
         CurrencyInfoEndpoints.MapAll(app);
         AccountSpecsEndpoints.MapAll(app);

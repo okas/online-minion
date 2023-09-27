@@ -1,12 +1,33 @@
-###
-HEAD https://localhost:7068/api/v1/AccountSpecs
+HEAD {{host}}/api/account-specs
+api-ver: 1
 
 ###
-POST https://localhost:7068/api/v1/AccountSpecs
+GET {{host}}/api/account-specs?page=1&size=100
+api-ver: 1
+
+<> 2023-09-26T144518.200.json
+
+###
+POST {{host}}/api/account-specs
+api-ver: 1
 Content-Type: application/json
 
 {
-  "name": "string1",
-  "group": "string",
-  "description": "string"
+  "name": "test1",
+  "group": "g1",
+  "description": "a nice description from test"
 }
+
+<> 2023-09-26T144548.201.json
+<> 2023-09-26T144537.409.json
+
+###
+GET {{host}}/api/account-specs/1341
+api-ver: 1
+
+<> 2023-09-26T144716.200.json
+<> 2023-09-26T144651.200.json
+
+###
+DELETE {{host}}/api/account-specs/1341
+api-ver: 1

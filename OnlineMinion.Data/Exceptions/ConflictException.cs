@@ -138,6 +138,6 @@ public class ConflictException(string message, UniqueConstraintException ex) : E
     public record ErrorDescriptor(object? InstanceId)
     {
         public IDictionary<string, string[]> Details { get; } =
-            new Dictionary<string, string[]>(StringComparer.Ordinal);
+            new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
     }
 }
