@@ -4,4 +4,4 @@ using OnlineMinion.Contracts.Transactions.Credit.Responses;
 
 namespace OnlineMinion.Contracts.Transactions.Credit.Requests;
 
-public sealed record GetTransactionCreditByIdReq([Required] int Id) : IGetByIdRequest<TransactionCreditResp?>;
+public sealed record GetTransactionCreditByIdReq([Required] int Id) : IGetByIdRequest<TransactionCreditResp>;

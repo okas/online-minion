@@ -6,36 +6,42 @@ namespace OnlineMinion.RestApi.Configuration;
 
 public class ApiCorsOptionsConfigurator : IConfigureOptions<CorsOptions>
 {
-    public const string ExposedHeadersPagingMetaInfo = "ExposedHeadersPagingMetaInfo";
+    public const string ExposedHeadersPagingMetaInfoPolicy = nameof(ExposedHeadersPagingMetaInfoPolicy);
 
-    public const string DefaultPolicyName = "BasePolicy";
+    public const string BasePolicy = nameof(BasePolicy);
 
     public void Configure(CorsOptions options)
     {
-        var basePolicy = GetOrCreateDefaultPolicy(options);
-
-        var specificPolicyBuilder = new CorsPolicyBuilder(basePolicy)
-            .WithExposedHeaders(
-                CustomHeaderNames.PagingRows,
-                CustomHeaderNames.PagingSize,
-                CustomHeaderNames.PagingPages
-            );
-
-        options.DefaultPolicyName = DefaultPolicyName;
-
-        options.AddPolicy(ExposedHeadersPagingMetaInfo, specificPolicyBuilder.Build());
+        var basePolicy = GetOrSetupDefaultPolicy(options);
+        SetupPagingMetaInfoPolicy(options, basePolicy);
     }
 
-    private static CorsPolicy GetOrCreateDefaultPolicy(CorsOptions options)
+    private static CorsPolicy GetOrSetupDefaultPolicy(CorsOptions options)
     {
-        if (options.GetPolicy(DefaultPolicyName) is { } basePolicy)
+        options.DefaultPolicyName = BasePolicy;
+
+        if (options.GetPolicy(BasePolicy) is { } basePolicy)
         {
             return basePolicy;
         }
 
         basePolicy = new();
+
         options.AddDefaultPolicy(basePolicy);
 
         return basePolicy;
+    }
+
+    private static void SetupPagingMetaInfoPolicy(CorsOptions options, CorsPolicy basePolicy)
+    {
+        var policy = new CorsPolicyBuilder(basePolicy)
+            .WithExposedHeaders(
+                CustomHeaderNames.PagingRows,
+                CustomHeaderNames.PagingSize,
+                CustomHeaderNames.PagingPages
+            )
+            .Build();
+
+        options.AddPolicy(ExposedHeadersPagingMetaInfoPolicy, policy);
     }
 }

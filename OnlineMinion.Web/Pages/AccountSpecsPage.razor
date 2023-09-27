@@ -20,8 +20,12 @@
   private static class Str
   {
     public const string PageTitle = "Account Specs";
-    public const string MainHeading = "Account Specifications";
-    public const string MainDescription = $"Manage {MainHeading}";
+    public const string MainHeading = "Manage Account Specifications";
+
+    public const string MainDescription =
+      @"For streaming request response demo purposes, API server sends each item after 20ms delay. Page is configured to add each individual item into the table as soon as it arrives from server.
+        It means that you can roghly see, how the table is populated with data as it arrives from server. To make this loading visible, Blazor is set to refresh the pages state after each item is added.";
+
     public const string Name = nameof(AccountSpecResp.Name);
     public const string Group = nameof(AccountSpecResp.Group);
     public const string Description = nameof(AccountSpecResp.Description);
@@ -33,7 +37,7 @@
 
 <main>
   <RadzenText class="rz-mt-4" Text="@Str.MainHeading" TextStyle="TextStyle.H3"/>
-  <RadzenText Text="@Str.MainDescription"/>
+  <RadzenText Style="white-space: pre-line;" Text="@Str.MainDescription"/>
   <RadzenDataGridWrapper
       AddClick="@OnAddHandler"
       Data="@ViewModels"

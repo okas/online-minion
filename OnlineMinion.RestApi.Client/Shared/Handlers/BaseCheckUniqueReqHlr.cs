@@ -5,7 +5,8 @@ using MediatR;
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
 internal abstract class BaseCheckUniqueReqHlr<TRequest>(HttpClient apiClient)
-    : IApiClientRequestHandler<TRequest, Success> where TRequest : IRequest<ErrorOr<Success>>
+    : IApiClientRequestHandler<TRequest, Success>
+    where TRequest : IRequest<ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(TRequest rq, CancellationToken ct)
     {

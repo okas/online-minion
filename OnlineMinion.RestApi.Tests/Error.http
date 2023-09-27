@@ -1,0 +1,2 @@
+GET {{host}}/api/error-tests/false
+api-ver:1

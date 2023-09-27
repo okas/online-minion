@@ -1,6 +1,5 @@
-using ErrorOr;
-using MediatR;
+using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 
-public record CheckPaymentSpecUniqueNewReq(string Name) : IRequest<ErrorOr<Success>>;
+public record CheckPaymentSpecUniqueNewReq(string MemberValue) : ICheckUniqueNewModelByMemberRequest;

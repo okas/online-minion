@@ -1,6 +1,6 @@
-using ErrorOr;
-using MediatR;
+using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.Contracts.PaymentSpec.Requests;
 
-public record CheckPaymentSpecUniqueExistingReq(string Name, int ExceptId) : IRequest<ErrorOr<Success>>;
+public record CheckPaymentSpecUniqueExistingReq(string MemberValue, int OwnId) :
+    ICheckUniqueExistingModelByMemberRequest;

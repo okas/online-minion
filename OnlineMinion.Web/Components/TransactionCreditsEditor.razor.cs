@@ -7,8 +7,6 @@ namespace OnlineMinion.Web.Components;
 
 public partial class TransactionCreditsEditor
 {
-    private FieldIdentifier _dateFiledIdentifier;
-
     [Parameter]
     public UpsertEditorWrapper<BaseTransactionCreditUpsertVM> WrapperRef { get; set; } = default!;
 

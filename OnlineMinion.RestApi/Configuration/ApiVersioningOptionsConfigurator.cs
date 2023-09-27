@@ -1,5 +1,7 @@
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using OnlineMinion.Contracts;
 
 namespace OnlineMinion.RestApi.Configuration;
 
@@ -7,15 +9,12 @@ public class ApiVersioningOptionsConfigurator : IConfigureOptions<ApiVersioningO
 {
     public void Configure(ApiVersioningOptions options)
     {
-        options.AssumeDefaultVersionWhenUnspecified = true;
-
+        options.AssumeDefaultVersionWhenUnspecified = false;
+        options.UnsupportedApiVersionStatusCode = StatusCodes.Status400BadRequest;
         options.ReportApiVersions = true;
 
         options.ApiVersionReader = ApiVersionReader.Combine(
-            new QueryStringApiVersionReader("api-ver"),
-            new HeaderApiVersionReader("X-Version"),
-            new MediaTypeApiVersionReader("ver"),
-            new UrlSegmentApiVersionReader()
+            new HeaderApiVersionReader(CustomHeaderNames.ApiVersion)
         );
     }
 }

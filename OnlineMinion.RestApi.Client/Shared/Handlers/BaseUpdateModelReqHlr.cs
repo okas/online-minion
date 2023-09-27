@@ -31,6 +31,7 @@ internal abstract class BaseUpdateModelReqHlr<TRequest>(HttpClient apiClient, Ur
         UriKind.RelativeOrAbsolute
     );
 
+    // TODO: Move logging to MediatR pipeline
     private async Task<ErrorOr<Updated>> HandleFailResponse(
         HttpResponseMessage message,
         TRequest            rq,

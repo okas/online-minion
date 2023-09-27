@@ -20,9 +20,8 @@ public static class TypeMemberHelpers
             throw new ArgumentException("Expression body must be a member expression", nameof(expression));
         }
 
-        var body = memberExpression.ToString();
-        var startIdx = body.IndexOf('.', StringComparison.Ordinal) + 1;
+        var body = memberExpression.ToString().AsSpan();
 
-        return body[startIdx..];
+        return body.Slice(body.IndexOf('.') + 1).ToString();
     }
 }

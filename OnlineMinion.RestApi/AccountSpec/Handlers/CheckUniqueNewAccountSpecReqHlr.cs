@@ -13,5 +13,5 @@ internal sealed class CheckUniqueNewAccountSpecReqHlr(OnlineMinionDbContext dbCo
     protected override Expression<Func<Data.Entities.AccountSpec, bool>> GetConflictPredicate(
         CheckAccountSpecUniqueNewReq rq
     ) =>
-        entity => entity.Name == rq.Name;
+        entity => entity.Name == rq.MemberValue;
 }

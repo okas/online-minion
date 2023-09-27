@@ -14,5 +14,5 @@ internal sealed class CheckUniqueExistingPaymentSpecReqHlr(OnlineMinionDbContext
     protected override Expression<Func<BasePaymentSpec, bool>> GetConflictPredicate(
         CheckPaymentSpecUniqueExistingReq rq
     ) =>
-        entity => entity.Name == rq.Name && entity.Id != rq.ExceptId;
+        entity => entity.Name == rq.MemberValue && entity.Id != rq.OwnId;
 }

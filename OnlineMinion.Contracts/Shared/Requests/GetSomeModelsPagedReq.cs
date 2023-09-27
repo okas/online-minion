@@ -1,7 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ErrorOr;
-using MediatR;
-using OnlineMinion.Contracts.Shared.Responses;
 
 namespace OnlineMinion.Contracts.Shared.Requests;
 
@@ -16,4 +13,4 @@ public record GetSomeModelsPagedReq<TResponse>(
     string?             Sort   = default,
     [Range(1, 50)]  int Page   = 1,
     [Range(1, 100)] int Size   = 10
-) : IRequest<ErrorOr<PagedStreamResult<TResponse>>>, IQueryParams;
+) : IGetStreamedPagedRequest<TResponse>;

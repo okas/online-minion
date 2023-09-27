@@ -9,9 +9,9 @@ namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal class GetPaymentSpecByIdReqHlr(OnlineMinionDbContext dbContext)
-    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, BasePaymentSpec, PaymentSpecResp?>(dbContext)
+    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, BasePaymentSpec, PaymentSpecResp>(dbContext)
 {
-    protected override PaymentSpecResp? ToResponse(BasePaymentSpec entity) => new()
+    protected override PaymentSpecResp ToResponse(BasePaymentSpec entity) => new()
     {
         Id = entity.Id,
         Name = entity.Name,

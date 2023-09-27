@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 
 namespace OnlineMinion.RestApi.Configuration;
@@ -8,7 +8,6 @@ public class ApiExplorerOptionsConfigurator : IConfigureOptions<ApiExplorerOptio
     public void Configure(ApiExplorerOptions options)
     {
         options.GroupNameFormat = "'v'VVV";
-
-        options.SubstituteApiVersionInUrl = true;
+        options.SubstituteApiVersionInUrl = false;
     }
 }

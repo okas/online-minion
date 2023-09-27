@@ -1,7 +1,6 @@
-using System.Globalization;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
-using OnlineMinion.RestApi;
+using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace OnlineMinion.Application.Swagger;
@@ -10,7 +9,7 @@ public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVers
     : IConfigureOptions<SwaggerUIOptions>
 {
     private readonly string _apiAssemblyName =
-        typeof(AccountSpecsController).Assembly.GetName().Name
+        typeof(ServicesSetup).Assembly.GetName().Name
         ?? throw new InvalidOperationException();
 
     public void Configure(SwaggerUIOptions options)
@@ -22,11 +21,11 @@ public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVers
 
         // Allows multiple versions of our routes.
         // .Reverse(), first shown most recent version.
-        foreach (var versionDescription in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
         {
             options.SwaggerEndpoint(
-                $"/swagger/{versionDescription.GroupName}/swagger.json",
-                $"{_apiAssemblyName} - {versionDescription.GroupName.ToUpper(CultureInfo.InvariantCulture)}"
+                $"/{options.RoutePrefix}/{description.GroupName}/swagger.json",
+                $"{_apiAssemblyName} - {description.GroupName}"
             );
         }
 

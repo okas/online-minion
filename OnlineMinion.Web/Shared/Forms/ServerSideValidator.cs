@@ -24,12 +24,12 @@ public class ServerSideValidator : ComponentBase
 
         _messageStore = new(CurrentEditContext);
 
-        CurrentEditContext.OnValidationRequested += (s, e) => _messageStore.Clear();
+        CurrentEditContext.OnValidationRequested += (_, _) => _messageStore.Clear();
 
-        CurrentEditContext.OnFieldChanged += (s, e) => _messageStore.Clear(e.FieldIdentifier);
+        CurrentEditContext.OnFieldChanged += (_, e) => _messageStore.Clear(e.FieldIdentifier);
     }
 
-    public void DisplayErrors(IDictionary<string, IEnumerable<object>> errors)
+    public void DisplayErrors(IDictionary<string, IEnumerable<object?>> errors)
     {
         foreach (var (field, messages) in errors)
         {
@@ -49,7 +49,7 @@ public class ServerSideValidator : ComponentBase
         CurrentEditContext.NotifyValidationStateChanged();
     }
 
-    public static string GetFieldName(string rawKey) => rawKey.Split('.')[^1];
+    public static string GetFieldName(string rawKey) => rawKey.AsSpan(rawKey.LastIndexOf('.') + 1).ToString();
 
     private static string GetErrorMessage(object? rawMessage) => rawMessage?.ToString() ?? "#error";
 }
