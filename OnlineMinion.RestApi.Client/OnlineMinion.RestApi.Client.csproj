@@ -43,4 +43,9 @@
         <Folder Include="Transactions\Common\"/>
     </ItemGroup>
 
+
+    <ItemGroup>
+        <None Remove="Directory.Build.props"/>
+    </ItemGroup>
+
 </Project>
