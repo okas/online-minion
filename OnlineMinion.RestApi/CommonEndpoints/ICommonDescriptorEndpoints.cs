@@ -26,7 +26,7 @@ public interface ICommonDescriptorEndpoints
     /// <returns></returns>
     public static async ValueTask<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>>
         GetAsDescriptors<TResponse>(ISender sender, CancellationToken ct)
-        where TResponse : IHasIntId
+        where TResponse : IHasId
     {
         var rq = new GetSomeModelDescriptorsReq<TResponse>();
         var result = await sender.Send(rq, ct);

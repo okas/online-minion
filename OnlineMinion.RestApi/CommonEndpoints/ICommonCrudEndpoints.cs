@@ -54,7 +54,7 @@ internal interface ICommonCrudEndpoints
         HttpResponse                                    httpResponse,
         CancellationToken                               ct
     )
-        where TResponse : IHasIntId
+        where TResponse : IHasId
     {
         var result = await sender.Send(rq, ct);
 

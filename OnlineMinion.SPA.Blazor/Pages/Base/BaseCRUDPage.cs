@@ -23,8 +23,8 @@ namespace OnlineMinion.SPA.Blazor.Pages.Base;
 /// </typeparam>
 /// <typeparam name="TBaseUpsert"><b>class</b> constrained, because it is used in form, must be mutable.</typeparam>
 public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentWithCancellationToken
-    where TVModel : IHasIntId
-    where TResponse : IHasIntId
+    where TVModel : IHasId
+    where TResponse : IHasId
     where TBaseUpsert : class
 {
     private readonly string _respModelName;

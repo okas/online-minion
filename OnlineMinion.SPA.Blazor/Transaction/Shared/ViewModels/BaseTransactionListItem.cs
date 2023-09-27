@@ -12,4 +12,4 @@ public abstract record BaseTransactionListItem(
     string                    Party,
     string?                   Tags,
     PaymentSpecDescriptorResp PaymentInstrument
-) : IHasIntId;
+) : IHasId;

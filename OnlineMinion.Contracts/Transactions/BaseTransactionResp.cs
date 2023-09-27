@@ -9,4 +9,4 @@ public abstract record BaseTransactionResp(
         string   Party,
         string?  Tags
     )
-    : IHasIntId;
+    : IHasId;

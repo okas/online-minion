@@ -1,6 +1,6 @@
 namespace OnlineMinion.Contracts;
 
-public interface IHasIntId
+public interface IHasId
 {
     int Id { get; }
 }
