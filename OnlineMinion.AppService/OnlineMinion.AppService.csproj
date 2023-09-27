@@ -53,7 +53,7 @@
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
         <ProjectReference Include="..\OnlineMinion.RestApi\OnlineMinion.RestApi.csproj"/>
-        <ProjectReference Include="..\OnlineMinion.Data\OnlineMinion.Data.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.DataStore\OnlineMinion.DataStore.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

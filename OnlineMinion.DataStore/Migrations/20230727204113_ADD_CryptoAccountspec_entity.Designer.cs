@@ -9,18 +9,18 @@ using OnlineMinion.Data;
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    [Migration("20230607225221_Add_HiLobased_PK_generation")]
-    partial class Add_HiLobased_PK_generation
+    [Migration("20230727204113_ADD_CryptoAccountspec_entity")]
+    partial class ADD_CryptoAccountspec_entity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-preview.3.23174.2")
+                .HasAnnotation("ProductVersion", "8.0.0-preview.6.23329.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
@@ -159,6 +159,21 @@ namespace OnlineMinion.Data.Migrations
                     b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
 
                     b.HasDiscriminator().HasValue("CashAccountSpec");
+                });
+
+            modelBuilder.Entity("OnlineMinion.Data.Entities.CryptoAccountSpec", b =>
+                {
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
+
+                    b.Property<string>("ExchangeName")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
+
+                    b.Property<bool>("IsFiat")
+                        .HasColumnType("bit");
+
+                    b.HasDiscriminator().HasValue("CryptoAccountSpec");
                 });
 
             modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionCredit", b =>

@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Data;
+using OnlineMinion.DataStore;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;

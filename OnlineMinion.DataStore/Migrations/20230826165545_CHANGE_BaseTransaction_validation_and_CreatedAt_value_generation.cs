@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     /// <inheritdoc />
     public partial class CHANGE_BaseTransaction_validation_and_CreatedAt_value_generation : Migration

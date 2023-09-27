@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     /// <inheritdoc />
     public partial class CHANGE_Entity_and_member_renames : Migration

@@ -9,7 +9,7 @@ using OnlineMinion.Data;
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
     [Migration("20230831224448_FIX_TransactionDebit_to_AccountSpec_relationship")]

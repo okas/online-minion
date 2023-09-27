@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace OnlineMinion.Data.Exceptions;
+namespace OnlineMinion.DataStore.Exceptions;
 
 public class ConflictException(string message, UniqueConstraintException ex) : Exception(message)
 {

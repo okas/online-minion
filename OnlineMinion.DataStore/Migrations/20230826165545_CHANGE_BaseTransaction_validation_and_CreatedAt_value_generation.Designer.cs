@@ -9,7 +9,7 @@ using OnlineMinion.Data;
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
     [Migration("20230826165545_CHANGE_BaseTransaction_validation_and_CreatedAt_value_generation")]

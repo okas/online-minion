@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Data;
+using OnlineMinion.DataStore;
 using OnlineMinion.Domain.Shared;
 using OnlineMinion.RestApi.Shared.Handlers;
 

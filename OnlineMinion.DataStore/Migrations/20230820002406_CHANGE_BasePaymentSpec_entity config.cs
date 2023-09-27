@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     /// <inheritdoc />
     public partial class CHANGE_BasePaymentSpec_entityconfig : Migration

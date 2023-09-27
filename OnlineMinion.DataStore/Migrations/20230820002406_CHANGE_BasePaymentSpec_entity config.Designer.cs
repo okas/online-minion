@@ -9,11 +9,11 @@ using OnlineMinion.Data;
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    [Migration("20230831224004_FIX_BaseTransaction_to_BasePaymentSpec_relationship")]
-    partial class FIX_BaseTransaction_to_BasePaymentSpec_relationship
+    [Migration("20230820002406_CHANGE_BasePaymentSpec_entity config")]
+    partial class CHANGE_BasePaymentSpec_entityconfig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,37 +28,7 @@ namespace OnlineMinion.Data.Migrations
             modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
                 .IncrementsBy(10);
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.AccountSpec", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Group")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("AccountSpecs");
-                });
-
-            modelBuilder.Entity("OnlineMinion.Data.Entities.Shared.BasePaymentSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Data.BaseEntities.BasePaymentSpec", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,7 +67,7 @@ namespace OnlineMinion.Data.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.Shared.BaseTransaction", b =>
+            modelBuilder.Entity("OnlineMinion.Data.BaseEntities.BaseTransaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +80,6 @@ namespace OnlineMinion.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
 
                     b.Property<DateOnly>("Date")
@@ -130,21 +99,51 @@ namespace OnlineMinion.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Tags")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PaymentInstrumentId");
+                    b.HasIndex("PaymentInstrumentId")
+                        .IsUnique();
 
                     b.ToTable((string)null);
 
                     b.UseTpcMappingStrategy();
                 });
 
+            modelBuilder.Entity("OnlineMinion.Data.Entities.AccountSpec", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AccountSpecs");
+                });
+
             modelBuilder.Entity("OnlineMinion.Data.Entities.BankAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
 
                     b.Property<string>("BankName")
                         .IsRequired()
@@ -161,14 +160,14 @@ namespace OnlineMinion.Data.Migrations
 
             modelBuilder.Entity("OnlineMinion.Data.Entities.CashAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
 
                     b.HasDiscriminator().HasValue("CashAccountSpec");
                 });
 
             modelBuilder.Entity("OnlineMinion.Data.Entities.CryptoExchangeAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BasePaymentSpec");
 
                     b.Property<string>("ExchangeName")
                         .IsRequired()
@@ -183,14 +182,14 @@ namespace OnlineMinion.Data.Migrations
 
             modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionCredit", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BaseTransaction");
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BaseTransaction");
 
                     b.ToTable("TransactionCredits");
                 });
 
             modelBuilder.Entity("OnlineMinion.Data.Entities.TransactionDebit", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Data.Entities.Shared.BaseTransaction");
+                    b.HasBaseType("OnlineMinion.Data.BaseEntities.BaseTransaction");
 
                     b.Property<int>("AccountSpecId")
                         .HasColumnType("int");
@@ -206,11 +205,11 @@ namespace OnlineMinion.Data.Migrations
                     b.ToTable("TransactionDebits");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Data.Entities.Shared.BaseTransaction", b =>
+            modelBuilder.Entity("OnlineMinion.Data.BaseEntities.BaseTransaction", b =>
                 {
-                    b.HasOne("OnlineMinion.Data.Entities.Shared.BasePaymentSpec", "PaymentInstrument")
-                        .WithMany()
-                        .HasForeignKey("PaymentInstrumentId")
+                    b.HasOne("OnlineMinion.Data.BaseEntities.BasePaymentSpec", "PaymentInstrument")
+                        .WithOne()
+                        .HasForeignKey("OnlineMinion.Data.BaseEntities.BaseTransaction", "PaymentInstrumentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

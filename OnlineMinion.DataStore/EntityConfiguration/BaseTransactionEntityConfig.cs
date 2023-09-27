@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnlineMinion.Data.ValueGeneration;
+using OnlineMinion.DataStore.ValueGeneration;
 using OnlineMinion.Domain.Shared;
 
-namespace OnlineMinion.Data.EntityConfiguration;
+namespace OnlineMinion.DataStore.EntityConfiguration;
 
 public class BaseTransactionEntityConfig : IEntityTypeConfiguration<BaseTransaction>
 {

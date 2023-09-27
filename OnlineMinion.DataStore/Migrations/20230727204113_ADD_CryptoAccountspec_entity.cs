@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     /// <inheritdoc />
     public partial class ADD_CryptoAccountspec_entity : Migration

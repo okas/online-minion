@@ -9,18 +9,18 @@ using OnlineMinion.Data;
 
 #nullable disable
 
-namespace OnlineMinion.Data.Migrations
+namespace OnlineMinion.DataStore.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    [Migration("20230820002406_CHANGE_BasePaymentSpec_entity config")]
-    partial class CHANGE_BasePaymentSpec_entityconfig
+    [Migration("20230727212310_CHANGE_Entity_and_member_renames")]
+    partial class CHANGE_Entity_and_member_renames
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-preview.7.23375.4")
+                .HasAnnotation("ProductVersion", "8.0.0-preview.6.23329.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
@@ -52,13 +52,9 @@ namespace OnlineMinion.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Tags")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("PaymentSpecs");
 

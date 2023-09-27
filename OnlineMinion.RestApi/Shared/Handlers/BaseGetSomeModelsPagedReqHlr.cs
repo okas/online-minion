@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.Data;
+using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
