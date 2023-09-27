@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace OnlineMinion.Application.Swagger;
+namespace OnlineMinion.AppService.Swagger;
 
 /// <inheritdoc />
 public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider, IServer server)

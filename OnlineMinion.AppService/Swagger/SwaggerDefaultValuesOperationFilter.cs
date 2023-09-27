@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace OnlineMinion.Application.Swagger;
+namespace OnlineMinion.AppService.Swagger;
 
 /// <summary>
 ///     Represents the OpenAPI/Swashbuckle operation filter used to document information provided, but not used.

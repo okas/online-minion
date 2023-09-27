@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.RestApi", "OnlineMinion.RestApi\OnlineMinion.RestApi.csproj", "{12D75875-E92A-4590-ACF7-C692BD065FCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Application", "OnlineMinion.Application\OnlineMinion.Application.csproj", "{ECE7C0B4-0E4C-4069-BADB-9533E698700C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.AppService", "OnlineMinion.AppService\OnlineMinion.AppService.csproj", "{ECE7C0B4-0E4C-4069-BADB-9533E698700C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Data", "OnlineMinion.Data\OnlineMinion.Data.csproj", "{E5F7CAE6-690A-4B97-8242-DE2FA1872635}"
 EndProject

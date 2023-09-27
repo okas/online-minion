@@ -1,9 +1,8 @@
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
-using OnlineMinion.RestApi.Init;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace OnlineMinion.Application.Swagger;
+namespace OnlineMinion.AppService.Swagger;
 
 public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
     : IConfigureOptions<SwaggerUIOptions>

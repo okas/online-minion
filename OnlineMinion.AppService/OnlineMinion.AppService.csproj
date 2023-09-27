@@ -8,9 +8,8 @@
         <Authors>Lauri Saar</Authors>
         <Company>LS Pro</Company>
         <PublicSign>false</PublicSign>
-        <PackageId>OnlineMinion.Application</PackageId>
+        <PackageId>OnlineMinion.AppService</PackageId>
         <Product>OnlineMinion.Application</Product>
-        <RootNamespace>OnlineMinion.Application</RootNamespace>
         <Copyright>Lauri Saar</Copyright>
     </PropertyGroup>
 
