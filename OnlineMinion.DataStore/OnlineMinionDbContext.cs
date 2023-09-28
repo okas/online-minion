@@ -62,8 +62,6 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.UseHiLo();
-
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineMinionDbContext).Assembly);
     }
 }
