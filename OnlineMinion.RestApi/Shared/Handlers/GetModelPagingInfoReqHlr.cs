@@ -2,17 +2,17 @@ using ErrorOr;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OnlineMinion.Application;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetModelPagingInfoReqHlr<TRequest, TEntity>(
-        OnlineMinionDbContext                                dbContext,
+        IOnlineMinionDbContext                               dbContext,
         ILogger<GetModelPagingInfoReqHlr<TRequest, TEntity>> logger
     )
     : IErrorOrRequestHandler<TRequest, PagingMetaInfo>

@@ -1,12 +1,12 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.AccountSpec.Handlers;
 
 [UsedImplicitly]
-internal sealed class CreateAccountSpecReqHlr(OnlineMinionDbContext dbContext)
+internal sealed class CreateAccountSpecReqHlr(IOnlineMinionDbContext dbContext)
     : BaseCreateModelReqHlr<CreateAccountSpecReq, Domain.AccountSpec>(dbContext)
 {
     protected override Domain.AccountSpec ToEntity(CreateAccountSpecReq rq) =>

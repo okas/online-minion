@@ -9,11 +9,11 @@ namespace OnlineMinion.Common.AccountSpec.Validators;
 public class UpdateAccountSpecReqValidator : AbstractValidator<UpdateAccountSpecReq>
 {
     public UpdateAccountSpecReqValidator(
-        HasIntIdValidator                     intIdValidator,
+        HasIdValidator                        idValidator,
         BaseUpsertAccountSpecReqDataValidator baseValidator
     )
     {
-        Include(intIdValidator);
+        Include(idValidator);
         Include(baseValidator);
     }
 }

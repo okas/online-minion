@@ -1,14 +1,14 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Transactions.Debit.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetTransactionDebitByIdReqHlr(OnlineMinionDbContext dbContext)
+internal sealed class GetTransactionDebitByIdReqHlr(IOnlineMinionDbContext dbContext)
     : BaseGetModelByIdReqHlr<GetTransactionDebitByIdReq, TransactionDebit, TransactionDebitResp>(dbContext)
 {
     protected override TransactionDebitResp ToResponse(TransactionDebit entity) => new(

@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
@@ -9,7 +9,7 @@ namespace OnlineMinion.RestApi.Transactions.Debit.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdateTransactionDebitReqHlr(
-        OnlineMinionDbContext                 dbContext,
+        IOnlineMinionDbContext                dbContext,
         ILogger<UpdateTransactionDebitReqHlr> logger
     )
     : BaseUpdateModelReqHlr<UpdateTransactionDebitReq, TransactionDebit>(dbContext, logger)

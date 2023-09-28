@@ -4,13 +4,14 @@ using FluentValidation;
 using IL.FluentValidation.Extensions.Options;
 using Microsoft.Extensions.Options;
 using OnlineMinion.Contracts;
+using OnlineMinion.RestApi.Client;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Settings;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class ServicesSetup
+public static class ServiceCollectionExtensions
 {
     /// <summary>Sets up API Client, configurations and related services.</summary>
     /// <param name="services"></param>
@@ -20,7 +21,7 @@ public static class ServicesSetup
     /// </returns>
     public static IHttpClientBuilder AddRestApiClient(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining(typeof(ServicesSetup));
+        services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarkerRestApiClient));
 
         services.AddOptions<ApiClientSettings>()
             .BindConfiguration(nameof(ApiClientSettings))
@@ -34,7 +35,7 @@ public static class ServicesSetup
             .AddApiVersion(new ApiVersion(1));
 
         services.AddMediatR(
-            opts => opts.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup))
+            opts => opts.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarkerRestApiClient))
         );
 
         return apiHttpClientBuilder;

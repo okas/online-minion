@@ -1,15 +1,15 @@
 using System.Linq.Expressions;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Application;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class GetSomeModelDescriptorsReqHlr<TEntity, TResponse>(OnlineMinionDbContext dbContext)
+internal abstract class GetSomeModelDescriptorsReqHlr<TEntity, TResponse>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<GetSomeModelDescriptorsReq<TResponse>, IAsyncEnumerable<TResponse>>
     where TEntity : BaseEntity
     where TResponse : IHasId

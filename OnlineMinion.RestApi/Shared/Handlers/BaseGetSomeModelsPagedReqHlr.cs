@@ -1,17 +1,17 @@
 using System.Linq.Expressions;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Application;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(OnlineMinionDbContext dbContext)
+internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<GetSomeModelsPagedReq<TResponse>, PagedStreamResult<TResponse>>
     where TEntity : BaseEntity
 {

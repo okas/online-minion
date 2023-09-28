@@ -1,13 +1,13 @@
 using ErrorOr;
+using OnlineMinion.Application;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Contracts.Shared.Responses;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseCreateModelReqHlr<TRequest, TEntity>(OnlineMinionDbContext dbContext)
+internal abstract class BaseCreateModelReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<TRequest, ModelIdResp>
     where TRequest : ICreateCommand
     where TEntity : BaseEntity

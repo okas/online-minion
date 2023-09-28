@@ -1,14 +1,14 @@
 using System.Linq.Expressions;
 using JetBrains.Annotations;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Transactions.Debit.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetTransactionDebitsReqHlr(OnlineMinionDbContext dbContext)
+internal sealed class GetTransactionDebitsReqHlr(IOnlineMinionDbContext dbContext)
     : BaseGetSomeModelsPagedReqHlr<TransactionDebit, TransactionDebitResp>(dbContext)
 {
     protected override Expression<Func<TransactionDebit, TransactionDebitResp>> Projection =>

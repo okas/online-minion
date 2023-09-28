@@ -1,8 +1,8 @@
 using System.Transactions;
 using ErrorOr;
 using MediatR;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.DataStore;
 
 namespace OnlineMinion.RestApi.MediatorInfra.Behaviors;
 
@@ -18,7 +18,7 @@ namespace OnlineMinion.RestApi.MediatorInfra.Behaviors;
 /// </remarks>
 /// <typeparam name="TRequest">Request or model, constrained to <see cref="IUpsertCommand{TResponse}" />.</typeparam>
 /// <typeparam name="TResponse">Response model, constrained to <see cref="IErrorOr" />.</typeparam>
-public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse>(OnlineMinionDbContext dbContext)
+public sealed class CommandUnitOfWorkBehavior<TRequest, TResponse>(IOnlineMinionDbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IUpsertCommand<TResponse>
     where TResponse : IErrorOr

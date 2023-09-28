@@ -1,14 +1,14 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Credit.Responses;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Transactions.Credit.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetTransactionCreditByIdReqHlr(OnlineMinionDbContext dbContext)
+internal sealed class GetTransactionCreditByIdReqHlr(IOnlineMinionDbContext dbContext)
     : BaseGetModelByIdReqHlr<GetTransactionCreditByIdReq, TransactionCredit, TransactionCreditResp>(dbContext)
 {
     protected override TransactionCreditResp ToResponse(TransactionCredit entity) => new(

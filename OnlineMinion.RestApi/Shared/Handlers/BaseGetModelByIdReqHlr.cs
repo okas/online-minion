@@ -1,13 +1,13 @@
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Application;
 using OnlineMinion.Common;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseGetModelByIdReqHlr<TRequest, TEntity, TResponse>(OnlineMinionDbContext dbContext)
+internal abstract class BaseGetModelByIdReqHlr<TRequest, TEntity, TResponse>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<TRequest, TResponse>
     where TRequest : IGetByIdRequest<TResponse>
     where TEntity : BaseEntity

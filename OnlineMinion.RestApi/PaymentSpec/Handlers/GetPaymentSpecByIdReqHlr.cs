@@ -1,14 +1,14 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain.Shared;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.PaymentSpec.Handlers;
 
 [UsedImplicitly]
-internal class GetPaymentSpecByIdReqHlr(OnlineMinionDbContext dbContext)
+internal class GetPaymentSpecByIdReqHlr(IOnlineMinionDbContext dbContext)
     : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, BasePaymentSpec, PaymentSpecResp>(dbContext)
 {
     protected override PaymentSpecResp ToResponse(BasePaymentSpec entity) => new()

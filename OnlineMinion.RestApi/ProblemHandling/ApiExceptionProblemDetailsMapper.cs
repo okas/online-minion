@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using OnlineMinion.DataStore.Exceptions;
+using OnlineMinion.Application.Exceptions;
 
 namespace OnlineMinion.RestApi.ProblemHandling;
 

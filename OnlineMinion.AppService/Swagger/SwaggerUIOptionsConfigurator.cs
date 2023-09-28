@@ -8,7 +8,7 @@ public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVers
     : IConfigureOptions<SwaggerUIOptions>
 {
     private readonly string _apiAssemblyName =
-        typeof(ServicesSetup).Assembly.GetName().Name
+        typeof(Program).Assembly.GetName().Name
         ?? throw new InvalidOperationException();
 
     public void Configure(SwaggerUIOptions options)

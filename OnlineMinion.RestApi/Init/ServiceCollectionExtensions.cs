@@ -11,6 +11,7 @@ using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Domain;
 using OnlineMinion.Domain.Shared;
+using OnlineMinion.RestApi;
 using OnlineMinion.RestApi.Configuration;
 using OnlineMinion.RestApi.MediatorInfra.Behaviors;
 using OnlineMinion.RestApi.ProblemHandling;
@@ -20,7 +21,7 @@ using OnlineMinion.RestApi.Shared.Handlers;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class ServicesSetup
+public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRestApi(this IServiceCollection services, IConfigurationRoot config)
     {
@@ -60,8 +61,8 @@ public static class ServicesSetup
 
         #region API FluentValidatior setup
 
-        services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
-        services.AddValidatorsFromAssembly(typeof(ServicesSetup).Assembly);
+        services.AddValidatorsFromAssemblyContaining<HasIdValidator>();
+        services.AddValidatorsFromAssembly(typeof(IAssemblyMarkerRestApi).Assembly);
 
         #endregion
 
@@ -71,7 +72,7 @@ public static class ServicesSetup
             .AddMediatR(
                 cfg =>
                 {
-                    cfg.RegisterServicesFromAssemblyContaining(typeof(ServicesSetup));
+                    cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarkerRestApi));
 
                     // Pipeline
                     cfg.AddOpenBehavior(typeof(CommandValidationBehavior<,>));

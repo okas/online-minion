@@ -2,12 +2,12 @@ using System.Linq.Expressions;
 using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.DataStore;
+using OnlineMinion.Application;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseCheckUniqueModelReqHlr<TRequest, TEntity>(OnlineMinionDbContext dbContext)
+internal abstract class BaseCheckUniqueModelReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext)
     : IRequestHandler<TRequest, ErrorOr<Success>>
     where TRequest : IRequest<ErrorOr<Success>>
     where TEntity : BaseEntity

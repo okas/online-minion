@@ -1,13 +1,13 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.RestApi.Shared.Handlers;
 
-internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity>(OnlineMinionDbContext dbContext, ILogger logger)
+internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext, ILogger logger)
     : IRequestHandler<TRequest, ErrorOr<Updated>>
     where TRequest : IUpdateCommand
     where TEntity : BaseEntity

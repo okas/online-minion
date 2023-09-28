@@ -1,13 +1,13 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
 namespace OnlineMinion.RestApi.Transactions.Credit.Handlers;
 
 [UsedImplicitly]
-internal sealed class CreateTransactionCreditReqHlr(OnlineMinionDbContext dbContext)
+internal sealed class CreateTransactionCreditReqHlr(IOnlineMinionDbContext dbContext)
     : BaseCreateModelReqHlr<CreateTransactionCreditReq, TransactionCredit>(dbContext)
 {
     protected override TransactionCredit ToEntity(CreateTransactionCreditReq rq) => new()

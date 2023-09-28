@@ -41,7 +41,7 @@ services.AddTransient<WasmHttpRequestMessageConfiguration>()
 
 services.AddSingleton<StateContainer>();
 
-services.AddValidatorsFromAssemblyContaining<HasIntIdValidator>();
+services.AddValidatorsFromAssemblyContaining<HasIdValidator>();
 services.AddValidatorsFromAssemblyContaining<Program>();
 
 services.AddScoped<DialogService>();

@@ -9,11 +9,11 @@ namespace OnlineMinion.Common.Transactions.Credit.Validators;
 public sealed class UpdateTransactionCreditReqValidator : AbstractValidator<UpdateTransactionCreditReq>
 {
     public UpdateTransactionCreditReqValidator(
-        HasIntIdValidator                     intIdValidator,
+        HasIdValidator                        idValidator,
         BaseUpsertTransactionReqDataValidator baseValidator
     )
     {
-        Include(intIdValidator);
+        Include(idValidator);
         Include(baseValidator);
     }
 }

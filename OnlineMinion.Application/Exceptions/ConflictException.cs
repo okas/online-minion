@@ -1,12 +1,11 @@
 using System.Runtime.CompilerServices;
-using EntityFramework.Exceptions.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace OnlineMinion.DataStore.Exceptions;
+namespace OnlineMinion.Application.Exceptions;
 
-public class ConflictException(string message, UniqueConstraintException ex) : Exception(message)
+public class ConflictException(string message, DbUpdateException ex) : Exception(message)
 {
     public IList<ErrorDescriptor> Errors { get; } = GetErrorData(
         ex.Entries,
@@ -88,8 +87,8 @@ public class ConflictException(string message, UniqueConstraintException ex) : E
         IEnumerable<ITableIndex> allEntryUniqueIndices
     ) => allEntryUniqueIndices.GroupBy(
         i => i.Name,
-        i => i.MappedIndexes.SelectMany(
-            mi => mi.Properties.Select(
+        i => i.MappedIndexes.SelectMany<IIndex, string>(
+            mi => mi.Properties.Select<IProperty, string>(
                 p => p.Name
             )
         ),

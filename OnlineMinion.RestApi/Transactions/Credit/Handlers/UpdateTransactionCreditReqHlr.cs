@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using OnlineMinion.Application;
 using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.DataStore;
 using OnlineMinion.Domain;
 using OnlineMinion.RestApi.Shared.Handlers;
 
@@ -9,7 +9,7 @@ namespace OnlineMinion.RestApi.Transactions.Credit.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdateTransactionCreditReqHlr(
-        OnlineMinionDbContext                  dbContext,
+        IOnlineMinionDbContext                 dbContext,
         ILogger<UpdateTransactionCreditReqHlr> logger
     )
     : BaseUpdateModelReqHlr<UpdateTransactionCreditReq, TransactionCredit>(dbContext, logger)

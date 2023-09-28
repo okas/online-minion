@@ -10,11 +10,11 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Debit.Validation;
 public sealed class UpdateTransactionDebitVMValidator : AbstractValidator<UpdateTransactionDebitVM>
 {
     public UpdateTransactionDebitVMValidator(
-        HasIntIdValidator                     intIdValidator,
+        HasIdValidator                        idValidator,
         BaseUpsertTransactionReqDataValidator baseValidator
     )
     {
-        Include(intIdValidator);
+        Include(idValidator);
         Include(baseValidator);
 
         // It is important, because it is hidden member, thus base validator wont reach it.

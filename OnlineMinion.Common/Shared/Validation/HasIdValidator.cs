@@ -5,9 +5,9 @@ using OnlineMinion.Contracts;
 namespace OnlineMinion.Common.Shared.Validation;
 
 [UsedImplicitly]
-public class HasIntIdValidator : AbstractValidator<IHasId>
+public class HasIdValidator : AbstractValidator<IHasId>
 {
-    public HasIntIdValidator()
+    public HasIdValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty();
