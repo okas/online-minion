@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace OnlineMinion.Common;
+namespace OnlineMinion.Common.Validation;
 
 /// <summary>
 ///     A marker interface for validators that validate uniqueness of a property asynchronously.

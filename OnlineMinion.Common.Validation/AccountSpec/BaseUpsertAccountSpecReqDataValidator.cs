@@ -2,7 +2,7 @@ using FluentValidation;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 
-namespace OnlineMinion.Common.AccountSpec.Validators;
+namespace OnlineMinion.Common.Validation.AccountSpec;
 
 /// <summary>
 ///     It is only meant to be be used ad "Included" set of rules to <see cref="BaseUpsertAccountSpecReqData" />

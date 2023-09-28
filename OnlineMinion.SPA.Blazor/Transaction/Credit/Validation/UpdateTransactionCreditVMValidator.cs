@@ -1,7 +1,7 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Common.Shared.Validation;
-using OnlineMinion.Common.Transactions;
+using OnlineMinion.Common.Validation.Shared;
+using OnlineMinion.Common.Validation.TransactionsShared;
 using OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.Validation;

@@ -2,9 +2,9 @@ using ErrorOr;
 using FluentValidation;
 using MediatR;
 
-namespace OnlineMinion.Common.Shared.Validation;
+namespace OnlineMinion.Common.Validation.Shared;
 
-public abstract class BaseCheckUniqueModelValidator<TModel>(ISender sender)
+public abstract class BaseCheckUniqueModelValidator<TModel>(IAsyncValidatorSender sender)
     : AbstractValidator<TModel>, IAsyncUniqueValidator<TModel>
 {
     protected const string FailureMessageFormat = "'{PropertyName}' must be unique";

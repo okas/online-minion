@@ -2,15 +2,15 @@ using ErrorOr;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using OnlineMinion.Common.Shared.Validation;
+using OnlineMinion.Common.Validation.Shared;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 
-namespace OnlineMinion.Common.AccountSpec.Validators;
+namespace OnlineMinion.Common.Validation.AccountSpec;
 
 [UsedImplicitly]
 public sealed class CheckUniqueNewAccountSpecValidator : BaseCheckUniqueModelValidator<CreateAccountSpecReq>
 {
-    public CheckUniqueNewAccountSpecValidator(ISender sender) : base(sender)
+    public CheckUniqueNewAccountSpecValidator(IAsyncValidatorSender sender) : base(sender)
     {
         RuleFor(x => x.Name)
             .MustAsync(BeUniqueAsync)

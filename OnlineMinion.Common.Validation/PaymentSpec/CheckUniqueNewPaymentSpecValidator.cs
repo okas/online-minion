@@ -2,15 +2,15 @@ using ErrorOr;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using OnlineMinion.Common.Shared.Validation;
+using OnlineMinion.Common.Validation.Shared;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 
-namespace OnlineMinion.Common.PaymentSpec.Validators;
+namespace OnlineMinion.Common.Validation.PaymentSpec;
 
 [UsedImplicitly]
 public sealed class CheckUniqueNewPaymentSpecValidator : BaseCheckUniqueModelValidator<CreatePaymentSpecReq>
 {
-    public CheckUniqueNewPaymentSpecValidator(ISender sender) : base(sender)
+    public CheckUniqueNewPaymentSpecValidator(IAsyncValidatorSender sender) : base(sender)
     {
         RuleFor(x => x.Name)
             .MustAsync(BeUniqueAsync)

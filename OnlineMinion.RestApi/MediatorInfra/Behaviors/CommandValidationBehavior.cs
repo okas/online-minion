@@ -3,7 +3,7 @@ using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Results;
 using MediatR;
-using OnlineMinion.Common;
+using OnlineMinion.Common.Validation;
 using OnlineMinion.Contracts.Shared.Requests;
 
 namespace OnlineMinion.RestApi.MediatorInfra.Behaviors;

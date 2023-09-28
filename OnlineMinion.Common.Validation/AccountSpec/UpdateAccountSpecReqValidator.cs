@@ -1,9 +1,9 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Common.Shared.Validation;
+using OnlineMinion.Common.Validation.Shared;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 
-namespace OnlineMinion.Common.AccountSpec.Validators;
+namespace OnlineMinion.Common.Validation.AccountSpec;
 
 [UsedImplicitly]
 public class UpdateAccountSpecReqValidator : AbstractValidator<UpdateAccountSpecReq>

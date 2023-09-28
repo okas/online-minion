@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Domain\OnlineMinion.Domain.csproj"/>
     </ItemGroup>
 

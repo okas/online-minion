@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="ErrorOr" Version="1.2.1.2-preview"/>
         <PackageReference Include="FluentValidation" Version="11.7.1"/>
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0-eap1"/>
         <PackageReference Include="MediatR" Version="12.1.1"/>
@@ -18,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
+        <None Remove="Directory.Build.props"/>
     </ItemGroup>
 
 </Project>

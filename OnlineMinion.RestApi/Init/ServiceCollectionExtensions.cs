@@ -3,7 +3,8 @@ using ErrorOr;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using OnlineMinion.Common.Shared.Validation;
+using OnlineMinion.Application;
+using OnlineMinion.Common.Validation;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
@@ -61,7 +62,7 @@ public static class ServiceCollectionExtensions
 
         #region API FluentValidatior setup
 
-        services.AddValidatorsFromAssemblyContaining<HasIdValidator>();
+        services.AddValidatorsFromAssemblyContaining<IAssemblyMarkerCommonValidation>();
         services.AddValidatorsFromAssembly(typeof(IAssemblyMarkerRestApi).Assembly);
 
         #endregion
@@ -92,6 +93,12 @@ public static class ServiceCollectionExtensions
             .AddTransient<IRequestHandler<GetTransactionDebitPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
                 GetModelPagingInfoReqHlr<GetTransactionDebitPagingMetaInfoReq, TransactionDebit>
             >();
+
+        #endregion
+
+        #region Application services
+
+        services.AddApplication();
 
         #endregion
 

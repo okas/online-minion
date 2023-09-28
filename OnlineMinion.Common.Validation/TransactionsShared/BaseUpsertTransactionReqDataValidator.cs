@@ -2,7 +2,7 @@ using FluentValidation;
 using JetBrains.Annotations;
 using OnlineMinion.Contracts.Transactions;
 
-namespace OnlineMinion.Common.Transactions;
+namespace OnlineMinion.Common.Validation.TransactionsShared;
 
 [UsedImplicitly]
 public sealed class BaseUpsertTransactionReqDataValidator : AbstractValidator<BaseUpsertTransactionReqData>

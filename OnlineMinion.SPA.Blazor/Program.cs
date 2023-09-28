@@ -2,7 +2,8 @@ using FluentValidation;
 using IL.FluentValidation.Extensions.Options;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using OnlineMinion.Common.Shared.Validation;
+using OnlineMinion.Common;
+using OnlineMinion.Common.Validation;
 using OnlineMinion.RestApi.Client.HttpRequestMessageHandlers;
 using OnlineMinion.SPA.Blazor;
 using OnlineMinion.SPA.Blazor.Configuration;
@@ -39,9 +40,11 @@ services.AddTransient<WasmHttpRequestMessageConfiguration>()
         )
     );
 
+services.AddTransient<IAsyncValidatorSender, MediatorWrapper>();
+
 services.AddSingleton<StateContainer>();
 
-services.AddValidatorsFromAssemblyContaining<HasIdValidator>();
+services.AddValidatorsFromAssemblyContaining<IAssemblyMarkerCommonValidation>();
 services.AddValidatorsFromAssemblyContaining<Program>();
 
 services.AddScoped<DialogService>();

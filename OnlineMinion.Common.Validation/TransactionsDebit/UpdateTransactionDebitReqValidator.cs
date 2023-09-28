@@ -1,9 +1,9 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Common.Shared.Validation;
+using OnlineMinion.Common.Validation.Shared;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 
-namespace OnlineMinion.Common.Transactions.Debit.Validators;
+namespace OnlineMinion.Common.Validation.TransactionsDebit;
 
 [UsedImplicitly]
 public sealed class UpdateTransactionDebitReqValidator : AbstractValidator<UpdateTransactionDebitReq>
