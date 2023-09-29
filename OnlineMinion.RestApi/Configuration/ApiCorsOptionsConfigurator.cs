@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 
 namespace OnlineMinion.RestApi.Configuration;
 

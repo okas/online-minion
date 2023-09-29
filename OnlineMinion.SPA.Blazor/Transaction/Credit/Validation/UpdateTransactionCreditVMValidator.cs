@@ -1,7 +1,7 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Common.Shared.Validation;
-using OnlineMinion.Common.Transactions;
+using OnlineMinion.Application.RequestValidation.Shared;
+using OnlineMinion.Application.RequestValidation.TransactionsShared;
 using OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.Validation;
@@ -10,11 +10,11 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Credit.Validation;
 public sealed class UpdateTransactionCreditVMValidator : AbstractValidator<UpdateTransactionCreditVM>
 {
     public UpdateTransactionCreditVMValidator(
-        HasIntIdValidator                     intIdValidator,
+        HasIdValidator                        idValidator,
         BaseUpsertTransactionReqDataValidator baseValidator
     )
     {
-        Include(intIdValidator);
+        Include(idValidator);
         Include(baseValidator);
 
         // It is important, because it is hidden member, thus base validator wont reach it.

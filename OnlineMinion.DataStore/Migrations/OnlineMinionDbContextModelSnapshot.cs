@@ -20,18 +20,13 @@ namespace OnlineMinion.DataStore.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
-
-            modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-                .IncrementsBy(10);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("OnlineMinion.Domain.AccountSpec", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasMaxLength(150)
@@ -57,11 +52,9 @@ namespace OnlineMinion.DataStore.Migrations
 
             modelBuilder.Entity("OnlineMinion.Domain.Shared.BasePaymentSpec", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CurrencyCode")
                         .IsRequired()
@@ -96,11 +89,9 @@ namespace OnlineMinion.DataStore.Migrations
 
             modelBuilder.Entity("OnlineMinion.Domain.Shared.BaseTransaction", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
@@ -118,8 +109,8 @@ namespace OnlineMinion.DataStore.Migrations
                         .HasMaxLength(75)
                         .HasColumnType("nvarchar(75)");
 
-                    b.Property<int>("PaymentInstrumentId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PaymentInstrumentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -189,8 +180,8 @@ namespace OnlineMinion.DataStore.Migrations
                 {
                     b.HasBaseType("OnlineMinion.Domain.Shared.BaseTransaction");
 
-                    b.Property<int>("AccountSpecId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("AccountSpecId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Fee")
                         .HasPrecision(18, 2)

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Application.Contracts.AccountSpec.Requests;
 
 namespace OnlineMinion.SPA.Blazor.Components;
 

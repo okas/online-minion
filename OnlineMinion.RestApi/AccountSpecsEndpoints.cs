@@ -3,18 +3,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
-using OnlineMinion.Common.Utilities;
-using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.RestApi.CommonEndpoints;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.AccountSpec.Requests;
+using OnlineMinion.Application.Contracts.AccountSpec.Responses;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Presentation.Utilities;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
 using OnlineMinion.RestApi.Services.LinkGeneration;
-using static OnlineMinion.RestApi.CommonEndpoints.ICommonValidationEndpoints;
+using static OnlineMinion.RestApi.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
-using static OnlineMinion.RestApi.CommonEndpoints.ICommonDescriptorEndpoints;
+using static OnlineMinion.RestApi.ICommonDescriptorEndpoints;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
 namespace OnlineMinion.RestApi;
@@ -39,14 +38,14 @@ public class AccountSpecsEndpoints
         apiV1.MapGet("/", GetSomePaged<AccountSpecResp>) // TODO: Custom, throttling response streaming
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetAccountSpecByIdReq, AccountSpecResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetAccountSpecByIdReq, AccountSpecResp>)
             .WithName(V1GetAccountSpecById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdateAccountSpecReq>)
+        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdateAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeleteAccountSpecReq>)
+        apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeleteAccountSpecReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetAccountSpecPagingMetaInfoReq>)
@@ -72,7 +71,7 @@ public class AccountSpecsEndpoints
         HttpResponse                                    httpResponse,
         CancellationToken                               ct
     )
-        where TResponse : IHasIntId
+        where TResponse : IHasId
     {
         var result = await sender.Send(rq, ct);
 

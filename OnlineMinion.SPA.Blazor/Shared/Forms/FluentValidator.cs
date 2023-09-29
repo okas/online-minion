@@ -3,8 +3,8 @@ using FluentValidation.Internal;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Common;
-using OnlineMinion.Common.Utilities;
+using OnlineMinion.Application.RequestValidation;
+using OnlineMinion.Presentation.Utilities;
 
 namespace OnlineMinion.SPA.Blazor.Shared.Forms;
 

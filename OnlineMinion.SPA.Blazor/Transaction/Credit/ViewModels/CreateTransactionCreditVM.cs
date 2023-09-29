@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 

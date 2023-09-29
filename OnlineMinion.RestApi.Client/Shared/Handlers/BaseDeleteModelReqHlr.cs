@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Net;
 using ErrorOr;
-using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 

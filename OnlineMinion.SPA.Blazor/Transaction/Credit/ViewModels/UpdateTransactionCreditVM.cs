@@ -1,14 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 
 /// <inheritdoc cref="BaseTransactionCreditUpsertVM" />
 [method: SetsRequiredMembers]
 public sealed class UpdateTransactionCreditVM(
-        int      id,
-        int      paymentInstrumentId,
+        Guid     id,
+        Guid     paymentInstrumentId,
         DateTime date,
         decimal  amount,
         string   subject,
@@ -17,7 +17,7 @@ public sealed class UpdateTransactionCreditVM(
     )
     : BaseTransactionCreditUpsertVM(paymentInstrumentId, date, amount, subject, party, tags), IUpdateCommand
 {
-    public int Id { get; } = id;
+    public Guid Id { get; } = id;
 
     public UpdateTransactionCreditReq ToCommand() => new(
         Id,

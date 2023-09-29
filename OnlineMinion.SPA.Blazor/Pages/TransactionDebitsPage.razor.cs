@@ -1,10 +1,10 @@
 using System.Globalization;
 using JetBrains.Annotations;
-using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Debit.Requests;
-using OnlineMinion.Contracts.Transactions.Debit.Responses;
+using OnlineMinion.Application.Contracts.AccountSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.Pages.Base;
 using OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
@@ -73,8 +73,8 @@ public partial class TransactionDebitsPage
         ((CreateTransactionDebitVM)reqOrVM).ToCommand();
 
     private (PaymentSpecDescriptorResp paymentSpec, AccountSpecDescriptorResp accountSpec) GetVMDependencies(
-        int paymentSpecId,
-        int accountSpecId
+        Guid paymentSpecId,
+        Guid accountSpecId
     ) => (
         _paymentDescriptorViewModels.Single(vm => vm.Id == paymentSpecId),
         _accountDescriptorViewModels.Single(vm => vm.Id == accountSpecId)

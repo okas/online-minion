@@ -2,8 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using ErrorOr;
 using Microsoft.Extensions.Logging;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Responses;
+using OnlineMinion.RestApi.Client.Helpers;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
@@ -36,7 +37,7 @@ internal abstract class BaseCreateModelReqHlr<TRequest>(HttpClient apiClient, Ur
                     .ReadFromJsonAsync<ModelIdResp>(ct)
                     .ConfigureAwait(false);
 
-                return result is { Id: > 0, }
+                return result is not null && result.Id != Guid.Empty
                     ? result
                     : Error.Validation($"Invalid message response, Id is not set {result?.Id}");
             }

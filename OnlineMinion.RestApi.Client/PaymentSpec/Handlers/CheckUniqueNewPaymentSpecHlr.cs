@@ -1,6 +1,6 @@
 using System.Globalization;
 using JetBrains.Annotations;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 

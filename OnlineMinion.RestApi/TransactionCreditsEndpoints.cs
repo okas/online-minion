@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Responses;
-using OnlineMinion.RestApi.CommonEndpoints;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Services.LinkGeneration;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
@@ -28,14 +27,14 @@ public class TransactionCreditsEndpoints : ICommonCrudEndpoints, ICommonPagingIn
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<TransactionCreditResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:int}", ICommonCrudEndpoints.GetById<GetTransactionCreditByIdReq, TransactionCreditResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetTransactionCreditByIdReq, TransactionCreditResp>)
             .WithName(V1GetTransactCreditById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:int}", ICommonCrudEndpoints.Update<UpdateTransactionCreditReq>)
+        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdateTransactionCreditReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapDelete("{id:int}", ICommonCrudEndpoints.Delete<DeleteTransactionCreditReq>)
+        apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeleteTransactionCreditReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapHead("/", ICommonPagingInfoEndpoints.GetPagingMetaInfo<GetTransactionCreditPagingMetaInfoReq>)

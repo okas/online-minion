@@ -7,11 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
+        <None Remove="Directory.Build.props"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Directory.Build.props"/>
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.85">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

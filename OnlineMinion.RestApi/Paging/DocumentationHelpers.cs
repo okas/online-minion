@@ -1,5 +1,5 @@
 using Microsoft.OpenApi.Models;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 
 namespace OnlineMinion.RestApi.Paging;
 

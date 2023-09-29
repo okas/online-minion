@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Debit.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 
 /// <inheritdoc cref="BaseTransactionDebitUpsertVM" />
 [method: SetsRequiredMembers]
 public sealed class UpdateTransactionDebitVM(
-    int      id,
-    int      paymentInstrumentId,
-    int      accountSpecId,
+    Guid     id,
+    Guid     paymentInstrumentId,
+    Guid     accountSpecId,
     decimal  fee,
     DateTime date,
     decimal  amount,
@@ -19,7 +19,7 @@ public sealed class UpdateTransactionDebitVM(
 ) : BaseTransactionDebitUpsertVM(paymentInstrumentId, accountSpecId, fee, date, amount, subject, party, tags),
     IUpdateCommand
 {
-    public int Id { get; } = id;
+    public Guid Id { get; } = id;
 
     public UpdateTransactionDebitReq ToCommand() => new(
         Id,

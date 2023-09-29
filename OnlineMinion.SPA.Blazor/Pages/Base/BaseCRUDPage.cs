@@ -1,10 +1,9 @@
-using System.Globalization;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Components;
-using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Responses;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.Helpers;
 using Radzen;
@@ -23,8 +22,8 @@ namespace OnlineMinion.SPA.Blazor.Pages.Base;
 /// </typeparam>
 /// <typeparam name="TBaseUpsert"><b>class</b> constrained, because it is used in form, must be mutable.</typeparam>
 public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentWithCancellationToken
-    where TVModel : IHasIntId
-    where TResponse : IHasIntId
+    where TVModel : IHasId
+    where TResponse : IHasId
     where TBaseUpsert : class
 {
     private readonly string _respModelName;
@@ -194,7 +193,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             UpsertVM = (TBaseUpsert)UpdateVMFactory(vm);
         }
 
-        var title = $"Edit {ModelTypeName}: id #{vm.Id.ToString(CultureInfo.InvariantCulture)}";
+        var title = $"Edit {ModelTypeName}: id #{vm.Id}";
         OpenEditorDialog(title);
     }
 
@@ -403,7 +402,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         await ChangeGridPageAsync(visiblePageAfterDelete);
     }
 
-    private void OnApiDeleteError(int id, Error error)
+    private void OnApiDeleteError(Guid id, Error error)
     {
         if (error.Type is ErrorType.NotFound)
         {
@@ -491,14 +490,14 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     private void LogErrorOnApiGetPagingInfo() =>
         Logger.LogError("Unexpected error while getting paging metadata to re-paginate table");
 
-    private void LogWarningOnApiDelete(int id) =>
+    private void LogWarningOnApiDelete(Guid id) =>
         Logger.LogWarning(
             "{ModelType} Id='{Id}' do not exist anymore in database",
             ModelTypeName,
             id
         );
 
-    private void LogErrorOnApiDelete(int id) =>
+    private void LogErrorOnApiDelete(Guid id) =>
         Logger.LogError(
             "Unexpected failure while trying to delete {ModelType} Id='{Id}'",
             ModelTypeName,

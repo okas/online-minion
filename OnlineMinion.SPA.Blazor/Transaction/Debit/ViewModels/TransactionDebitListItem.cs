@@ -1,7 +1,7 @@
-using OnlineMinion.Contracts.AccountSpec.Responses;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.Contracts.Transactions.Debit.Requests;
-using OnlineMinion.Contracts.Transactions.Debit.Responses;
+using OnlineMinion.Application.Contracts.AccountSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Responses;
 using OnlineMinion.SPA.Blazor.Transaction.Shared.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
@@ -9,7 +9,7 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 /// <inheritdoc />
 /// <param name="AccountSpec">NB! It is important too keep member name, so that API communication queries work.</param>
 public sealed record TransactionDebitListItem(
-    int                       Id,
+    Guid                      Id,
     decimal                   Fee,
     DateOnly                  Date,
     decimal                   Amount,

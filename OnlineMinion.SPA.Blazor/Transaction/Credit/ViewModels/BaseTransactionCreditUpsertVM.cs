@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.Transactions;
+using OnlineMinion.Application.Contracts.Transactions;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 
@@ -17,7 +17,7 @@ namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 /// <param name="party"></param>
 /// <param name="tags"></param>
 public abstract class BaseTransactionCreditUpsertVM(
-    int      paymentInstrumentId,
+    Guid     paymentInstrumentId,
     DateTime date,
     decimal  amount,
     string   subject,

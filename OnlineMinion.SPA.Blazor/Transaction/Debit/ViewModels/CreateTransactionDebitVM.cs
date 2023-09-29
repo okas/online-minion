@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Debit.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 

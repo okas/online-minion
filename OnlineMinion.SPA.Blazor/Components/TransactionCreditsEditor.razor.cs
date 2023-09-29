@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
 using OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Components;

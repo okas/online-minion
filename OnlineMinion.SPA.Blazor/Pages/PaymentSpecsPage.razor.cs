@@ -1,8 +1,8 @@
 using JetBrains.Annotations;
-using OnlineMinion.Contracts.CurrencyInfo.Requests;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.CurrencyInfo.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 using OnlineMinion.SPA.Blazor.Pages.Base;

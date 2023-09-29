@@ -1,13 +1,15 @@
 using EntityFramework.Exceptions.Common;
 using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.DataStore.Exceptions;
+using OnlineMinion.Application;
+using OnlineMinion.Application.Exceptions;
 using OnlineMinion.Domain;
 using OnlineMinion.Domain.Shared;
 
 namespace OnlineMinion.DataStore;
 
-public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> options) : DbContext(options)
+public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> options)
+    : DbContext(options), IOnlineMinionDbContext
 {
     public DbSet<AccountSpec> AccountSpecs { get; set; } = null!;
 
@@ -23,6 +25,11 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
 
     public DbSet<CryptoExchangeAccountSpec> CryptoExchangeAccountSpecs { get; set; } = null!;
 
+    DbSet<TEntity> IOnlineMinionDbContext.Set<TEntity>() => base.Set<TEntity>();
+
+    /// <inheritdoc cref="DbContext" />
+    public new Task<int> SaveChangesAsync(CancellationToken ct = default) => SaveChangesAsync(true, ct);
+
     /// <inheritdoc cref="DbContext" />
     public new int SaveChanges() => SaveChanges(true);
 
@@ -35,12 +42,9 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
         }
         catch (UniqueConstraintException ex)
         {
-            throw new ConflictException("Field(s) must have unique values", ex);
+            throw new ConflictException(Str.MsgUniqueViolation, ex);
         }
     }
-
-    /// <inheritdoc cref="DbContext" />
-    public new Task<int> SaveChangesAsync(CancellationToken ct = default) => SaveChangesAsync(true, ct);
 
     /// <inheritdoc cref="DbContext" />
     public new async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
@@ -51,7 +55,7 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
         }
         catch (UniqueConstraintException ex)
         {
-            throw new ConflictException("Field(s) must have unique values", ex);
+            throw new ConflictException(Str.MsgUniqueViolation, ex);
         }
     }
 
@@ -62,8 +66,11 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.UseHiLo();
-
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineMinionDbContext).Assembly);
+    }
+
+    private static class Str
+    {
+        public const string MsgUniqueViolation = "Field(s) must have unique values";
     }
 }
