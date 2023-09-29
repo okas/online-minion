@@ -17,7 +17,8 @@ internal abstract class GetSomeModelDescriptorsReqHlr<TResponse>(HttpClient apiC
     {
         var uri = BuildUri(rq);
 
-        return await ICollectionRequestResponseStreaming.GetApiResponse<TResponse>(apiClient, uri, ct);
+        return await ICollectionRequestResponseStreaming.GetApiResponse<TResponse>(apiClient, uri, ct)
+            .ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(GetSomeModelDescriptorsReq<TResponse> rq) => new(

@@ -73,7 +73,7 @@ public class AccountSpecsEndpoints
     )
         where TResponse : IHasId
     {
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>>(
             envelope =>

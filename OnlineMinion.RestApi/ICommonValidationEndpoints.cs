@@ -21,7 +21,7 @@ public interface ICommonValidationEndpoints
         CancellationToken       ct
     ) where TRequest : ICheckUniqueNewModelByMemberRequest
     {
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
         return ConvertToHttpResult(result);
     }
 
@@ -32,7 +32,7 @@ public interface ICommonValidationEndpoints
         CancellationToken       ct
     ) where TRequest : ICheckUniqueExistingModelByMemberRequest
     {
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
         return ConvertToHttpResult(result);
     }
 

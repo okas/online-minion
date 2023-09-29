@@ -21,7 +21,7 @@ internal abstract class BaseCreateModelReqHlr<TRequest>(HttpClient apiClient, Ur
         using var responseMessage = await apiClient.PostAsJsonAsync(uri, rq, ct)
             .ConfigureAwait(false);
 
-        return await HandleResponse(responseMessage, ct);
+        return await HandleResponse(responseMessage, ct).ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(TRequest rq) => resource;

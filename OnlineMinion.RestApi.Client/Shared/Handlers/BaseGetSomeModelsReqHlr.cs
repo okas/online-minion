@@ -12,7 +12,8 @@ internal abstract class BaseGetSomeModelsReqHlr<TRequest, TResponse>(HttpClient 
     {
         var uri = BuildUri(rq);
 
-        return await ICollectionRequestResponseStreaming.GetApiResponse<TResponse>(apiClient, uri, ct);
+        return await ICollectionRequestResponseStreaming.GetApiResponse<TResponse>(apiClient, uri, ct)
+            .ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(TRequest _) => resource;

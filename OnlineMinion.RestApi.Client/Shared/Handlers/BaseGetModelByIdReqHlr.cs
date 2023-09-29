@@ -16,7 +16,7 @@ internal abstract class BaseGetModelByIdReqHlr<TRequest, TResponse>(HttpClient a
 
         var responseMessage = await apiClient.GetAsync(uri, ct).ConfigureAwait(false);
 
-        return await HandleResponse(responseMessage);
+        return await HandleResponse(responseMessage).ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(TRequest rq) => new(

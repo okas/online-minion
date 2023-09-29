@@ -15,7 +15,8 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TResponse>(HttpClient apiCl
     {
         var uri = BuildUri(rq);
 
-        return await IPagedRequestResultStreaming.GetApiResponse<TResponse>(apiClient, uri, rq, ct);
+        return await IPagedRequestResultStreaming.GetApiResponse<TResponse>(apiClient, uri, rq, ct)
+            .ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(GetSomeModelsPagedReq<TResponse> rq) =>

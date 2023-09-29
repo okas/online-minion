@@ -29,7 +29,7 @@ internal interface ICollectionRequestResponseStreaming : IRequestResponseStreami
             return ToStreamResponseApiError(responseMessage);
         }
 
-        var modelsAsyncStream = await GetResultAsStreamAsync<TResponse>(responseMessage, ct);
+        var modelsAsyncStream = await GetResultAsStreamAsync<TResponse>(responseMessage, ct).ConfigureAwait(false);
 
         return ErrorOrFactory.From(modelsAsyncStream);
     }

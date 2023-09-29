@@ -25,7 +25,7 @@ internal interface ICommonCrudEndpoints
         where TRequest : ICreateCommand
     {
         // TODO: param validation & BadRequest return
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<CreatedAtRoute<ModelIdResp>, ProblemHttpResult>>(
             idResp => CreatedAtRoute(idResp, linkGen.ResourceRouteName, new { idResp.Id, }),
@@ -56,7 +56,7 @@ internal interface ICommonCrudEndpoints
     )
         where TResponse : IHasId
     {
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<Ok<IAsyncEnumerable<TResponse>>, ProblemHttpResult>>(
             envelope =>
@@ -82,7 +82,7 @@ internal interface ICommonCrudEndpoints
     )
         where TRequest : IGetByIdRequest<TResponse>
     {
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<Ok<TResponse>, NotFound, ProblemHttpResult>>(
             model => Ok(model),
@@ -109,7 +109,7 @@ internal interface ICommonCrudEndpoints
             return validationProblem;
         }
 
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<NoContent, ValidationProblem, ProblemHttpResult>>(
             _ => NoContent(),
@@ -126,7 +126,7 @@ internal interface ICommonCrudEndpoints
     )
         where TRequest : IDeleteByIdCommand
     {
-        var result = await sender.Send(rq, ct);
+        var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
             _ => NoContent(),
