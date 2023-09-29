@@ -43,7 +43,7 @@ services.AddTransient<IAsyncValidatorSender, MediatorWrapper>();
 
 services.AddSingleton<StateContainer>();
 
-services.AddCommonValidation();
+services.AddApplicationRequestValidation();
 // For settings validation.
 services.AddValidatorsFromAssemblyContaining<Program>();
 

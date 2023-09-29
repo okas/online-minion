@@ -1,9 +1,9 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Components;
-using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Responses;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.Helpers;
 using Radzen;

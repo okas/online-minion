@@ -1,7 +1,7 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;

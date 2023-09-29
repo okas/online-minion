@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using JetBrains.Annotations;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Domain.Shared;
 
 namespace OnlineMinion.Application.PaymentSpec.Handlers;

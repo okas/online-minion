@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 
 namespace OnlineMinion.RestApi.Configuration;
 

@@ -1,5 +1,5 @@
 using JetBrains.Annotations;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 

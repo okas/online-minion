@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Domain.Shared;
 
 namespace OnlineMinion.Application.PaymentSpec.Handlers;

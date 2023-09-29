@@ -1,6 +1,6 @@
-using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.SPA.Blazor.Transaction.Shared.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;

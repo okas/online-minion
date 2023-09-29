@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.Transactions;
+using OnlineMinion.Application.Contracts.Transactions;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;
 

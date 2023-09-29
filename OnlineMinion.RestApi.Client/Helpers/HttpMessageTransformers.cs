@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using ErrorOr;
 using Microsoft.AspNetCore.Http;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 
 namespace OnlineMinion.RestApi.Client.Helpers;
 

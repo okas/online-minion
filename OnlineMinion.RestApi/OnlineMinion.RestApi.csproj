@@ -30,15 +30,13 @@
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Application\OnlineMinion.Application.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Presentation.Utilities\OnlineMinion.Presentation.Utilities.csproj"/>
-        <ProjectReference Include="..\OnlineMinion.Common.Validation\OnlineMinion.Common.Validation.csproj"/>
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Application.RequestValidation\OnlineMinion.Application.RequestValidation.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Application.Contracts\OnlineMinion.Application.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="7.0.1"/>
         <PackageReference Include="CorsPolicySettings" Version="2.0.0"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
-        <PackageReference Include="MediatR" Version="12.1.1"/>
         <PackageReference Include="Meziantou.Analyzer" Version="2.0.85">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

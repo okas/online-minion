@@ -1,7 +1,7 @@
 using System.Transactions;
 using ErrorOr;
 using MediatR;
-using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 
 namespace OnlineMinion.Application.MediatorInfra.Behaviors;
 

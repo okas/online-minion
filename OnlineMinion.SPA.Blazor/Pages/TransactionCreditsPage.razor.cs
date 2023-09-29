@@ -1,9 +1,9 @@
 using System.Globalization;
 using JetBrains.Annotations;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.Pages.Base;
 using OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels;

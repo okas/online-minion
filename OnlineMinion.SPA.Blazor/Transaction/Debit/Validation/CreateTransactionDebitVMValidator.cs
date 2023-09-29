@@ -1,6 +1,6 @@
 using FluentValidation;
 using JetBrains.Annotations;
-using OnlineMinion.Common.Validation.TransactionsShared;
+using OnlineMinion.Application.RequestValidation.TransactionsShared;
 using OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Debit.Validation;

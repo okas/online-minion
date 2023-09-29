@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using OnlineMinion.Contracts.AccountSpec.Requests;
+using OnlineMinion.Application.Contracts.AccountSpec.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 

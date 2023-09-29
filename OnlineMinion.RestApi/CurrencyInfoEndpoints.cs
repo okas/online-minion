@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
-using OnlineMinion.Contracts.CurrencyInfo.Requests;
-using OnlineMinion.Contracts.CurrencyInfo.Responses;
+using OnlineMinion.Application.Contracts.CurrencyInfo.Requests;
+using OnlineMinion.Application.Contracts.CurrencyInfo.Responses;
 
 namespace OnlineMinion.RestApi;
 

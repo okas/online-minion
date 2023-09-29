@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Transactions.Debit.Handlers;

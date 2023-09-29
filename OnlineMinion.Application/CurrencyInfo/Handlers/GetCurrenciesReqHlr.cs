@@ -2,8 +2,8 @@ using System.Globalization;
 using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
-using OnlineMinion.Contracts.CurrencyInfo.Requests;
-using OnlineMinion.Contracts.CurrencyInfo.Responses;
+using OnlineMinion.Application.Contracts.CurrencyInfo.Requests;
+using OnlineMinion.Application.Contracts.CurrencyInfo.Responses;
 
 namespace OnlineMinion.Application.CurrencyInfo.Handlers;
 

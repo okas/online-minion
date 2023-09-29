@@ -1,14 +1,14 @@
 using ErrorOr;
 using MediatR;
 using OnlineMinion.Application;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.AccountSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.MediatorInfra.Behaviors;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Common;
-using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.AccountSpec.Requests;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Domain;
 using OnlineMinion.Domain.Shared;
 
@@ -19,9 +19,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        #region API FluentValidatior setup
+        #region API FluentValidation setup
 
-        services.AddCommonValidation();
+        services.AddApplicationRequestValidation();
 
         #endregion
 

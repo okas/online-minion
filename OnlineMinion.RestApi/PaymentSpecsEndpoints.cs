@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Services.LinkGeneration;
 using static OnlineMinion.RestApi.ICommonValidationEndpoints;

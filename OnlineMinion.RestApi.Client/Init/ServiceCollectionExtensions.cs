@@ -3,10 +3,11 @@ using Asp.Versioning.Http;
 using FluentValidation;
 using IL.FluentValidation.Extensions.Options;
 using Microsoft.Extensions.Options;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 using OnlineMinion.RestApi.Client;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Settings;
+using OnlineMinion.RestApi.Client.Settings.Validation;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -21,11 +22,12 @@ public static class ServiceCollectionExtensions
     /// </returns>
     public static IHttpClientBuilder AddRestApiClient(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarkerRestApiClient));
+        services.AddScoped<IValidator<ApiClientSettings>, ApiClientSettingsValidator>();
 
         services.AddOptions<ApiClientSettings>()
             .BindConfiguration(nameof(ApiClientSettings))
-            .ValidateWithFluentValidator();
+            .ValidateWithFluentValidator()
+            .ValidateOnStart();
 
         // IApiVersionWriters are singletons, AddApiVersion() is registering QueryStringApiVersionWriter with "Try*".
         // Intention is to only register and use HeaderApiVersionWriter.

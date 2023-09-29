@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.Transactions.Debit;
+using OnlineMinion.Application.Contracts.Transactions.Debit;
 
 namespace OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels;
 

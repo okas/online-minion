@@ -13,12 +13,11 @@
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Presentation.Utilities\OnlineMinion.Presentation.Utilities.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
-        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Application.Contracts\OnlineMinion.Application.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Http.Client" Version="7.0.1"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
         <PackageReference Include="IL.FluentValidation.Extensions.Options" Version="11.0.2"/>
         <PackageReference Include="MediatR" Version="12.1.1"/>
         <PackageReference Include="Meziantou.Analyzer" Version="2.0.85">

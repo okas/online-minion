@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.Paging;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
@@ -14,7 +14,7 @@ public interface ICommonPagingInfoEndpoints
     /// <param name="sender"></param>
     /// <param name="httpResponse">
     ///     Query result is returned using Pagination headers, see:
-    ///     <see cref="OnlineMinion.Contracts.CustomHeaderNames" />.
+    ///     <see cref="OnlineMinion.Application.Contracts.CustomHeaderNames" />.
     /// </param>
     /// <param name="ct"></param>
     /// <remarks>

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
-using OnlineMinion.Contracts;
-using static OnlineMinion.Contracts.CustomHeaderNames;
+using OnlineMinion.Application.Contracts;
+using static OnlineMinion.Application.Contracts.CustomHeaderNames;
 
 namespace OnlineMinion.RestApi.Paging;
 

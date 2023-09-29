@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using JetBrains.Annotations;
+using OnlineMinion.Application.Contracts.AccountSpec.Responses;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Contracts.AccountSpec.Responses;
 
 namespace OnlineMinion.Application.AccountSpec.Handlers;
 

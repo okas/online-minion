@@ -1,4 +1,4 @@
-using OnlineMinion.Contracts.CurrencyInfo.Responses;
+using OnlineMinion.Application.Contracts.CurrencyInfo.Responses;
 
 namespace OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 

@@ -1,6 +1,6 @@
 using System.Diagnostics.Contracts;
 using Microsoft.EntityFrameworkCore;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 
 namespace OnlineMinion.Application.Paging;
 

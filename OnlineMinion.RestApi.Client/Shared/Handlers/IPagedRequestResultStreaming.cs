@@ -1,6 +1,6 @@
 using ErrorOr;
-using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.Shared.Responses;
 using OnlineMinion.Presentation.Utilities;
 using OnlineMinion.RestApi.Client.Helpers;
 

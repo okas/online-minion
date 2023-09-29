@@ -1,5 +1,5 @@
 using System.Linq.Dynamic.Core;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Paging;

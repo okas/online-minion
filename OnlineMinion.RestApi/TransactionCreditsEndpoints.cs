@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Responses;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Services.LinkGeneration;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 
 namespace OnlineMinion.SPA.Blazor.Components;

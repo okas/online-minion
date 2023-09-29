@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using OnlineMinion.Contracts;
-using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.ProblemHandling;
 
 namespace OnlineMinion.RestApi;

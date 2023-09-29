@@ -1,7 +1,7 @@
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Common;
-using OnlineMinion.Contracts.Shared.Requests;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;

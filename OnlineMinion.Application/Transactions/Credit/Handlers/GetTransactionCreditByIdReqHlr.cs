@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
+using OnlineMinion.Application.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Contracts.Transactions.Credit.Requests;
-using OnlineMinion.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Transactions.Credit.Handlers;

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using OnlineMinion.Contracts;
+using OnlineMinion.Application.Contracts;
 
 namespace OnlineMinion.RestApi.Helpers;
 
