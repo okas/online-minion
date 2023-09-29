@@ -21,4 +21,8 @@
         <None Remove="Directory.Build.props"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\OnlineMinion.Application.RequestValidation\OnlineMinion.Application.RequestValidation.csproj"/>
+    </ItemGroup>
+
 </Project>

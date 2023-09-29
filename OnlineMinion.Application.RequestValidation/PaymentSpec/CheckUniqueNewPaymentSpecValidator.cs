@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Application.RequestValidation.Shared;
-using OnlineMinion.Common;
 
 namespace OnlineMinion.Application.RequestValidation.PaymentSpec;
 

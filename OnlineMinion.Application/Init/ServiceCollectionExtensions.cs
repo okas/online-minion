@@ -7,6 +7,7 @@ using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.MediatorInfra.Behaviors;
+using OnlineMinion.Application.RequestValidation;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Common;
 using OnlineMinion.Domain;

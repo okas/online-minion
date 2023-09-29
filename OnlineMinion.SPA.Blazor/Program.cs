@@ -2,6 +2,7 @@ using FluentValidation;
 using IL.FluentValidation.Extensions.Options;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using OnlineMinion.Application.RequestValidation;
 using OnlineMinion.Common;
 using OnlineMinion.RestApi.Client.HttpRequestMessageHandlers;
 using OnlineMinion.SPA.Blazor;

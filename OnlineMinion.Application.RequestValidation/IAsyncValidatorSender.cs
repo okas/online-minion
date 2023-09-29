@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace OnlineMinion.Common;
+namespace OnlineMinion.Application.RequestValidation;
 
 /// <summary>For FluentValidator async API based validation, that uses MediatR for request sending.</summary>
 /// <remarks>It exposes only some oft MediatR's own API, just enough to send out requests.</remarks>

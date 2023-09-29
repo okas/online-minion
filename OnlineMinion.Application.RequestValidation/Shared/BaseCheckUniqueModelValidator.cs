@@ -1,7 +1,6 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OnlineMinion.Common;
 
 namespace OnlineMinion.Application.RequestValidation.Shared;
 

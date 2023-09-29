@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using MediatR;
 using OnlineMinion.Application.Contracts.AccountSpec.Requests;
 using OnlineMinion.Application.RequestValidation.Shared;
-using OnlineMinion.Common;
 
 namespace OnlineMinion.Application.RequestValidation.AccountSpec;
 

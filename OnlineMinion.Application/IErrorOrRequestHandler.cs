@@ -1,7 +1,7 @@
 using ErrorOr;
 using MediatR;
 
-namespace OnlineMinion.Common;
+namespace OnlineMinion.Application;
 
 public interface IErrorOrRequestHandler<in TRequest, TResult>
     : IRequestHandler<TRequest, ErrorOr<TResult>>

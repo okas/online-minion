@@ -1,11 +1,12 @@
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+using OnlineMinion.Application.RequestValidation;
 
 namespace OnlineMinion.Common;
 
 /// <summary>
-///     Wrapped<see cref="Mediator" /> class to be able to use it as <see cref="IAsyncValidatorSender" />.
+///     Wrapped<see cref="Mediator" /> class to be able to use it as
+///     <see cref="OnlineMinion.Application.RequestValidation.IAsyncValidatorSender" />.
 /// </summary>
 /// <remarks>
 ///     NB! This class must be registered to the DI container only after MediatR's normal registration using
