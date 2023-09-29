@@ -6,7 +6,7 @@ namespace OnlineMinion.Application;
 
 public interface IOnlineMinionDbContext
 {
-    DbSet<AccountSpec> AccountSpecs { get; set; }
+    DbSet<Domain.AccountSpec> AccountSpecs { get; set; }
 
     DbSet<TransactionDebit> TransactionDebits { get; set; }
 

@@ -37,7 +37,7 @@ internal interface IPagedRequestResultStreaming : IRequestResponseStreaming
     /// <param name="uri">URI to append any optional parameters.</param>
     /// <param name="rq">Paging and filtering parameters source.</param>
     /// <returns></returns>
-    protected static Uri AddQueryString(Uri uri, IQueryParams rq)
+    protected static Uri AddQueryString(Uri uri, IFullQueryParams rq)
     {
         var queryStringParams = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
 

@@ -8,13 +8,12 @@ using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.AccountSpec.Requests;
 using OnlineMinion.Contracts.AccountSpec.Responses;
 using OnlineMinion.Contracts.Shared.Requests;
-using OnlineMinion.RestApi.CommonEndpoints;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Paging;
 using OnlineMinion.RestApi.Services.LinkGeneration;
-using static OnlineMinion.RestApi.CommonEndpoints.ICommonValidationEndpoints;
+using static OnlineMinion.RestApi.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
-using static OnlineMinion.RestApi.CommonEndpoints.ICommonDescriptorEndpoints;
+using static OnlineMinion.RestApi.ICommonDescriptorEndpoints;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
 namespace OnlineMinion.RestApi;

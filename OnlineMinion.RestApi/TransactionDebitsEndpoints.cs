@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Contracts.Transactions.Debit.Responses;
-using OnlineMinion.RestApi.CommonEndpoints;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Services.LinkGeneration;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;

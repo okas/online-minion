@@ -2,12 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using OnlineMinion.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Contracts.PaymentSpec.Responses;
-using OnlineMinion.RestApi.CommonEndpoints;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Services.LinkGeneration;
-using static OnlineMinion.RestApi.CommonEndpoints.ICommonValidationEndpoints;
+using static OnlineMinion.RestApi.ICommonValidationEndpoints;
 using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
-using static OnlineMinion.RestApi.CommonEndpoints.ICommonDescriptorEndpoints;
+using static OnlineMinion.RestApi.ICommonDescriptorEndpoints;
 
 namespace OnlineMinion.RestApi;
 

@@ -22,3 +22,5 @@ public class MediatorWrapper : Mediator, IAsyncValidatorSender
     public MediatorWrapper(IServiceProvider serviceProvider, INotificationPublisher publisher)
         : base(serviceProvider, publisher) { }
 }
+
+// TODO: To Decorator pattern?

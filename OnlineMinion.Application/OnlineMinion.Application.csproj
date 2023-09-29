@@ -11,17 +11,23 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
         <PackageReference Include="Meziantou.Analyzer" Version="2.0.85">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.1.23419.6"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="7.3.5"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0-rc.1.23419.6"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-rc.1.23419.4"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-rc.1.23419.4"/>
+        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\OnlineMinion.Common.Validation\OnlineMinion.Common.Validation.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Domain\OnlineMinion.Domain.csproj"/>
     </ItemGroup>
 
