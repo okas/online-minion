@@ -1,10 +1,9 @@
 using System.Net.Http.Json;
 using ErrorOr;
 using Microsoft.AspNetCore.Http;
-using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts;
 
-namespace OnlineMinion.RestApi.Client;
+namespace OnlineMinion.RestApi.Client.Helpers;
 
 public static class HttpMessageTransformers
 {

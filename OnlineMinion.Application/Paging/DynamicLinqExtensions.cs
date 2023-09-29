@@ -8,18 +8,18 @@ public static class DynamicLinqExtensions
 {
     public static IQueryable<TEntity> ConfigureStoreQuery<TEntity>(
         this IQueryable<TEntity> query,
-        IFullQueryParams         fullQueryParams
+        IQueryParameters         queryParams
     ) where TEntity : BaseEntity
     {
-        if (!string.IsNullOrWhiteSpace(fullQueryParams.Filter))
+        if (!string.IsNullOrWhiteSpace(queryParams.Filter))
         {
-            query = query.Where(fullQueryParams.Filter);
+            query = query.Where(queryParams.Filter);
         }
 
-        query = string.IsNullOrWhiteSpace(fullQueryParams.Sort)
+        query = string.IsNullOrWhiteSpace(queryParams.Sort)
             ? query.OrderBy(e => e.Id)
-            : query.OrderBy(fullQueryParams.Sort);
+            : query.OrderBy(queryParams.Sort);
 
-        return query.Skip((fullQueryParams.Page - 1) * fullQueryParams.Size).Take(fullQueryParams.Size);
+        return query.Skip((queryParams.Page - 1) * queryParams.Size).Take(queryParams.Size);
     }
 }

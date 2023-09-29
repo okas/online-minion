@@ -1,6 +1,6 @@
 namespace OnlineMinion.Contracts;
 
-public interface IFullQueryParams : IPagingInfo
+public interface IQueryParameters : IPagingInfo
 {
     /// <summary>
     ///     Filter string <a href="https://dynamic-linq.net/basic-simple-query#more-where-examples">see docs</a>.

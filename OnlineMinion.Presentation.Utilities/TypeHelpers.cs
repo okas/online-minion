@@ -1,4 +1,4 @@
-namespace OnlineMinion.Common.Utilities;
+namespace OnlineMinion.Presentation.Utilities;
 
 public static class TypeHelpers
 {

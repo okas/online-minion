@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
-namespace OnlineMinion.Common.Utilities;
+namespace OnlineMinion.Presentation.Utilities;
 
 public static class AsyncEnumerableHelpers
 {

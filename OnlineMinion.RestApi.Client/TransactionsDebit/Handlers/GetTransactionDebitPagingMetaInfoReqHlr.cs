@@ -3,7 +3,7 @@ using OnlineMinion.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 
-namespace OnlineMinion.RestApi.Client.Transactions.Debit.Handlers;
+namespace OnlineMinion.RestApi.Client.TransactionsDebit.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetTransactionDebitPagingMetaInfoReqHlr(ApiProvider api)

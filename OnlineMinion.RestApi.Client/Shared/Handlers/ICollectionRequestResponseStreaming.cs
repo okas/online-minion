@@ -1,6 +1,6 @@
 using ErrorOr;
 
-namespace OnlineMinion.RestApi.Client.Shared;
+namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
 /// <inheritdoc cref="IRequestResponseStreaming" />
 internal interface ICollectionRequestResponseStreaming : IRequestResponseStreaming

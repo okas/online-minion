@@ -1,4 +1,4 @@
-namespace OnlineMinion.RestApi.Client;
+namespace OnlineMinion.RestApi.Client.Helpers;
 
 public static class ExceptionHelpers
 {

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using ErrorOr;
 
-namespace OnlineMinion.RestApi.Client.Shared;
+namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
 /// <summary>
 ///     Manages Wasm Browser Streaming Behavior. Has default static implementations for to handel sending request  with
@@ -64,7 +64,7 @@ internal interface IRequestResponseStreaming
     /// <typeparam name="TResponse"></typeparam>
     /// <remarks>Uses deserialization options from <see cref="DefaultDeserializationOptions" />.</remarks>
     /// <returns></returns>
-    protected static async ValueTask<IAsyncEnumerable<TResponse>> GetResultAsStreamAsync<TResponse>(
+    protected static async Task<IAsyncEnumerable<TResponse>> GetResultAsStreamAsync<TResponse>(
         HttpResponseMessage httpResponse,
         CancellationToken   ct
     )

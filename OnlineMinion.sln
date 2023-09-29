@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Contracts", "O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.SPA.Blazor", "OnlineMinion.SPA.Blazor\OnlineMinion.SPA.Blazor.csproj", "{156691A3-8993-47C8-BFB0-ECC03ABECAC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Common.Utilities", "OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj", "{8546968C-16DB-4A0B-AC23-45A347D53EAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineMinion.Presentation.Utilities", "OnlineMinion.Presentation.Utilities\OnlineMinion.Presentation.Utilities.csproj", "{8546968C-16DB-4A0B-AC23-45A347D53EAF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{D5C564BF-AA58-47C4-897A-9C39793C6314}"
 EndProject

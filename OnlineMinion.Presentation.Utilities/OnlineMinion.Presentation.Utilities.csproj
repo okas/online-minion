@@ -17,5 +17,9 @@
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="Directory.Build.props"/>
+    </ItemGroup>
+
 
 </Project>

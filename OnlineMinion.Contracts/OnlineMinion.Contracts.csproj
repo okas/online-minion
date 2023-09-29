@@ -18,5 +18,9 @@
         <PackageReference Include="Microsoft.NETCore.Targets" Version="6.0.0-preview.4.21253.7"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="Directory.Build.props"/>
+    </ItemGroup>
+
 
 </Project>

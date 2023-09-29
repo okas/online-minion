@@ -1,9 +1,10 @@
 using ErrorOr;
-using OnlineMinion.Common.Utilities;
 using OnlineMinion.Contracts;
 using OnlineMinion.Contracts.Shared.Responses;
+using OnlineMinion.Presentation.Utilities;
+using OnlineMinion.RestApi.Client.Helpers;
 
-namespace OnlineMinion.RestApi.Client.Shared;
+namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
 /// <inheritdoc cref="IRequestResponseStreaming" />
 internal interface IPagedRequestResultStreaming : IRequestResponseStreaming
@@ -24,7 +25,7 @@ internal interface IPagedRequestResultStreaming : IRequestResponseStreaming
             return ToStreamResponseApiError(responseMessage);
         }
 
-        var modelsAsyncStream = await GetResultAsStreamAsync<TResponse>(responseMessage, ct);
+        var modelsAsyncStream = await GetResultAsStreamAsync<TResponse>(responseMessage, ct).ConfigureAwait(false);
 
         var pagingMetaInfo = responseMessage.GetPagingMetaInfo(rq.Page);
 
@@ -37,7 +38,7 @@ internal interface IPagedRequestResultStreaming : IRequestResponseStreaming
     /// <param name="uri">URI to append any optional parameters.</param>
     /// <param name="rq">Paging and filtering parameters source.</param>
     /// <returns></returns>
-    protected static Uri AddQueryString(Uri uri, IFullQueryParams rq)
+    protected static Uri AddQueryString(Uri uri, IQueryParameters rq)
     {
         var queryStringParams = new Dictionary<string, object?>(StringComparer.InvariantCultureIgnoreCase);
 

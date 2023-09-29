@@ -3,7 +3,7 @@ using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 
-namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
+namespace OnlineMinion.RestApi.Client.TransactionsCredit.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetTransactionCreditPagingMetaInfoReqHlr(ApiProvider api)

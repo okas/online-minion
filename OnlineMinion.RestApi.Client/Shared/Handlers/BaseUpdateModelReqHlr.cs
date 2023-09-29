@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using ErrorOr;
 using Microsoft.Extensions.Logging;
 using OnlineMinion.Contracts.Shared.Requests;
+using OnlineMinion.RestApi.Client.Helpers;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 

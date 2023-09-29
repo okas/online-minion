@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.WebUtilities;
 using static System.String;
 
-namespace OnlineMinion.Common.Utilities;
+namespace OnlineMinion.Presentation.Utilities;
 
 // TODO: needs fixes and optimizations, see MA analyzer result for input! Also,  QueryHelpers.AddQueryString
 // is already taking care of null values, so we can remove that check.

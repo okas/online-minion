@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnlineMinion.Common.Utilities\OnlineMinion.Common.Utilities.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Presentation.Utilities\OnlineMinion.Presentation.Utilities.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Contracts\OnlineMinion.Contracts.csproj"/>
     </ItemGroup>
@@ -40,12 +40,12 @@
 
 
     <ItemGroup>
-        <Folder Include="Transactions\Common\"/>
+        <None Remove="Directory.Build.props"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <None Remove="Directory.Build.props"/>
+        <Folder Include="TransactionsCredit\"/>
     </ItemGroup>
 
 </Project>

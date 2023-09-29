@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Net.Http.Headers;
 
-namespace OnlineMinion.Common.Utilities;
+namespace OnlineMinion.RestApi.Client.Helpers;
 
 public static class HttpResponseHeadersExtensions
 {

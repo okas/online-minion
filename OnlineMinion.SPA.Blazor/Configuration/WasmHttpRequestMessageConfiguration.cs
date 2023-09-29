@@ -20,7 +20,7 @@ namespace OnlineMinion.SPA.Blazor.Configuration;
 ///     <see cref="HttpClient.SendAsync(System.Net.Http.HttpRequestMessage, HttpCompletionOption)" /> method with the
 ///     completion option set to <see cref="HttpCompletionOption.ResponseHeadersRead" />.<br />
 ///     This call is made in
-///     <see cref="OnlineMinion.RestApi.Client.Shared.IRequestResponseStreaming.GetRequestResponse">
+///     <see cref="IRequestResponseStreaming.GetHttpRequestResponse">
 ///         IRequestResponseStreaming.GetRequestResponse
 ///     </see>
 ///     , in its default implementation.

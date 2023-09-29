@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace OnlineMinion.Common.Utilities;
+namespace OnlineMinion.Presentation.Utilities;
 
 public static class TypeMemberHelpers
 {

@@ -4,11 +4,11 @@ using OnlineMinion.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 
-namespace OnlineMinion.RestApi.Client.Transactions.Credit.Handlers;
+namespace OnlineMinion.RestApi.Client.TransactionsCredit.Handlers;
 
 [UsedImplicitly]
-internal sealed class UpdateTransactionCreditReqHlr(ApiProvider api, ILogger<UpdateTransactionCreditReqHlr> logger)
-    : BaseUpdateModelReqHlr<UpdateTransactionCreditReq>(api.Client, ApiProvider.ApiTransactionsCreditUri, logger)
+internal sealed class CreateTransactionCreditReqHlr(ApiProvider api, ILogger<CreateTransactionCreditReqHlr> logger)
+    : BaseCreateModelReqHlr<CreateTransactionCreditReq>(api.Client, ApiProvider.ApiTransactionsCreditUri, logger)
 {
     protected override string ModelName => "Credit Transaction";
 }
