@@ -8,7 +8,7 @@ var webAppBuilder = WebApplication.CreateBuilder(args);
 
 webAppBuilder.Services.AddDataStore(connectionString);
 
-webAppBuilder.Services.ConfigureRestApi(webAppBuilder.Configuration, webAppBuilder.Environment);
+webAppBuilder.Services.AddRestApi(webAppBuilder.Configuration, webAppBuilder.Environment);
 
 if (webAppBuilder.Environment.IsDevelopment())
 {

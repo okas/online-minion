@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection ConfigureRestApi(
+    public static IServiceCollection AddRestApi(
         this IServiceCollection services,
         ConfigurationManager    confManager,
         IWebHostEnvironment     environment
