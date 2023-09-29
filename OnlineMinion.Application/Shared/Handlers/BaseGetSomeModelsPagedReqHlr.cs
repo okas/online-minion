@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.Contracts.Shared.Responses;
 using OnlineMinion.Application.Paging;
-using OnlineMinion.Common;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;

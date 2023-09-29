@@ -3,7 +3,6 @@ using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.Shared.Requests;
-using OnlineMinion.Common;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;

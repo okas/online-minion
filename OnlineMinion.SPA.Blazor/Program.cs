@@ -3,10 +3,10 @@ using IL.FluentValidation.Extensions.Options;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OnlineMinion.Application.RequestValidation;
-using OnlineMinion.Common;
 using OnlineMinion.RestApi.Client.HttpRequestMessageHandlers;
 using OnlineMinion.SPA.Blazor;
 using OnlineMinion.SPA.Blazor.Configuration;
+using OnlineMinion.SPA.Blazor.Helpers;
 using OnlineMinion.SPA.Blazor.Settings;
 using Radzen;
 
@@ -40,7 +40,7 @@ services.AddTransient<WasmHttpRequestMessageConfiguration>()
         )
     );
 
-services.AddTransient<IAsyncValidatorSender, MediatorWrapper>();
+services.AddTransient<IAsyncValidatorSender, MediatorDecorator>();
 
 services.AddSingleton<StateContainer>();
 

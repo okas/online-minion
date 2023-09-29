@@ -9,7 +9,6 @@ using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.MediatorInfra.Behaviors;
 using OnlineMinion.Application.RequestValidation;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Common;
 using OnlineMinion.Domain;
 using OnlineMinion.Domain.Shared;
 
@@ -53,7 +52,7 @@ public static class ServiceCollectionExtensions
                 GetModelPagingInfoReqHlr<GetTransactionDebitPagingMetaInfoReq, TransactionDebit>
             >();
 
-        services.AddTransient<IAsyncValidatorSender, MediatorWrapper>();
+        services.AddTransient<IAsyncValidatorSender, MediatorDecorator>();
 
         #endregion
 

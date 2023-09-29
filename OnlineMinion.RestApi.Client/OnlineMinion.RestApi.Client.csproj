@@ -12,7 +12,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Presentation.Utilities\OnlineMinion.Presentation.Utilities.csproj"/>
-        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Application.Contracts\OnlineMinion.Application.Contracts.csproj"/>
     </ItemGroup>
 

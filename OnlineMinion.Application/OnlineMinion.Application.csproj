@@ -24,7 +24,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Application.RequestValidation\OnlineMinion.Application.RequestValidation.csproj"/>
-        <ProjectReference Include="..\OnlineMinion.Common\OnlineMinion.Common.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Application.Contracts\OnlineMinion.Application.Contracts.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Domain\OnlineMinion.Domain.csproj"/>
     </ItemGroup>

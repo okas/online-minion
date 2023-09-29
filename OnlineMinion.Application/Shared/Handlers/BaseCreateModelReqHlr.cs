@@ -1,7 +1,6 @@
 using ErrorOr;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.Contracts.Shared.Responses;
-using OnlineMinion.Common;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;
