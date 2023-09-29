@@ -6,41 +6,25 @@ var webAppBuilder = WebApplication.CreateBuilder(args);
 
 #region Container setup
 
-var confManager = webAppBuilder.Configuration;
-var services = webAppBuilder.Services;
+webAppBuilder.Services.AddDataStore(connectionString);
 
-services.AddDataStore(connectionString)
-    .AddRestApi(webAppBuilder.Configuration);
-
-services.AddSwaggerGen(confManager);
+webAppBuilder.Services.ConfigureRestApi(webAppBuilder.Configuration, webAppBuilder.Environment);
 
 if (webAppBuilder.Environment.IsDevelopment())
 {
-    services.AddDatabaseDeveloperPageExceptionFilter();
-
-    services.AddSwaggerUI(confManager);
+    webAppBuilder.Services.AddDatabaseDeveloperPageExceptionFilter();
 }
 
 #endregion
 
-var app = webAppBuilder.Build();
+var webApp = webAppBuilder.Build();
 
 #region HTTP request pipeline
 
-app.UseSwagger();
+webApp.UseHttpsRedirection();
 
-if (app.Environment.IsDevelopment())
-{
-    // Required to serve custom CSS for SwaggerUI.
-    app.UseStaticFiles();
-
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseRestApi();
+webApp.UseRestApi();
 
 #endregion
 
-await app.RunAsync().ConfigureAwait(false);
+await webApp.RunAsync().ConfigureAwait(false);

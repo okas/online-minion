@@ -8,6 +8,16 @@ public static class HttpRequestPipelineSetup
 {
     public static WebApplication UseRestApi(this WebApplication app)
     {
+        app.UseSwagger();
+
+        if (app.Environment.IsDevelopment())
+        {
+            // Required to serve custom CSS for SwaggerUI.
+            app.UseStaticFiles();
+
+            app.UseSwaggerUI();
+        }
+
         app.UseCors();
 
         app.UseExceptionHandler();

@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Routing;
 
 namespace OnlineMinion.RestApi.ProblemHandling;
 
 public static class ErrorEndpoints
 {
-    public static void MapDevEndpoints(WebApplication app)
+    public static void MapDevEndpoints(IEndpointRouteBuilder app)
     {
         var api = app.NewVersionedApi("Error Tests")
             .MapGroup("api/error-tests")

@@ -3,13 +3,13 @@ using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using OnlineMinion.RestApi;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace OnlineMinion.AppService.Swagger;
+namespace OnlineMinion.RestApi.Swagger;
 
 /// <inheritdoc />
 public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider, IServer server)

@@ -1,14 +1,15 @@
 using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace OnlineMinion.AppService.Swagger;
+namespace OnlineMinion.RestApi.Swagger;
 
 public class SwaggerUIOptionsConfigurator(IApiVersionDescriptionProvider apiVersionDescriptionProvider)
     : IConfigureOptions<SwaggerUIOptions>
 {
     private readonly string _apiAssemblyName =
-        typeof(Program).Assembly.GetName().Name
+        typeof(IAssemblyMarkerRestApi).Assembly.GetName().Name
         ?? throw new InvalidOperationException();
 
     public void Configure(SwaggerUIOptions options)
