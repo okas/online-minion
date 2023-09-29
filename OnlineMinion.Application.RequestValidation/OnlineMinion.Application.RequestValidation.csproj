@@ -13,7 +13,10 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1"/>
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0-eap1"/>
-        <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.85">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
