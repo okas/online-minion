@@ -1,7 +1,9 @@
 @page "/transactions/debit"
+
 @using static Presentation.Utilities.TypeMemberHelpers;
 @using static CurrencyInfo.ViewModels.CurrencyInfoExtensions;
 @using OnlineMinion.SPA.Blazor.Transaction.Debit.ViewModels
+@using OnlineMinion.SPA.Blazor.ViewModels
 @inherits BaseCRUDPage<
             TransactionDebitListItem,
             OnlineMinion.Application.Contracts.Transactions.Debit.Responses.TransactionDebitResp,
@@ -10,16 +12,18 @@
 
 @code
 {
-  protected override RenderFragment RenderEditorComponent() =>
-    @<CascadingValue IsFixed="@true" Value="@CT">
-      <TransactionDebitsEditor
-          AccountSpecDescriptors="@_accountDescriptorViewModels"
-          Model="@UpsertVM"
-          OnCancel="@CloseEditorDialog"
-          OnSubmit="@OnUpsertSubmitHandlerAsync"
-          PaymentSpecDescriptors="@_paymentDescriptorViewModels"
-          @ref="@_editorRef"/>
-    </CascadingValue>;
+  protected override RenderFragment RenderEditorComponent(
+    BaseTransactionDebitUpsertVM editVM,
+    IEditorMetadata<TransactionDebitListItem>? metadata) =>
+      @<CascadingValue IsFixed="@true" Value="@CT">
+        <TransactionDebitsEditor
+            AccountSpecDescriptors="@_accountDescriptorViewModels"
+            Model="@editVM"
+            OnCancel="@CloseEditorDialog"
+            OnSubmit="@OnUpsertSubmitHandlerAsync"
+            PaymentSpecDescriptors="@_paymentDescriptorViewModels"
+            @ref="@_editorRef"/>
+      </CascadingValue>;
 
   private static class Str
   {

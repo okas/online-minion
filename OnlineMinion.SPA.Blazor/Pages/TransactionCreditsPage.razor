@@ -1,7 +1,9 @@
 @page "/transactions/credit"
+
 @using static Presentation.Utilities.TypeMemberHelpers;
 @using static CurrencyInfo.ViewModels.CurrencyInfoExtensions;
 @using OnlineMinion.SPA.Blazor.Transaction.Credit.ViewModels
+@using OnlineMinion.SPA.Blazor.ViewModels
 @inherits BaseCRUDPage<
             TransactionCreditListItem,
             OnlineMinion.Application.Contracts.Transactions.Credit.Responses.TransactionCreditResp,
@@ -10,15 +12,17 @@
 
 @code
 {
-  protected override RenderFragment RenderEditorComponent() =>
-    @<CascadingValue IsFixed="@true" Value="@CT">
-      <TransactionCreditsEditor
-          Model="@UpsertVM"
-          OnCancel="@CloseEditorDialog"
-          OnSubmit="@OnUpsertSubmitHandlerAsync"
-          PaymentSpecDescriptors="@_paymentDescriptorViewModels"
-          @ref="@_editorRef"/>
-    </CascadingValue>;
+  protected override RenderFragment RenderEditorComponent(
+    BaseTransactionCreditUpsertVM editVM,
+    IEditorMetadata<TransactionCreditListItem>? _) =>
+      @<CascadingValue IsFixed="@true" Value="@CT">
+        <TransactionCreditsEditor
+            Model="@editVM"
+            OnCancel="@CloseEditorDialog"
+            OnSubmit="@OnUpsertSubmitHandlerAsync"
+            PaymentSpecDescriptors="@_paymentDescriptorViewModels"
+            @ref="@_editorRef"/>
+      </CascadingValue>;
 
   private static class Str
   {

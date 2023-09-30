@@ -1,17 +1,15 @@
 ﻿@page "/account-specs"
+@using OnlineMinion.Application.Contracts.AccountSpec.Requests
 @using OnlineMinion.Application.Contracts.AccountSpec.Responses
-@inherits BaseCRUDPage<
-            AccountSpecResp,
-            AccountSpecResp,
-            OnlineMinion.Application.Contracts.AccountSpec.Requests.BaseUpsertAccountSpecReqData
-            >
+@using OnlineMinion.SPA.Blazor.ViewModels
+@inherits BaseCRUDPage<AccountSpecResp, AccountSpecResp, BaseUpsertAccountSpecReqData>
 
 @code
 {
-  protected override RenderFragment RenderEditorComponent() =>
+  protected override RenderFragment RenderEditorComponent(BaseUpsertAccountSpecReqData editVM, IEditorMetadata<AccountSpecResp>? _) =>
     @<CascadingValue IsFixed="@true" Value="@CT">
       <AccountSpecsEditor
-          Model="@UpsertVM"
+          Model="@editVM"
           OnCancel="@CloseEditorDialog"
           OnSubmit="@OnUpsertSubmitHandlerAsync"
           @ref="@_editorRef"/>

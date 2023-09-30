@@ -6,6 +6,7 @@ using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.Contracts.Shared.Responses;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.Helpers;
+using OnlineMinion.SPA.Blazor.ViewModels;
 using Radzen;
 
 namespace OnlineMinion.SPA.Blazor.Pages.Base;
@@ -180,7 +181,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
             UpsertVM = (TBaseUpsert)CreateVMFactory();
         }
 
-        OpenEditorDialog($"Add new {ModelTypeName}");
+        OpenEditorDialog($"Add new {ModelTypeName}", UpsertVM);
     }
 
     protected abstract ICreateCommand CreateVMFactory();
@@ -194,18 +195,26 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         }
 
         var title = $"Edit {ModelTypeName}: id #{vm.Id}";
-        OpenEditorDialog(title);
+        var metadata = EditorMetadataFactory(vm);
+
+        OpenEditorDialog(title, UpsertVM, metadata);
     }
 
     protected abstract IUpdateCommand UpdateVMFactory(TVModel vm);
 
-    private void OpenEditorDialog(string title) => DialogService.Open(
-        title,
-        _ => RenderEditorComponent(),
-        new() { Draggable = true, }
-    );
+    private void OpenEditorDialog(string title, TBaseUpsert vm, IEditorMetadata<TVModel>? metadata = null) =>
+        DialogService.Open(
+            title,
+            _ => RenderEditorComponent(vm, metadata),
+            new() { Draggable = true, }
+        );
 
-    protected abstract RenderFragment RenderEditorComponent();
+    protected virtual IEditorMetadata<TVModel>? EditorMetadataFactory(TVModel? vm) => null;
+
+    protected abstract RenderFragment RenderEditorComponent(
+        TBaseUpsert               editVM,
+        IEditorMetadata<TVModel>? editorMetadata
+    );
 
     protected async Task OnUpsertSubmitHandlerAsync()
     {

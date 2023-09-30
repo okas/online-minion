@@ -6,6 +6,8 @@ using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 using OnlineMinion.SPA.Blazor.Pages.Base;
+using OnlineMinion.SPA.Blazor.ViewModels;
+using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec;
 
 namespace OnlineMinion.SPA.Blazor.Pages;
 

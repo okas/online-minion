@@ -1,11 +1,10 @@
 @page "/payment-specs"
 @using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels
+@using OnlineMinion.SPA.Blazor.ViewModels
+@using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec
+@using OnlineMinion.Application.Contracts.PaymentSpec.Requests
 @using OnlineMinion.Application.Contracts.PaymentSpec.Responses
-@inherits BaseCRUDPage<
-            PaymentSpecResp,
-            PaymentSpecResp,
-            OnlineMinion.Application.Contracts.PaymentSpec.Requests.BaseUpsertPaymentSpecReqData
-            >
+@inherits BaseCRUDPage<PaymentSpecResp, PaymentSpecResp, BaseUpsertPaymentSpecReqData>
 
 @code
 {
@@ -18,6 +17,17 @@
           OnSubmit="@OnUpsertSubmitHandlerAsync"
           @ref="@_editorRef"/>
     </CascadingValue>;
+  protected override RenderFragment RenderEditorComponent(
+    BaseUpsertPaymentSpecReqData editVM,
+    IEditorMetadata<PaymentSpecResp>? metadata) =>
+      @<CascadingValue IsFixed="@true" Value="@CT">
+        <PaymentSpecsEditor
+            CurrencyInfoVMs="_currencyCodes"
+            Model="@editVM"
+            OnCancel="@CloseEditorDialog"
+            OnSubmit="@OnUpsertSubmitHandlerAsync"
+            @ref="@_editorRef"/>
+      </CascadingValue>;
 
   private static class Str
   {
