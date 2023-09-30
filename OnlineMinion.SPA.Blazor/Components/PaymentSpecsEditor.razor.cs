@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
+using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec;
 
 namespace OnlineMinion.SPA.Blazor.Components;
 
@@ -14,6 +15,9 @@ public partial class PaymentSpecsEditor
     [Parameter]
     [EditorRequired]
     public BaseUpsertPaymentSpecReqData Model { get; set; } = default!;
+
+    [Parameter]
+    public UpdatePaymentSpecEditorMetadata? Metadata { get; set; }
 
     [Parameter]
     [EditorRequired]

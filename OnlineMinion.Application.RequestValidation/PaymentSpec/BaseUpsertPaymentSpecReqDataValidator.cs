@@ -20,10 +20,6 @@ public sealed class BaseUpsertPaymentSpecReqDataValidator : AbstractValidator<Ba
                     .MinimumLength(2)
                     .MaximumLength(50);
 
-                RuleFor(x => x.CurrencyCode)
-                    .NotEmpty()
-                    .Length(3);
-
                 RuleFor(x => x.Tags)
                     .MaximumLength(150);
             }

@@ -8,21 +8,13 @@
 
 @code
 {
-  protected override RenderFragment RenderEditorComponent() =>
-    @<CascadingValue IsFixed="@true" Value="@CT">
-      <PaymentSpecsEditor
-          CurrencyInfoVMs="_currencyCodes"
-          Model="@UpsertVM"
-          OnCancel="@CloseEditorDialog"
-          OnSubmit="@OnUpsertSubmitHandlerAsync"
-          @ref="@_editorRef"/>
-    </CascadingValue>;
   protected override RenderFragment RenderEditorComponent(
     BaseUpsertPaymentSpecReqData editVM,
     IEditorMetadata<PaymentSpecResp>? metadata) =>
       @<CascadingValue IsFixed="@true" Value="@CT">
         <PaymentSpecsEditor
             CurrencyInfoVMs="_currencyCodes"
+            Metadata="@((UpdatePaymentSpecEditorMetadata?)metadata)"
             Model="@editVM"
             OnCancel="@CloseEditorDialog"
             OnSubmit="@OnUpsertSubmitHandlerAsync"

@@ -13,7 +13,6 @@ internal sealed class UpdatePaymentSpecReqHlr(IOnlineMinionDbContext dbContext, 
     protected override void UpdateEntityAsync(BasePaymentSpec entity, UpdatePaymentSpecReq rq)
     {
         entity.Name = rq.Name;
-        entity.CurrencyCode = rq.CurrencyCode;
         entity.Tags = rq.Tags;
     }
 }

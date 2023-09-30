@@ -1,5 +1,6 @@
 @using OnlineMinion.Application.Contracts.PaymentSpec.Responses
 @using OnlineMinion.Application.Contracts.CurrencyInfo.Responses
+@using OnlineMinion.Application.Contracts.PaymentSpec.Requests
 @using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels
 
 @code {
@@ -24,22 +25,30 @@
       <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 25%" Text="@Str.CurrencyCodeField" Variant="@Variant.Text">
-      <RadzenDropDownDataGrid
-          AllowClear="@true"
-          AllowFilteringByAllStringColumns="@true"
-          AllowVirtualization="@true"
-          @bind-Value="@context.CurrencyCode"
-          Data="@CurrencyInfoVMs"
-          Density="@Density.Compact"
-          FilterCaseSensitivity="@FilterCaseSensitivity.CaseInsensitive"
-          PageSize="10"
-          TextProperty="@Str.DisplayValue"
-          ValueProperty="@Str.IsoCode">
-        <Columns>
-          <RadzenDropDownDataGridColumn Property="@Str.IsoCode" Title="@Str.IsoCodeField"/>
-          <RadzenDropDownDataGridColumn Property="@Str.Symbol" Title="@Str.Symbol"/>
-        </Columns>
-      </RadzenDropDownDataGrid>
+      @if (context is CreatePaymentSpecReq createContext)
+      {
+        <RadzenDropDownDataGrid
+            AllowClear="@true"
+            AllowFilteringByAllStringColumns="@true"
+            AllowVirtualization="@true"
+            @bind-Value="@createContext.CurrencyCode"
+            Data="@CurrencyInfoVMs"
+            Density="@Density.Compact"
+            FilterCaseSensitivity="@FilterCaseSensitivity.CaseInsensitive"
+            PageSize="10"
+            TextProperty="@Str.DisplayValue"
+            ValueProperty="@Str.IsoCode"
+            VirtualizationOverscanCount="15">
+          <Columns>
+            <RadzenDropDownDataGridColumn Property="@Str.IsoCode" Title="@Str.IsoCodeField"/>
+            <RadzenDropDownDataGridColumn Property="@Str.Symbol" Title="@Str.Symbol"/>
+          </Columns>
+        </RadzenDropDownDataGrid>
+      }
+      else if (Metadata is { } meta)
+      {
+        <RadzenTextBox Disabled="@meta.CurrencyCode.IsReadOnly" Value="@meta.CurrencyCode.Value"/>
+      }
     </RadzenFormField>
     <RadzenFormField Style="width: 100%" Text="@Str.Tags" Variant="@Variant.Text">
       <RadzenTextBox @bind-Value="@context.Tags" Trim="@true"/>

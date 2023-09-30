@@ -7,6 +7,12 @@ namespace OnlineMinion.Application.RequestValidation.PaymentSpec;
 [UsedImplicitly]
 public class CreatePaymentSpecReqValidator : AbstractValidator<CreatePaymentSpecReq>
 {
-    public CreatePaymentSpecReqValidator(BaseUpsertPaymentSpecReqDataValidator baseValidator) =>
+    public CreatePaymentSpecReqValidator(BaseUpsertPaymentSpecReqDataValidator baseValidator)
+    {
         Include(baseValidator);
+
+        RuleFor(x => x.CurrencyCode)
+            .NotEmpty()
+            .Length(3);
+    }
 }

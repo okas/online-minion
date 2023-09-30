@@ -41,7 +41,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
     protected override CreatePaymentSpecReq CreateVMFactory() => new();
 
     protected override UpdatePaymentSpecReq UpdateVMFactory(PaymentSpecResp vm) =>
-        new(vm.Id, vm.Name, vm.CurrencyCode, vm.Tags);
+        new(vm.Id, vm.Name, vm.Tags);
 
     protected override PaymentSpecResp ConvertReqResponseToVM(PaymentSpecResp dto) => dto;
 
@@ -58,4 +58,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
     protected override string GetDeleteMessageDescriptorData(PaymentSpecResp model) => model.Name;
 
     protected override DeletePaymentSpecReq DeleteCommandFactory(PaymentSpecResp vm) => new(vm.Id);
+
+    protected override IEditorMetadata<PaymentSpecResp> EditorMetadataFactory(PaymentSpecResp vm) =>
+        new UpdatePaymentSpecEditorMetadata(vm);
 }
