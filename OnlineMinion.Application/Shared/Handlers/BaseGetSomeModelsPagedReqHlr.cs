@@ -10,7 +10,7 @@ namespace OnlineMinion.Application.Shared.Handlers;
 
 internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<GetSomeModelsPagedReq<TResponse>, PagedStreamResult<TResponse>>
-    where TEntity : BaseEntity
+    where TEntity : class, IEntity<IId>
 {
     protected abstract Expression<Func<TEntity, TResponse>> Projection { get; }
 
@@ -25,8 +25,7 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TEntity, TResponse>(IOnline
 
         var pagingMeta = await query.GetPagingMetaInfoAsync(rq, ct).ConfigureAwait(false);
 
-        var resultStream = query
-            .ConfigureStoreQuery(rq)
+        var resultStream = query.ConfigureStoreQuery(rq)
             .Select(Projection)
             .AsAsyncEnumerable();
 

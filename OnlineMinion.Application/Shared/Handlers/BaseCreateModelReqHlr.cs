@@ -8,15 +8,15 @@ namespace OnlineMinion.Application.Shared.Handlers;
 internal abstract class BaseCreateModelReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<TRequest, ModelIdResp>
     where TRequest : ICreateCommand
-    where TEntity : BaseEntity
+    where TEntity : class, IEntity<IId>
 {
     public async Task<ErrorOr<ModelIdResp>> Handle(TRequest rq, CancellationToken ct)
     {
-        var entry = await dbContext.Set<TEntity>()
-            .AddAsync(ToEntity(rq), ct)
-            .ConfigureAwait(false);
+        var entity = ToEntity(rq);
 
-        return new ModelIdResp(entry.Entity.Id);
+        await dbContext.Set<TEntity>().AddAsync(entity, ct).ConfigureAwait(false);
+
+        return new ModelIdResp(entity.Id.Value);
     }
 
     protected abstract TEntity ToEntity(TRequest rq);

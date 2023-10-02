@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnlineMinion.Domain.Shared;
+using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 
@@ -8,6 +8,11 @@ public class BasePaymentSpecEntityConfig : IEntityTypeConfiguration<BasePaymentS
 {
     public void Configure(EntityTypeBuilder<BasePaymentSpec> builder)
     {
+        builder.UseTphMappingStrategy()
+            .ToTable("PaymentSpecs");
+
+        builder.HasKey(e => e.Id);
+
         builder.Property(e => e.Name)
             .HasMaxLength(50);
 
@@ -20,7 +25,5 @@ public class BasePaymentSpecEntityConfig : IEntityTypeConfiguration<BasePaymentS
 
         builder.HasIndex(e => e.Name)
             .IsUnique();
-
-        builder.UseTphMappingStrategy();
     }
 }

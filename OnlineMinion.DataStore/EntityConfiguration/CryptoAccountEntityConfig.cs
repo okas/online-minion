@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnlineMinion.Domain;
+using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 

@@ -3,8 +3,11 @@ using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Application;
 using OnlineMinion.Application.Exceptions;
-using OnlineMinion.Domain;
-using OnlineMinion.Domain.Shared;
+using OnlineMinion.DataStore.ValueConverters;
+using OnlineMinion.Domain.AccountSpecs;
+using OnlineMinion.Domain.PaymentSpecs;
+using OnlineMinion.Domain.TransactionCredits;
+using OnlineMinion.Domain.TransactionDebits;
 
 namespace OnlineMinion.DataStore;
 
@@ -16,8 +19,6 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
     public DbSet<TransactionDebit> TransactionDebits { get; set; } = null!;
 
     public DbSet<TransactionCredit> TransactionCredits { get; set; } = null!;
-
-    public DbSet<BasePaymentSpec> PaymentSpecs { get; set; } = null!;
 
     public DbSet<BankAccountSpec> BankAccountSpecs { get; set; } = null!;
 
@@ -59,15 +60,14 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
         }
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.UseExceptionProcessor();
-    }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
+        configurationBuilder.ConfigureConverters();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineMinionDbContext).Assembly);
-    }
 
     private static class Str
     {

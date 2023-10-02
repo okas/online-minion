@@ -6,15 +6,18 @@ using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;
 
-internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext, ILogger logger)
+internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity, TId>(IOnlineMinionDbContext dbContext, ILogger logger)
     : IRequestHandler<TRequest, ErrorOr<Updated>>
     where TRequest : IUpdateCommand
-    where TEntity : BaseEntity
+    where TEntity : class, IEntity<TId>
+    where TId : class, IId
 {
     public async Task<ErrorOr<Updated>> Handle(TRequest rq, CancellationToken ct)
     {
+        var id = CreateEntityId(rq);
+
         var entity = await dbContext.Set<TEntity>()
-            .FindAsync(new object?[] { rq.Id, }, ct)
+            .FindAsync(new object?[] { id, }, ct)
             .ConfigureAwait(false);
 
         if (entity is null)
@@ -24,10 +27,12 @@ internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity>(IOnlineMinionDb
             return Error.NotFound();
         }
 
-        UpdateEntityAsync(entity, rq);
+        UpdateEntity(entity, rq);
 
         return default;
     }
 
-    protected abstract void UpdateEntityAsync(TEntity entity, TRequest rq);
+    protected abstract TId CreateEntityId(TRequest rq);
+
+    protected abstract void UpdateEntity(TEntity entity, TRequest rq);
 }

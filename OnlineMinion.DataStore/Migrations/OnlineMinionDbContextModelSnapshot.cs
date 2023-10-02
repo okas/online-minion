@@ -22,10 +22,9 @@ namespace OnlineMinion.DataStore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OnlineMinion.Domain.AccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.AccountSpecs.AccountSpec", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -50,10 +49,9 @@ namespace OnlineMinion.DataStore.Migrations
                     b.ToTable("AccountSpecs");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.Shared.BasePaymentSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.PaymentSpecs.BasePaymentSpec", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CurrencyCode")
@@ -80,17 +78,16 @@ namespace OnlineMinion.DataStore.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("PaymentSpecs");
+                    b.ToTable("PaymentSpecs", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("BasePaymentSpec");
 
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.Shared.BaseTransaction", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionCredits.TransactionCredit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
@@ -125,14 +122,65 @@ namespace OnlineMinion.DataStore.Migrations
 
                     b.HasIndex("PaymentInstrumentId");
 
-                    b.ToTable((string)null);
+                    b.ToTable("TransactionCredits");
 
                     b.UseTpcMappingStrategy();
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.BankAccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionDebits.TransactionDebit", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Domain.Shared.BasePaymentSpec");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountSpecId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("Fee")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Party")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
+
+                    b.Property<Guid>("PaymentInstrumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountSpecId");
+
+                    b.HasIndex("PaymentInstrumentId");
+
+                    b.ToTable("TransactionDebits");
+
+                    b.UseTpcMappingStrategy();
+                });
+
+            modelBuilder.Entity("OnlineMinion.Domain.PaymentSpecs.BankAccountSpec", b =>
+                {
+                    b.HasBaseType("OnlineMinion.Domain.PaymentSpecs.BasePaymentSpec");
 
                     b.Property<string>("BankName")
                         .IsRequired()
@@ -147,16 +195,16 @@ namespace OnlineMinion.DataStore.Migrations
                     b.HasDiscriminator().HasValue("BankAccountSpec");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.CashAccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.PaymentSpecs.CashAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Domain.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Domain.PaymentSpecs.BasePaymentSpec");
 
                     b.HasDiscriminator().HasValue("CashAccountSpec");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.CryptoExchangeAccountSpec", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.PaymentSpecs.CryptoExchangeAccountSpec", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Domain.Shared.BasePaymentSpec");
+                    b.HasBaseType("OnlineMinion.Domain.PaymentSpecs.BasePaymentSpec");
 
                     b.Property<string>("ExchangeName")
                         .IsRequired()
@@ -169,32 +217,9 @@ namespace OnlineMinion.DataStore.Migrations
                     b.HasDiscriminator().HasValue("CryptoExchangeAccountSpec");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.TransactionCredit", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionCredits.TransactionCredit", b =>
                 {
-                    b.HasBaseType("OnlineMinion.Domain.Shared.BaseTransaction");
-
-                    b.ToTable("TransactionCredits");
-                });
-
-            modelBuilder.Entity("OnlineMinion.Domain.TransactionDebit", b =>
-                {
-                    b.HasBaseType("OnlineMinion.Domain.Shared.BaseTransaction");
-
-                    b.Property<Guid>("AccountSpecId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Fee")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasIndex("AccountSpecId");
-
-                    b.ToTable("TransactionDebits");
-                });
-
-            modelBuilder.Entity("OnlineMinion.Domain.Shared.BaseTransaction", b =>
-                {
-                    b.HasOne("OnlineMinion.Domain.Shared.BasePaymentSpec", "PaymentInstrument")
+                    b.HasOne("OnlineMinion.Domain.PaymentSpecs.BasePaymentSpec", "PaymentInstrument")
                         .WithMany()
                         .HasForeignKey("PaymentInstrumentId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -203,15 +228,23 @@ namespace OnlineMinion.DataStore.Migrations
                     b.Navigation("PaymentInstrument");
                 });
 
-            modelBuilder.Entity("OnlineMinion.Domain.TransactionDebit", b =>
+            modelBuilder.Entity("OnlineMinion.Domain.TransactionDebits.TransactionDebit", b =>
                 {
-                    b.HasOne("OnlineMinion.Domain.AccountSpec", "AccountSpec")
+                    b.HasOne("OnlineMinion.Domain.AccountSpecs.AccountSpec", "AccountSpec")
                         .WithMany()
                         .HasForeignKey("AccountSpecId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("OnlineMinion.Domain.PaymentSpecs.BasePaymentSpec", "PaymentInstrument")
+                        .WithMany()
+                        .HasForeignKey("PaymentInstrumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("AccountSpec");
+
+                    b.Navigation("PaymentInstrument");
                 });
 #pragma warning restore 612, 618
         }

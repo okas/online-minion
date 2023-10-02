@@ -9,7 +9,7 @@ namespace OnlineMinion.Application.Shared.Handlers;
 
 internal abstract class GetSomeModelDescriptorsReqHlr<TEntity, TResponse>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<GetSomeModelDescriptorsReq<TResponse>, IAsyncEnumerable<TResponse>>
-    where TEntity : BaseEntity
+    where TEntity : class, IEntity<IId>
     where TResponse : IHasId
 {
     protected abstract Expression<Func<TEntity, TResponse>> Projection { get; }

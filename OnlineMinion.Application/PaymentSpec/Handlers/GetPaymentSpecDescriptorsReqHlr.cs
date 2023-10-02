@@ -2,17 +2,17 @@ using System.Linq.Expressions;
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Domain.Shared;
+using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.Application.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetPaymentSpecDescriptorsReqHlr(IOnlineMinionDbContext dbContext)
-    : GetSomeModelDescriptorsReqHlr<BasePaymentSpec, PaymentSpecDescriptorResp>(dbContext)
+    : GetSomeModelDescriptorsReqHlr<CashAccountSpec, PaymentSpecDescriptorResp>(dbContext)
 {
-    protected override Expression<Func<BasePaymentSpec, PaymentSpecDescriptorResp>> Projection =>
+    protected override Expression<Func<CashAccountSpec, PaymentSpecDescriptorResp>> Projection =>
         e => new(
-            e.Id,
+            e.Id.Value,
             e.Name,
             e.CurrencyCode
         );

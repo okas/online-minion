@@ -1,15 +1,15 @@
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Domain.Shared;
+using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.Application.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class CreatePaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseCreateModelReqHlr<CreatePaymentSpecReq, BasePaymentSpec>(dbContext)
+    : BaseCreateModelReqHlr<CreatePaymentSpecReq, CashAccountSpec>(dbContext)
 {
-    protected override BasePaymentSpec ToEntity(CreatePaymentSpecReq rq) => new()
+    protected override CashAccountSpec ToEntity(CreatePaymentSpecReq rq) => new()
     {
         Name = rq.Name,
         CurrencyCode = rq.CurrencyCode,

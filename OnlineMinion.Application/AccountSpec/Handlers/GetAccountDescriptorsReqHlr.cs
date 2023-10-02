@@ -7,11 +7,11 @@ namespace OnlineMinion.Application.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class GetAccountDescriptorsReqHlr(IOnlineMinionDbContext dbContext)
-    : GetSomeModelDescriptorsReqHlr<Domain.AccountSpec, AccountSpecDescriptorResp>(dbContext)
+    : GetSomeModelDescriptorsReqHlr<Domain.AccountSpecs.AccountSpec, AccountSpecDescriptorResp>(dbContext)
 {
-    protected override Expression<Func<Domain.AccountSpec, AccountSpecDescriptorResp>> Projection =>
+    protected override Expression<Func<Domain.AccountSpecs.AccountSpec, AccountSpecDescriptorResp>> Projection =>
         e => new(
-            e.Id,
+            e.Id.Value,
             e.Name
         );
 }

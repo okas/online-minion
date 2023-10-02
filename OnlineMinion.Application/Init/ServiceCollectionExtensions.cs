@@ -9,8 +9,10 @@ using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.MediatorInfra.Behaviors;
 using OnlineMinion.Application.RequestValidation;
 using OnlineMinion.Application.Shared.Handlers;
-using OnlineMinion.Domain;
-using OnlineMinion.Domain.Shared;
+using OnlineMinion.Domain.AccountSpecs;
+using OnlineMinion.Domain.PaymentSpecs;
+using OnlineMinion.Domain.TransactionCredits;
+using OnlineMinion.Domain.TransactionDebits;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -43,7 +45,7 @@ public static class ServiceCollectionExtensions
                 GetModelPagingInfoReqHlr<GetAccountSpecPagingMetaInfoReq, AccountSpec>
             >()
             .AddTransient<IRequestHandler<GetPaymentSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
-                GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, BasePaymentSpec>
+                GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, CashAccountSpec>
             >()
             .AddTransient<IRequestHandler<GetTransactionCreditPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
                 GetModelPagingInfoReqHlr<GetTransactionCreditPagingMetaInfoReq, TransactionCredit>

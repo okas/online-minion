@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnlineMinion.Domain;
+using OnlineMinion.Domain.AccountSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 
@@ -8,6 +8,8 @@ public class AccountSpecEntityConfig : IEntityTypeConfiguration<AccountSpec>
 {
     public void Configure(EntityTypeBuilder<AccountSpec> builder)
     {
+        builder.HasKey(e => e.Id);
+
         builder.Property(e => e.Name)
             .HasMaxLength(50);
 

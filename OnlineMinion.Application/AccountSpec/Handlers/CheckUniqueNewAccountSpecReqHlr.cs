@@ -7,9 +7,9 @@ namespace OnlineMinion.Application.AccountSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class CheckUniqueNewAccountSpecReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueNewReq, Domain.AccountSpec>(dbContext)
+    : BaseCheckUniqueModelReqHlr<CheckAccountSpecUniqueNewReq, Domain.AccountSpecs.AccountSpec>(dbContext)
 {
-    protected override Expression<Func<Domain.AccountSpec, bool>> GetConflictPredicate(
+    protected override Expression<Func<Domain.AccountSpecs.AccountSpec, bool>> GetConflictPredicate(
         CheckAccountSpecUniqueNewReq rq
     ) =>
         entity => entity.Name == rq.MemberValue;

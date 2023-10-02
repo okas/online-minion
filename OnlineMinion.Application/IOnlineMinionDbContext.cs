@@ -1,18 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Domain;
-using OnlineMinion.Domain.Shared;
+using OnlineMinion.Domain.PaymentSpecs;
+using OnlineMinion.Domain.TransactionDebits;
 
 namespace OnlineMinion.Application;
 
 public interface IOnlineMinionDbContext
 {
-    DbSet<Domain.AccountSpec> AccountSpecs { get; set; }
+    DbSet<Domain.AccountSpecs.AccountSpec> AccountSpecs { get; set; }
 
     DbSet<TransactionDebit> TransactionDebits { get; set; }
 
-    DbSet<TransactionCredit> TransactionCredits { get; set; }
-
-    DbSet<BasePaymentSpec> PaymentSpecs { get; set; }
+    DbSet<Domain.TransactionCredits.TransactionCredit> TransactionCredits { get; set; }
 
     DbSet<BankAccountSpec> BankAccountSpecs { get; set; }
 
@@ -22,7 +21,8 @@ public interface IOnlineMinionDbContext
 
     Task<int> SaveChangesAsync() => SaveChangesAsync(default);
 
-    DbSet<TEntity> Set<TEntity>() where TEntity : BaseEntity;
+    DbSet<TEntity> Set<TEntity>()
+        where TEntity : class, IEntity<IId>;
 
     Task<int> SaveChangesAsync(CancellationToken ct);
 }

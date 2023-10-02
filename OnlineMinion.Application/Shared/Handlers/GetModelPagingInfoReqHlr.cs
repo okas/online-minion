@@ -15,7 +15,7 @@ internal sealed class GetModelPagingInfoReqHlr<TRequest, TEntity>(
     )
     : IErrorOrRequestHandler<TRequest, PagingMetaInfo>
     where TRequest : IGetPagingInfoRequest
-    where TEntity : BaseEntity
+    where TEntity : class, IEntity<IId>
 {
     public async Task<ErrorOr<PagingMetaInfo>> Handle(TRequest rq, CancellationToken ct)
     {

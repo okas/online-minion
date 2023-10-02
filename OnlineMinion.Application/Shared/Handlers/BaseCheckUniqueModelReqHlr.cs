@@ -9,7 +9,7 @@ namespace OnlineMinion.Application.Shared.Handlers;
 internal abstract class BaseCheckUniqueModelReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext)
     : IRequestHandler<TRequest, ErrorOr<Success>>
     where TRequest : IRequest<ErrorOr<Success>>
-    where TEntity : BaseEntity
+    where TEntity : class, IEntity<IId>
 {
     public async Task<ErrorOr<Success>> Handle(TRequest rq, CancellationToken ct)
     {
