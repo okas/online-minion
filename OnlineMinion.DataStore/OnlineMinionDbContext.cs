@@ -3,7 +3,7 @@ using EntityFramework.Exceptions.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using OnlineMinion.Application;
 using OnlineMinion.Application.Exceptions;
-using OnlineMinion.DataStore.ValueConverters;
+using OnlineMinion.DataStore.Helpers;
 using OnlineMinion.Domain.AccountSpecs;
 using OnlineMinion.Domain.PaymentSpecs;
 using OnlineMinion.Domain.TransactionCredits;
@@ -64,7 +64,7 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
         optionsBuilder.UseExceptionProcessor();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
-        configurationBuilder.ConfigureConverters();
+        configurationBuilder.ApplyValueConversionsFromAssembly(typeof(OnlineMinionDbContext).Assembly);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineMinionDbContext).Assembly);
