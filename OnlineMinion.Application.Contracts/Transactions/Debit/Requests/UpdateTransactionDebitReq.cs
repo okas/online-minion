@@ -5,8 +5,8 @@ namespace OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 
 [method: SetsRequiredMembers]
 public sealed class UpdateTransactionDebitReq(
-        Guid     paymentInstrumentId,
         Guid     id,
+        Guid     paymentInstrumentId,
         Guid     accountSpecId,
         decimal  fee,
         DateOnly date,
