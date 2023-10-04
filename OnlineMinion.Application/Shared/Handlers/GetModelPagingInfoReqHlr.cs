@@ -1,7 +1,6 @@
 using ErrorOr;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Domain;
@@ -9,10 +8,7 @@ using OnlineMinion.Domain;
 namespace OnlineMinion.Application.Shared.Handlers;
 
 [UsedImplicitly]
-internal sealed class GetModelPagingInfoReqHlr<TRequest, TEntity>(
-        IOnlineMinionDbContext                               dbContext,
-        ILogger<GetModelPagingInfoReqHlr<TRequest, TEntity>> logger
-    )
+internal sealed class GetModelPagingInfoReqHlr<TRequest, TEntity>(IOnlineMinionDbContext dbContext)
     : IErrorOrRequestHandler<TRequest, PagingMetaInfo>
     where TRequest : IGetPagingInfoRequest
     where TEntity : class, IEntity<IId>
@@ -28,17 +24,7 @@ internal sealed class GetModelPagingInfoReqHlr<TRequest, TEntity>(
         {
             var requestName = typeof(TRequest).Name;
 
-            logger.LogCritical(
-                ex,
-                "Error while getting paging info for {RequestType}: {ErrorMessage}",
-                requestName,
-                ex.Message
-            );
-
-            return Error.Failure(
-                $"Error while getting paging info for {requestName}: {ex.Message}",
-                ex.InnerException?.Message ?? string.Empty
-            );
+            return Error.Failure(description: $"Error while getting paging info for {requestName}: {ex.Message}");
         }
 
         return new PagingMetaInfo(

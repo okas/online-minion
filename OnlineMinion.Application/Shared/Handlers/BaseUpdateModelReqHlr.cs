@@ -1,12 +1,11 @@
 using ErrorOr;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Domain;
 
 namespace OnlineMinion.Application.Shared.Handlers;
 
-internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity, TId>(IOnlineMinionDbContext dbContext, ILogger logger)
+internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity, TId>(IOnlineMinionDbContext dbContext)
     : IRequestHandler<TRequest, ErrorOr<Updated>>
     where TRequest : IUpdateCommand
     where TEntity : class, IEntity<TId>
@@ -22,9 +21,7 @@ internal abstract class BaseUpdateModelReqHlr<TRequest, TEntity, TId>(IOnlineMin
 
         if (entity is null)
         {
-            logger.LogWarning("{ModelName} with Id {Id} not found", typeof(TEntity).Name, rq.Id);
-
-            return Error.NotFound();
+            return Error.NotFound(description: $"{typeof(TEntity).Name} with Id {rq.Id} not found");
         }
 
         UpdateEntity(entity, rq);

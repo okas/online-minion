@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.TransactionDebits;
@@ -7,11 +6,8 @@ using OnlineMinion.Domain.TransactionDebits;
 namespace OnlineMinion.Application.TransactionsDebit.Handlers;
 
 [UsedImplicitly]
-internal sealed class UpdateTransactionDebitReqHlr(
-        IOnlineMinionDbContext                dbContext,
-        ILogger<UpdateTransactionDebitReqHlr> logger
-    )
-    : BaseUpdateModelReqHlr<UpdateTransactionDebitReq, TransactionDebit, TransactionDebitId>(dbContext, logger)
+internal sealed class UpdateTransactionDebitReqHlr(IOnlineMinionDbContext dbContext)
+    : BaseUpdateModelReqHlr<UpdateTransactionDebitReq, TransactionDebit, TransactionDebitId>(dbContext)
 {
     protected override TransactionDebitId CreateEntityId(UpdateTransactionDebitReq rq) => new(rq.Id);
 
