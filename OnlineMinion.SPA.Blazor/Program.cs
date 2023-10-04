@@ -12,7 +12,7 @@ using Radzen;
 
 var hostBuilder = WebAssemblyHostBuilder.CreateDefault(args);
 
-#region Container setup
+#region General setup
 
 var services = hostBuilder.Services;
 
@@ -32,27 +32,35 @@ services.AddOptions<WebAppSettings>()
     .ValidateWithFluentValidator()
     .ValidateOnStart();
 
-services.AddTransient<WasmHttpRequestMessageConfiguration>()
-    .AddRestApiClient()
+#endregion
+
+#region RestApi.Client setup
+
+services.AddTransient<WasmHttpRequestMessageConfiguration>();
+
+services.AddRestApiClient()
     .AddHttpMessageHandler(
         sp => new DelegatedRequestHandler(
             sp.GetRequiredService<WasmHttpRequestMessageConfiguration>().EnableBrowserResponseStreamingForGet
         )
     );
 
+#endregion
+
+#region Validation setup
+
 services.AddTransient<IAsyncValidatorSender, MediatorDecorator>();
-
-services.AddSingleton<StateContainer>();
-
 services.AddApplicationRequestValidation();
 // For settings validation.
 services.AddValidatorsFromAssemblyContaining<Program>();
 
-services.AddScoped<DialogService>();
-
 #endregion
 
-#region Components setup
+#region UI services setup
+
+services.AddSingleton<StateContainer>();
+services.AddScoped<DialogService>();
+services.AddScoped<TooltipService>();
 
 hostBuilder.RootComponents.Add<App>("#app");
 hostBuilder.RootComponents.Add<HeadOutlet>("head::after");

@@ -1,6 +1,6 @@
 namespace OnlineMinion.Domain.PaymentSpecs;
 
-public sealed class BankAccountSpec : BasePaymentSpec
+public sealed class BankAccountSpec : BasePaymentSpecData
 {
     public required string IBAN { get; set; }
 

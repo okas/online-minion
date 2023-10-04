@@ -9,10 +9,9 @@ namespace OnlineMinion.Application.PaymentSpec.Handlers;
 internal sealed class CreatePaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
     : BaseCreateModelReqHlr<CreatePaymentSpecReq, CashAccountSpec>(dbContext)
 {
-    protected override CashAccountSpec ToEntity(CreatePaymentSpecReq rq) => new()
-    {
-        Name = rq.Name,
-        CurrencyCode = rq.CurrencyCode,
-        Tags = rq.Tags,
-    };
+    protected override CashAccountSpec ToEntity(CreatePaymentSpecReq rq) => new(
+        rq.Name,
+        rq.CurrencyCode,
+        rq.Tags
+    );
 }

@@ -3,11 +3,15 @@ using Microsoft.AspNetCore.Components.Forms;
 using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec;
+using Radzen;
 
 namespace OnlineMinion.SPA.Blazor.Components;
 
 public partial class PaymentSpecsEditor
 {
+    [Inject]
+    private TooltipService TooltipService { get; set; } = default!;
+
     [Parameter]
     public UpsertEditorWrapper<BaseUpsertPaymentSpecReqData> WrapperRef { get; set; } = default!;
 
@@ -29,4 +33,11 @@ public partial class PaymentSpecsEditor
     [Parameter]
     [EditorRequired]
     public IEnumerable<CurrencyInfoVm> CurrencyInfoVMs { get; set; } = Enumerable.Empty<CurrencyInfoVm>();
+
+    private void ShowDisabledCurrencyCodeHelp(ElementReference elementRef)
+    {
+        var options = new TooltipOptions { Duration = null, };
+
+        TooltipService.Open(elementRef, Str.CurrencyCodeCannotUpdate, options);
+    }
 }

@@ -4,9 +4,9 @@ using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 
-public class BasePaymentSpecEntityConfig : IEntityTypeConfiguration<BasePaymentSpec>
+public class BasePaymentSpecEntityConfig : IEntityTypeConfiguration<BasePaymentSpecData>
 {
-    public void Configure(EntityTypeBuilder<BasePaymentSpec> builder)
+    public void Configure(EntityTypeBuilder<BasePaymentSpecData> builder)
     {
         builder.UseTphMappingStrategy()
             .ToTable("PaymentSpecs");

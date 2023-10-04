@@ -18,5 +18,5 @@ public abstract class BaseTransactionData
 
     public DateTime CreatedAt { get; set; }
 
-    public BasePaymentSpec? PaymentInstrument { get; set; }
+    public BasePaymentSpecData? PaymentInstrument { get; set; }
 }

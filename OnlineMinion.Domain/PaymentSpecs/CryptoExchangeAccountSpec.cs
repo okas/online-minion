@@ -1,6 +1,6 @@
 namespace OnlineMinion.Domain.PaymentSpecs;
 
-public sealed class CryptoExchangeAccountSpec : BasePaymentSpec
+public sealed class CryptoExchangeAccountSpec : BasePaymentSpecData
 {
     public required string ExchangeName { get; set; }
 

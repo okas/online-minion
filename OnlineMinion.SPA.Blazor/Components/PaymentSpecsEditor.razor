@@ -15,6 +15,7 @@
     public const string IsoCode = nameof(CurrencyInfoResp.IsoCode);
     public const string IsoCodeField = "ISO code";
     public const string DisplayValue = nameof(CurrencyInfoVm.Display);
+    public const string CurrencyCodeCannotUpdate = "Currency code cannot be updated.";
   }
 
 }
@@ -47,7 +48,11 @@
       }
       else if (Metadata is { } meta)
       {
-        <RadzenTextBox Disabled="@meta.CurrencyCode.IsReadOnly" Value="@meta.CurrencyCode.Value"/>
+        <RadzenTextBox
+            Disabled="@meta.CurrencyCode.IsReadOnly"
+            MouseEnter="@ShowDisabledCurrencyCodeHelp"
+            Style="cursor: help"
+            Value="@meta.CurrencyCode.Value"/>
       }
     </RadzenFormField>
     <RadzenFormField Style="width: 100%" Text="@Str.Tags" Variant="@Variant.Text">

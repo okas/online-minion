@@ -12,9 +12,6 @@ internal sealed class UpdatePaymentSpecReqHlr(IOnlineMinionDbContext dbContext, 
 {
     protected override PaymentSpecId CreateEntityId(UpdatePaymentSpecReq rq) => new(rq.Id);
 
-    protected override void UpdateEntity(CashAccountSpec entity, UpdatePaymentSpecReq rq)
-    {
-        entity.Name = rq.Name;
-        entity.Tags = rq.Tags;
-    }
+    protected override void UpdateEntity(CashAccountSpec entity, UpdatePaymentSpecReq rq) =>
+        entity.Update(rq.Name, rq.Tags);
 }
