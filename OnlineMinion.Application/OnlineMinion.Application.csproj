@@ -12,7 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="MediatR" Version="12.1.1"/>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.85">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.92">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
