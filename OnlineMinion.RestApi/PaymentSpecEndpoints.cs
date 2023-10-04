@@ -28,7 +28,7 @@ public class PaymentSpecEndpoints
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<PaymentSpecResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetPaymentSpecByIdReq, PaymentSpecResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetByIdPaymentSpecReq, PaymentSpecResp>)
             .WithName(V1GetPaymentSpecById)
             .WithMetadata(linkGeneratorMetaData);
 

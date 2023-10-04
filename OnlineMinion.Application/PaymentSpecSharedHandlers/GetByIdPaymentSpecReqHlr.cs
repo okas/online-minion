@@ -7,10 +7,10 @@ using OnlineMinion.Domain.PaymentSpecs;
 namespace OnlineMinion.Application.PaymentSpecSharedHandlers;
 
 [UsedImplicitly]
-internal class GetPaymentSpecByIdReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, PaymentSpecCash, PaymentSpecId, PaymentSpecResp>(dbContext)
+internal class GetByIdPaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
+    : BaseGetModelByIdReqHlr<GetByIdPaymentSpecReq, PaymentSpecCash, PaymentSpecId, PaymentSpecResp>(dbContext)
 {
-    protected override PaymentSpecId CreateEntityId(GetPaymentSpecByIdReq rq) => new(rq.Id);
+    protected override PaymentSpecId CreateEntityId(GetByIdPaymentSpecReq rq) => new(rq.Id);
 
     protected override PaymentSpecResp ToResponse(PaymentSpecCash entity) => new()
     {
