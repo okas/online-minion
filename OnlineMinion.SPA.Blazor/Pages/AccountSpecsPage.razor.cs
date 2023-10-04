@@ -36,8 +36,12 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpe
 
     protected override IUpdateCommand ConvertUpdateVMToReq(IUpdateCommand reqOrVM) => reqOrVM;
 
-    protected override AccountSpecResp ConvertUpdateReqToVM(IUpdateCommand dto) =>
-        (AccountSpecResp)(UpdateAccountSpecReq)dto;
+    protected override AccountSpecResp ConvertUpdateReqToVM(IUpdateCommand dto, AccountSpecResp vm)
+    {
+        var updateReq = (UpdateAccountSpecReq)dto;
+
+        return vm with { Name = updateReq.Name, Group = updateReq.Group, Description = updateReq.Description, };
+    }
 
     protected override ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM) => reqOrVM;
 

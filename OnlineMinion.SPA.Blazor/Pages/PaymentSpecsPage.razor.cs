@@ -48,8 +48,12 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
 
     protected override IUpdateCommand ConvertUpdateVMToReq(IUpdateCommand reqOrVM) => reqOrVM;
 
-    protected override PaymentSpecResp ConvertUpdateReqToVM(IUpdateCommand dto) =>
-        (PaymentSpecResp)(UpdatePaymentSpecCashReq)dto;
+    protected override PaymentSpecResp ConvertUpdateReqToVM(IUpdateCommand dto, PaymentSpecResp vm)
+    {
+        var updateReq = (UpdatePaymentSpecCashReq)dto;
+
+        return vm with { Name = updateReq.Name, Tags = updateReq.Tags, };
+    }
 
     protected override ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM) => reqOrVM;
 

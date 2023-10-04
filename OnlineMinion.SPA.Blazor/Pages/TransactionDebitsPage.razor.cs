@@ -61,7 +61,7 @@ public partial class TransactionDebitsPage
     protected override UpdateTransactionDebitReq ConvertUpdateVMToReq(IUpdateCommand reqOrVM) =>
         ((UpdateTransactionDebitVM)reqOrVM).ToCommand();
 
-    protected override TransactionDebitListItem ConvertUpdateReqToVM(IUpdateCommand dto)
+    protected override TransactionDebitListItem ConvertUpdateReqToVM(IUpdateCommand dto, TransactionDebitListItem _)
     {
         var rq = (UpdateTransactionDebitReq)dto;
         var (paymentSpec, accountSpec) = GetVMDependencies(rq.PaymentInstrumentId, rq.AccountSpecId);

@@ -52,7 +52,7 @@ public partial class TransactionCreditsPage
     protected override UpdateTransactionCreditReq ConvertUpdateVMToReq(IUpdateCommand reqOrVM) =>
         ((UpdateTransactionCreditVM)reqOrVM).ToCommand();
 
-    protected override TransactionCreditListItem ConvertUpdateReqToVM(IUpdateCommand dto)
+    protected override TransactionCreditListItem ConvertUpdateReqToVM(IUpdateCommand dto, TransactionCreditListItem _)
     {
         var rq = (UpdateTransactionCreditReq)dto;
         var paymentSpec = GetVMDependencies(rq.PaymentInstrumentId);

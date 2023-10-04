@@ -270,9 +270,9 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     private void OnApiUpdateSuccess(IUpdateCommand rq)
     {
-        var model = ViewModels.Single(m => m.Id == rq.Id);
-        var clone = ConvertUpdateReqToVM(rq);
-        ViewModels[ViewModels.IndexOf(model)] = clone;
+        var vm = ViewModels.Single(m => m.Id == rq.Id);
+        var clone = ConvertUpdateReqToVM(rq, vm);
+        ViewModels[ViewModels.IndexOf(vm)] = clone;
     }
 
     private async Task OnApiUpdateErrorAsync(List<Error> errors)
@@ -288,7 +288,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         //TODO handel all other errors
     }
 
-    protected abstract TVModel ConvertUpdateReqToVM(IUpdateCommand dto);
+    protected abstract TVModel ConvertUpdateReqToVM(IUpdateCommand dto, TVModel vm);
 
     private async ValueTask<bool> SubmitCreateCommandAsync(ICreateCommand reqOrVM)
     {
