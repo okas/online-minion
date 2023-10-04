@@ -4,7 +4,7 @@ using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
 
-namespace OnlineMinion.RestApi.Client.PaymentSpec.Handlers;
+namespace OnlineMinion.RestApi.Client.PaymentSpecShared.Handlers;
 
 [UsedImplicitly]
 internal sealed class CheckUniqueNewPaymentSpecHlr(ApiProvider api)

@@ -3,10 +3,10 @@ using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.PaymentSpecs;
 
-namespace OnlineMinion.Application.PaymentSpec.CashAccountSpecHandlers;
+namespace OnlineMinion.Application.PaymentSpecSharedHandlers;
 
 [UsedImplicitly]
-internal sealed class DeleteCashAccountSpecReqHlr(IOnlineMinionDbContext dbContext)
+internal sealed class DeletePaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
     : BaseDeleteModelReqHlr<DeletePaymentSpecReq, PaymentSpecCash, PaymentSpecId>(dbContext)
 {
     protected override PaymentSpecId CreateEntityId(DeletePaymentSpecReq rq) => new(rq.Id);

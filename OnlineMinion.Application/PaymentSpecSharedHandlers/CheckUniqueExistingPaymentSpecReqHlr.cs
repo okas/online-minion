@@ -4,7 +4,7 @@ using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.PaymentSpecs;
 
-namespace OnlineMinion.Application.PaymentSpec.CommonHandlers;
+namespace OnlineMinion.Application.PaymentSpecSharedHandlers;
 
 [UsedImplicitly]
 internal sealed class CheckUniqueExistingPaymentSpecReqHlr(IOnlineMinionDbContext dbContext)

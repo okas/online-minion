@@ -3,10 +3,10 @@ using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.PaymentSpecs;
 
-namespace OnlineMinion.Application.PaymentSpec.CashAccountSpecHandlers;
+namespace OnlineMinion.Application.PaymentSpecCashHandlers;
 
 [UsedImplicitly]
-internal sealed class CreateCashAccountSpecReqHlr(IOnlineMinionDbContext dbContext)
+internal sealed class CreatePaymentSpecCashReqHlr(IOnlineMinionDbContext dbContext)
     : BaseCreateModelReqHlr<CreatePaymentSpecCashReq, PaymentSpecCash>(dbContext)
 {
     protected override PaymentSpecCash ToEntity(CreatePaymentSpecCashReq rq) => new(

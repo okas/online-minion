@@ -4,10 +4,10 @@ using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.PaymentSpecs;
 
-namespace OnlineMinion.Application.PaymentSpec.CashAccountSpecHandlers;
+namespace OnlineMinion.Application.PaymentSpecSharedHandlers;
 
 [UsedImplicitly]
-internal sealed class GetCashAccountSpecReqHlr(IOnlineMinionDbContext dbContext)
+internal sealed class GetPaymentSpecCashReqHlr(IOnlineMinionDbContext dbContext)
     : BaseGetSomeModelsPagedReqHlr<PaymentSpecCash, PaymentSpecResp>(dbContext)
 {
     protected override Expression<Func<PaymentSpecCash, PaymentSpecResp>> Projection =>

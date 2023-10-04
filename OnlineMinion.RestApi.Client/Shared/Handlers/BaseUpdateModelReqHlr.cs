@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using ErrorOr;
@@ -25,10 +24,7 @@ internal abstract class BaseUpdateModelReqHlr<TRequest>(HttpClient apiClient, Ur
     }
 
     public virtual Uri BuildUri(TRequest rq) => new(
-        string.Create(
-            CultureInfo.InvariantCulture,
-            $"{resource}/{rq.Id}"
-        ),
+        $"{resource}/{rq.Id}",
         UriKind.RelativeOrAbsolute
     );
 
