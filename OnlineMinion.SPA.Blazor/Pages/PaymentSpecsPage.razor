@@ -27,11 +27,11 @@
     public const string MainHeading = "Payment Specifications (all)";
     public const string MainDescription = "Manage all Payment Specifications";
     public const string Name = nameof(PaymentSpecResp.Name);
+    public const string Type = nameof(PaymentSpecResp.Type);
     public const string CurrencyCode = nameof(PaymentSpecResp.CurrencyCode);
     public const string CurrencyCodeField = "Currency";
     public const string Tags = nameof(PaymentSpecResp.Tags);
   }
-
 }
 
 <AppPageTitle Text="@Str.PageTitle"/>
@@ -51,6 +51,19 @@
       TItem="PaymentSpecResp"
       TotalItemsCount="@TotalItemsCount">
     <Columns>
+      <RadzenDataGridColumn
+          Filterable="@false"
+          Groupable="@false"
+          Property="@Str.Type"
+          Sortable="@false"
+          TItem="PaymentSpecResp"
+          Title="@Str.Type"
+          Type="@typeof(string)"
+          Width="100px">
+        <Template>
+          @GetTypeName(context.Type)
+        </Template>
+      </RadzenDataGridColumn>
       <RadzenDataGridColumn Property="@Str.Name" TItem="PaymentSpecResp" Title="@Str.Name"/>
       <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCodeField">
         <Template>

@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.CurrencyInfo.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Contracts.Shared.Requests;
@@ -60,10 +61,26 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetPaymentSpecPagingMetaInfoReq(pageSize);
 
-    protected override string GetDeleteMessageDescriptorData(PaymentSpecResp model) => model.Name;
+    protected override string GetDeleteDialogMessage(PaymentSpecResp vm) => GetDeleteDialogMessageFormat.Replace(
+        "{}",
+        $"'{GetTypeName(vm.Type)} {ModelTypeName}' with name <em>{vm.Name}</em>"
+    );
 
     protected override DeletePaymentSpecReq DeleteCommandFactory(PaymentSpecResp vm) => new(vm.Id);
 
     protected override IEditorMetadata<PaymentSpecResp> EditorMetadataFactory(PaymentSpecResp vm) =>
         new UpdatePaymentSpecEditorMetadata(vm);
+
+    private static string GetTypeName(PaymentSpecType type) =>
+        type switch
+        {
+            PaymentSpecType.Cash => nameof(PaymentSpecType.Cash),
+            PaymentSpecType.Bank => nameof(PaymentSpecType.Bank),
+            PaymentSpecType.Crypto => nameof(PaymentSpecType.Crypto),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(type),
+                type,
+                "Payment Spec type is not supported"
+            ),
+        };
 }

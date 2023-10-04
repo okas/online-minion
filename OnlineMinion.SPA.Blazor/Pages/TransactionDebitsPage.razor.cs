@@ -83,8 +83,12 @@ public partial class TransactionDebitsPage
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetTransactionDebitPagingMetaInfoReq(pageSize);
 
-    protected override string GetDeleteMessageDescriptorData(TransactionDebitListItem model) =>
-        $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
+    protected override string GetDeleteDialogMessage(TransactionDebitListItem vm) =>
+        GetDeleteDialogMessageFormat.Replace(
+            "{}",
+            $"'{ModelTypeName}' with subject <em>{vm.Subject}</em>, at {
+                vm.Date.ToString(CultureInfo.CurrentCulture)}"
+        );
 
     protected override IDeleteByIdCommand DeleteCommandFactory(TransactionDebitListItem vm) =>
         new DeleteTransactionDebitReq(vm.Id);

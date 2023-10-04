@@ -69,8 +69,12 @@ public partial class TransactionCreditsPage
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetTransactionCreditPagingMetaInfoReq(pageSize);
 
-    protected override string GetDeleteMessageDescriptorData(TransactionCreditListItem model) =>
-        $"subject `{model.Subject}`, at {model.Date.ToString(CultureInfo.CurrentCulture)}";
+    protected override string GetDeleteDialogMessage(TransactionCreditListItem vm) =>
+        GetDeleteDialogMessageFormat.Replace(
+            "{}",
+            $"'{ModelTypeName}' with subject <em>{vm.Subject}</em>, at {
+                vm.Date.ToString(CultureInfo.CurrentCulture)}"
+        );
 
     protected override DeleteTransactionCreditReq DeleteCommandFactory(TransactionCreditListItem vm) => new(vm.Id);
 }

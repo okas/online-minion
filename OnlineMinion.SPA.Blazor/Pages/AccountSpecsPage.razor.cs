@@ -48,7 +48,10 @@ public partial class AccountSpecsPage : BaseCRUDPage<AccountSpecResp, AccountSpe
     protected override IGetPagingInfoRequest PageCountRequestFactory(int pageSize) =>
         new GetAccountSpecPagingMetaInfoReq(pageSize);
 
-    protected override string GetDeleteMessageDescriptorData(AccountSpecResp model) => model.Name;
+    protected override string GetDeleteDialogMessage(AccountSpecResp vm) => GetDeleteDialogMessageFormat.Replace(
+        "{}",
+        $"'{ModelTypeName}' with name <em>{vm.Name}</em>"
+    );
 
     protected override DeleteAccountSpecReq DeleteCommandFactory(AccountSpecResp vm) => new(vm.Id);
 }

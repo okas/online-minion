@@ -27,6 +27,9 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     where TResponse : IHasId
     where TBaseUpsert : class
 {
+    /// <summary>A format string for delete dialog message.</summary>
+    protected const string GetDeleteDialogMessageFormat = "Are you sure to delete {}?";
+
     private readonly string _respModelName;
 
     protected UpsertEditorWrapper<TBaseUpsert> EditorWrapperRef = null!;
@@ -365,9 +368,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     protected async Task OnDeleteHandlerAsync(TVModel vm)
     {
-        var descriptorData = GetDeleteMessageDescriptorData(vm);
-
-        if (!await GetUserConfirmationAsync(descriptorData, null))
+        if (!await GetUserConfirmationAsync(vm))
         {
             return;
         }
@@ -376,8 +377,6 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         await DeleteModelFromApiAsync(vm);
         SC.IsBusy = false;
     }
-
-    protected abstract string GetDeleteMessageDescriptorData(TVModel model);
 
     private async ValueTask<bool> DeleteModelFromApiAsync(TVModel vm)
     {
@@ -423,20 +422,11 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
         }
     }
 
-    /// <summary>
-    ///     Display confirmation dialog to user.
-    /// </summary>
-    /// <param name="descriptorData">Some details, like name or similar of model to present in dialog.</param>
-    /// <param name="descriptorName">
-    ///     Optional name for descriptor data in the sentence. Can be set tu null if
-    ///     <paramref name="descriptorData" /> already has it.
-    /// </param>
-    private async ValueTask<bool> GetUserConfirmationAsync(string descriptorData, string? descriptorName = "name")
+    /// <summary>Display confirmation dialog to user.</summary>
+    private async ValueTask<bool> GetUserConfirmationAsync(TVModel vm)
     {
-        var name = string.IsNullOrWhiteSpace(descriptorName) ? string.Empty : $"{descriptorName.Trim()} ";
-        var messageEng = $"Are you sure to delete {ModelTypeName} with {name}<em>{descriptorData}</em>?";
-
         const string title = "Confirm deletion";
+        var messageEng = GetDeleteDialogMessage(vm);
 
         var options = new ConfirmOptions
         {
@@ -448,6 +438,8 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
         return await DialogService.Confirm(messageEng, title, options) ?? false;
     }
+
+    protected abstract string GetDeleteDialogMessage(TVModel model);
 
     protected void PagerChangeHandler(PagerEventArgs changeData)
     {
