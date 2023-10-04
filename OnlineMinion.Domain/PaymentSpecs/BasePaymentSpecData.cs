@@ -19,4 +19,12 @@ public abstract class BasePaymentSpecData : IEntity<PaymentSpecId>
     public string? Tags { get; protected set; }
 
     public PaymentSpecId Id { get; protected set; } = null!;
+
+    protected void Update(string name, string? tags)
+    {
+        // Business rule: Id cannot be changed
+        // Business rule: currency code cannot be changed
+        Name = name;
+        Tags = tags;
+    }
 }

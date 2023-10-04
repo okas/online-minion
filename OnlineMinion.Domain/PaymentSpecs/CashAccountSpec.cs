@@ -7,11 +7,5 @@ public sealed class CashAccountSpec : BasePaymentSpecData
 
     public CashAccountSpec(string name, string currencyCode, string? tags) : base(name, currencyCode, tags) { }
 
-    public void Update(string name, string? tags)
-    {
-        // Business rule: Id cannot be changed
-        // Business rule: currency code cannot be changed
-        Name = name;
-        Tags = tags;
-    }
+    public new void Update(string name, string? tags) => base.Update(name, tags);
 }
