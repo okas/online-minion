@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using JetBrains.Annotations;
+using OnlineMinion.Application.Contracts.PaymentSpecShared;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.PaymentSpecs;
@@ -11,5 +12,5 @@ internal sealed class GetSomePaymentSpecCashReqHlr(IOnlineMinionDbContext dbCont
     : BaseGetSomeModelsPagedReqHlr<PaymentSpecCash, PaymentSpecResp>(dbContext)
 {
     protected override Expression<Func<PaymentSpecCash, PaymentSpecResp>> Projection =>
-        e => new(e.Id.Value, e.Name, e.CurrencyCode, e.Tags);
+        e => new(e.Id.Value, e.Name, e.CurrencyCode, e.Tags, PaymentSpecType.Cash);
 }
