@@ -15,7 +15,7 @@ public interface IOnlineMinionDbContext
 
     DbSet<BankAccountSpec> BankAccountSpecs { get; set; }
 
-    DbSet<CashAccountSpec> CashAccountsSpecs { get; set; }
+    DbSet<PaymentSpecCash> CashAccountsSpecs { get; set; }
 
     DbSet<CryptoExchangeAccountSpec> CryptoExchangeAccountSpecs { get; set; }
 

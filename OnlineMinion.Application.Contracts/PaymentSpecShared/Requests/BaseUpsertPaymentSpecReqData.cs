@@ -1,4 +1,4 @@
-namespace OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+namespace OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 
 public abstract class BaseUpsertPaymentSpecReqData(string name, string? tags)
 {

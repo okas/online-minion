@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.RestApi.Helpers;
 using OnlineMinion.RestApi.Services.LinkGeneration;
 using static OnlineMinion.RestApi.ICommonValidationEndpoints;
@@ -24,7 +25,7 @@ public class PaymentCacheSpecsEndpoints
 
         var linkGeneratorMetaData = new ResourceLinkGeneratorMetaData(V1GetPaymentSpecById);
 
-        apiV1.MapPost("/", ICommonCrudEndpoints.Create<CreatePaymentSpecReq>)
+        apiV1.MapPost("/", ICommonCrudEndpoints.Create<CreatePaymentSpecCashReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<PaymentSpecResp>)
@@ -34,7 +35,7 @@ public class PaymentCacheSpecsEndpoints
             .WithName(V1GetPaymentSpecById)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecReq>)
+        apiV1.MapPut("{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCashReq>)
             .WithMetadata(linkGeneratorMetaData);
 
         apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeletePaymentSpecReq>)

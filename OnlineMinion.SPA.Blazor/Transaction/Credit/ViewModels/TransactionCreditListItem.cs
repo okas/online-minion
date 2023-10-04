@@ -1,4 +1,4 @@
-using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Credit.Responses;
 using OnlineMinion.SPA.Blazor.Transaction.Shared.ViewModels;

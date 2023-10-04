@@ -2,8 +2,8 @@
 @using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels
 @using OnlineMinion.SPA.Blazor.ViewModels
 @using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec
-@using OnlineMinion.Application.Contracts.PaymentSpec.Requests
-@using OnlineMinion.Application.Contracts.PaymentSpec.Responses
+@using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests
+@using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses
 @inherits BaseCRUDPage<PaymentSpecResp, PaymentSpecResp, BaseUpsertPaymentSpecReqData>
 
 @code
@@ -12,7 +12,7 @@
     BaseUpsertPaymentSpecReqData editVM,
     IEditorMetadata<PaymentSpecResp>? metadata) =>
       @<CascadingValue IsFixed="@true" Value="@CT">
-        <PaymentSpecsEditor
+        <PaymentSpecCashEditor
             CurrencyInfoVMs="_currencyCodes"
             Metadata="@((UpdatePaymentSpecEditorMetadata?)metadata)"
             Model="@editVM"
@@ -24,8 +24,8 @@
   private static class Str
   {
     public const string PageTitle = "Payment Specs";
-    public const string MainHeading = "Payment Specifications";
-    public const string MainDescription = $"Manage {MainHeading}";
+    public const string MainHeading = "Payment Specifications (all)";
+    public const string MainDescription = "Manage all Payment Specifications";
     public const string Name = nameof(PaymentSpecResp.Name);
     public const string CurrencyCode = nameof(PaymentSpecResp.CurrencyCode);
     public const string CurrencyCodeField = "Currency";

@@ -1,7 +1,7 @@
 using System.Globalization;
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.AccountSpec.Responses;
-using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Debit.Responses;

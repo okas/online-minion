@@ -1,7 +1,8 @@
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.CurrencyInfo.Requests;
-using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
-using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.SPA.Blazor.Components;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
@@ -16,7 +17,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
 {
     private readonly List<CurrencyInfoVm> _currencyCodes = new();
 
-    private PaymentSpecsEditor? _editorRef;
+    private PaymentSpecCashEditor? _editorRef;
 
     protected override string ModelTypeName => "Payment Specification";
 
@@ -38,9 +39,9 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
         resp => _currencyCodes.Add(new(resp))
     );
 
-    protected override CreatePaymentSpecReq CreateVMFactory() => new();
+    protected override CreatePaymentSpecCashReq CreateVMFactory() => new();
 
-    protected override UpdatePaymentSpecReq UpdateVMFactory(PaymentSpecResp vm) =>
+    protected override UpdatePaymentSpecCashReq UpdateVMFactory(PaymentSpecResp vm) =>
         new(vm.Id, vm.Name, vm.Tags);
 
     protected override PaymentSpecResp ConvertReqResponseToVM(PaymentSpecResp dto) => dto;
@@ -48,7 +49,7 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
     protected override IUpdateCommand ConvertUpdateVMToReq(IUpdateCommand reqOrVM) => reqOrVM;
 
     protected override PaymentSpecResp ConvertUpdateReqToVM(IUpdateCommand dto) =>
-        (PaymentSpecResp)(UpdatePaymentSpecReq)dto;
+        (PaymentSpecResp)(UpdatePaymentSpecCashReq)dto;
 
     protected override ICreateCommand ConvertCreateVMToReq(ICreateCommand reqOrVM) => reqOrVM;
 

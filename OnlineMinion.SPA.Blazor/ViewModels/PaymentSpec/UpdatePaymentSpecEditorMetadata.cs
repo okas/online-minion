@@ -1,4 +1,4 @@
-using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 
 namespace OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec;
 

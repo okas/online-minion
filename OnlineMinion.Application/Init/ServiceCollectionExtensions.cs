@@ -3,7 +3,7 @@ using MediatR;
 using OnlineMinion.Application;
 using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.AccountSpec.Requests;
-using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.Application.Contracts.Transactions.Debit.Requests;
 using OnlineMinion.Application.MediatorInfra.Behaviors;
@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions
                 GetModelPagingInfoReqHlr<GetAccountSpecPagingMetaInfoReq, AccountSpec>>()
             .AddTransient<
                 IRequestHandler<GetPaymentSpecPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
-                GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, CashAccountSpec>>()
+                GetModelPagingInfoReqHlr<GetPaymentSpecPagingMetaInfoReq, PaymentSpecCash>>()
             .AddTransient<
                 IRequestHandler<GetTransactionCreditPagingMetaInfoReq, ErrorOr<PagingMetaInfo>>,
                 GetModelPagingInfoReqHlr<GetTransactionCreditPagingMetaInfoReq, TransactionCredit>>()

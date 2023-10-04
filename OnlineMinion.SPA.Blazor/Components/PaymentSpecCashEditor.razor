@@ -1,6 +1,6 @@
-@using OnlineMinion.Application.Contracts.PaymentSpec.Responses
+@using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses
 @using OnlineMinion.Application.Contracts.CurrencyInfo.Responses
-@using OnlineMinion.Application.Contracts.PaymentSpec.Requests
+@using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests
 @using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels
 
 @code {
@@ -26,7 +26,7 @@
       <RadzenTextBox @bind-Value="@context.Name" Trim="@true"/>
     </RadzenFormField>
     <RadzenFormField Style="width: 25%" Text="@Str.CurrencyCodeField" Variant="@Variant.Text">
-      @if (context is CreatePaymentSpecReq createContext)
+      @if (context is CreatePaymentSpecCashReq createContext)
       {
         <RadzenDropDownDataGrid
             AllowClear="@true"

@@ -2,13 +2,14 @@ using ErrorOr;
 using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
-using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.RequestValidation.Shared;
 
-namespace OnlineMinion.Application.RequestValidation.PaymentSpec;
+namespace OnlineMinion.Application.RequestValidation.PaymentSpecShared;
 
 [UsedImplicitly]
-public sealed class CheckUniqueNewPaymentSpecValidator : BaseCheckUniqueModelValidator<CreatePaymentSpecReq>
+public sealed class CheckUniqueNewPaymentSpecValidator : BaseCheckUniqueModelValidator<CreatePaymentSpecCashReq>
 {
     public CheckUniqueNewPaymentSpecValidator(IAsyncValidatorSender sender) : base(sender)
     {
@@ -19,6 +20,6 @@ public sealed class CheckUniqueNewPaymentSpecValidator : BaseCheckUniqueModelVal
 
     protected override string ModelName => "Payment specification";
 
-    protected override IRequest<ErrorOr<Success>> ValidationRequestFactory(CreatePaymentSpecReq _, string value) =>
+    protected override IRequest<ErrorOr<Success>> ValidationRequestFactory(CreatePaymentSpecCashReq _, string value) =>
         new CheckPaymentSpecUniqueNewReq(value);
 }

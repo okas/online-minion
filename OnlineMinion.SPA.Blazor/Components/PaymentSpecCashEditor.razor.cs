@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using OnlineMinion.Application.Contracts.PaymentSpec.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec;
 using Radzen;
 
 namespace OnlineMinion.SPA.Blazor.Components;
 
-public partial class PaymentSpecsEditor
+public partial class PaymentSpecCashEditor
 {
     [Inject]
     private TooltipService TooltipService { get; set; } = default!;
