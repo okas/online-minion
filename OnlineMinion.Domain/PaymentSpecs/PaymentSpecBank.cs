@@ -1,11 +1,11 @@
 namespace OnlineMinion.Domain.PaymentSpecs;
 
-public sealed class BankAccountSpec : BasePaymentSpecData
+public sealed class PaymentSpecBank : BasePaymentSpecData
 {
     // ReSharper disable once UnusedMember.Local
-    private BankAccountSpec() { }
+    private PaymentSpecBank() { }
 
-    public BankAccountSpec(string iban, string bankName, string name, string currencyCode, string? tags)
+    public PaymentSpecBank(string iban, string bankName, string name, string currencyCode, string? tags)
         : base(name, currencyCode, tags)
     {
         IBAN = iban;

@@ -20,7 +20,7 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
 
     public DbSet<TransactionCredit> TransactionCredits { get; set; } = null!;
 
-    public DbSet<BankAccountSpec> BankAccountSpecs { get; set; } = null!;
+    public DbSet<PaymentSpecBank> BankAccountSpecs { get; set; } = null!;
 
     public DbSet<PaymentSpecCash> CashAccountsSpecs { get; set; } = null!;
 

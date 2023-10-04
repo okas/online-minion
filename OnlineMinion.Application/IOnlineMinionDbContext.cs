@@ -13,7 +13,7 @@ public interface IOnlineMinionDbContext
 
     DbSet<Domain.TransactionCredits.TransactionCredit> TransactionCredits { get; set; }
 
-    DbSet<BankAccountSpec> BankAccountSpecs { get; set; }
+    DbSet<PaymentSpecBank> BankAccountSpecs { get; set; }
 
     DbSet<PaymentSpecCash> CashAccountsSpecs { get; set; }
 

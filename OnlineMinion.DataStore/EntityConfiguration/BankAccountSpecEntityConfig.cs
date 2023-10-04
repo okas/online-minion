@@ -4,9 +4,9 @@ using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 
-public class BankAccountSpecEntityConfig : IEntityTypeConfiguration<BankAccountSpec>
+public class BankAccountSpecEntityConfig : IEntityTypeConfiguration<PaymentSpecBank>
 {
-    public void Configure(EntityTypeBuilder<BankAccountSpec> builder)
+    public void Configure(EntityTypeBuilder<PaymentSpecBank> builder)
     {
         builder.Property(e => e.BankName)
             .HasMaxLength(75);
