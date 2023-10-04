@@ -10,15 +10,15 @@ using static OnlineMinion.RestApi.ICommonDescriptorEndpoints;
 
 namespace OnlineMinion.RestApi;
 
-public class PaymentSpecsEndpoints
+public class PaymentCacheSpecsEndpoints
     : ICommonCrudEndpoints, ICommonDescriptorEndpoints, ICommonPagingInfoEndpoints, ICommonValidationEndpoints
 {
     public const string V1GetPaymentSpecById = nameof(V1GetPaymentSpecById);
 
     public static void MapAll(IEndpointRouteBuilder app)
     {
-        var apiV1 = app.NewVersionedApi("Payment Specs")
-            .MapGroup("api/payment-specs")
+        var apiV1 = app.NewVersionedApi("Payment Specs: Cash")
+            .MapGroup("api/payment-specs/cash")
             .HasApiVersion(1)
             .MapToApiVersion(1);
 

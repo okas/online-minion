@@ -4,10 +4,10 @@ using OnlineMinion.Application.Contracts.PaymentSpec.Responses;
 using OnlineMinion.Application.Shared.Handlers;
 using OnlineMinion.Domain.PaymentSpecs;
 
-namespace OnlineMinion.Application.PaymentSpec.Handlers;
+namespace OnlineMinion.Application.PaymentSpec.CashAccountSpecHandlers;
 
 [UsedImplicitly]
-internal class GetPaymentSpecByIdReqHlr(IOnlineMinionDbContext dbContext)
+internal class GetCashAccountSpecByIdReqHlr(IOnlineMinionDbContext dbContext)
     : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, CashAccountSpec, PaymentSpecId, PaymentSpecResp>(dbContext)
 {
     protected override PaymentSpecId CreateEntityId(GetPaymentSpecByIdReq rq) => new(rq.Id);
