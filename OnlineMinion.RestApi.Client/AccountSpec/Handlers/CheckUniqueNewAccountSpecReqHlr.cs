@@ -1,4 +1,3 @@
-using System.Globalization;
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.AccountSpec.Requests;
 using OnlineMinion.RestApi.Client.Api;
@@ -11,10 +10,7 @@ internal sealed class CheckUniqueNewAccountSpecReqHlr(ApiProvider api)
     : BaseCheckUniqueReqHlr<CheckAccountSpecUniqueNewReq>(api.Client)
 {
     public override Uri BuildUri(CheckAccountSpecUniqueNewReq rq) => new(
-        string.Create(
-            CultureInfo.InvariantCulture,
-            $"{ApiProvider.ApiAccountSpecsUri}/validate-available-name/{rq.MemberValue}"
-        ),
+        $"{ApiProvider.ApiAccountSpecsUri}/validate-available-name/{rq.MemberValue}",
         UriKind.RelativeOrAbsolute
     );
 }

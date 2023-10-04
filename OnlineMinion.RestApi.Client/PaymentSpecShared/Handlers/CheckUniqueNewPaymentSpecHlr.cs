@@ -1,4 +1,3 @@
-using System.Globalization;
 using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.RestApi.Client.Api;
@@ -11,10 +10,7 @@ internal sealed class CheckUniqueNewPaymentSpecHlr(ApiProvider api)
     : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueNewReq>(api.Client)
 {
     public override Uri BuildUri(CheckPaymentSpecUniqueNewReq rq) => new(
-        string.Create(
-            CultureInfo.InvariantCulture,
-            $"{ApiProvider.ApiPaymentSpecsUri}/validate-available-name/{rq.MemberValue}"
-        ),
+        $"{ApiProvider.ApiPaymentSpecsUri}/validate-available-name/{rq.MemberValue}",
         UriKind.RelativeOrAbsolute
     );
 }
