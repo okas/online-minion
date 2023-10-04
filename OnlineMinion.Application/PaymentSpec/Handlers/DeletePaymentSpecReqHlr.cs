@@ -7,7 +7,7 @@ namespace OnlineMinion.Application.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class DeletePaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseDeleteModelReqHlr<DeletePaymentSpecReq, CashAccountSpec, BasePaymentSpecId>(dbContext)
+    : BaseDeleteModelReqHlr<DeletePaymentSpecReq, CashAccountSpec, PaymentSpecId>(dbContext)
 {
-    protected override BasePaymentSpecId CreateEntityId(DeletePaymentSpecReq rq) => new(rq.Id);
+    protected override PaymentSpecId CreateEntityId(DeletePaymentSpecReq rq) => new(rq.Id);
 }

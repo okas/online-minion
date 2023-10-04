@@ -14,7 +14,7 @@ public abstract class BaseTransactionData
 
     public string? Tags { get; set; }
 
-    public required BasePaymentSpecId PaymentInstrumentId { get; set; }
+    public required PaymentSpecId PaymentInstrumentId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

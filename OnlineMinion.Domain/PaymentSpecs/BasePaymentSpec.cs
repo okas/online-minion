@@ -1,6 +1,6 @@
 namespace OnlineMinion.Domain.PaymentSpecs;
 
-public abstract class BasePaymentSpec : IEntity<BasePaymentSpecId>
+public abstract class BasePaymentSpec : IEntity<PaymentSpecId>
 {
     public required string Name { get; set; }
 
@@ -8,5 +8,5 @@ public abstract class BasePaymentSpec : IEntity<BasePaymentSpecId>
 
     public string? Tags { get; set; }
 
-    public BasePaymentSpecId Id { get; } = new();
+    public PaymentSpecId Id { get; } = new();
 }

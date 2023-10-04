@@ -8,9 +8,9 @@ namespace OnlineMinion.Application.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal class GetPaymentSpecByIdReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, CashAccountSpec, BasePaymentSpecId, PaymentSpecResp>(dbContext)
+    : BaseGetModelByIdReqHlr<GetPaymentSpecByIdReq, CashAccountSpec, PaymentSpecId, PaymentSpecResp>(dbContext)
 {
-    protected override BasePaymentSpecId CreateEntityId(GetPaymentSpecByIdReq rq) => new(rq.Id);
+    protected override PaymentSpecId CreateEntityId(GetPaymentSpecByIdReq rq) => new(rq.Id);
 
     protected override PaymentSpecResp ToResponse(CashAccountSpec entity) => new()
     {

@@ -5,7 +5,7 @@ using OnlineMinion.Domain.PaymentSpecs;
 namespace OnlineMinion.DataStore.ValueConverters;
 
 [UsedImplicitly]
-public class PaymentSpecIdConverter() : ValueConverter<BasePaymentSpecId, Guid>(
+public class PaymentSpecIdConverter() : ValueConverter<PaymentSpecId, Guid>(
     paymentSpecId => paymentSpecId.Value,
     value => new(value)
 );

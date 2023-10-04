@@ -14,5 +14,5 @@ internal sealed class CheckUniqueExistingPaymentSpecReqHlr(IOnlineMinionDbContex
         CheckPaymentSpecUniqueExistingReq rq
     ) =>
         entity => entity.Name == rq.MemberValue
-                  && entity.Id != new BasePaymentSpecId(rq.OwnId);
+                  && entity.Id != new PaymentSpecId(rq.OwnId);
 }

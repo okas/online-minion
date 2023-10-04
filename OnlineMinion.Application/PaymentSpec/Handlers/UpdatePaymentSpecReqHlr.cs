@@ -8,9 +8,9 @@ namespace OnlineMinion.Application.PaymentSpec.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdatePaymentSpecReqHlr(IOnlineMinionDbContext dbContext, ILogger<UpdatePaymentSpecReqHlr> logger)
-    : BaseUpdateModelReqHlr<UpdatePaymentSpecReq, CashAccountSpec, BasePaymentSpecId>(dbContext, logger)
+    : BaseUpdateModelReqHlr<UpdatePaymentSpecReq, CashAccountSpec, PaymentSpecId>(dbContext, logger)
 {
-    protected override BasePaymentSpecId CreateEntityId(UpdatePaymentSpecReq rq) => new(rq.Id);
+    protected override PaymentSpecId CreateEntityId(UpdatePaymentSpecReq rq) => new(rq.Id);
 
     protected override void UpdateEntity(CashAccountSpec entity, UpdatePaymentSpecReq rq)
     {
