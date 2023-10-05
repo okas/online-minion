@@ -13,6 +13,7 @@
     <ItemGroup>
         <ProjectReference Include="..\OnlineMinion.Presentation.Utilities\OnlineMinion.Presentation.Utilities.csproj"/>
         <ProjectReference Include="..\OnlineMinion.Application.Contracts\OnlineMinion.Application.Contracts.csproj"/>
+        <ProjectReference Include="..\OnlineMinion.Utilities.Mediatr\OnlineMinion.Utilities.Mediatr.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

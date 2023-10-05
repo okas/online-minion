@@ -2,7 +2,7 @@ using ErrorOr;
 using JetBrains.Annotations;
 using MediatR;
 
-namespace OnlineMinion.Application.MediatorInfra.Behaviors;
+namespace OnlineMinion.Utilities.Mediatr.Behaviors;
 
 [UsedImplicitly]
 public interface IErrorOrPipelineBehavior<in TRequest, TResponse>

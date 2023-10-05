@@ -4,7 +4,7 @@ using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace OnlineMinion.Application.MediatorInfra.Behaviors;
+namespace OnlineMinion.Utilities.Mediatr.Behaviors;
 
 public class ErrorOrLoggingBehavior<TRequest, TResponse>(ILogger<ErrorOrLoggingBehavior<TRequest, TResponse>> logger)
     : IErrorOrPipelineBehavior<TRequest, TResponse>

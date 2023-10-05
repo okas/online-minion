@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using ErrorOr;
 using OnlineMinion.Application.Contracts.Shared.Requests;
@@ -19,10 +18,7 @@ internal abstract class BaseDeleteModelReqHlr<TRequest>(HttpClient apiClient, Ur
     }
 
     public virtual Uri BuildUri(TRequest request) => new(
-        string.Create(
-            CultureInfo.InvariantCulture,
-            $"{resource}/{request.Id}"
-        ),
+        $"{resource}/{request.Id}",
         UriKind.RelativeOrAbsolute
     );
 

@@ -1,6 +1,7 @@
 using ErrorOr;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.Contracts.Shared.Responses;
+using static OnlineMinion.RestApi.Client.Shared.Handlers.IPagedRequestResultStreaming;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
@@ -15,10 +16,8 @@ internal abstract class BaseGetSomeModelsPagedReqHlr<TResponse>(HttpClient apiCl
     {
         var uri = BuildUri(rq);
 
-        return await IPagedRequestResultStreaming.GetApiResponse<TResponse>(apiClient, uri, rq, ct)
-            .ConfigureAwait(false);
+        return await GetApiResponse<TResponse>(apiClient, uri, rq, ct).ConfigureAwait(false);
     }
 
-    public virtual Uri BuildUri(GetSomeModelsPagedReq<TResponse> rq) =>
-        IPagedRequestResultStreaming.AddQueryString(resource, rq);
+    public virtual Uri BuildUri(GetSomeModelsPagedReq<TResponse> rq) => AddQueryString(resource, rq);
 }

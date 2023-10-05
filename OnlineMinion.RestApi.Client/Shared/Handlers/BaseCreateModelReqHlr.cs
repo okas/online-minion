@@ -1,70 +1,56 @@
 using System.Net;
 using System.Net.Http.Json;
 using ErrorOr;
-using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.Contracts.Shared.Responses;
 using OnlineMinion.RestApi.Client.Helpers;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
-internal abstract class BaseCreateModelReqHlr<TRequest>(HttpClient apiClient, Uri resource, ILogger logger)
+internal abstract class BaseCreateModelReqHlr<TRequest>(HttpClient apiClient, Uri resource)
     : IApiClientRequestHandler<TRequest, ModelIdResp>
     where TRequest : ICreateCommand
 {
-    protected abstract string ModelName { get; }
-
     public async Task<ErrorOr<ModelIdResp>> Handle(TRequest rq, CancellationToken ct)
     {
         var uri = BuildUri(rq);
 
-        using var responseMessage = await apiClient.PostAsJsonAsync(uri, rq, ct)
-            .ConfigureAwait(false);
+        using var responseMessage = await apiClient.PostAsJsonAsync(uri, rq, ct).ConfigureAwait(false);
 
         return await HandleResponse(responseMessage, ct).ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(TRequest rq) => resource;
 
-    // TODO: Move logging to MediatR pipeline
-    private async ValueTask<ErrorOr<ModelIdResp>> HandleResponse(HttpResponseMessage message, CancellationToken ct)
-    {
-        switch (message.StatusCode)
+    private static async ValueTask<ErrorOr<ModelIdResp>> HandleResponse(
+        HttpResponseMessage response,
+        CancellationToken   ct
+    ) =>
+        response.StatusCode switch
         {
-            case HttpStatusCode.Created:
-            {
-                var result = await message.Content
-                    .ReadFromJsonAsync<ModelIdResp>(ct)
-                    .ConfigureAwait(false);
+            HttpStatusCode.Created => await HandleExpectedHttpResult(response, ct).ConfigureAwait(false),
+            HttpStatusCode.Conflict => await response.TransformConflictHttpResponse(ct).ConfigureAwait(false),
+            HttpStatusCode.BadRequest => await response.TransformBadRequestHttpResponse(ct).ConfigureAwait(false),
+            _ => response.GetErrorWithReasonPhraseAndContent(),
+        };
 
-                return result is not null && result.Id != Guid.Empty
-                    ? result
-                    : Error.Validation($"Invalid message response, Id is not set {result?.Id}");
-            }
-            case HttpStatusCode.Conflict:
-            {
-                logger.LogWarning("Conflict error while updating model `{ModelName}`", ModelName);
-                return await message.TransformConflictHttpResponse(ct).ConfigureAwait(false);
-            }
-            case HttpStatusCode.BadRequest:
-            {
-                logger.LogWarning("Validation error while creating model `{ModelName}`", ModelName);
-                return await message.TransformBadRequestHttpResponse(ct).ConfigureAwait(false);
-            }
-            default:
-            {
-                var reasonPhrase = message.ReasonPhrase ?? string.Empty;
-                var description = message.Content.ToString() ?? string.Empty;
+    private static async ValueTask<ErrorOr<ModelIdResp>> HandleExpectedHttpResult(
+        HttpResponseMessage response,
+        CancellationToken   ct
+    )
+    {
+        var result = await response.Content.ReadFromJsonAsync<ModelIdResp>(ct).ConfigureAwait(false);
 
-                logger.LogError(
-                    "Model `{ModelName}` cannot be created. Reason: {ReasonPhrase}. Description: {Description}",
-                    ModelName,
-                    reasonPhrase,
-                    description
-                );
-
-                return Error.Failure(reasonPhrase, description);
-            }
+        if (result is null)
+        {
+            return Error.Unexpected(description: "Empty response, expected new object's Id");
         }
+
+        if (result.Id == Guid.Empty)
+        {
+            return Error.Validation(description: $"Invalid response, Id is not set {result?.Id}");
+        }
+
+        return result;
     }
 }

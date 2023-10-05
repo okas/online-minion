@@ -1,14 +1,11 @@
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts.Transactions.Credit.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
+using static OnlineMinion.RestApi.Client.Api.ApiProvider;
 
 namespace OnlineMinion.RestApi.Client.TransactionsCredit.Handlers;
 
 [UsedImplicitly]
-internal sealed class UpdateTransactionCreditReqHlr(ApiProvider api, ILogger<UpdateTransactionCreditReqHlr> logger)
-    : BaseUpdateModelReqHlr<UpdateTransactionCreditReq>(api.Client, ApiProvider.ApiTransactionsCreditUri, logger)
-{
-    protected override string ModelName => "Credit Transaction";
-}
+internal sealed class UpdateTransactionCreditReqHlr(ApiProvider api)
+    : BaseUpdateModelReqHlr<UpdateTransactionCreditReq>(api.Client, ApiTransactionsCreditUri);

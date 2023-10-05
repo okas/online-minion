@@ -1,5 +1,6 @@
 using ErrorOr;
 using MediatR;
+using static OnlineMinion.RestApi.Client.Shared.Handlers.ICollectionRequestResponseStreaming;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
@@ -12,8 +13,7 @@ internal abstract class BaseGetSomeModelsReqHlr<TRequest, TResponse>(HttpClient 
     {
         var uri = BuildUri(rq);
 
-        return await ICollectionRequestResponseStreaming.GetApiResponse<TResponse>(apiClient, uri, ct)
-            .ConfigureAwait(false);
+        return await GetApiResponse<TResponse>(apiClient, uri, ct).ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(TRequest _) => resource;

@@ -1,19 +1,17 @@
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
+using static OnlineMinion.RestApi.Client.Api.ApiProvider;
 
 namespace OnlineMinion.RestApi.Client.PaymentSpecCash.Handlers;
 
 [UsedImplicitly]
-internal sealed class CreatePaymentSpecCashReqHlr(ApiProvider api, ILogger<CreatePaymentSpecCashReqHlr> logger)
-    : BaseCreateModelReqHlr<CreatePaymentSpecCashReq>(api.Client, ApiProvider.ApiPaymentSpecsUri, logger)
+internal sealed class CreatePaymentSpecCashReqHlr(ApiProvider api)
+    : BaseCreateModelReqHlr<CreatePaymentSpecCashReq>(api.Client, ApiPaymentSpecsUri)
 {
-    protected override string ModelName => "Payment Specification";
-
     public override Uri BuildUri(CreatePaymentSpecCashReq rq) => new(
-        $"{ApiProvider.ApiPaymentSpecsUri}/cash",
+        $"{ApiPaymentSpecsUri}/cash",
         UriKind.RelativeOrAbsolute
     );
 }

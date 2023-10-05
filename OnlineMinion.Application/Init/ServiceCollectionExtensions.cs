@@ -13,6 +13,7 @@ using OnlineMinion.Domain.AccountSpecs;
 using OnlineMinion.Domain.PaymentSpecs;
 using OnlineMinion.Domain.TransactionCredits;
 using OnlineMinion.Domain.TransactionDebits;
+using OnlineMinion.Utilities.Mediatr.Behaviors;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

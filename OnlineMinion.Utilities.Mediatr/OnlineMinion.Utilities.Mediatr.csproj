@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ErrorOr" Version="1.2.1.2-preview"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0-eap1"/>
+        <PackageReference Include="MediatR" Version="12.1.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+            <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.0-rc.1.23421.29\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+</Project>

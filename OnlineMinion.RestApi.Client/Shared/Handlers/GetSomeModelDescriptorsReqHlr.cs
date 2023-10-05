@@ -1,7 +1,7 @@
-using System.Globalization;
 using ErrorOr;
 using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.Shared.Requests;
+using static OnlineMinion.RestApi.Client.Shared.Handlers.ICollectionRequestResponseStreaming;
 
 namespace OnlineMinion.RestApi.Client.Shared.Handlers;
 
@@ -17,12 +17,11 @@ internal abstract class GetSomeModelDescriptorsReqHlr<TResponse>(HttpClient apiC
     {
         var uri = BuildUri(rq);
 
-        return await ICollectionRequestResponseStreaming.GetApiResponse<TResponse>(apiClient, uri, ct)
-            .ConfigureAwait(false);
+        return await GetApiResponse<TResponse>(apiClient, uri, ct).ConfigureAwait(false);
     }
 
     public virtual Uri BuildUri(GetSomeModelDescriptorsReq<TResponse> rq) => new(
-        string.Create(CultureInfo.InvariantCulture, $"{resource}/descriptors"),
+        $"{resource}/descriptors",
         UriKind.RelativeOrAbsolute
     );
 }

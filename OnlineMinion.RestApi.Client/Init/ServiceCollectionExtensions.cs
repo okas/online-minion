@@ -8,6 +8,7 @@ using OnlineMinion.RestApi.Client;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Settings;
 using OnlineMinion.RestApi.Client.Settings.Validation;
+using OnlineMinion.Utilities.Mediatr.Behaviors;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,8 @@ public static class ServiceCollectionExtensions
     /// </returns>
     public static IHttpClientBuilder AddRestApiClient(this IServiceCollection services)
     {
+        #region AppSettings setup
+
         services.AddScoped<IValidator<ApiClientSettings>, ApiClientSettingsValidator>();
 
         services.AddOptions<ApiClientSettings>()
@@ -29,18 +32,34 @@ public static class ServiceCollectionExtensions
             .ValidateWithFluentValidator()
             .ValidateOnStart();
 
-        // IApiVersionWriters are singletons, AddApiVersion() is registering QueryStringApiVersionWriter with "Try*".
-        // Intention is to only register and use HeaderApiVersionWriter.
-        var apiHttpClientBuilder = services
-            .AddSingleton<IApiVersionWriter>(new HeaderApiVersionWriter(CustomHeaderNames.ApiVersion))
-            .AddHttpClient<ApiProvider>(ConfigureApiHttpClient)
-            .AddApiVersion(new ApiVersion(1));
+        #endregion
+
+        #region MediatR setup
 
         services.AddMediatR(
-            opts => opts.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarkerRestApiClient))
+            cfg =>
+            {
+                cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarkerRestApiClient));
+
+                // Pipeline
+                cfg.AddOpenBehavior(typeof(ErrorOrLoggingBehavior<,>));
+            }
         );
 
+        #endregion
+
+        #region HttpClient setup
+
+        // IApiVersionWriters are singletons, AddApiVersion() is registering QueryStringApiVersionWriter with "Try*".
+        // Intention is to only register and use HeaderApiVersionWriter.
+        services.AddSingleton<IApiVersionWriter>(new HeaderApiVersionWriter(CustomHeaderNames.ApiVersion));
+
+        var apiHttpClientBuilder = services.AddHttpClient<ApiProvider>(ConfigureApiHttpClient)
+            .AddApiVersion(new ApiVersion(1));
+
         return apiHttpClientBuilder;
+
+        #endregion
     }
 
     private static void ConfigureApiHttpClient(IServiceProvider sp, HttpClient client) =>

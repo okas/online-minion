@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using OnlineMinion.Application.Contracts.AccountSpec.Requests;
 using OnlineMinion.RestApi.Client.Api;
 using OnlineMinion.RestApi.Client.Shared.Handlers;
+using static OnlineMinion.RestApi.Client.Api.ApiProvider;
 
 namespace OnlineMinion.RestApi.Client.AccountSpec.Handlers;
 
@@ -10,7 +11,7 @@ internal sealed class CheckUniqueExistingAccountSpecReqHlr(ApiProvider api)
     : BaseCheckUniqueReqHlr<CheckAccountSpecUniqueExistingReq>(api.Client)
 {
     public override Uri BuildUri(CheckAccountSpecUniqueExistingReq rq) => new(
-        $"{ApiProvider.ApiAccountSpecsUri}/validate-available-name/{rq.MemberValue}/except-id/{rq.OwnId}",
+        $"{ApiAccountSpecsUri}/validate-available-name/{rq.MemberValue}/except-id/{rq.OwnId}",
         UriKind.RelativeOrAbsolute
     );
 }

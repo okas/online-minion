@@ -8,10 +8,9 @@ namespace OnlineMinion.RestApi.Client.Helpers;
 public static class HttpMessageTransformers
 {
     /// <exception cref="InvalidOperationException">
-    ///     If message content is not understood,
-    ///     it is not <see cref="HttpValidationProblemDetails" />.
+    ///     If message content is not understood, it is not <see cref="HttpValidationProblemDetails" />.
     /// </exception>
-    public static async Task<Error> TransformConflictHttpResponse(
+    public static async ValueTask<Error> TransformConflictHttpResponse(
         this HttpResponseMessage message,
         CancellationToken        ct
     )
@@ -28,8 +27,7 @@ public static class HttpMessageTransformers
     }
 
     /// <exception cref="InvalidOperationException">
-    ///     If message content is not understood,
-    ///     it is not <see cref="HttpValidationProblemDetails" />.
+    ///     If message content is not understood, it is not <see cref="HttpValidationProblemDetails" />.
     /// </exception>
     public static async Task<Error> TransformBadRequestHttpResponse(
         this HttpResponseMessage message,
@@ -64,6 +62,12 @@ public static class HttpMessageTransformers
             ? new(totalItems.Value, size.Value, page.Value)
             : new PagingMetaInfo(totalItems.Value, size.Value);
     }
+
+    public static Error GetErrorWithReasonPhraseAndContent(this HttpResponseMessage message) =>
+        Error.Failure(
+            message.ReasonPhrase ?? string.Empty,
+            message.Content.ToString() ?? string.Empty
+        );
 
     private static async Task<HttpValidationProblemDetails> ReadHttpValidationProblemDetails(
         HttpResponseMessage message,
