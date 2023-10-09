@@ -20,11 +20,7 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
 
     public void Configure(SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(
-            Path.Combine(AppContext.BaseDirectory, $"{_apiAssemblyName}.xml"),
-            true
-        );
-
+        options.SchemaFilter<EnumSchemaFilter>();
         options.OperationFilter<SwaggerDefaultValuesOperationFilter>();
         options.OperationFilter<AddResponseHeadersFilter>();
         options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
@@ -33,12 +29,16 @@ public class SwaggerGenOptionsConfigurator(IApiVersionDescriptionProvider apiVer
         //options.AddSecurityDefinition(...);
         //options.AddSecurityRequirement(...);
 
-        CreateOrUpdateOpenApiDocs(apiVersionDescriptionProvider, options);
-
         options.OrderActionsBy(apiDesc => $"{apiDesc.RelativePath}");
         options.DescribeAllParametersInCamelCase();
         options.CustomSchemaIds(DefaultSchemaIdSelector);
 
+        options.IncludeXmlComments(
+            Path.Combine(AppContext.BaseDirectory, $"{_apiAssemblyName}.xml"),
+            true
+        );
+
+        CreateOrUpdateOpenApiDocs(apiVersionDescriptionProvider, options);
         CheckContacts(options);
         CheckLicense(options);
         CheckServers(options);
