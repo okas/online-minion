@@ -20,7 +20,9 @@ internal abstract class BaseGetModelByIdReqHlr<TRequest, TEntity, TId, TResponse
             .FirstOrDefaultAsync(e => e.Id == id, ct)
             .ConfigureAwait(false);
 
-        return entity is null ? Error.NotFound() : ToResponse(entity);
+        return entity is null
+            ? Error.NotFound()
+            : ToResponse(entity);
     }
 
     protected abstract TId CreateEntityId(TRequest rq);

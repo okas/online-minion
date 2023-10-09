@@ -16,6 +16,8 @@ using static OnlineMinion.RestApi.Configuration.ApiCorsOptionsConfigurator;
 using static OnlineMinion.RestApi.ICommonDescriptorEndpoints;
 using static OnlineMinion.RestApi.ProblemHandling.ApiProblemResults;
 
+// ReSharper disable ConvertClosureToMethodGroup
+
 namespace OnlineMinion.RestApi;
 
 public class AccountSpecsEndpoints
@@ -81,12 +83,7 @@ public class AccountSpecsEndpoints
                 httpResponse.SetPagingHeaders(envelope.Paging);
                 return TypedResults.Ok(envelope.StreamResult.ToDelayedAsyncEnumerable(20, ct));
             },
-            firstError =>
-            {
-                // TODO: put into logging pipeline (needs creation)
-                // logger.LogError("Error while getting paged models: {Error}", firstError);
-                return CreateApiProblemResult(firstError);
-            }
+            firstError => { return CreateApiProblemResult(firstError); }
         );
     }
 

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.OpenApi.Models;
 using OnlineMinion.Application.Contracts;
 
@@ -14,8 +15,8 @@ public static class DocumentationHelpers
     /// <returns></returns>
     public static OpenApiOperation SetPagingMetaInfoHeaders(this OpenApiOperation operation, int statusCode)
     {
-        var responseKey = statusCode.ToString();
-        if (!operation.Responses.TryGetValue(statusCode.ToString(), out var response))
+        var responseKey = statusCode.ToString(CultureInfo.InvariantCulture);
+        if (!operation.Responses.TryGetValue(responseKey, out var response))
         {
             response = operation.Responses[responseKey] = new();
         }

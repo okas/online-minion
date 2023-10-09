@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using OnlineMinion.Application.Contracts;
 using static OnlineMinion.Application.Contracts.CustomHeaderNames;
@@ -13,8 +14,8 @@ public static class PagingResponseHelpers
     /// <param name="values">Paging meta info to set into response headers.</param>
     public static void SetPagingHeaders(this HttpResponse response, PagingMetaInfo values)
     {
-        response.Headers[PagingRows] = values.Rows.ToString();
-        response.Headers[PagingSize] = values.Size.ToString();
-        response.Headers[PagingPages] = values.Pages.ToString();
+        response.Headers[PagingRows] = values.Rows.ToString(CultureInfo.InvariantCulture);
+        response.Headers[PagingSize] = values.Size.ToString(CultureInfo.InvariantCulture);
+        response.Headers[PagingPages] = values.Pages.ToString(CultureInfo.InvariantCulture);
     }
 }

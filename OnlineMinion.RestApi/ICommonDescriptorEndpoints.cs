@@ -5,6 +5,8 @@ using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.RestApi.ProblemHandling;
 
+// ReSharper disable ConvertClosureToMethodGroup
+
 namespace OnlineMinion.RestApi;
 
 public interface ICommonDescriptorEndpoints

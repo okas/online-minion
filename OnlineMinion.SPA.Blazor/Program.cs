@@ -34,11 +34,12 @@ services.AddOptions<WebAppSettings>()
 
 #endregion
 
-#region RestApi.Client setup
+#region OnlineMinion.RestApi.Client setup
 
 services.AddTransient<WasmHttpRequestMessageConfiguration>();
 
 services.AddRestApiClient()
+    // Outbound request pipeline.
     .AddHttpMessageHandler(
         sp => new DelegatedRequestHandler(
             sp.GetRequiredService<WasmHttpRequestMessageConfiguration>().EnableBrowserResponseStreamingForGet

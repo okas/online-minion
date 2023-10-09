@@ -27,11 +27,9 @@ public interface ICommonPagingInfoEndpoints
         ISender                 sender,
         HttpResponse            httpResponse,
         CancellationToken       ct
-    ) where TRequest : IGetPagingInfoRequest
+    )
+        where TRequest : IGetPagingInfoRequest
     {
-        // var rq = ActivatorUtilities.CreateInstance<TRequest>(provider, pageSize)
-        // ?? throw new InvalidOperationException(GetMsgInvalidTypeParameterInit<TRequest>(pageSize));
-
         var result = await sender.Send(rq, ct).ConfigureAwait(false);
 
         return result.MatchFirst<Results<NoContent, ProblemHttpResult>>(
