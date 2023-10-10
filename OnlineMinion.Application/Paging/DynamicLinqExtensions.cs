@@ -18,10 +18,10 @@ public static class DynamicLinqExtensions
         }
 
         // TODO: default order by CreatedAt field based, need interface for entity and here to compare it´s compatibility
-        query = string.IsNullOrWhiteSpace(queryParams.Sort)
-            ? query.OrderBy(e => e.Id)
-            : query.OrderBy(queryParams.Sort);
+        query = !string.IsNullOrWhiteSpace(queryParams.Sort)
+            ? query.OrderBy(queryParams.Sort)
+            : query.OrderBy(e => e.Id);
 
-        return query.Skip((queryParams.Page - 1) * queryParams.Size).Take(queryParams.Size);
+        return query.Page(queryParams.Page, queryParams.Size);
     }
 }
