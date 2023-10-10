@@ -5,5 +5,5 @@ public record struct PaymentSpecResp(
     string          Name,
     string          CurrencyCode,
     string?         Tags,
-    PaymentSpecType Type
+    PaymentSpecType Type // NB! Before rename/remove, check GetSomePaymentSpecsReqHlr.cs
 ) : IHasId;

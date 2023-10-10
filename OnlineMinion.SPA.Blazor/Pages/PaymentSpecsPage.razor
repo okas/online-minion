@@ -52,18 +52,13 @@
       TotalItemsCount="@TotalItemsCount">
     <Columns>
       <RadzenDataGridColumn
-          Filterable="@false"
+          Filterable
           Groupable="@false"
           Property="@Str.Type"
-          Sortable="@false"
+          Sortable
           TItem="PaymentSpecResp"
           Title="@Str.Type"
-          Type="@typeof(string)"
-          Width="100px">
-        <Template>
-          @GetTypeName(context.Type)
-        </Template>
-      </RadzenDataGridColumn>
+          Width="150px"/>
       <RadzenDataGridColumn Property="@Str.Name" TItem="PaymentSpecResp" Title="@Str.Name"/>
       <RadzenDataGridColumn Property="@Str.CurrencyCode" TItem="PaymentSpecResp" Title="@Str.CurrencyCodeField">
         <Template>
