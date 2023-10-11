@@ -115,7 +115,7 @@ internal sealed partial class GetSomePaymentSpecsReqHlr(IOnlineMinionDbContext d
         {
             PaymentSpecType.Cash => typeof(PaymentSpecCash).FullName,
             PaymentSpecType.Bank => typeof(PaymentSpecBank).FullName,
-            _ => typeof(CryptoExchangeAccountSpec).FullName,
+            _ => typeof(PaymentSpecCrypto).FullName,
         };
 
         // Using PaymentSpecTypeRegEx, replace found value with call to DynamicLinq's "is" operator expression.

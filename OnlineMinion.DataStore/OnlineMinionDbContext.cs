@@ -20,11 +20,11 @@ public class OnlineMinionDbContext(DbContextOptions<OnlineMinionDbContext> optio
 
     public DbSet<TransactionCredit> TransactionCredits { get; set; } = null!;
 
-    public DbSet<PaymentSpecBank> BankAccountSpecs { get; set; } = null!;
+    public DbSet<PaymentSpecBank> BankPaymentSpecs { get; set; } = null!;
 
-    public DbSet<PaymentSpecCash> CashAccountsSpecs { get; set; } = null!;
+    public DbSet<PaymentSpecCash> CashPaymentSpecs { get; set; } = null!;
 
-    public DbSet<CryptoExchangeAccountSpec> CryptoExchangeAccountSpecs { get; set; } = null!;
+    public DbSet<PaymentSpecCrypto> CryptoPaymentSpecs { get; set; } = null!;
 
     DbSet<TEntity> IOnlineMinionDbContext.Set<TEntity>() => base.Set<TEntity>();
 

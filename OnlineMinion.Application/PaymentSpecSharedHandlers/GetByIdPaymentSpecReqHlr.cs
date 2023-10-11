@@ -31,7 +31,7 @@ internal class GetByIdPaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
                 e.IBAN
             ),
 
-            CryptoExchangeAccountSpec e => new PaymentSpecCryptoResp(
+            PaymentSpecCrypto e => new PaymentSpecCryptoResp(
                 e.Id.Value,
                 e.Name,
                 e.CurrencyCode,

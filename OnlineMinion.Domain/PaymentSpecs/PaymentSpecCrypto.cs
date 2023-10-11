@@ -1,11 +1,11 @@
 namespace OnlineMinion.Domain.PaymentSpecs;
 
-public sealed class CryptoExchangeAccountSpec : BasePaymentSpecData
+public sealed class PaymentSpecCrypto : BasePaymentSpecData
 {
     // ReSharper disable once UnusedMember.Local
-    private CryptoExchangeAccountSpec() { }
+    private PaymentSpecCrypto() { }
 
-    public CryptoExchangeAccountSpec(string exchangeName, bool isFiat, string name, string currencyCode, string? tags)
+    public PaymentSpecCrypto(string exchangeName, bool isFiat, string name, string currencyCode, string? tags)
         : base(name, currencyCode, tags) => (ExchangeName, IsFiat) = (exchangeName, isFiat);
 
     public string ExchangeName { get; private set; } = null!;

@@ -13,11 +13,11 @@ public interface IOnlineMinionDbContext
 
     DbSet<Domain.TransactionCredits.TransactionCredit> TransactionCredits { get; set; }
 
-    DbSet<PaymentSpecBank> BankAccountSpecs { get; set; }
+    DbSet<PaymentSpecBank> BankPaymentSpecs { get; set; }
 
-    DbSet<PaymentSpecCash> CashAccountsSpecs { get; set; }
+    DbSet<PaymentSpecCash> CashPaymentSpecs { get; set; }
 
-    DbSet<CryptoExchangeAccountSpec> CryptoExchangeAccountSpecs { get; set; }
+    DbSet<PaymentSpecCrypto> CryptoPaymentSpecs { get; set; }
 
     Task<int> SaveChangesAsync() => SaveChangesAsync(default);
 

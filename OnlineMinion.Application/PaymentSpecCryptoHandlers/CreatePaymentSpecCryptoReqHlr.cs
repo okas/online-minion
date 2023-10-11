@@ -7,9 +7,9 @@ namespace OnlineMinion.Application.PaymentSpecCryptoHandlers;
 
 [UsedImplicitly]
 internal sealed class CreatePaymentSpecCryptoReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseCreateModelReqHlr<CreatePaymentSpecCryptoReq, CryptoExchangeAccountSpec>(dbContext)
+    : BaseCreateModelReqHlr<CreatePaymentSpecCryptoReq, PaymentSpecCrypto>(dbContext)
 {
-    protected override CryptoExchangeAccountSpec ToEntity(CreatePaymentSpecCryptoReq rq) => new(
+    protected override PaymentSpecCrypto ToEntity(CreatePaymentSpecCryptoReq rq) => new(
         rq.ExchangeName,
         rq.IsFiat,
         rq.Name,
