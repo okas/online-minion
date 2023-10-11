@@ -9,7 +9,11 @@ public class BasePaymentSpecEntityConfig : IEntityTypeConfiguration<BasePaymentS
     public void Configure(EntityTypeBuilder<BasePaymentSpecData> builder)
     {
         builder.UseTphMappingStrategy()
-            .ToTable("PaymentSpecs");
+            .ToTable("PaymentSpecs")
+            .HasDiscriminator<string>("Discriminator")
+            .HasValue<PaymentSpecCash>("Cash")
+            .HasValue<PaymentSpecBank>("Bank")
+            .HasValue<PaymentSpecCrypto>("Crypto");
 
         builder.HasKey(e => e.Id);
 
