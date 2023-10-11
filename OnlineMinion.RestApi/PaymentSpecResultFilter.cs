@@ -14,9 +14,9 @@ namespace OnlineMinion.RestApi;
 ///     <see cref="OpenApiRouteHandlerBuilderExtensions.Produces{TResponse}" /> method.<br />
 ///     Depending of the implementation of the <see cref="BasePaymentSpecResp" />, that is returned as a value from the
 ///     endpoint, this filter will output results with content types either of
-///     <see cref="CustomVendorContentTypes.PaymentSpecCashJson" />,
-///     <see cref="CustomVendorContentTypes.PaymentSpecBankJson" /> or
-///     <see cref="CustomVendorContentTypes.PaymentSpecCryptoJson" />.
+///     <see cref="CustomVendorContentTypes.PaymentSpecCashJsonCharset" />,
+///     <see cref="CustomVendorContentTypes.PaymentSpecBankJsonCharset" /> or
+///     <see cref="CustomVendorContentTypes.PaymentSpecCryptoJsonCharset" />.
 /// </remarks>
 public class PaymentSpecResultFilter : IEndpointFilter
 {
@@ -32,21 +32,21 @@ public class PaymentSpecResultFilter : IEndpointFilter
                     TypedResults.Json(
                         value,
                         statusCode: result.StatusCode,
-                        contentType: CustomVendorContentTypes.PaymentSpecCashJson
+                        contentType: CustomVendorContentTypes.PaymentSpecCashJsonCharset
                     ),
 
                 PaymentSpecBankResp value =>
                     TypedResults.Json(
                         value,
                         statusCode: result.StatusCode,
-                        contentType: CustomVendorContentTypes.PaymentSpecBankJson
+                        contentType: CustomVendorContentTypes.PaymentSpecBankJsonCharset
                     ),
 
                 PaymentSpecCryptoResp value =>
                     TypedResults.Json(
                         value,
                         statusCode: result.StatusCode,
-                        contentType: CustomVendorContentTypes.PaymentSpecCryptoJson
+                        contentType: CustomVendorContentTypes.PaymentSpecCryptoJsonCharset
                     ),
 
                 _ => result,
