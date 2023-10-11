@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.PaymentSpecBank.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecCrypto.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecShared;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
@@ -57,11 +58,46 @@ public class PaymentSpecEndpoints
 
         apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueExisting<CheckPaymentSpecUniqueExistingReq>);
 
-        apiV1.MapPost("cash", ICommonCrudEndpoints.Create<CreatePaymentSpecCashReq>)
+        #endregion
+
+        #region Cash endpoints
+
+        const string cashRoute = nameof(PaymentSpecType.Cash);
+
+        apiV1.MapPost($"{cashRoute}", ICommonCrudEndpoints.Create<CreatePaymentSpecCashReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut("cash/{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCashReq>)
+        apiV1.MapPut($@"{cashRoute}/{{id:guid}}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCashReq>)
+            .WithMetadata(linkGeneratorMetaData)
+            .Accepts<UpdatePaymentSpecCashReq>(CustomVendorContentTypes.PaymentSpecCashJson);
+
+        #endregion
+
+        #region Bank endpoints
+
+        const string bankRoute = nameof(PaymentSpecType.Bank);
+
+        apiV1.MapPost($"{bankRoute}", ICommonCrudEndpoints.Create<CreatePaymentSpecBankReq>)
             .WithMetadata(linkGeneratorMetaData);
+
+        apiV1.MapPut($@"{bankRoute}/{{id:guid}}", ICommonCrudEndpoints.Update<UpdatePaymentSpecBankReq>)
+            .WithMetadata(linkGeneratorMetaData)
+            .Accepts<UpdatePaymentSpecBankReq>(CustomVendorContentTypes.PaymentSpecBankJson);
+
+        #endregion
+
+        #region Crypto endpoints
+
+        const string cryptoRoute = nameof(PaymentSpecType.Crypto);
+
+        apiV1.MapPost($"{cryptoRoute}", ICommonCrudEndpoints.Create<CreatePaymentSpecCryptoReq>)
+            .WithMetadata(linkGeneratorMetaData);
+
+        apiV1.MapPut($@"{cryptoRoute}/{{id:guid}}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCryptoReq>)
+            .WithMetadata(linkGeneratorMetaData)
+            .Accepts<UpdatePaymentSpecCryptoReq>(CustomVendorContentTypes.PaymentSpecCryptoJson);
+
+        #endregion
 
         // TODO: fix FE project handler URLs!
     }

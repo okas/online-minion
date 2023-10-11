@@ -6,11 +6,7 @@ public sealed class PaymentSpecBank : BasePaymentSpecData
     private PaymentSpecBank() { }
 
     public PaymentSpecBank(string iban, string bankName, string name, string currencyCode, string? tags)
-        : base(name, currencyCode, tags)
-    {
-        IBAN = iban;
-        BankName = bankName;
-    }
+        : base(name, currencyCode, tags) => (IBAN, BankName) = (iban, bankName);
 
     public string IBAN { get; private set; } = null!;
 
