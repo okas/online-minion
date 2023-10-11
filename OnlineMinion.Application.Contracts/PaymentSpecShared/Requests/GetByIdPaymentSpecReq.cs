@@ -6,4 +6,4 @@ using OnlineMinion.Application.Contracts.Shared.Requests;
 namespace OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 
 [UsedImplicitly]
-public record GetByIdPaymentSpecReq([Required] Guid Id) : IGetByIdRequest<PaymentSpecResp>;
+public record GetByIdPaymentSpecReq([Required] Guid Id) : IGetByIdRequest<BasePaymentSpecResp>;

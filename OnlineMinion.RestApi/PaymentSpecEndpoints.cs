@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using OnlineMinion.Application.Contracts;
+using OnlineMinion.Application.Contracts.PaymentSpecBank.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
+using OnlineMinion.Application.Contracts.PaymentSpecShared;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.RestApi.Helpers;
@@ -25,12 +29,21 @@ public class PaymentSpecEndpoints
 
         var linkGeneratorMetaData = new ResourceLinkGeneratorMetaData(V1GetPaymentSpecById);
 
+        #region Common & -CRUD endpoints
+
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<PaymentSpecResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
 
-        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetByIdPaymentSpecReq, PaymentSpecResp>)
+        apiV1.MapGet("{id:guid}", ICommonCrudEndpoints.GetById<GetByIdPaymentSpecReq, BasePaymentSpecResp>)
             .WithName(V1GetPaymentSpecById)
-            .WithMetadata(linkGeneratorMetaData);
+            .WithMetadata(linkGeneratorMetaData)
+            .AddEndpointFilter<PaymentSpecResultFilter>()
+            .Produces<BasePaymentSpecResp>(
+                StatusCodes.Status200OK,
+                CustomVendorContentTypes.PaymentSpecCashJson,
+                CustomVendorContentTypes.PaymentSpecBankJson,
+                CustomVendorContentTypes.PaymentSpecCryptoJson
+            );
 
         apiV1.MapDelete("{id:guid}", ICommonCrudEndpoints.Delete<DeletePaymentSpecReq>)
             .WithMetadata(linkGeneratorMetaData);

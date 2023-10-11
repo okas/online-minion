@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using OnlineMinion.Application.Contracts.PaymentSpecShared;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.Application.Shared.Handlers;
@@ -9,15 +8,41 @@ namespace OnlineMinion.Application.PaymentSpecSharedHandlers;
 
 [UsedImplicitly]
 internal class GetByIdPaymentSpecReqHlr(IOnlineMinionDbContext dbContext)
-    : BaseGetModelByIdReqHlr<GetByIdPaymentSpecReq, PaymentSpecCash, PaymentSpecId, PaymentSpecResp>(dbContext)
+    : BaseGetModelByIdReqHlr<GetByIdPaymentSpecReq, BasePaymentSpecData, PaymentSpecId, BasePaymentSpecResp>(dbContext)
 {
     protected override PaymentSpecId CreateEntityId(GetByIdPaymentSpecReq rq) => new(rq.Id);
 
-    protected override PaymentSpecResp ToResponse(PaymentSpecCash entity) => new(
-        entity.Id.Value,
-        entity.Name,
-        entity.CurrencyCode,
-        entity.Tags,
-        PaymentSpecType.Cash
-    );
+    protected override BasePaymentSpecResp ToResponse(BasePaymentSpecData entity)
+    {
+        BasePaymentSpecResp response = entity switch
+        {
+            PaymentSpecCash e => new PaymentSpecCashResp(
+                e.Id.Value,
+                e.Name,
+                e.CurrencyCode,
+                e.Tags
+            ),
+
+            PaymentSpecBank e => new PaymentSpecBankResp(
+                e.Id.Value,
+                e.Name,
+                e.CurrencyCode,
+                e.Tags,
+                e.IBAN
+            ),
+
+            CryptoExchangeAccountSpec e => new PaymentSpecCryptoResp(
+                e.Id.Value,
+                e.Name,
+                e.CurrencyCode,
+                e.Tags,
+                e.ExchangeName,
+                e.IsFiat
+            ),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(entity), entity, null),
+        };
+
+        return response;
+    }
 }
