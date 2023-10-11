@@ -24,10 +24,17 @@
       PageSizeOptions="@PageSizeOptions"
       @ref="@DataGridRef"
       ShowPagingSummary
+      RowExpand="@RowExpand"
+      RowRender="@RowRender"
+      ShowExpandColumn="@ShowExpandColumn"
+      ExpandMode="@ExpandMode"
       TItem="TItem">
     <HeaderTemplate>
       <RadzenButton ButtonStyle="@ButtonStyle.Info" Click="@DataGridRef.Reload" Icon="refresh" IsBusy="@SC.IsBusy"/>
     </HeaderTemplate>
+    <Template>
+      @Template?.Invoke(context)
+    </Template>
     <Columns>
       @Columns
       <RadzenDataGridColumn

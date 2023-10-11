@@ -32,8 +32,8 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
 
     private readonly string _respModelName;
 
-    protected UpsertEditorWrapper<TBaseUpsert> EditorWrapperRef = null!;
-    protected RadzenDataGridWrapper<TVModel> GridWrapperRef = null!;
+    protected UpsertEditorWrapper<TBaseUpsert>? EditorWrapperRef;
+    protected RadzenDataGridWrapper<TVModel>? GridWrapperRef;
     protected TBaseUpsert? UpsertVM;
 
     protected BaseCRUDPage()
@@ -223,7 +223,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     {
         SC.IsBusy = true;
 
-        if (!await EditorWrapperRef.ValidateEditorAsync())
+        if (!await EditorWrapperRef!.ValidateEditorAsync())
         {
             SC.IsBusy = false;
 
@@ -357,11 +357,11 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     }
 
 
-    private void SetServerValidationErrors(IList<Error> errors) => EditorWrapperRef.SetServerValidationErrors(errors);
+    private void SetServerValidationErrors(IList<Error> errors) => EditorWrapperRef?.SetServerValidationErrors(errors);
 
     protected void CloseEditorDialog()
     {
-        EditorWrapperRef.ResetEditor();
+        EditorWrapperRef?.ResetEditor();
         DialogService.Close();
         UpsertVM = null;
     }
@@ -448,7 +448,7 @@ public abstract class BaseCRUDPage<TVModel, TResponse, TBaseUpsert> : ComponentW
     }
 
     private async Task ChangeGridPageAsync(int apiPage) =>
-        await GridWrapperRef.DataGridRef.GoToPage(ToGridPage(apiPage), true);
+        await GridWrapperRef!.DataGridRef.GoToPage(ToGridPage(apiPage), true);
 
     /// <summary>
     ///     Radzen DataGrid uses 0-based page index, but API uses 1-based page index.

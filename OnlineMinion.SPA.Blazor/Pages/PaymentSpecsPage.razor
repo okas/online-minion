@@ -31,6 +31,9 @@
     public const string CurrencyCode = nameof(PaymentSpecResp.CurrencyCode);
     public const string CurrencyCodeField = "Currency";
     public const string Tags = nameof(PaymentSpecResp.Tags);
+    public const string IBAN = nameof(PaymentSpecBankResp.IBAN);
+    public const string IsFiat = "Is Fiat?";
+    public const string ExchangeName = "Exchange name";
   }
 }
 
@@ -44,12 +47,47 @@
       Data="@ViewModels"
       DeleteClick="@OnDeleteHandlerAsync"
       EditClick="@OnEditHandler"
+      ExpandMode="@DataGridExpandMode.Single"
       LoadData="@OnLoadDataHandlerAsync"
       Page="@PagerChangeHandler"
       PageSizeOptions="@PageSizeOptions"
       @ref="@GridWrapperRef"
+      RowExpand="@WrappedGridRowExpandHandler"
+      RowRender="@WrappedGridRowRenderHandler"
       TItem="PaymentSpecResp"
       TotalItemsCount="@TotalItemsCount">
+    <Template>
+      <RadzenCard class="rz-pb-3 rz-pt-1 rz-px-2">
+        <RadzenRow AlignItems="@AlignItems.Center" JustifyContent="@JustifyContent.SpaceEvenly" RowGap="1em">
+          @switch (_cachedPaymentSpecs.Find(x => x.Id == context.Id))
+          {
+            case PaymentSpecBankResp bank:
+              <RadzenColumn SizeSM="4">
+                <RadzenText class="rz-display-flex rz-mt-2 rz-my-0" Text="@Str.IBAN" TextStyle="TextStyle.Overline"/>
+                <RadzenText Text="@bank.IBAN"/>
+              </RadzenColumn>
+              break;
+
+            case PaymentSpecCryptoResp cash:
+              <RadzenColumn SizeSM="4">
+                <RadzenText class="rz-display-flex rz-mt-2 rz-my-0" Text="@Str.ExchangeName" TextStyle="TextStyle.Overline"/>
+                <RadzenText Text="@cash.ExchangeName"/>
+              </RadzenColumn>
+              <RadzenColumn SizeSM="4">
+                <RadzenText class="rz-display-flex rz-mt-2 rz-my-0" Text="@Str.IsFiat" TextStyle="TextStyle.Overline"/>
+                <RadzenCheckBox class="rz-mt-4" ReadOnly Value="@cash.IsFiat"/>
+              </RadzenColumn>
+              break;
+
+            default:
+              <RadzenColumn SizeSM="4">
+                <RadzenIcon Icon="refresh" IconStyle="IconStyle.Info" Style="animation: rotation 700ms linear infinite"/>
+              </RadzenColumn>
+              break;
+          }
+        </RadzenRow>
+      </RadzenCard>
+    </Template>
     <Columns>
       <RadzenDataGridColumn
           Filterable

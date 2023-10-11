@@ -10,12 +10,14 @@ using OnlineMinion.SPA.Blazor.CurrencyInfo.ViewModels;
 using OnlineMinion.SPA.Blazor.Pages.Base;
 using OnlineMinion.SPA.Blazor.ViewModels;
 using OnlineMinion.SPA.Blazor.ViewModels.PaymentSpec;
+using Radzen;
 
 namespace OnlineMinion.SPA.Blazor.Pages;
 
 [UsedImplicitly]
 public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpecResp, BaseUpsertPaymentSpecReqData>
 {
+    private readonly List<BasePaymentSpecResp> _cachedPaymentSpecs = new();
     private readonly List<CurrencyInfoVm> _currencyCodes = new();
 
     private PaymentSpecCashEditor? _editorRef;
@@ -33,6 +35,28 @@ public partial class PaymentSpecsPage : BaseCRUDPage<PaymentSpecResp, PaymentSpe
         {
             EditorWrapperRef = _editorRef.WrapperRef;
         }
+    }
+
+    private async Task WrappedGridRowExpandHandler(PaymentSpecResp rowItem)
+    {
+        if (_cachedPaymentSpecs.Exists(vm => vm.Id == rowItem.Id))
+        {
+            return;
+        }
+
+        var rq = new GetByIdPaymentSpecReq(rowItem.Id);
+        var result = await Sender.Send(rq, CT);
+
+        if (!result.IsError)
+        {
+            _cachedPaymentSpecs.Add(result.Value);
+        }
+    }
+
+    private static void WrappedGridRowRenderHandler(RowRenderEventArgs<PaymentSpecResp> args)
+    {
+        // Cash type do not have any nested properties, so we can skip this for it.
+        args.Expandable = args.Data.Type != PaymentSpecType.Cash;
     }
 
     protected override async Task RunDependencyLoadingAsync() => await LoadDependencyFromApiAsync(
