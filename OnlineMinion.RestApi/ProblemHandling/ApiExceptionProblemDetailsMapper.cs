@@ -3,6 +3,15 @@ using OnlineMinion.Application.Exceptions;
 
 namespace OnlineMinion.RestApi.ProblemHandling;
 
+/// <summary>
+///     Maps known exceptions ins API to <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails" />, customizing them as
+///     necessary.
+/// </summary>
+/// <remarks>
+///     This class is supposed to be updated, for expected <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails" /> to be
+///     returned
+///     from API.
+/// </remarks>
 public sealed class ApiExceptionProblemDetailsMapper : IExceptionProblemDetailsMapper
 {
     public void MapExceptions(ProblemDetailsContext context)

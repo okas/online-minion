@@ -41,9 +41,11 @@ public static class ServiceCollectionExtensions
 
         #region API Problem handling setup
 
-        services.AddSingleton<IExceptionProblemDetailsMapper, ApiExceptionProblemDetailsMapper>()
-            .ConfigureOptions<ProblemDetailsOptionsConfigurator>()
-            .AddProblemDetails();
+        services.AddSingleton<IExceptionProblemDetailsMapper, ApiExceptionProblemDetailsMapper>();
+        services.ConfigureOptions<ProblemDetailsOptionsConfigurator>();
+
+        services.AddProblemDetails();
+        services.AddExceptionHandler<ApiExceptionHandler>();
 
         #endregion
 
