@@ -30,7 +30,7 @@ internal abstract class BaseUpdateModelReqHlr<TRequest>(HttpClient apiClient, Ur
     ) =>
         response.StatusCode switch
         {
-            HttpStatusCode.NoContent => default,
+            HttpStatusCode.NoContent => Result.Updated,
             HttpStatusCode.NotFound => Error.NotFound(),
             HttpStatusCode.Conflict => await response.TransformConflictHttpResponse(ct).ConfigureAwait(false),
             HttpStatusCode.BadRequest => await response.TransformBadRequestHttpResponse(ct).ConfigureAwait(false),

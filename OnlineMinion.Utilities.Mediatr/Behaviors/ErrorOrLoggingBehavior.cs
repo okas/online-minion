@@ -49,8 +49,9 @@ public class ErrorOrLoggingBehavior<TRequest, TResponse>(ILogger<ErrorOrLoggingB
 
             logger.Log(
                 logLevel,
-                "Problem on handling {RequestType}: code `{Code}`, description `{Description}`",
+                "Problem on handling {RequestType}: error type: `{ErrorType}`, code `{Code}`, description `{Description}`",
                 _requestTypeName,
+                error.Type,
                 error.Code,
                 error.Description
             );
