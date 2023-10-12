@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OnlineMinion.Application.Contracts.Shared.Requests;
 using OnlineMinion.Application.RequestValidation;
 
@@ -26,11 +27,16 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
     private readonly IValidator<TRequest>[] _normalValidators;
     private readonly IAsyncUniqueValidator<TRequest>[] _uniqueAsyncValidators;
 
-    public CommandValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    public CommandValidationBehavior(
+        IEnumerable<IValidator<TRequest>>                       validators,
+        ILogger<CommandValidationBehavior<TRequest, TResponse>> logger
+    )
     {
         var validatorArray = validators as IValidator<TRequest>[] ?? validators.ToArray();
         _uniqueAsyncValidators = validatorArray.OfType<IAsyncUniqueValidator<TRequest>>().ToArray();
         _normalValidators = validatorArray.Except(_uniqueAsyncValidators).ToArray();
+
+        LogValidators(logger, validatorArray, typeof(TRequest).FullName!);
     }
 
     public async Task<TResponse> Handle(TRequest req, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
@@ -124,5 +130,17 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
             x => x.Key,
             x => x.Values as object, // TODO Stinks!
             StringComparer.OrdinalIgnoreCase
+        );
+
+    private static void LogValidators(
+        ILogger                         logger,
+        IReadOnlyCollection<IValidator> validators,
+        string                          modelFullName
+    ) =>
+        logger.LogDebug(
+            "Got {Count} validators from DI container for model `{ModelType}`: {Validators}",
+            validators.Count,
+            modelFullName,
+            validators.Select(v => $"\n- {v.GetType().FullName}")
         );
 }
