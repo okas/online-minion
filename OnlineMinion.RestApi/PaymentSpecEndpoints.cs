@@ -5,7 +5,6 @@ using OnlineMinion.Application.Contracts;
 using OnlineMinion.Application.Contracts.PaymentSpecBank.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecCash.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecCrypto.Requests;
-using OnlineMinion.Application.Contracts.PaymentSpecShared;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Requests;
 using OnlineMinion.Application.Contracts.PaymentSpecShared.Responses;
 using OnlineMinion.RestApi.Helpers;
@@ -30,7 +29,7 @@ public class PaymentSpecEndpoints
 
         var linkGeneratorMetaData = new ResourceLinkGeneratorMetaData(V1GetPaymentSpecById);
 
-        #region Common & -CRUD endpoints
+        #region Common & common CRUD endpoints
 
         apiV1.MapGet("/", ICommonCrudEndpoints.GetSomePaged<PaymentSpecResp>)
             .RequireCors(ExposedHeadersPagingMetaInfoPolicy);
@@ -54,20 +53,18 @@ public class PaymentSpecEndpoints
 
         apiV1.MapGet($"{DescriptorsCommonRoute}", GetAsDescriptors<PaymentSpecDescriptorResp>);
 
-        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckUniqueNewPaymentSpecNameReq>);
+        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueByMember<CheckUniqueNewPaymentSpecNameReq>);
 
-        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueExisting<CheckUniqueExistingPaymentSpecNameReq>);
+        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueByMember<CheckUniqueExistingPaymentSpecNameReq>);
 
         #endregion
 
         #region Cash endpoints
 
-        const string cashRoute = nameof(PaymentSpecType.Cash);
-
-        apiV1.MapPost($"{cashRoute}", ICommonCrudEndpoints.Create<CreatePaymentSpecCashReq>)
+        apiV1.MapPost("cash", ICommonCrudEndpoints.Create<CreatePaymentSpecCashReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut($@"{cashRoute}/{{id:guid}}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCashReq>)
+        apiV1.MapPut(@"cash/{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCashReq>)
             .WithMetadata(linkGeneratorMetaData)
             .Accepts<UpdatePaymentSpecCashReq>(CustomVendorContentTypes.PaymentSpecCashJson);
 
@@ -75,25 +72,31 @@ public class PaymentSpecEndpoints
 
         #region Bank endpoints
 
-        const string bankRoute = nameof(PaymentSpecType.Bank);
-
-        apiV1.MapPost($"{bankRoute}", ICommonCrudEndpoints.Create<CreatePaymentSpecBankReq>)
+        apiV1.MapPost("bank", ICommonCrudEndpoints.Create<CreatePaymentSpecBankReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut($@"{bankRoute}/{{id:guid}}", ICommonCrudEndpoints.Update<UpdatePaymentSpecBankReq>)
+        apiV1.MapPut(@"bank/{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecBankReq>)
             .WithMetadata(linkGeneratorMetaData)
             .Accepts<UpdatePaymentSpecBankReq>(CustomVendorContentTypes.PaymentSpecBankJson);
+
+        apiV1.MapHead(
+            $"bank/{NewIBANValidationRoute}",
+            CheckUniqueByMember<CheckUniqueNewPaymentSpecBankIBANReq>
+        );
+
+        apiV1.MapHead(
+            $"bank/{ExistingIBANValidationRoute}",
+            CheckUniqueByMember<CheckUniqueExistingPaymentSpecBankIBANReq>
+        );
 
         #endregion
 
         #region Crypto endpoints
 
-        const string cryptoRoute = nameof(PaymentSpecType.Crypto);
-
-        apiV1.MapPost($"{cryptoRoute}", ICommonCrudEndpoints.Create<CreatePaymentSpecCryptoReq>)
+        apiV1.MapPost("crypto", ICommonCrudEndpoints.Create<CreatePaymentSpecCryptoReq>)
             .WithMetadata(linkGeneratorMetaData);
 
-        apiV1.MapPut($@"{cryptoRoute}/{{id:guid}}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCryptoReq>)
+        apiV1.MapPut(@"crypto/{id:guid}", ICommonCrudEndpoints.Update<UpdatePaymentSpecCryptoReq>)
             .WithMetadata(linkGeneratorMetaData)
             .Accepts<UpdatePaymentSpecCryptoReq>(CustomVendorContentTypes.PaymentSpecCryptoJson);
 

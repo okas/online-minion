@@ -55,9 +55,9 @@ public class AccountSpecsEndpoints
 
         apiV1.MapGet($"{DescriptorsCommonRoute}", GetAsDescriptors<AccountSpecDescriptorResp>);
 
-        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckAccountSpecUniqueNewReq>);
+        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueByMember<CheckAccountSpecUniqueNewReq>);
 
-        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueExisting<CheckAccountSpecUniqueExistingReq>);
+        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueByMember<CheckAccountSpecUniqueExistingReq>);
     }
 
     /// <summary>
