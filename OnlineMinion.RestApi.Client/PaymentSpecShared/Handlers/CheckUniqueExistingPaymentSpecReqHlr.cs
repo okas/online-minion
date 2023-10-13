@@ -8,9 +8,9 @@ namespace OnlineMinion.RestApi.Client.PaymentSpecShared.Handlers;
 
 [UsedImplicitly]
 internal sealed class CheckUniqueExistingPaymentSpecReqHlr(ApiProvider api)
-    : BaseCheckUniqueReqHlr<CheckPaymentSpecUniqueExistingReq>(api.Client)
+    : BaseCheckUniqueReqHlr<CheckUniqueExistingPaymentSpecNameReq>(api.Client)
 {
-    public override Uri BuildUri(CheckPaymentSpecUniqueExistingReq rq) => new(
+    public override Uri BuildUri(CheckUniqueExistingPaymentSpecNameReq rq) => new(
         $"{ApiPaymentSpecsUri}/validate-available-name/{rq.MemberValue}/except-id/{rq.OwnId}",
         UriKind.RelativeOrAbsolute
     );

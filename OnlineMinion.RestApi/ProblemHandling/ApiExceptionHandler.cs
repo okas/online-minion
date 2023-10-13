@@ -44,6 +44,18 @@ public class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExcepti
                 httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
                 break;
             }
+
+            case BadHttpRequestException ex:
+            {
+                logger.LogWarning(
+                    ex,
+                    "Bad request exception occurred during request: `{Method} {Request}`",
+                    httpContext.Request.Method,
+                    httpContext.Request.Path
+                );
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                break;
+            }
         }
 
         // It is intentionally only setting to log and tweak response if needed.

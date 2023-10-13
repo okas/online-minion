@@ -54,9 +54,9 @@ public class PaymentSpecEndpoints
 
         apiV1.MapGet($"{DescriptorsCommonRoute}", GetAsDescriptors<PaymentSpecDescriptorResp>);
 
-        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckPaymentSpecUniqueNewReq>);
+        apiV1.MapHead($"{NewNameValidationRoute}", CheckUniqueNew<CheckUniqueNewPaymentSpecNameReq>);
 
-        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueExisting<CheckPaymentSpecUniqueExistingReq>);
+        apiV1.MapHead($"{ExistingNameValidationRoute}", CheckUniqueExisting<CheckUniqueExistingPaymentSpecNameReq>);
 
         #endregion
 

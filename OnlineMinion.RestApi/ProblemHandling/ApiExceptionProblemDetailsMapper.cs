@@ -16,26 +16,31 @@ public sealed class ApiExceptionProblemDetailsMapper : IExceptionProblemDetailsM
 {
     public void MapExceptions(ProblemDetailsContext context)
     {
-        switch (context.Exception)
+        var exception = context.Exception;
+        switch (exception)
         {
-            case ConflictException conflictException:
+            case ConflictException conflictEx:
             {
                 context.ProblemDetails = new HttpValidationProblemDetails
                 {
                     Status = StatusCodes.Status409Conflict,
-                    Title = conflictException.Message,
-                    Errors = CreateErrorsExtension(conflictException.Errors),
+                    Errors = CreateErrorsExtension(conflictEx.Errors),
                 };
                 break;
             }
 
             case { } ex:
             {
-                context.ProblemDetails.Title = ex.Message;
-                context.ProblemDetails.Status = StatusCodes.Status500InternalServerError;
+                if (context.HttpContext.Response.StatusCode < 500)
+                {
+                    context.ProblemDetails.Status = context.HttpContext.Response.StatusCode;
+                }
+
                 break;
             }
         }
+
+        context.ProblemDetails.Detail = exception?.InnerException?.Message ?? exception?.Message;
     }
 
     private static Dictionary<string, string[]> CreateErrorsExtension(

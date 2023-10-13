@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineMinion.DataStore;
 
@@ -11,9 +12,11 @@ using OnlineMinion.DataStore;
 namespace OnlineMinion.DataStore.Migrations
 {
     [DbContext(typeof(OnlineMinionDbContext))]
-    partial class OnlineMinionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231012173243_CHANGE_set_CK_PaymentSpec_Bank_IBAN_Length_and_unqidx")]
+    partial class CHANGE_set_CK_PaymentSpec_Bank_IBAN_Length_and_unqidx
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

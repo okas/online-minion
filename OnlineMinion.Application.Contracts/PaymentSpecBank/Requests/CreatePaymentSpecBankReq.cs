@@ -10,14 +10,14 @@ public sealed class CreatePaymentSpecBankReq(
         string  currencyCode,
         string? tags
     )
-    : BaseUpsertPaymentSpecReqData(name, tags), ICreateCommand
+    : BaseUpsertPaymentSpecReqData(name, tags), IUpsertPaymentSpecBankReq, ICreateCommand
 {
     public CreatePaymentSpecBankReq()
         : this(string.Empty, string.Empty, string.Empty, string.Empty, null) { }
 
+    public string CurrencyCode { get; set; } = currencyCode;
+
     public string IBAN { get; set; } = iban;
 
     public string BankName { get; set; } = bankName;
-
-    public string CurrencyCode { get; set; } = currencyCode;
 }

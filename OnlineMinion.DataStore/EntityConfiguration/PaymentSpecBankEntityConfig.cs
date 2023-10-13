@@ -4,7 +4,7 @@ using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 
-public class BankAccountSpecEntityConfig : IEntityTypeConfiguration<PaymentSpecBank>
+public class PaymentSpecBankEntityConfig : IEntityTypeConfiguration<PaymentSpecBank>
 {
     public void Configure(EntityTypeBuilder<PaymentSpecBank> builder)
     {
@@ -13,5 +13,15 @@ public class BankAccountSpecEntityConfig : IEntityTypeConfiguration<PaymentSpecB
 
         builder.Property(e => e.IBAN)
             .HasMaxLength(34);
+
+        builder.HasIndex(e => e.IBAN)
+            .IsUnique();
+
+        builder.ToTable(
+            tb => tb.HasCheckConstraint(
+                "CK_PaymentSpecBank_IBAN_Length",
+                "LEN(IBAN) BETWEEN 16 AND 34"
+            )
+        );
     }
 }

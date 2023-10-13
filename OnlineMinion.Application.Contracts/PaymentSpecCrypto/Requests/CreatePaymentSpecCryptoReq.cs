@@ -10,14 +10,14 @@ public sealed class CreatePaymentSpecCryptoReq(
         string  currencyCode,
         string? tags
     )
-    : BaseUpsertPaymentSpecReqData(name, tags), ICreateCommand
+    : BaseUpsertPaymentSpecReqData(name, tags), IUpsertPaymentSpecCryptoReq, ICreateCommand
 {
     public CreatePaymentSpecCryptoReq()
         : this(string.Empty, false, string.Empty, string.Empty, null) { }
 
+    public string CurrencyCode { get; set; } = currencyCode;
+
     public string ExchangeName { get; set; } = exchangeName;
 
     public bool IsFiat { get; set; } = isFiat;
-
-    public string CurrencyCode { get; set; } = currencyCode;
 }

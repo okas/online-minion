@@ -4,7 +4,7 @@ using OnlineMinion.Domain.PaymentSpecs;
 
 namespace OnlineMinion.DataStore.EntityConfiguration;
 
-public class CryptoAccountEntityConfig : IEntityTypeConfiguration<PaymentSpecCrypto>
+public class PaymentSpecCryptoEntityConfig : IEntityTypeConfiguration<PaymentSpecCrypto>
 {
     public void Configure(EntityTypeBuilder<PaymentSpecCrypto> builder)
     {
