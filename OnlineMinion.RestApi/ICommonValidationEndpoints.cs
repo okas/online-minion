@@ -11,7 +11,7 @@ public interface ICommonValidationEndpoints
 {
     public const string NewNameValidationRoute = "validate-available-name/{memberValue:required:length(2,50)}";
 
-    public const string ExistingNameValidationRoute = $"{NewNameValidationRoute}/except-id/{{ownid:guid}}";
+    public const string ExistingNameValidationRoute = $$"""{{NewNameValidationRoute}}/except-id/{ownid:guid}""";
 
     //TODO: copy docs from other endpoints
 
@@ -19,7 +19,8 @@ public interface ICommonValidationEndpoints
         [AsParameters] TRequest rq,
         ISender                 sender,
         CancellationToken       ct
-    ) where TRequest : ICheckUniqueNewModelByMemberRequest
+    )
+        where TRequest : ICheckUniqueNewModelByMemberRequest
     {
         var result = await sender.Send(rq, ct).ConfigureAwait(false);
         return ConvertToHttpResult(result);
@@ -30,7 +31,8 @@ public interface ICommonValidationEndpoints
         [AsParameters] TRequest rq,
         ISender                 sender,
         CancellationToken       ct
-    ) where TRequest : ICheckUniqueExistingModelByMemberRequest
+    )
+        where TRequest : ICheckUniqueExistingModelByMemberRequest
     {
         var result = await sender.Send(rq, ct).ConfigureAwait(false);
         return ConvertToHttpResult(result);

@@ -41,11 +41,6 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
 
     public async Task<TResponse> Handle(TRequest req, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
-        if (_normalValidators.Length == 0 && _uniqueAsyncValidators.Length == 0)
-        {
-            return await next().ConfigureAwait(false);
-        }
-
         ErrorOr<Success> validationResult;
 
         // First, validate non async-uniqueness validators, whether sync or async; return early if validation fails.
@@ -61,9 +56,13 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         validationResult = await ValidateAsync(req, _uniqueAsyncValidators, ConflictErrorFactory, ct)
             .ConfigureAwait(false);
 
-        return validationResult.IsError
-            ? (TResponse)(dynamic)validationResult.Errors
-            : await next().ConfigureAwait(false);
+        if (validationResult.IsError)
+        {
+            return (TResponse)(dynamic)validationResult.Errors;
+        }
+
+        // Either there were no validators available or all of them passed, so we can proceed with the request pipeline.
+        return await next().ConfigureAwait(false);
     }
 
     private static async ValueTask<ErrorOr<Success>> ValidateAsync(
@@ -78,9 +77,12 @@ public class CommandValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
             return Result.Success;
         }
 
-        return await GetValidationFailures(req, validators, ct).ConfigureAwait(false) is { Length: > 0, } failures
-            ? errFactory(failures)
-            : Result.Success;
+        if (await GetValidationFailures(req, validators, ct).ConfigureAwait(false) is not { Length: > 0, } failures)
+        {
+            return Result.Success;
+        }
+
+        return errFactory(failures);
     }
 
     private static async ValueTask<ValidationFailure[]> GetValidationFailures(

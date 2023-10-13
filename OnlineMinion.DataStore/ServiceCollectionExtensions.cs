@@ -11,15 +11,14 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataStore(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<OnlineMinionDbContext>(
-            optionsBuilder =>
-                optionsBuilder.UseSqlServer(
+        services.AddDbContext<IOnlineMinionDbContext, OnlineMinionDbContext>(
+            dbContextOptionsBuilder =>
+                dbContextOptionsBuilder.UseSqlServer(
                     connectionString,
-                    contextOptionsBuilder => contextOptionsBuilder.MigrationsAssembly(MigrationsAssemblyName)
+                    serverDbContextOptionsBuilder => serverDbContextOptionsBuilder
+                        .MigrationsAssembly(MigrationsAssemblyName)
                 )
         );
-
-        services.AddScoped<IOnlineMinionDbContext>(provider => provider.GetRequiredService<OnlineMinionDbContext>());
 
         return services;
     }
