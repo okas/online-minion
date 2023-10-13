@@ -15,9 +15,9 @@ namespace OnlineMinion.Application.PaymentSpecSharedHandlers;
 /// <inheritdoc cref="BaseCheckUniqueModelReqHlr{TRequest,TEntity}" />
 [UsedImplicitly]
 internal sealed class CheckUniqueExistingPaymentSpecNameReqHlr(IServiceScopeFactory scopeFactory)
-    : BaseCheckUniqueModelReqHlr<CheckUniqueExistingPaymentSpecNameReq, PaymentSpecBank>(scopeFactory)
+    : BaseCheckUniqueModelReqHlr<CheckUniqueExistingPaymentSpecNameReq, BasePaymentSpecData>(scopeFactory)
 {
-    protected override Expression<Func<PaymentSpecBank, bool>> GetConflictPredicate(
+    protected override Expression<Func<BasePaymentSpecData, bool>> GetConflictPredicate(
         CheckUniqueExistingPaymentSpecNameReq rq
     ) =>
         entity => entity.Name == rq.MemberValue
