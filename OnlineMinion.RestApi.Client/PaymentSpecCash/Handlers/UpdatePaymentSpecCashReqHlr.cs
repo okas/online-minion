@@ -8,10 +8,4 @@ namespace OnlineMinion.RestApi.Client.PaymentSpecCash.Handlers;
 
 [UsedImplicitly]
 internal sealed class UpdatePaymentSpecCashReqHlr(ApiProvider api)
-    : BaseUpdateModelReqHlr<UpdatePaymentSpecCashReq>(api.Client, ApiPaymentSpecsUri)
-{
-    public override Uri BuildUri(UpdatePaymentSpecCashReq rq) => new(
-        $"{ApiPaymentSpecsUri}/cash/{rq.Id}",
-        UriKind.RelativeOrAbsolute
-    );
-}
+    : BaseUpdateModelReqHlr<UpdatePaymentSpecCashReq>(api.Client, ApiPaymentSpecsCashUri);

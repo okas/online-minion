@@ -17,8 +17,8 @@ internal abstract class BaseDeleteModelReqHlr<TRequest>(HttpClient apiClient, Ur
         return HandleResponse(responseMessage);
     }
 
-    public virtual Uri BuildUri(TRequest request) => new(
-        $"{resource}/{request.Id}",
+    public virtual Uri BuildUri(TRequest rq) => new(
+        $"{resource}/{rq.Id}",
         UriKind.RelativeOrAbsolute
     );
 

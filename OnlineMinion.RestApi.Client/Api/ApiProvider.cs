@@ -12,11 +12,13 @@ public record ApiProvider(HttpClient Client)
 
     public static readonly Uri ApiCurrencyInfoUri = new("api/currency-info", UriKind.Relative);
 
-    public static readonly Uri ApiPaymentSpecsUri = new("api/payment-specs", UriKind.Relative);
     public static readonly Uri ApiPaymentSpecsUri = new($"api/{PaymentSpecRoute}", UriKind.Relative);
 
     public static readonly Uri ApiPaymentSpecsBankUri = new($"api/{PaymentSpecRoute}/bank", UriKind.Relative);
 
+    public static readonly Uri ApiPaymentSpecsCashUri = new($"api/{PaymentSpecRoute}/cash", UriKind.Relative);
+
+    public static readonly Uri ApiPaymentSpecsCryptoUri = new($"api/{PaymentSpecRoute}/crypto", UriKind.Relative);
 
     public static readonly Uri ApiTransactionsCreditUri = new("api/transactions/credits", UriKind.Relative);
 
