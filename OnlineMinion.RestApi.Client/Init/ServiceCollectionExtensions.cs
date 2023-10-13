@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<ApiClientSettings>, ApiClientSettingsValidator>();
 
         services.AddOptions<ApiClientSettings>()
-            .BindConfiguration(nameof(ApiClientSettings))
+            .BindConfiguration(ApiClientSettings.ConfigurationSection)
             .ValidateWithFluentValidator()
             .ValidateOnStart();
 

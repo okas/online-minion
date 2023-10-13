@@ -2,6 +2,8 @@ namespace OnlineMinion.SPA.Blazor.Settings;
 
 public class WebAppSettings
 {
+    public const string ConfigurationSection = "WebApp";
+
     /// <summary>
     ///     Controls whether the response body should be buffered. See
     ///     <see

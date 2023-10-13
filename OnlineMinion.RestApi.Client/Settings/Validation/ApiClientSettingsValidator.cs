@@ -10,12 +10,14 @@ public class ApiClientSettingsValidator : AbstractValidator<ApiClientSettings>
 
     public ApiClientSettingsValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x.Url)
+            .NotEmpty()
             .Must(uri => Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out _))
             .WithName($"{TypeName}.{nameof(ApiClientSettings.Url)}")
             .WithMessage(
                 "'{PropertyName}' must be a valid URI, instead of '{PropertyValue}'; check appsettings/configuration."
-            )
-            .NotEmpty();
+            );
     }
 }

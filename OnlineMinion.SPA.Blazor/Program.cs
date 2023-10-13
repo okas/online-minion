@@ -28,7 +28,7 @@ services.AddHttpClient(
 );
 
 services.AddOptions<WebAppSettings>()
-    .BindConfiguration(nameof(WebAppSettings))
+    .BindConfiguration(WebAppSettings.ConfigurationSection)
     .ValidateWithFluentValidator()
     .ValidateOnStart();
 

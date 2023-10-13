@@ -10,6 +10,8 @@ public class WebAppSettingsValidator : AbstractValidator<WebAppSettings>
 
     public WebAppSettingsValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x.BrowserResponseStreamingEnabled)
             .NotEmpty()
             .WithName($"{TypeName}.{nameof(WebAppSettings.BrowserResponseStreamingEnabled)}")
